@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Disney+ Hotstar — ZAMI Watch Party</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0f1014;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      user-select: none;
+    }
+    .hs-nav {
+      position: sticky; top: 0; z-index: 1000; height: 64px;
+      background: rgba(15, 16, 20, 0.95); backdrop-filter: blur(12px);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 32px; border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .hs-logo { display: flex; align-items: center; cursor: pointer; }
+    .hs-sync-badge {
+      background: rgba(0, 210, 255, 0.15); border: 1px solid rgba(0, 210, 255, 0.4);
+      color: #00d2ff; font-size: 11px; font-weight: 800; padding: 4px 10px;
+      border-radius: 12px; display: flex; align-items: center; gap: 6px;
+    }
+    .hs-hero {
+      position: relative; height: 460px; background: #000; display: flex; align-items: center;
+    }
+    .hs-hero-bg {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.65;
+    }
+    .hs-hero-grad {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(90deg, #0f1014 0%, rgba(15, 16, 20, 0.8) 40%, transparent 100%),
+                  linear-gradient(0deg, #0f1014 0%, transparent 40%);
+    }
+    .hs-hero-content {
+      position: relative; z-index: 10; max-width: 600px; padding: 0 40px;
+    }
+    .hs-btn-primary {
+      background: linear-gradient(135deg, #00d2ff 0%, #0063e5 100%);
+      color: #fff; font-size: 14px; font-weight: 800; padding: 11px 22px;
+      border-radius: 8px; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+    }
+    .hs-btn-secondary {
+      background: rgba(255,255,255,0.1); color: #fff; font-size: 14px; font-weight: 700;
+      padding: 11px 18px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15);
+      cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .hs-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px;
+      padding: 24px 40px 60px 40px;
+    }
+    .hs-card {
+      position: relative; aspect-ratio: 16 / 9; border-radius: 8px; overflow: hidden;
+      cursor: pointer; background: #1a1c23; transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .hs-card:hover {
+      transform: scale(1.05); box-shadow: 0 10px 24px rgba(0, 210, 255, 0.2);
+    }
+    .hs-card-img { width: 100%; height: 100%; object-fit: cover; }
+    .hs-card-body {
+      position: absolute; bottom: 0; left: 0; right: 0; padding: 8px 12px;
+      background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
+    }
+  </style>
+</head>
+<body>
+  <nav class="hs-nav">
+    <div class="hs-logo" id="btn-hs-home">
+      <svg viewBox="0 0 130 46" width="110" height="38" fill="none">
+        <path d="M6 30 C 14 6, 44 2, 64 12" fill="none" stroke="#00D2FF" stroke-width="2.5" stroke-linecap="round"/>
+        <text x="8" y="29" font-family="sans-serif" font-size="17" font-weight="900" fill="#FFFFFF" font-style="italic">Disney+</text>
+        <polygon points="78,14 79.5,17.5 83,18 80.5,20.5 81,24 78,22 75,24 75.5,20.5 73,18 76.5,17.5" fill="#FFB703"/>
+        <text x="85" y="23" font-family="sans-serif" font-size="8" font-weight="800" fill="#FFB703">HOTSTAR</text>
+      </svg>
+    </div>
+    <div class="hs-sync-badge">
+      <span style="width:6px;height:6px;border-radius:50%;background:#00d2ff;box-shadow:0 0 6px #00d2ff;"></span>
+      <span>HOTSTAR LIVE WATCH PARTY</span>
+    </div>
+  </nav>
+
+  <section class="hs-hero">
+    <img class="hs-hero-bg" src="https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=1920&q=80">
+    <div class="hs-hero-grad"></div>
+    <div class="hs-hero-content">
+      <div style="font-size:12px;font-weight:900;color:#00d2ff;letter-spacing:0.1em;margin-bottom:8px;">HOTSTAR SPECIALS</div>
+      <h1 style="font-size:38px;font-weight:900;margin-bottom:12px;">Loki & Marvel Studios Showcase</h1>
+      <p style="color:#cbd5e1;font-size:14px;line-height:1.5;margin-bottom:20px;">
+        Explore the Marvel Cinematic Universe and Hotstar Specials live with synchronized stereo sound.
+      </p>
+      <div style="display:flex;gap:12px;">
+        <button class="hs-btn-primary" id="btn-hs-screen">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          <span>SCREEN TO ROOM (SYNCED)</span>
+        </button>
+        <button class="hs-btn-secondary" id="btn-hs-queue">+ ADD TO QUEUE</button>
+      </div>
+    </div>
+  </section>
+
+  <div style="padding:24px 40px 8px 40px;font-size:20px;font-weight:800;">Featured Blockbusters & Live Sports</div>
+  <div class="hs-grid" id="hs-grid"></div>
+
+  <script>
+    (function() {
+      const items = [
+        { title: 'Loki Season 2', thumb: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=720&q=80', ytId: 'dug56u8NN7g' },
+        { title: 'Brahmastra Part One: Shiva', thumb: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=720&q=80', ytId: 'V5Zzboaz33o' },
+        { title: 'The Mandalorian', thumb: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=720&q=80', ytId: 'aOC8E8R_N5c' },
+        { title: 'Live Cricket Match Highlights', thumb: 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=720&q=80', ytId: 'kJQP7kiw5Fk' }
+      ];
+
+      const grid = document.getElementById('hs-grid');
+      items.forEach(item => {
+        const d = document.createElement('div');
+        d.className = 'hs-card';
+        d.innerHTML = `
+          <img class="hs-card-img" src="${item.thumb}" alt="${item.title}">
+          <div class="hs-card-body">
+            <div style="font-weight:700;font-size:14px;">${item.title}</div>
+            <div style="font-size:11px;color:#00d2ff;margin-top:2px;">▶ Screen to Room</div>
+          </div>
+        `;
+        d.addEventListener('click', () => {
+          window.parent.postMessage({
+            type: 'CINESYNC_PLAY_YOUTUBE',
+            url: `https://www.youtube.com/watch?v=${item.ytId}`,
+            title: `Hotstar // ${item.title}`,
+            poster: item.thumb
+          }, '*');
+        });
+        grid.appendChild(d);
+      });
+
+      document.getElementById('btn-hs-screen').addEventListener('click', () => {
+        window.parent.postMessage({
+          type: 'CINESYNC_PLAY_YOUTUBE',
+          url: `https://www.youtube.com/watch?v=dug56u8NN7g`,
+          title: 'Hotstar // Loki Season 2',
+          poster: items[0].thumb
+        }, '*');
+      });
+
+      document.getElementById('btn-hs-queue').addEventListener('click', () => {
+        window.parent.postMessage({
+          type: 'CINESYNC_QUEUE_YOUTUBE',
+          url: `https://www.youtube.com/watch?v=dug56u8NN7g`,
+          title: 'Hotstar // Loki Season 2',
+          poster: items[0].thumb
+        }, '*');
+      });
+    })();
+  </script>
+</body>
+</html>

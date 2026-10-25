@@ -1,0 +1,61 @@
+{
+  "manifest_version": 3,
+  "name": "CineSync — Watch Party for Netflix, Prime, Hotstar & MX",
+  "version": "1.1.0",
+  "description": "Watch movies together on Netflix, Prime Video, Disney+ Hotstar, MX Player, and Crunchyroll in sync with friends, with floating chat and live reactions.",
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "host_permissions": [
+    "https://*.netflix.com/*",
+    "https://*.primevideo.com/*",
+    "https://*.amazon.com/*",
+    "https://*.hotstar.com/*",
+    "https://*.mxplayer.in/*",
+    "https://*.crunchyroll.com/*",
+    "https://*.youtube.com/*",
+    "https://*.twitch.tv/*",
+    "http://localhost:3000/*",
+    "http://127.0.0.1:3000/*"
+  ],
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "CineSync Watch Party",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.netflix.com/*",
+        "https://*.primevideo.com/*",
+        "https://*.amazon.com/*",
+        "https://*.hotstar.com/*",
+        "https://*.mxplayer.in/*",
+        "https://*.crunchyroll.com/*",
+        "https://*.youtube.com/*",
+        "https://*.twitch.tv/*"
+      ],
+      "js": [
+        "libs/socket.io.min.js",
+        "content.js"
+      ],
+      "css": [
+        "styles.css"
+      ],
+      "run_at": "document_end"
+    }
+  ]
+}

@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Netflix — ZAMI Watch Party Edition</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --nf-black: #141414;
+      --nf-dark: #0b0b0b;
+      --nf-red: #e50914;
+      --nf-red-hover: #b80710;
+      --nf-text: #fff;
+      --nf-muted: #aaa;
+    }
+
+    body {
+      background: var(--nf-black);
+      color: var(--nf-text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      user-select: none;
+    }
+
+    /* TOP NAVBAR */
+    .nf-navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      height: 68px;
+      background: linear-gradient(180deg, rgba(0,0,0,0.85) 0%, rgba(20,20,20,0.95) 100%);
+      backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+    }
+
+    .nf-nav-left {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .nf-logo {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .nf-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .nf-link {
+      color: #e5e5e5;
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      transition: color 0.15s;
+    }
+
+    .nf-link:hover, .nf-link.active {
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .nf-sync-pill {
+      background: rgba(229, 9, 20, 0.15);
+      border: 1px solid rgba(229, 9, 20, 0.5);
+      color: #ff4d4d;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 9px;
+      border-radius: 12px;
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nf-sync-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #e50914;
+      box-shadow: 0 0 8px #e50914;
+      animation: nfPulse 1.8s infinite;
+    }
+
+    @keyframes nfPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    /* HERO BILLBOARD */
+    .nf-billboard {
+      position: relative;
+      height: 540px;
+      background: #000;
+      display: flex;
+      align-items: center;
+    }
+
+    .nf-billboard-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 25%;
+      opacity: 0.7;
+    }
+
+    .nf-billboard-gradient {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(77deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 50%, transparent 100%),
+                  linear-gradient(0deg, #141414 0%, transparent 50%);
+    }
+
+    .nf-billboard-content {
+      position: relative;
+      z-index: 10;
+      max-width: 650px;
+      padding: 0 48px;
+    }
+
+    .nf-series-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .nf-n-icon {
+      color: #e50914;
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: -2px;
+    }
+
+    .nf-series-type {
+      font-size: 13px;
+      font-weight: 800;
+      color: #aaa;
+      letter-spacing: 0.2em;
+    }
+
+    .nf-billboard-title {
+      font-size: 48px;
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 16px;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+    }
+
+    .nf-billboard-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      margin-bottom: 14px;
+    }
+
+    .nf-match {
+      color: #46d369;
+      font-weight: 800;
+    }
+
+    .nf-age {
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      padding: 1px 6px;
+      font-size: 12px;
+    }
+
+    .nf-billboard-desc {
+      font-size: 15px;
+      line-height: 1.5;
+      color: #e5e5e5;
+      margin-bottom: 24px;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .nf-billboard-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-nf-play {
+      background: #fff;
+      color: #000;
+      font-size: 15px;
+      font-weight: 700;
+      padding: 11px 26px;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: background 0.15s;
+    }
+
+    .btn-nf-play:hover {
+      background: rgba(255, 255, 255, 0.85);
+    }
+
+    .btn-nf-screen {
+      background: #e50914;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 800;
+      padding: 11px 22px;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 14px rgba(229, 9, 20, 0.5);
+      transition: all 0.2s;
+    }
+
+    .btn-nf-screen:hover {
+      background: #b80710;
+      transform: translateY(-2px);
+    }
+
+    .btn-nf-more {
+      background: rgba(109, 109, 110, 0.7);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 11px 20px;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-nf-more:hover {
+      background: rgba(109, 109, 110, 0.4);
+    }
+
+    /* CATALOG ROWS */
+    .nf-catalog {
+      padding: 0 48px 60px 48px;
+      margin-top: -30px;
+      position: relative;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      gap: 36px;
+    }
+
+    .nf-row-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: #e5e5e5;
+      margin-bottom: 12px;
+    }
+
+    .nf-row-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 12px;
+    }
+
+    .nf-card {
+      position: relative;
+      aspect-ratio: 16 / 9;
+      border-radius: 4px;
+      overflow: hidden;
+      cursor: pointer;
+      background: #202020;
+      transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1), z-index 0.25s;
+    }
+
+    .nf-card:hover {
+      transform: scale(1.08);
+      z-index: 30;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.9);
+    }
+
+    .nf-card-thumb {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .nf-card-badge {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      background: #e50914;
+      color: #fff;
+      font-size: 9px;
+      font-weight: 900;
+      padding: 2px 5px;
+      border-radius: 2px;
+      letter-spacing: 0.05em;
+    }
+
+    .nf-card-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 10px;
+      background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 60%, transparent 100%);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .nf-card:hover .nf-card-overlay {
+      opacity: 1;
+    }
+
+    .nf-card-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .nf-card-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .nf-card-btn {
+      flex: 1;
+      background: #e50914;
+      color: #fff;
+      border: none;
+      padding: 5px 8px;
+      border-radius: 3px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .nf-card-btn.queue {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    /* THEATER WATCH VIEW */
+    .nf-theater-view {
+      display: none;
+      padding: 24px 48px;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    .nf-player-frame {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #000;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid rgba(229, 9, 20, 0.4);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.9), 0 0 25px rgba(229, 9, 20, 0.2);
+    }
+
+    .nf-player-frame iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .nf-theater-info {
+      margin-top: 18px;
+    }
+
+    .nf-toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: rgba(20, 20, 20, 0.95);
+      border: 1px solid #e50914;
+      color: #fff;
+      padding: 10px 22px;
+      border-radius: 24px;
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
+      z-index: 9999;
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+
+    .nf-toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="nf-navbar">
+    <div class="nf-nav-left">
+      <div class="nf-logo" id="btn-nf-home">
+        <!-- Official Netflix Red Wordmark SVG -->
+        <svg viewBox="0 0 111 30" width="100" height="28" fill="none">
+          <path d="M105.062 14.28L111 30c-1.782-.266-3.564-.479-5.385-.638l-4.103-11.233-4.082 10.871c-1.782-.107-3.564-.17-5.385-.17l6.692-17.51-5.63-14.89h5.384l3.144 8.765 3.336-8.766h5.385l-5.281 14.851zM82.35 15.6h7.955v4.616h-7.955V30c-1.803.022-3.606.064-5.385.127V.48h14.774v4.637H82.35V15.6zm-17.91-10.483h-5.406V30.4c1.803-.042 3.606-.063 5.406-.063V5.117zm-14.89 0h-5.384V30.634c1.782-.043 3.585-.064 5.384-.064V5.117zm-14.654 0h-5.407V30.953c1.803-.021 3.606-.021 5.407 0V5.117zM14.773 17.552l6.224 13.882c-1.803.149-3.585.34-5.385.553L9.388 17.552V32.4c-1.803.255-3.585.553-5.385.872V.48h5.385v17.072z" fill="#E50914"/>
+        </svg>
+      </div>
+
+      <div class="nf-nav-links">
+        <span class="nf-link active">Home</span>
+        <span class="nf-link">TV Shows</span>
+        <span class="nf-link">Movies</span>
+        <span class="nf-link">New & Popular</span>
+        <span class="nf-link">My List</span>
+      </div>
+
+      <div class="nf-sync-pill">
+        <span class="nf-sync-dot"></span>
+        <span>NETFLIX PARTY SYNC ACTIVE</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- CATALOG VIEW -->
+  <div id="nf-catalog-view">
+    <!-- BILLBOARD HERO -->
+    <section class="nf-billboard">
+      <img class="nf-billboard-bg" id="nf-billboard-bg" src="https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1920&q=80" alt="Billboard">
+      <div class="nf-billboard-gradient"></div>
+
+      <div class="nf-billboard-content">
+        <div class="nf-series-badge">
+          <span class="nf-n-icon">N</span>
+          <span class="nf-series-type">SERIES</span>
+        </div>
+        <h1 class="nf-billboard-title" id="nf-billboard-title">Stranger Things 5</h1>
+        <div class="nf-billboard-meta">
+          <span class="nf-match">99% Match</span>
+          <span>2025</span>
+          <span class="nf-age">16+</span>
+          <span>5 Seasons</span>
+          <span class="nf-age">Ultra HD 4K</span>
+        </div>
+        <p class="nf-billboard-desc" id="nf-billboard-desc">
+          When a young boy vanishes, a small town uncovers a mystery involving secret experiments, terrifying supernatural forces and one strange little girl.
+        </p>
+
+        <div class="nf-billboard-actions">
+          <button class="btn-nf-screen" id="btn-hero-screen">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            <span>SCREEN TO PARTY (SYNCED)</span>
+          </button>
+          <button class="btn-nf-play" id="btn-hero-play">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            <span>Play Trailer</span>
+          </button>
+          <button class="btn-nf-more" id="btn-hero-queue">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+            <span>Add to Queue</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTENT ROWS -->
+    <div class="nf-catalog">
+      <div>
+        <h2 class="nf-row-title">Trending Now on Netflix</h2>
+        <div class="nf-row-grid" id="row-trending"></div>
+      </div>
+
+      <div>
+        <h2 class="nf-row-title">Critically Acclaimed Netflix Originals</h2>
+        <div class="nf-row-grid" id="row-originals"></div>
+      </div>
+
+      <div>
+        <h2 class="nf-row-title">Top Action Blockbusters</h2>
+        <div class="nf-row-grid" id="row-action"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- THEATER VIEW -->
+  <div class="nf-theater-view" id="nf-theater-view">
+    <div class="nf-player-frame">
+      <iframe id="nf-active-player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    </div>
+
+    <div class="nf-theater-info">
+      <h1 style="font-size: 28px; font-weight: 900;" id="nf-theater-title">Movie Title</h1>
+      <div style="display: flex; gap: 12px; margin-top: 14px;">
+        <button class="btn-nf-screen" id="btn-theater-screen">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          <span>SCREEN TO ROOM (SYNCED)</span>
+        </button>
+        <button class="btn-nf-more" id="btn-theater-queue">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+          <span>ADD TO QUEUE</span>
+        </button>
+        <button class="btn-nf-more" id="btn-theater-back">‹ Back to Netflix</button>
+      </div>
+      <p id="nf-theater-desc" style="color: #aaa; margin-top: 16px; font-size: 14.5px; line-height: 1.5; max-width: 800px;"></p>
+    </div>
+  </div>
+
+  <div class="nf-toast" id="nf-toast"></div>
+
+  <script>
+    (function() {
+      const catalogView = document.getElementById('nf-catalog-view');
+      const theaterView = document.getElementById('nf-theater-view');
+      const activePlayer = document.getElementById('nf-active-player');
+      const theaterTitle = document.getElementById('nf-theater-title');
+      const theaterDesc = document.getElementById('nf-theater-desc');
+      const toast = document.getElementById('nf-toast');
+
+      let currentItem = null;
+
+      function showToast(msg, iconSvg = '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>') {
+        if (!toast) return;
+        toast.innerHTML = `<span style="display:inline-flex;align-items:center;">${iconSvg}</span><span>${msg}</span>`;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3500);
+      }
+
+      const netflixTitles = [
+        {
+          id: 'stranger-things',
+          title: 'Stranger Things',
+          thumb: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=720&q=80',
+          desc: 'When a young boy vanishes, a small town uncovers a mystery involving secret experiments and supernatural forces.',
+          ytId: 'b9EkMc79ZSU'
+        },
+        {
+          id: 'squid-game',
+          title: 'Squid Game',
+          thumb: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=720&q=80',
+          desc: 'Hundreds of cash-strapped players accept a strange invitation to compete in children games with high stakes.',
+          ytId: 'oqxAJKy0ii4'
+        },
+        {
+          id: 'wednesday',
+          title: 'Wednesday',
+          thumb: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=720&q=80',
+          desc: 'Wednesday Addams misadventures as a student at Nevermore Academy, solving a 25-year-old mystery.',
+          ytId: 'Di310BC8urj'
+        },
+        {
+          id: 'money-heist',
+          title: 'Money Heist (La Casa de Papel)',
+          thumb: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=720&q=80',
+          desc: 'An unusual group of robbers attempt to carry out the most perfect robbery in Spanish history.',
+          ytId: 'p_PJbmrX4uk'
+        },
+        {
+          id: 'dark',
+          title: 'Dark',
+          thumb: 'https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?auto=format&fit=crop&w=720&q=80',
+          desc: 'A family saga with a supernatural twist, set in a German town where the disappearance of two young children exposes secrets.',
+          ytId: 'rrwycJ08PSA'
+        },
+        {
+          id: 'all-of-us-are-dead',
+          title: 'All of Us Are Dead',
+          thumb: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=720&q=80',
+          desc: 'A high school becomes ground zero for a zombie virus outbreak. Trapped students must fight their way out.',
+          ytId: 'IN5TD4VRcZU'
+        }
+      ];
+
+      function renderGrid(list, containerId) {
+        const el = document.getElementById(containerId);
+        if (!el) return;
+        el.innerHTML = '';
+
+        list.forEach(item => {
+          const card = document.createElement('div');
+          card.className = 'nf-card';
+          card.innerHTML = `
+            <img class="nf-card-thumb" src="${item.thumb}" alt="${item.title}" loading="lazy">
+            <div class="nf-card-badge">TOP 10</div>
+            <div class="nf-card-overlay">
+              <div class="nf-card-title">${item.title}</div>
+              <div class="nf-card-actions">
+                <button class="nf-card-btn btn-card-screen">▶ Screen</button>
+                <button class="nf-card-btn queue btn-card-queue">+ Queue</button>
+              </div>
+            </div>
+          `;
+
+          card.querySelector('.btn-card-screen').addEventListener('click', (e) => {
+            e.stopPropagation();
+            screenToRoom(item);
+          });
+
+          card.querySelector('.btn-card-queue').addEventListener('click', (e) => {
+            e.stopPropagation();
+            queueForRoom(item);
+          });
+
+          card.addEventListener('click', () => {
+            openTheater(item);
+          });
+
+          el.appendChild(card);
+        });
+      }
+
+      function openTheater(item) {
+        currentItem = item;
+        theaterTitle.textContent = item.title;
+        theaterDesc.textContent = item.desc;
+        activePlayer.src = `https://www.youtube-nocookie.com/embed/${item.ytId}?autoplay=1&enablejsapi=1`;
+
+        catalogView.style.display = 'none';
+        theaterView.style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function closeTheater() {
+        if (activePlayer) activePlayer.src = 'about:blank';
+        theaterView.style.display = 'none';
+        catalogView.style.display = 'block';
+      }
+
+      function screenToRoom(item) {
+        const target = item || currentItem;
+        if (!target) return;
+        const videoUrl = `https://www.youtube.com/watch?v=${target.ytId}`;
+
+        window.parent.postMessage({
+          type: 'CINESYNC_PLAY_YOUTUBE',
+          url: videoUrl,
+          title: `Netflix // ${target.title}`,
+          poster: target.thumb
+        }, '*');
+
+        showToast(`Screening "${target.title}" to ZAMI Watch Party!`, '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>');
+      }
+
+      function queueForRoom(item) {
+        const target = item || currentItem;
+        if (!target) return;
+        const videoUrl = `https://www.youtube.com/watch?v=${target.ytId}`;
+
+        window.parent.postMessage({
+          type: 'CINESYNC_QUEUE_YOUTUBE',
+          url: videoUrl,
+          title: `Netflix // ${target.title}`,
+          poster: target.thumb
+        }, '*');
+
+        showToast(`Added "${target.title}" to Room Queue!`, '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>');
+      }
+
+      renderGrid(netflixTitles, 'row-trending');
+      renderGrid(netflixTitles.slice(1).concat(netflixTitles.slice(0, 1)), 'row-originals');
+      renderGrid(netflixTitles.slice(2).concat(netflixTitles.slice(0, 2)), 'row-action');
+
+      document.getElementById('btn-hero-screen').addEventListener('click', () => screenToRoom(netflixTitles[0]));
+      document.getElementById('btn-hero-play').addEventListener('click', () => openTheater(netflixTitles[0]));
+      document.getElementById('btn-hero-queue').addEventListener('click', () => queueForRoom(netflixTitles[0]));
+
+      document.getElementById('btn-theater-screen').addEventListener('click', () => screenToRoom(currentItem));
+      document.getElementById('btn-theater-queue').addEventListener('click', () => queueForRoom(currentItem));
+      document.getElementById('btn-theater-back').addEventListener('click', closeTheater);
+      document.getElementById('btn-nf-home').addEventListener('click', closeTheater);
+    })();
+  </script>
+</body>
+</html>

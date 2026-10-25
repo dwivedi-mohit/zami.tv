@@ -1,0 +1,2021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZAMI — Watch Party</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700;1,800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/clay.css">
+  <link rel="stylesheet" href="/css/room.css?v=23">
+  <script src="/js/theme.js"></script>
+  <script>
+    // Allow intentional embedding from parent application or localhost
+    if (window.self !== window.top && !window.location.search.includes('embed') && !['localhost', '127.0.0.1'].includes(window.location.hostname)) {
+      window.location.replace('about:blank');
+    }
+  </script>
+</head>
+<body>
+  <div class="room-container">
+    <!-- Top Masthead / Cinematic Lounge Top Bar -->
+    <!-- Top Masthead / Cinematic Lounge Top Bar -->
+    <header class="room-navbar">
+      <div class="nav-left">
+        <a href="/" class="brand-logo" title="Back to Screening Index" aria-label="Zami">
+          <span class="zami-text-logo">
+            <span class="z-cursive">Z</span><span class="ami-serif">ami</span>
+          </span>
+        </a>
+
+        <!-- Room Title Dropdown Pill -->
+        <div class="room-dropdown-pill" id="room-identity-group" title="Screening Room">
+          <span id="room-id-display" class="room-dropdown-title">Bollywood Night</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+
+        <!-- Live Presence Avatars Stack -->
+        <div class="nav-presence-stack" id="nav-presence-stack" title="Active viewers in this room">
+          <div class="nav-avatar-circles" id="nav-avatar-circles">
+            <div class="nav-mini-avatar" title="Alex">
+              <div class="avatar-ph avatar-c1">A</div>
+            </div>
+            <div class="nav-mini-avatar" title="Priya">
+              <div class="avatar-ph avatar-c2">P</div>
+            </div>
+            <div class="nav-mini-avatar" title="David">
+              <div class="avatar-ph avatar-c3">D</div>
+            </div>
+            <div class="nav-mini-avatar" title="Rohan">
+              <div class="avatar-ph avatar-c4">R</div>
+            </div>
+          </div>
+          <span class="nav-viewer-counter" id="nav-presence-count">4 watching</span>
+        </div>
+
+        <!-- Restrained Teal Sync Status Indicator -->
+        <div id="sync-indicator" class="sync-status-pill" title="Playback synchronization state with room">
+          <span class="sync-dot"></span>
+          <span id="sync-text">SYNCED</span>
+        </div>
+
+        <!-- Live Telemetry & Latency HUD Pill -->
+        <div id="stage-telemetry-pill" class="stage-telemetry-pill" title="Real-time network latency, quality, and stream telemetry">
+          <span id="telemetry-dot" class="telemetry-dot live-dot-green"></span>
+          <span id="telemetry-ping-text">Ping: 18ms</span>
+          <span class="telemetry-sep">|</span>
+          <span id="telemetry-quality-text">1080p HD</span>
+        </div>
+      </div>
+
+      <div class="nav-right">
+        <!-- Cast Screen / Tab Button -->
+        <button id="btn-navbar-screenshare" class="btn-top-icon" title="Broadcast tab or screen to room">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="3" width="20" height="14" rx="2"/>
+            <line x1="8" y1="21" x2="16" y2="21"/>
+            <line x1="12" y1="17" x2="12" y2="21"/>
+          </svg>
+        </button>
+
+        <!-- Picture in Picture (PiP) -->
+        <button type="button" id="btn-theater-mode" class="btn-top-icon" title="Cinema Theater Mode (T)" aria-label="Cinema Theater Mode">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="3" width="20" height="15" rx="2" ry="2"/>
+            <line x1="2" y1="18" x2="22" y2="18"/>
+          </svg>
+        </button>
+
+        <!-- Stage Wallpaper Switcher Button -->
+        <button type="button" id="btn-nav-wallpaper" class="btn-top-icon" title="Change Stage Wallpaper" aria-label="Change Stage Wallpaper">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+        </button>
+
+        <!-- Cinema Theme Switcher Button -->
+        <div class="nav-theme-container" style="position: relative;">
+          <button type="button" id="btn-nav-theme" class="btn-top-icon" title="Cinema Themes &amp; OLED Presets" aria-label="Cinema Themes &amp; OLED Presets">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+            </svg>
+          </button>
+          <div id="theme-switcher-flyout" class="theme-switcher-flyout" style="display: none;">
+            <div class="theme-flyout-header">CINEMA THEMES</div>
+            <div class="theme-options-grid">
+              <button type="button" class="theme-opt-btn active" data-theme="default">
+                <span class="theme-color-dot dot-default"></span>
+                <span>ZAMI Classic</span>
+              </button>
+              <button type="button" class="theme-opt-btn" data-theme="cyberpunk">
+                <span class="theme-color-dot dot-cyberpunk"></span>
+                <span>Cyberpunk Neon</span>
+              </button>
+              <button type="button" class="theme-opt-btn" data-theme="oled">
+                <span class="theme-color-dot dot-oled"></span>
+                <span>Pure OLED Black</span>
+              </button>
+              <button type="button" class="theme-opt-btn" data-theme="amber">
+                <span class="theme-color-dot dot-amber"></span>
+                <span>Warm Amber</span>
+              </button>
+              <button type="button" class="theme-opt-btn" data-theme="vhs">
+                <span class="theme-color-dot dot-vhs"></span>
+                <span>Retro VHS 80s</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Room Settings -->
+        <button type="button" id="btn-nav-settings" class="btn-top-icon" title="Room Settings">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+        </button>
+
+        <!-- Keyboard Shortcuts (?) -->
+        <button type="button" id="btn-nav-shortcuts" class="btn-top-icon" title="Keyboard Shortcuts (?)" aria-label="Keyboard Shortcuts">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="4" width="20" height="16" rx="2"/>
+            <path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M6 12h.01M10 12h.01M14 12h.01M18 12h.01M8 16h8"/>
+          </svg>
+        </button>
+
+        <!-- Social Panel Trigger (Chat & People Lounge) -->
+        <button id="btn-toggle-sidebar" class="btn-top-icon active" title="Social Lounge Panel (Chat & People)" aria-label="Social Lounge Panel (Chat & People)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <line x1="15" y1="3" x2="15" y2="21"/>
+          </svg>
+          <span id="nav-chat-unread-dot" class="nav-unread-dot" style="display: none;"></span>
+        </button>
+
+        <!-- Invite Button (Warm Amber/Gold Pill) -->
+        <button id="btn-copy-link" class="btn-top-invite" title="Invite Friends">
+          <span>Invite</span>
+        </button>
+
+        <!-- Leave Room (Dark Red Pill) -->
+        <a href="/" class="btn-top-leave" title="Leave Watch Room">
+          <span>Leave Room</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Main Body Container with Left Rail + Workspace -->
+    <div class="room-body-container">
+      <!-- Slim Left Navigation Rail -->
+      <nav class="room-nav-rail" aria-label="Quick Navigation">
+        <div class="rail-top">
+          <button type="button" class="rail-btn active" data-rail="stage" id="rail-btn-stage" title="Screening Room">
+            <div class="rail-btn-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+            </div>
+            <span class="rail-label">Room</span>
+          </button>
+
+          <button type="button" class="rail-btn" id="rail-btn-vault" title="Discover &amp; Catalog">
+            <div class="rail-btn-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+              </svg>
+            </div>
+            <span class="rail-label">Discover</span>
+          </button>
+
+          <button type="button" class="rail-btn" id="rail-btn-queue" title="Room Watchlist">
+            <div class="rail-btn-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+              </svg>
+            </div>
+            <span class="rail-label">Watchlist</span>
+          </button>
+
+          <button type="button" class="rail-btn" id="rail-btn-history" title="Screening History">
+            <div class="rail-btn-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+            </div>
+            <span class="rail-label">History</span>
+          </button>
+        </div>
+      </nav>
+
+      <!-- Workspace: Stage + Sidebar -->
+      <main class="room-workspace">
+      <!-- Stage: Video Player Area -->
+      <section class="room-stage">
+        <div class="player-wrapper">
+          <!-- Mobile Playing Top Header (Only visible on mobile during playback) -->
+          <div id="mobile-playing-header" class="mobile-playing-header" style="display: none;">
+            <div class="mobile-playing-left">
+              <button type="button" id="btn-mobile-playing-back" class="btn-playing-back" title="Back to Lounge" aria-label="Back">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e5a93c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="19" y1="12" x2="5" y2="12"></line>
+                  <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+              </button>
+              <span id="mobile-playing-title" class="mobile-playing-title">Interstellar</span>
+            </div>
+            <div class="mobile-playing-right">
+              <div class="nav-avatar-circles mini">
+                <div class="nav-mini-avatar" title="Alex"><div class="avatar-ph avatar-c1">A</div></div>
+                <div class="nav-mini-avatar" title="Priya"><div class="avatar-ph avatar-c2">P</div></div>
+              </div>
+              <button type="button" id="btn-mobile-playing-more" class="btn-playing-more" title="More options" aria-label="More">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="1.5"></circle>
+                  <circle cx="12" cy="5" r="1.5"></circle>
+                  <circle cx="12" cy="19" r="1.5"></circle>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Ambient Cinema Glow / Backdrop Ambilight -->
+          <div id="stage-ambilight" class="stage-ambilight"></div>
+          <div id="stage-ambilight-glow" class="stage-ambilight-glow"></div>
+
+          <!-- Direct Playing Stage Poster/Still Backdrop -->
+          <div id="playing-stage-backdrop" class="playing-stage-backdrop" style="display: none;"></div>
+
+          <!-- Native / HLS / Local Video element -->
+          <video id="main-video" playsinline preload="auto"></video>
+
+          <!-- YouTube Player Container -->
+          <div id="yt-player-container"></div>
+
+          <!-- Embed Player Container (VidSrc / AutoEmbed / TMDB Streams) -->
+          <div id="embed-player-container" class="embed-player-container" style="display: none;"></div>
+
+          <!-- Inbuilt Rave Virtual Browser / Webview Window on Stage -->
+          <div id="inbuilt-browser-container" class="inbuilt-browser-container" style="display: none;">
+            <div class="browser-navbar">
+              <div class="browser-nav-controls">
+                <button type="button" id="browser-btn-back" class="browser-nav-btn" title="Back">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <button type="button" id="browser-btn-forward" class="browser-nav-btn" title="Forward">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+                <button type="button" id="browser-btn-reload" class="browser-nav-btn" title="Reload">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                </button>
+                <span id="remote-session-badge" class="remote-session-badge" title="Running genuine remote Brave instance with isolated pulse audio">
+                  <span class="live-dot-teal"></span>Remote Browser
+                </span>
+              </div>
+              <form id="browser-url-form" class="browser-url-bar">
+                <span class="browser-ssl-icon">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </span>
+                <input type="text" id="browser-url-input" class="browser-url-input" placeholder="Enter URL (netflix.com, hotstar.com, primevideo.com, youtube.com)..." autocomplete="off" aria-label="Enter streaming web URL">
+                <button type="submit" class="browser-go-btn" title="Navigate to URL" aria-label="Navigate to URL">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </button>
+              </form>
+              <div class="browser-apps-dropdown-wrapper" id="browser-apps-dropdown-wrapper">
+                <button type="button" id="btn-browser-apps-toggle" class="btn-browser-apps-toggle" aria-expanded="false" aria-controls="browser-apps-menu" title="Switch Streaming App">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+                    <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+                    <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+                    <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+                  </svg>
+                  <span>Apps</span>
+                  <svg class="apps-caret" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div id="browser-apps-menu" class="browser-apps-menu" role="menu" aria-label="Streaming Apps" style="display: none;">
+                  <div class="browser-apps-menu-header">Streaming Services</div>
+                  <div class="browser-apps-grid">
+                    <button type="button" class="browser-app-item" data-url="https://www.youtube.com" role="menuitem">
+                      <span class="app-item-icon yt-badge">YT</span>
+                      <div class="app-item-info">
+                        <span class="app-item-name">YouTube</span>
+                        <span class="app-item-desc">Movies & 4K Clips</span>
+                      </div>
+                    </button>
+                    <button type="button" class="browser-app-item" data-url="https://www.hotstar.com" role="menuitem">
+                      <span class="app-item-icon hotstar-badge">JH</span>
+                      <div class="app-item-info">
+                        <span class="app-item-name">JioHotstar</span>
+                        <span class="app-item-desc">Live Sports & HBO</span>
+                      </div>
+                    </button>
+                    <button type="button" class="browser-app-item" data-url="https://www.primevideo.com" role="menuitem">
+                      <span class="app-item-icon prime-badge">PV</span>
+                      <div class="app-item-info">
+                        <span class="app-item-name">Prime Video</span>
+                        <span class="app-item-desc">Amazon Originals</span>
+                      </div>
+                    </button>
+                    <button type="button" class="browser-app-item" data-url="https://www.mxplayer.in" role="menuitem">
+                      <span class="app-item-icon mx-badge">MX</span>
+                      <div class="app-item-info">
+                        <span class="app-item-name">MX Player</span>
+                        <span class="app-item-desc">Free Web Series</span>
+                      </div>
+                    </button>
+                    <button type="button" class="browser-app-item" data-url="https://www.netflix.com" role="menuitem">
+                      <span class="app-item-icon netflix-badge">NF</span>
+                      <div class="app-item-info">
+                        <span class="app-item-name">Netflix</span>
+                        <span class="app-item-desc">Global Cinema & Series</span>
+                      </div>
+                    </button>
+                    <button type="button" class="browser-app-item" data-url="https://www.twitch.tv" role="menuitem">
+                      <span class="app-item-icon twitch-badge">TW</span>
+                      <div class="app-item-info">
+                        <span class="app-item-name">Twitch</span>
+                        <span class="app-item-desc">Live Esports & Creators</span>
+                      </div>
+                    </button>
+                    <button type="button" class="browser-app-item" data-url="https://www.crunchyroll.com" role="menuitem">
+                      <span class="app-item-icon crunchy-badge">CR</span>
+                      <div class="app-item-info">
+                        <span class="app-item-name">Crunchyroll</span>
+                        <span class="app-item-desc">Anime Simulcasts</span>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="browser-actions">
+                <button type="button" id="btn-remote-quality-toggle" class="btn-browser-action" title="Switch Remote Browser Resolution / Quality (1080p Crisp)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></svg>
+                  <span id="remote-quality-toggle-text">1080p HD</span>
+                </button>
+                <button type="button" id="btn-remote-audio-toggle" class="btn-browser-action" title="Toggle Stage Audio">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                  <span id="remote-audio-toggle-text">Audio On</span>
+                </button>
+                <button type="button" id="btn-browser-sync-countdown" class="btn-browser-action" title="Initiate 3-2-1 Synchronized Co-Watching Countdown">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  <span>3-2-1 Sync</span>
+                </button>
+                <button type="button" id="btn-browser-cast-stage" class="btn-browser-action primary" title="Broadcast Stage Stream to Room (1080p Stereo)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                  <span>Cast</span>
+                </button>
+                <button type="button" id="btn-browser-close" class="btn-browser-close" title="Close Remote Browser">&times;</button>
+              </div>
+            </div>
+            <div class="browser-viewport-wrapper" id="browser-viewport-wrapper">
+              <!-- Remote Browser Live Stage (CDP Screencast & Real-Time Input Forwarding) -->
+              <div id="remote-browser-container" class="remote-browser-container">
+                <canvas id="remote-browser-canvas" class="remote-browser-canvas" width="1920" height="1080" tabindex="0"></canvas>
+                <audio id="remote-browser-audio" playsinline preload="auto" autoplay style="position: fixed; bottom: 0; right: 0; width: 1px; height: 1px; opacity: 0.01; pointer-events: none;"></audio>
+                <video id="remote-pip-video" style="position: fixed; bottom: 0; right: 0; width: 1px; height: 1px; opacity: 0.001; pointer-events: none;" muted playsinline></video>
+                <div id="remote-stage-unmute-pill" class="remote-stage-unmute-pill" style="display: none;" title="Audio muted by browser policy. Click anywhere to listen.">
+                  <span class="unmute-icon">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="1" y1="1" x2="23" y2="23"/><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M23 9l-6 6M17 9l6 6"/></svg>
+                  </span>
+                  <span>Audio muted by browser &mdash; Click anywhere to listen</span>
+                </div>
+                <div id="remote-browser-status-overlay" class="remote-browser-status-overlay" style="display: none;">
+                  <div class="remote-status-spinner"></div>
+                  <div id="remote-status-text" class="remote-status-text">Starting remote browser session...</div>
+                </div>
+              </div>
+              <iframe id="browser-iframe" class="browser-iframe" style="display: none;" allow="autoplay; encrypted-media; fullscreen; picture-in-picture; clipboard-write; web-share; camera; microphone; display-capture; screen-wake-lock" allowfullscreen></iframe>
+              <div id="browser-loading-bar" class="browser-loading-bar" style="display: none;"></div>
+            </div>
+          </div>
+
+          <!-- Rave Inbuilt App Stage Slate (Netflix / Prime / Hotstar / Crunchyroll) -->
+          <div id="inbuilt-app-stage" class="inbuilt-app-stage" style="display: none;">
+            <div class="inbuilt-app-box">
+              <div id="inbuilt-app-icon" class="inbuilt-app-logo">
+                <svg class="stage-app-svg" viewBox="0 0 111 200" width="40" height="72" fill="none">
+                  <path d="M0 0h37v200H0z" fill="#B1060F"/>
+                  <path d="M74 0h37v200H74z" fill="#B1060F"/>
+                  <path d="M0 0h37l74 200h-37L0 0z" fill="#E50914"/>
+                </svg>
+              </div>
+              <span class="rave-badge-pill" id="inbuilt-app-badge">RAVE INBUILT // NETFLIX THEATER</span>
+              <h2 id="inbuilt-app-title">Netflix Inbuilt Cinema Stage</h2>
+              <p id="inbuilt-app-desc">
+                Stream Stranger Things, Squid Game, and your entire personal watchlist directly inside this ZAMI room with synchronized 1080p 60fps stereo audio.
+              </p>
+              <div class="inbuilt-app-actions">
+                <button type="button" id="btn-inbuilt-start-stream" class="btn btn-primary btn-lg">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                  <span>Stream Tab on Stage</span>
+                </button>
+                <button type="button" id="btn-inbuilt-open-site" class="btn btn-secondary btn-lg" title="Open Official Website in New Tab">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                  <span>Open Website</span>
+                </button>
+                <button type="button" id="btn-inbuilt-start-countdown" class="btn btn-secondary btn-lg" title="Start Synchronized 3-2-1 Countdown for Co-Watching">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  <span>3-2-1 Sync</span>
+                </button>
+                <button type="button" id="btn-inbuilt-close" class="btn btn-outline btn-lg">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  <span>Back</span>
+                </button>
+              </div>
+              <div class="inbuilt-app-tip">
+                <span class="tip-badge" style="display: inline-flex; align-items: center; gap: 4px; color: #f59e0b; font-weight: 700;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                  DRM Black-Screen Fix:
+                </span>
+                <span>In Chrome, open <code>chrome://settings/system</code> &gt; turn OFF <em>"Use graphics acceleration when available"</em> &gt; Relaunch. Video will stream with 100% clarity!</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Empty Placeholder: Ultra-Minimal Cinema Stage -->
+          <div id="player-placeholder" class="player-placeholder empty-stage-minimal">
+            <div class="empty-stage-center-box">
+              <button type="button" id="btn-empty-stage-load" class="empty-stage-btn" aria-label="Load Media" title="Load Media">
+                <div class="empty-stage-halo-outer">
+                  <div class="empty-stage-icon-circle">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#e5a93c" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="12" y1="5" x2="12" y2="19"></line>
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                  </div>
+                </div>
+                <h2 class="empty-stage-heading">Load Media</h2>
+                <p class="empty-stage-subtext empty-stage-desktop-sub">Share a screen, watch a movie, open a app and more — together.</p>
+                <p class="empty-stage-subtext empty-stage-mobile-sub">Watch anything together</p>
+              </button>
+
+              <!-- Wallpaper Switcher Pill Button -->
+              <button type="button" id="btn-stage-wallpaper" class="stage-wallpaper-pill" title="Change Stage Wallpaper" aria-label="Change Stage Wallpaper">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                  <circle cx="8.5" cy="8.5" r="1.5"/>
+                  <polyline points="21 15 16 10 5 21"/>
+                </svg>
+                <span>Change Wallpaper</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Floating Reaction Emoji Canvas -->
+          <canvas id="reaction-canvas"></canvas>
+
+          <!-- Synchronized Stage Laser Pointer & Telestrator Overlay Canvas -->
+          <canvas id="stage-laser-canvas" class="stage-laser-canvas" width="1920" height="1080"></canvas>
+
+          <!-- Rave-Style In-Stage Floating Live Chat Overlay -->
+          <div id="stage-floating-chat" class="stage-floating-chat" aria-live="polite"></div>
+
+          <!-- Gesture Ripple on video click -->
+          <div id="video-gesture-ripple" class="video-gesture-ripple"></div>
+
+          <!-- Cinema Loading Spinner Overlay -->
+          <div id="player-loading-spinner" class="player-loading-spinner" style="display: none;">
+            <div class="cinema-spinner-ring"></div>
+            <span id="cinema-spinner-text" class="cinema-spinner-text">CONNECTING REEL...</span>
+          </div>
+
+          <!-- Unmute Audio Floating Banner -->
+          <div id="unmute-banner" class="unmute-banner" style="display: none;" title="Click Anywhere to Unmute Audio">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+              <line x1="23" y1="9" x2="17" y2="15"/>
+              <line x1="17" y1="9" x2="23" y2="15"/>
+            </svg>
+            <span>Audio Muted by Browser — Click Anywhere to Unmute</span>
+          </div>
+
+          <!-- Big Center Play Button Overlay -->
+          <button type="button" id="player-big-play-btn" class="player-big-play-btn" style="display: none;" aria-label="Play Reel">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="6 3 20 12 6 21 6 3"/>
+            </svg>
+          </button>
+
+          <!-- Synchronized Party Countdown Overlay (Rave-style 3-2-1 Play!) -->
+          <div id="party-countdown-overlay" class="party-countdown-overlay" style="display: none;">
+            <div class="countdown-card">
+              <span class="countdown-badge">RAVE SYNC // COUNTDOWN</span>
+              <div id="countdown-number" class="countdown-number">3</div>
+              <div id="countdown-label" class="countdown-label">Get Ready to Play!</div>
+            </div>
+          </div>
+
+          <!-- Subtitle Drag & Drop Overlay -->
+          <div id="subtitle-drop-overlay" class="subtitle-drop-overlay">
+            <div class="sub-drop-box">
+              <span class="sub-drop-icon">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                  <line x1="16" y1="13" x2="8" y2="13"/>
+                  <line x1="16" y1="17" x2="8" y2="17"/>
+                  <polyline points="10 9 9 9 8 9"/>
+                </svg>
+              </span>
+              <span class="sub-drop-title">DROP SUBTITLE FILE HERE</span>
+              <span class="sub-drop-desc">Supports .SRT &amp; .VTT • Auto-syncs to player</span>
+            </div>
+          </div>
+
+          <!-- Smart Up-Next Autoplay Countdown HUD Overlay -->
+          <div id="stage-upnext-countdown" class="stage-upnext-countdown" style="display: none;" aria-live="polite">
+            <div class="upnext-pill-content">
+              <div class="upnext-spinner">
+                <svg class="upnext-ring" width="28" height="28" viewBox="0 0 36 36">
+                  <path class="upnext-ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                  <path id="upnext-ring-fill" class="upnext-ring-fill" stroke-dasharray="100, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                </svg>
+                <span id="upnext-seconds-num" class="upnext-seconds-num">5</span>
+              </div>
+              <div class="upnext-info">
+                <div class="upnext-label">UP NEXT IN <span id="upnext-countdown-time">5s</span></div>
+                <div id="upnext-title" class="upnext-title">Next Queued Reel</div>
+              </div>
+              <div class="upnext-actions">
+                <button type="button" id="btn-upnext-play" class="btn btn-primary btn-xs">Play Now</button>
+                <button type="button" id="btn-upnext-cancel" class="btn btn-ghost btn-xs">Cancel</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stage Snapshot Camera Flash Overlay -->
+          <div id="stage-camera-flash" class="stage-camera-flash" style="display: none;"></div>
+
+          <!-- 15s Party Clip Recorder HUD Overlay -->
+          <div id="stage-recording-hud" class="stage-recording-hud" style="display: none;" aria-live="assertive">
+            <div class="recording-hud-pill">
+              <span class="recording-rec-dot"></span>
+              <span class="recording-title">REC CLIP (15s)</span>
+              <span id="recording-countdown" class="recording-countdown">15s</span>
+              <div class="recording-progress-track">
+                <div id="recording-progress-bar" class="recording-progress-bar"></div>
+              </div>
+              <button type="button" id="btn-stop-recording-clip" class="recording-stop-btn" title="Stop &amp; Save WebM Clip">Save</button>
+            </div>
+          </div>
+
+          <!-- Floating Quick Vector Reactions Cannon Bar (Subordinate to active playback) -->
+          <div class="floating-reactions" id="floating-reactions">
+            <button type="button" class="reaction-btn" data-reaction="star" title="Star (Vector Burst)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="#f59e0b" stroke="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </button>
+            <button type="button" class="reaction-btn" data-reaction="heart" title="Heart (Vector Burst)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="#ef4444" stroke="#ef4444"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </button>
+            <button type="button" class="reaction-btn" data-reaction="flame" title="Flame (Vector Burst)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="#f97316" stroke="#f97316"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+            </button>
+            <button type="button" class="reaction-btn" data-reaction="zap" title="Zap (Vector Burst)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="#10b981" stroke="#10b981"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </button>
+            <button type="button" class="reaction-btn" data-reaction="clap" title="Clap (Vector Burst)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#eab308" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+            </button>
+            <button type="button" class="reaction-btn" data-reaction="laugh" title="Laugh (Vector Burst)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+            </button>
+            <button type="button" class="reaction-btn" data-reaction="shock" title="Shock (Vector Burst)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="15" r="2" fill="currentColor"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+            </button>
+          </div>
+
+          <!-- Custom Player Controls Bar -->
+          <div id="custom-controls" class="custom-controls" style="display: none;">
+            <!-- Scrubber / Timeline -->
+            <div id="progress-bar-container" class="progress-bar-container">
+              <div id="progress-buffered" class="progress-buffered"></div>
+              <div id="progress-filled" class="progress-filled"></div>
+              <div id="progress-hover-time" class="progress-hover-time">00:00</div>
+            </div>
+
+            <!-- Controls row -->
+            <div class="controls-row">
+              <div class="controls-left">
+                <!-- Play / Pause -->
+                <button id="ctrl-play" class="ctrl-btn" title="Play / Pause (Space)" aria-label="Play or Pause">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <polygon points="5 3 19 12 5 21 5 3"/>
+                  </svg>
+                </button>
+
+                <!-- Skip -10s -->
+                <button id="ctrl-back-10" class="ctrl-btn" title="Rewind 10s (Left Arrow)" aria-label="Rewind 10 seconds">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 5V2L8 6l4 4V7a6 6 0 1 1-6 6" stroke-linecap="round" stroke-linejoin="round"/>
+                    <text x="12" y="15" font-size="7.5" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" text-anchor="middle" fill="currentColor" stroke="none">10</text>
+                  </svg>
+                </button>
+
+                <!-- Skip +10s -->
+                <button id="ctrl-fwd-10" class="ctrl-btn" title="Forward 10s (Right Arrow)" aria-label="Forward 10 seconds">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 5V2l4 4-4 4V7a6 6 0 1 0 6 6" stroke-linecap="round" stroke-linejoin="round"/>
+                    <text x="12" y="15" font-size="7.5" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" text-anchor="middle" fill="currentColor" stroke="none">10</text>
+                  </svg>
+                </button>
+
+
+                <!-- Current Time / Duration -->
+                <span id="time-display" class="time-display">00:00 / 00:00</span>
+
+                <!-- Title of active media -->
+                <span id="current-media-title" class="current-media-title"></span>
+              </div>
+
+              <div class="controls-right">
+                <!-- Volume -->
+                <div class="volume-control">
+                  <button id="ctrl-volume" class="ctrl-btn" title="Mute / Unmute (M)" aria-label="Mute or Unmute">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                      <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                    </svg>
+                  </button>
+                  <input type="range" id="volume-slider" class="volume-slider" min="0" max="1" step="0.05" value="1" aria-label="Volume">
+                </div>
+
+                <!-- Speed Selector -->
+                <select id="speed-select" class="speed-select" title="Playback Speed" aria-label="Playback Speed">
+                  <option value="0.75">0.75×</option>
+                  <option value="1" selected>1.00×</option>
+                  <option value="1.25">1.25×</option>
+                  <option value="1.5">1.50×</option>
+                  <option value="2">2.00×</option>
+                </select>
+
+                <!-- Subtitles Studio Trigger -->
+                <div class="subtitle-control-wrapper" style="position: relative;">
+                  <button id="ctrl-subtitles" class="ctrl-btn" title="Subtitles & Timing" aria-label="Subtitles & Timing">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="2" y="4" width="20" height="16" rx="2"/>
+                      <path d="M7 15h3m-3-4h3m4 4h3m-3-4h3"/>
+                    </svg>
+                  </button>
+                  <div id="subtitle-flyout" class="subtitle-flyout" style="display: none;">
+                    <div class="sub-flyout-header">
+                      <span>SUBTITLE STUDIO</span>
+                      <button id="btn-close-sub-flyout" class="btn-close-x">&times;</button>
+                    </div>
+                    <div class="sub-flyout-body">
+                      <label class="btn btn-secondary btn-sm" style="display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; margin-bottom: 6px;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                        <span>Load .SRT / .VTT</span>
+                        <input type="file" id="sub-file-input" accept=".srt,.vtt" style="display: none;" aria-label="Upload subtitle file">
+                      </label>
+                      <div class="sub-hint">Or drag &amp; drop subtitle file onto screen!</div>
+                      
+                      <div class="sub-offset-card">
+                        <span class="sub-offset-label">TIMING OFFSET</span>
+                        <div class="sub-offset-controls">
+                          <button id="btn-sub-minus" class="btn btn-outline btn-xs" title="Subtitle 0.5s Earlier">-0.5s</button>
+                          <span id="sub-offset-val" class="badge badge-gold">0.0s</span>
+                          <button id="btn-sub-plus" class="btn btn-outline btn-xs" title="Subtitle 0.5s Later">+0.5s</button>
+                          <button id="btn-sub-reset" class="btn btn-secondary btn-xs" title="Reset Offset">Reset</button>
+                        </div>
+                      </div>
+
+                      <!-- Live Subtitle Auto-Translation -->
+                      <div class="sub-offset-card" style="margin-top: 10px;">
+                        <span class="sub-offset-label">AUTO-TRANSLATE SUBTITLES</span>
+                        <div style="display: flex; gap: 6px; align-items: center; margin-top: 6px;">
+                          <select id="sub-translate-lang" class="settings-select-custom" style="padding: 4px 8px; font-size: 0.78rem; flex: 1;" aria-label="Translate Subtitles To">
+                            <option value="es">Spanish (Espanol)</option>
+                            <option value="fr">French (Francais)</option>
+                            <option value="de">German (Deutsch)</option>
+                            <option value="ja">Japanese (Nihongo)</option>
+                            <option value="hi">Hindi</option>
+                            <option value="it">Italian (Italiano)</option>
+                            <option value="pt">Portuguese (Portugues)</option>
+                            <option value="ar">Arabic</option>
+                          </select>
+                          <button type="button" id="btn-sub-translate" class="btn btn-primary btn-xs" style="white-space: nowrap;">Translate</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Audio Tracks / Dubs Trigger -->
+                <div class="audio-tracks-control-wrapper" style="position: relative;">
+                  <button id="ctrl-audio-tracks" class="ctrl-btn" title="Audio Tracks &amp; Dubs" aria-label="Audio Tracks &amp; Dubs" style="display: none;">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                      <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                      <line x1="12" y1="19" x2="12" y2="23"/>
+                      <line x1="8" y1="23" x2="16" y2="23"/>
+                    </svg>
+                  </button>
+                  <div id="audio-tracks-flyout" class="subtitle-flyout" style="display: none; min-width: 220px;">
+                    <div class="sub-flyout-header">
+                      <span>AUDIO TRACKS &amp; DUBS</span>
+                      <button id="btn-close-audio-tracks-flyout" class="btn-close-x">&times;</button>
+                    </div>
+                    <div id="audio-tracks-list" class="sub-flyout-body" style="display: flex; flex-direction: column; gap: 6px;">
+                      <!-- Populated dynamically from hls.audioTracks -->
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Reaction Cannon Burst (E) -->
+                <button id="ctrl-reaction-cannon" class="ctrl-btn" title="Reaction Cannon (E)" aria-label="Reaction Cannon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                  </svg>
+                </button>
+
+                <!-- 1-Click Stage Snapshot & Souvenir (S) -->
+                <button id="ctrl-snapshot" class="ctrl-btn" title="Stage Snapshot (S)" aria-label="Take Stage Snapshot">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                    <circle cx="12" cy="13" r="4"/>
+                  </svg>
+                </button>
+
+                <!-- Dynamic Stage Ambilight Glow -->
+                <button id="ctrl-ambilight" class="ctrl-btn active" title="Dynamic Living Ambilight" aria-label="Toggle Dynamic Ambilight">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="5"/>
+                    <line x1="12" y1="1" x2="12" y2="3"/>
+                    <line x1="12" y1="21" x2="12" y2="23"/>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                    <line x1="1" y1="12" x2="3" y2="12"/>
+                    <line x1="21" y1="12" x2="23" y2="12"/>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                  </svg>
+                </button>
+
+                <!-- Synchronized Laser Pointer & Telestrator (L) -->
+                <button id="ctrl-laser-pointer" class="ctrl-btn" title="Stage Laser Pointer &amp; Telestrator (L)" aria-label="Toggle Laser Pointer &amp; Telestrator">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#00f2fe" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"/>
+                    <line x1="12" y1="2" x2="12" y2="6"/>
+                    <line x1="12" y1="18" x2="12" y2="22"/>
+                    <line x1="2" y1="12" x2="6" y2="12"/>
+                    <line x1="18" y1="12" x2="22" y2="12"/>
+                  </svg>
+                </button>
+
+                <!-- 15s Instant Party Clip Recorder (R) -->
+                <button id="ctrl-record-clip" class="ctrl-btn" title="Record 15s Party Clip (R)" aria-label="Record 15s Party Clip">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2">
+                    <circle cx="12" cy="12" r="9"/>
+                    <circle cx="12" cy="12" r="4" fill="#ef4444"/>
+                  </svg>
+                </button>
+
+                <!-- Trending Cinema Quick Explorer -->
+                <button id="ctrl-quick-shelf" class="ctrl-btn" title="Trending Cinema Shelf" aria-label="Open Trending Cinema Quick Shelf">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#e5a93c" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2"/>
+                    <line x1="9" y1="3" x2="9" y2="21"/>
+                    <path d="M14 8l3 4-3 4"/>
+                  </svg>
+                </button>
+
+                <!-- Picture in Picture (PiP) -->
+                <button id="ctrl-pip" class="ctrl-btn" title="Picture-in-Picture (P)" aria-label="Toggle Picture-in-Picture">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="4" width="20" height="16" rx="2" ry="2"/>
+                    <rect x="12" y="11" width="8" height="7" rx="1" ry="1"/>
+                  </svg>
+                </button>
+
+                <!-- Cinema Theater Mode -->
+                <button id="ctrl-theater" class="ctrl-btn" title="Cinema Theater Mode (T)" aria-label="Toggle Theater Mode">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="3" width="20" height="15" rx="2" ry="2"/>
+                    <line x1="2" y1="18" x2="22" y2="18"/>
+                  </svg>
+                </button>
+
+                <!-- Fullscreen -->
+                <button id="ctrl-fullscreen" class="ctrl-btn" title="Fullscreen (F)" aria-label="Toggle Fullscreen">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+        </div>
+
+        <!-- Rave Inbuilt App Dock (Quick App Switcher during playback, hidden by default on home hub) -->
+        <div class="rave-dock" id="rave-dock" style="display: none;">
+          <div class="rave-dock-header">
+            <div class="rave-dock-title">
+              <span class="rave-badge-pill">RAVE INBUILT</span>
+              <span class="rave-dock-heading">STREAMING APPS DOCK</span>
+            </div>
+            <div class="rave-dock-hint">
+              <span>Click any app to stream inbuilt on stage</span>
+            </div>
+          </div>
+          <div class="rave-dock-apps">
+            <button type="button" class="rave-btn-app rave-app-netflix" data-app="netflix" title="Inbuilt Netflix Stream">
+              <span class="rave-icon icon-netflix" style="color: #e50914; font-weight: 900;">N</span>
+              <span class="rave-name">Netflix</span>
+            </button>
+            <button type="button" class="rave-btn-app rave-app-prime" data-app="prime" title="Inbuilt Prime Video Stream">
+              <span class="rave-icon icon-prime" style="color: #00a8e1; font-weight: 800;">prime</span>
+              <span class="rave-name">Prime Video</span>
+            </button>
+            <button type="button" class="rave-btn-app rave-app-mx" data-app="mx" title="Inbuilt MX Player Catalog &amp; Cinema">
+              <span class="rave-icon icon-mx" style="color: #0066ff; font-weight: 800;">MX</span>
+              <span class="rave-name">MX Player</span>
+            </button>
+            <button type="button" class="rave-btn-app rave-app-hotstar" data-app="hotstar" title="Inbuilt JioHotstar &amp; Disney+">
+              <span class="rave-icon icon-hotstar">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="#f59e0b" stroke="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </span>
+              <span class="rave-name">JioHotstar</span>
+            </button>
+            <button type="button" class="rave-btn-app rave-app-youtube" data-app="youtube" title="Inbuilt YouTube Sync">
+              <span class="rave-icon icon-youtube" style="color: #ff0000; font-weight: 900;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              </span>
+              <span class="rave-name">YouTube</span>
+            </button>
+            <button type="button" class="rave-btn-app rave-app-twitch" data-app="twitch" title="Inbuilt Twitch Broadcast">
+              <span class="rave-icon icon-twitch">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9146ff" stroke-width="2"><path d="M21 2H3v16h5v4l4-4h5l4-4V2zm-10 9V7m5 4V7"/></svg>
+              </span>
+              <span class="rave-name">Twitch Live</span>
+            </button>
+            <button type="button" class="rave-btn-app rave-app-crunchyroll" data-app="crunchyroll" title="Inbuilt Crunchyroll Anime">
+              <span class="rave-icon icon-crunchyroll">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="#f47521"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4" fill="#18181b"/></svg>
+              </span>
+              <span class="rave-name">Crunchyroll</span>
+            </button>
+            <button type="button" class="rave-btn-app rave-app-vault" data-app="vault" title="Inbuilt Cinema Vault (Movies &amp; Shows)">
+              <span class="rave-icon icon-vault">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
+              </span>
+              <span class="rave-name">Cinema Vault</span>
+            </button>
+            <button type="button" class="rave-btn-app rave-app-browser" data-app="browser" title="Inbuilt Web Browser / Virtual Webview">
+              <span class="rave-icon icon-browser">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              </span>
+              <span class="rave-name">Web Browser</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- In-Room Trending Cinema Quick Shelf Drawer -->
+        <aside id="stage-quick-shelf" class="stage-quick-shelf" aria-label="Trending Cinema Shelf" style="display: none;">
+          <div class="quick-shelf-header">
+            <div class="quick-shelf-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+              <span>TRENDING CINEMA</span>
+            </div>
+            <div class="quick-shelf-tabs">
+              <button type="button" class="quick-shelf-tab active" data-cat="trending-movies">Movies</button>
+              <button type="button" class="quick-shelf-tab" data-cat="trending-tv">Series</button>
+              <button type="button" class="quick-shelf-tab" data-cat="top-rated">Top Rated</button>
+            </div>
+            <button type="button" id="btn-close-quick-shelf" class="btn-close-x" aria-label="Close Trending Shelf">&times;</button>
+          </div>
+          <div id="quick-shelf-content" class="quick-shelf-content">
+            <div class="quick-shelf-loading">
+              <div class="cinema-spinner-ring mini"></div>
+              <span>Loading trending releases...</span>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <!-- Right Sidebar: Social Lounge Panel (People, Chat, Queue, Guide) - Always Visible -->
+      <aside id="room-sidebar" class="room-sidebar">
+        <!-- Sidebar Header with Clean Tabs and Social Panel Navigation -->
+        <div class="sidebar-header-bar">
+          <nav class="sidebar-tabs" aria-label="Social Panel Tabs">
+            <button class="sidebar-tab-btn active" data-tab="chat" title="Room Live Chat">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              <span>Chat</span>
+              <span id="chat-unread-badge" class="tab-unread-badge">0</span>
+            </button>
+            <button class="sidebar-tab-btn" data-tab="voice" title="Room Participants &amp; Voice">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <span>People</span>
+              <span id="user-count-badge" class="badge-presence-count">1</span>
+            </button>
+            <button class="sidebar-tab-btn" data-tab="queue" title="Upcoming Reel Queue">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+              <span>Queue</span>
+              <span id="queue-badge" class="badge-presence-count">0</span>
+            </button>
+          </nav>
+        </div>
+
+        <!-- Tab 1: Live Chat -->
+        <div id="tab-pane-chat" class="tab-pane active">
+          <!-- Active Watch Party Poll & Trivia Banner (Pinned at top of chat) -->
+          <div id="active-poll-hud" class="active-poll-hud" style="display: none;">
+            <div class="poll-hud-header">
+              <div class="poll-hud-title-wrap">
+                <span id="poll-hud-type-badge" class="badge-mini-gold">LIVE POLL</span>
+                <span id="poll-hud-question" class="poll-hud-question">Poll Question</span>
+              </div>
+              <button type="button" id="btn-close-active-poll" class="btn-poll-close" title="End Poll">&times;</button>
+            </div>
+            <div id="poll-hud-options" class="poll-hud-options">
+              <!-- Dynamically populated options with live vote percentage bars -->
+            </div>
+            <div class="poll-hud-footer">
+              <span id="poll-hud-creator" class="poll-hud-meta">Created by Host</span>
+              <span id="poll-hud-total-votes" class="poll-hud-meta">0 votes</span>
+            </div>
+          </div>
+
+          <div id="chat-messages" class="chat-messages">
+            <!-- Messages populated dynamically -->
+          </div>
+
+          <!-- Party Soundboard Bar -->
+          <div class="soundboard-bar">
+            <span class="soundboard-label">SOUNDS:</span>
+            <div class="soundboard-buttons">
+              <button type="button" class="btn-soundboard" data-sound="applause" title="Party Applause">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+              </button>
+              <button type="button" class="btn-soundboard" data-sound="laugh" title="Sitcom Laugh">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+              </button>
+              <button type="button" class="btn-soundboard" data-sound="airhorn" title="Party Airhorn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+              </button>
+              <button type="button" class="btn-soundboard" data-sound="boom" title="Movie Boom">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              </button>
+              <button type="button" class="btn-soundboard" data-sound="gasp" title="Dramatic Gasp">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              </button>
+              <button type="button" class="btn-soundboard" data-sound="crickets" title="Awkward Crickets">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <form id="chat-form" class="chat-input-bar">
+            <input type="text" id="chat-input" class="chat-input" placeholder="Transmit message to party..." autocomplete="off" aria-label="Type message in room chat">
+            <button type="button" id="btn-open-poll-modal" class="btn btn-icon btn-sm btn-sound-toggle" title="Launch Watch Party Poll or Trivia" aria-label="Launch Watch Party Poll or Trivia">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="20" x2="18" y2="10"/>
+                <line x1="12" y1="20" x2="12" y2="4"/>
+                <line x1="6" y1="20" x2="6" y2="14"/>
+              </svg>
+            </button>
+            <button type="button" id="btn-toggle-sound" class="btn btn-icon btn-sm btn-sound-toggle" title="Toggle Sound Effects" aria-label="Toggle Sound Effects">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            </button>
+            <button type="submit" class="btn btn-primary btn-sm btn-chat-send" title="Send message" aria-label="Send message">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+          </form>
+        </div>
+
+        <!-- Tab 2: Voice & Video Call Panel -->
+        <div id="tab-pane-voice" class="tab-pane">
+          <div class="voice-panel">
+            <div class="voice-controls-card">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span class="eyebrow-tag" style="margin-bottom: 0;">AUDIO PROTOCOL</span>
+                <span id="voice-status-text" style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-dim);">DISCONNECTED</span>
+              </div>
+
+              <div class="voice-action-row">
+                <button id="btn-toggle-voice" class="btn btn-primary btn-sm" style="flex: 1;">
+                  JOIN VOICE
+                </button>
+                <button id="btn-toggle-mic" class="btn btn-outline btn-sm" disabled>
+                  MIC
+                </button>
+                <button id="btn-toggle-cam" class="btn btn-outline btn-sm" disabled>
+                  CAM
+                </button>
+              </div>
+            </div>
+
+            <!-- Screen Share trigger for Hotstar / MX Player -->
+            <div class="voice-controls-card" style="border-color: var(--border-bright);">
+              <div class="eyebrow-tag" style="margin-bottom: 0;">WEBCAST // P2P TAB STREAM</div>
+              <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.5;">
+                Stream your Disney+ Hotstar or MX Player browser tab directly with stereo tab sound to everyone in the room.
+              </p>
+              <button id="btn-screenshare-trigger" class="btn btn-secondary btn-sm" style="width: 100%;">
+                SHARE TAB WITH AUDIO
+              </button>
+            </div>
+
+            <!-- Peer Avatars / Webcams Grid -->
+            <div>
+              <span class="input-label" style="display: block; margin-bottom: 8px;">SCREENING PARTICIPANTS</span>
+              <div id="peer-tiles-grid" class="peer-tiles-grid">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 3: Shared Room Queue Pane -->
+        <div id="tab-pane-queue" class="tab-pane">
+          <div class="queue-panel">
+            <div class="queue-header-card">
+              <div class="queue-header-info">
+                <span class="queue-header-title">PARTY MEDIA QUEUE</span>
+                <span class="queue-header-sub">Autoplays upcoming reels for the room</span>
+              </div>
+              <div class="queue-header-actions">
+                <button type="button" id="btn-queue-skip" class="btn btn-secondary btn-xs" title="Skip to next queued item">
+                  <span>Skip</span>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+                </button>
+                <button type="button" id="btn-queue-clear" class="btn btn-outline btn-xs" title="Clear upcoming queue">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                  <span>Clear</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Queue Items List -->
+            <div id="queue-items-container" class="queue-items-container">
+              <!-- Dynamically populated by queue.js -->
+            </div>
+
+            <!-- Quick Add Input -->
+            <div class="queue-quick-add">
+              <input type="text" id="queue-quick-url" placeholder="Paste YouTube, HLS, or Video URL..." class="form-input form-input-sm" aria-label="Paste video URL to enqueue">
+              <button type="button" id="btn-queue-quick-add" class="btn btn-primary btn-sm btn-icon" title="Add to Queue" aria-label="Add video to queue">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+    </main>
+    </div> <!-- .room-body-container -->
+
+    <!-- Mobile Fixed Bottom Navigation Bar -->
+    <nav class="mobile-bottom-nav" id="mobile-bottom-nav" aria-label="Mobile Navigation">
+      <button type="button" class="mobile-nav-btn active" data-nav="stage" id="mob-nav-room">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+        <span>Room</span>
+      </button>
+
+      <button type="button" class="mobile-nav-btn" data-nav="chat" id="mob-nav-chat">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+        <span>Chat</span>
+        <span class="mobile-nav-dot" id="mob-chat-dot" style="display: none;"></span>
+      </button>
+
+      <button type="button" class="mobile-nav-btn" data-nav="people" id="mob-nav-people">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+        <span>People</span>
+      </button>
+
+      <button type="button" class="mobile-nav-btn" data-nav="more" id="mob-nav-more">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="1.5"></circle>
+          <circle cx="19" cy="12" r="1.5"></circle>
+          <circle cx="5" cy="12" r="1.5"></circle>
+        </svg>
+        <span>More</span>
+      </button>
+    </nav>
+
+    <!-- Progressive Disclosure Load Media & Screening Hub -->
+    <div id="media-modal" class="modal-overlay cinema-hub-overlay" role="dialog" aria-modal="true" aria-labelledby="vault-modal-title" style="display: none;">
+      <div class="cinema-hub-container menu-mode" id="cinema-hub-container">
+        <!-- Mobile Bottom Sheet Handle -->
+        <div class="bottom-sheet-handle-bar">
+          <div class="bottom-sheet-handle"></div>
+        </div>
+
+        <!-- Universal Hub Header -->
+        <header class="hub-header" id="hub-header">
+          <div class="hub-header-left">
+            <button type="button" id="btn-vault-back" class="vault-back-btn" style="display: none;" title="Back" aria-label="Back">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+            </button>
+            <div class="hub-title-group" id="hub-title-group">
+              <h2 class="hub-heading" id="vault-modal-title">Load Media</h2>
+            </div>
+          </div>
+
+          <div class="hub-header-actions">
+            <button id="btn-close-modal" class="hub-close-btn" title="Close (Esc)" aria-label="Close">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+        </header>
+
+        <!-- Progressive Views Container -->
+        <div class="hub-views-container">
+
+          <!-- View 1: Root Load Media Menu (6 Primary Options) -->
+          <div id="hub-view-menu" class="vault-view active">
+            <div class="load-media-menu-grid">
+              
+              <!-- 1. Share Screen -->
+              <button type="button" class="load-media-card" data-action="screenshare" title="Cast your screen">
+                <div class="load-media-icon-wrap" style="color: #38bdf8;">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="3" width="20" height="14" rx="2"/>
+                    <line x1="8" y1="21" x2="16" y2="21"/>
+                    <line x1="12" y1="17" x2="12" y2="21"/>
+                  </svg>
+                </div>
+                <div class="load-media-info">
+                  <h3 class="load-media-title">Share Screen</h3>
+                  <p class="load-media-desc">Cast your screen</p>
+                </div>
+              </button>
+
+              <!-- 2. Movies -->
+              <button type="button" class="load-media-card" data-action="movies" title="Browse catalog">
+                <div class="load-media-icon-wrap" style="color: #e5a93c;">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#e5a93c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="2.18"/>
+                    <line x1="7" y1="2" x2="7" y2="22"/>
+                    <line x1="17" y1="2" x2="17" y2="22"/>
+                    <line x1="2" y1="12" x2="22" y2="12"/>
+                    <line x1="2" y1="7" x2="7" y2="7"/>
+                    <line x1="2" y1="17" x2="7" y2="17"/>
+                    <line x1="17" y1="17" x2="22" y2="17"/>
+                    <line x1="17" y1="7" x2="22" y2="7"/>
+                  </svg>
+                </div>
+                <div class="load-media-info">
+                  <h3 class="load-media-title">Movies</h3>
+                  <p class="load-media-desc">Browse catalog</p>
+                </div>
+              </button>
+
+              <!-- 3. Apps -->
+              <button type="button" class="load-media-card" data-action="apps" title="Streaming platforms">
+                <div class="load-media-icon-wrap" style="color: #a855f7;">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7" rx="1"/>
+                    <rect x="14" y="3" width="7" height="7" rx="1"/>
+                    <rect x="14" y="14" width="7" height="7" rx="1"/>
+                    <rect x="3" y="14" width="7" height="7" rx="1"/>
+                  </svg>
+                </div>
+                <div class="load-media-info">
+                  <h3 class="load-media-title">Apps</h3>
+                  <p class="load-media-desc">Streaming platforms</p>
+                </div>
+              </button>
+
+              <!-- 4. YouTube -->
+              <button type="button" class="load-media-card" data-action="youtube" title="Videos &amp; Shorts">
+                <div class="load-media-icon-wrap" style="color: #ef4444;">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="#ef4444">
+                    <polygon points="5 3 19 12 5 21 5 3"/>
+                  </svg>
+                </div>
+                <div class="load-media-info">
+                  <h3 class="load-media-title">YouTube</h3>
+                  <p class="load-media-desc">Videos &amp; Shorts</p>
+                </div>
+              </button>
+
+              <!-- 5. Direct URL -->
+              <button type="button" class="load-media-card" data-action="url" title="HLS, MP4, WebM">
+                <div class="load-media-icon-wrap" style="color: #14b8a6;">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                  </svg>
+                </div>
+                <div class="load-media-info">
+                  <h3 class="load-media-title">Direct URL</h3>
+                  <p class="load-media-desc">HLS, MP4, WebM</p>
+                </div>
+              </button>
+
+              <!-- 6. Local Video -->
+              <button type="button" class="load-media-card" data-action="local" title="From your device">
+                <div class="load-media-icon-wrap" style="color: #f97316;">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <ellipse cx="12" cy="5" rx="9" ry="3"/>
+                    <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+                    <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+                  </svg>
+                </div>
+                <div class="load-media-info">
+                  <h3 class="load-media-title">Local Video</h3>
+                  <p class="load-media-desc">From your device</p>
+                </div>
+              </button>
+
+              <!-- 7. Wallpaper -->
+              <button type="button" class="load-media-card" data-action="wallpaper" title="Customize Stage Wallpaper">
+                <div class="load-media-icon-wrap" style="color: #ec4899;">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ec4899" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                  </svg>
+                </div>
+                <div class="load-media-info">
+                  <h3 class="load-media-title">Wallpaper</h3>
+                  <p class="load-media-desc">Stage background</p>
+                </div>
+              </button>
+
+            </div>
+          </div>
+
+          <!-- View 2: Movies View (Direct Cinema Catalog Matching Reference Design) -->
+          <div id="hub-view-movies" class="vault-view">
+            <div class="vault-search-filter-row">
+              <div class="vault-search-box">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="input-catalog-search" class="vault-search-input" placeholder="Search movies, series..." autocomplete="off" aria-label="Search movies and series">
+                <button type="button" id="btn-catalog-search-clear" class="vault-search-clear" style="display: none;" title="Clear search" aria-label="Clear search">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+              </div>
+              <button type="button" class="vault-filter-toggle-btn" title="Filter options" aria-label="Filter options">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="4" y1="21" x2="4" y2="14"></line>
+                  <line x1="4" y1="10" x2="4" y2="3"></line>
+                  <line x1="12" y1="21" x2="12" y2="12"></line>
+                  <line x1="12" y1="8" x2="12" y2="3"></line>
+                  <line x1="20" y1="21" x2="20" y2="16"></line>
+                  <line x1="20" y1="12" x2="20" y2="3"></line>
+                  <line x1="1" y1="14" x2="7" y2="14"></line>
+                  <line x1="9" y1="8" x2="15" y2="8"></line>
+                  <line x1="17" y1="16" x2="23" y2="16"></line>
+                </svg>
+              </button>
+            </div>
+
+            <div class="vault-pills-row" id="movies-category-pills">
+              <button type="button" class="vault-pill active" data-filter="popular">Popular</button>
+              <button type="button" class="vault-pill" data-filter="bollywood">Bollywood</button>
+              <button type="button" class="vault-pill" data-filter="hollywood">Hollywood</button>
+              <button type="button" class="vault-pill" data-filter="anime">Anime</button>
+              <button type="button" class="vault-pill" data-filter="trending">Trending</button>
+            </div>
+
+            <div class="movies-catalog-viewport">
+              <div id="movies-catalog-grid" class="movies-posters-grid">
+                <!-- Pre-rendered 6 exact reference movie cards -->
+                <article class="movie-poster-card" data-tmdb-id="693134" data-title="Dune Part Two" data-year="2024" data-rating="8.6">
+                  <div class="movie-poster-wrap">
+                    <img src="/img/posters/dune2.jpg" alt="Dune Part Two" class="movie-poster-img" loading="lazy">
+                  </div>
+                  <div class="movie-poster-info">
+                    <h4 class="movie-poster-title">Dune Part Two</h4>
+                    <div class="movie-poster-meta">
+                      <span class="movie-year">2024</span>
+                      <span class="movie-rating"><svg width="11" height="11" viewBox="0 0 24 24" fill="#e5a93c" style="display:inline-block;margin-right:2px;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>8.6</span>
+                    </div>
+                  </div>
+                </article>
+
+                <article class="movie-poster-card" data-tmdb-id="533535" data-title="Deadpool &amp; Wolverine" data-year="2024" data-rating="8.1">
+                  <div class="movie-poster-wrap">
+                    <img src="/img/posters/deadpool.jpg" alt="Deadpool &amp; Wolverine" class="movie-poster-img" loading="lazy">
+                  </div>
+                  <div class="movie-poster-info">
+                    <h4 class="movie-poster-title">Deadpool &amp; Wolverine</h4>
+                    <div class="movie-poster-meta">
+                      <span class="movie-year">2024</span>
+                      <span class="movie-rating"><svg width="11" height="11" viewBox="0 0 24 24" fill="#e5a93c" style="display:inline-block;margin-right:2px;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>8.1</span>
+                    </div>
+                  </div>
+                </article>
+
+                <article class="movie-poster-card" data-tmdb-id="1022789" data-title="Inside Out 2" data-year="2024" data-rating="8.0">
+                  <div class="movie-poster-wrap">
+                    <img src="/img/posters/insideout2.jpg" alt="Inside Out 2" class="movie-poster-img" loading="lazy">
+                  </div>
+                  <div class="movie-poster-info">
+                    <h4 class="movie-poster-title">Inside Out 2</h4>
+                    <div class="movie-poster-meta">
+                      <span class="movie-year">2024</span>
+                      <span class="movie-rating"><svg width="11" height="11" viewBox="0 0 24 24" fill="#e5a93c" style="display:inline-block;margin-right:2px;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>8.0</span>
+                    </div>
+                  </div>
+                </article>
+
+                <article class="movie-poster-card" data-tmdb-id="801688" data-title="Kalki 2898 AD" data-year="2024" data-rating="7.9">
+                  <div class="movie-poster-wrap">
+                    <img src="/img/posters/kalki.jpg" alt="Kalki 2898 AD" class="movie-poster-img" loading="lazy">
+                  </div>
+                  <div class="movie-poster-info">
+                    <h4 class="movie-poster-title">Kalki 2898 AD</h4>
+                    <div class="movie-poster-meta">
+                      <span class="movie-year">2024</span>
+                      <span class="movie-rating"><svg width="11" height="11" viewBox="0 0 24 24" fill="#e5a93c" style="display:inline-block;margin-right:2px;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>7.9</span>
+                    </div>
+                  </div>
+                </article>
+
+                <article class="movie-poster-card" data-tmdb-id="414906" data-title="The Batman" data-year="2022" data-rating="7.8">
+                  <div class="movie-poster-wrap">
+                    <img src="/img/posters/batman.jpg" alt="The Batman" class="movie-poster-img" loading="lazy">
+                  </div>
+                  <div class="movie-poster-info">
+                    <h4 class="movie-poster-title">The Batman</h4>
+                    <div class="movie-poster-meta">
+                      <span class="movie-year">2022</span>
+                      <span class="movie-rating"><svg width="11" height="11" viewBox="0 0 24 24" fill="#e5a93c" style="display:inline-block;margin-right:2px;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>7.8</span>
+                    </div>
+                  </div>
+                </article>
+
+                <article class="movie-poster-card" data-tmdb-id="157336" data-title="Interstellar" data-year="2014" data-rating="8.7">
+                  <div class="movie-poster-wrap">
+                    <img src="/img/posters/interstellar.jpg" alt="Interstellar" class="movie-poster-img" loading="lazy">
+                  </div>
+                  <div class="movie-poster-info">
+                    <h4 class="movie-poster-title">Interstellar</h4>
+                    <div class="movie-poster-meta">
+                      <span class="movie-year">2014</span>
+                      <span class="movie-rating"><svg width="11" height="11" viewBox="0 0 24 24" fill="#e5a93c" style="display:inline-block;margin-right:2px;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>8.7</span>
+                    </div>
+                  </div>
+                </article>
+              </div>
+            </div>
+          </div>
+
+          <!-- View 3: Apps View (12 Streaming App Squircles Matching Reference Design) -->
+          <div id="hub-view-apps" class="vault-view">
+            <div class="vault-search-filter-row">
+              <div class="vault-search-box">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="input-apps-search" class="vault-search-input" placeholder="Search apps..." autocomplete="off" aria-label="Search streaming apps">
+              </div>
+              <button type="button" class="vault-filter-toggle-btn" title="Filter apps" aria-label="Filter apps">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="4" y1="21" x2="4" y2="14"></line>
+                  <line x1="4" y1="10" x2="4" y2="3"></line>
+                  <line x1="12" y1="21" x2="12" y2="12"></line>
+                  <line x1="12" y1="8" x2="12" y2="3"></line>
+                  <line x1="20" y1="21" x2="20" y2="16"></line>
+                  <line x1="20" y1="12" x2="20" y2="3"></line>
+                  <line x1="1" y1="14" x2="7" y2="14"></line>
+                  <line x1="9" y1="8" x2="15" y2="8"></line>
+                  <line x1="17" y1="16" x2="23" y2="16"></line>
+                </svg>
+              </button>
+            </div>
+
+            <div class="vault-pills-row" id="apps-category-pills">
+              <button type="button" class="vault-pill active" data-filter="all">All</button>
+              <button type="button" class="vault-pill" data-filter="movies">Movies</button>
+              <button type="button" class="vault-pill" data-filter="livetv">Live TV</button>
+              <button type="button" class="vault-pill" data-filter="sports">Sports</button>
+              <button type="button" class="vault-pill" data-filter="others">Others</button>
+            </div>
+
+            <div class="apps-grid-viewport">
+              <div class="apps-squircles-grid" id="apps-squircles-grid">
+                <!-- 1. Netflix -->
+                <div class="app-item" data-app="netflix" data-cat="movies">
+                  <button type="button" class="app-squircle" title="Netflix">
+                    <svg viewBox="0 0 111 200" width="32" height="58" fill="none">
+                      <path d="M0 0h37v200H0z" fill="#B1060F"/>
+                      <path d="M74 0h37v200H74z" fill="#B1060F"/>
+                      <path d="M0 0h37l74 200h-37L0 0z" fill="#E50914"/>
+                    </svg>
+                  </button>
+                  <span class="app-label">Netflix</span>
+                </div>
+
+                <!-- 2. Prime Video -->
+                <div class="app-item" data-app="prime" data-cat="movies">
+                  <button type="button" class="app-squircle" title="Prime Video">
+                    <svg viewBox="0 0 120 44" width="76" height="28" fill="none">
+                      <text x="8" y="27" font-family="'Plus Jakarta Sans', sans-serif" font-size="19" font-weight="900" fill="#00A8E1" letter-spacing="-0.03em">prime</text>
+                      <path d="M12 34 Q 48 42, 84 34" stroke="#00A8E1" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                      <polygon points="82,31 87,35 83,38" fill="#00A8E1"/>
+                    </svg>
+                  </button>
+                  <span class="app-label">Prime Video</span>
+                </div>
+
+                <!-- 3. JioHotstar -->
+                <div class="app-item" data-app="jiohotstar" data-cat="movies sports livetv">
+                  <button type="button" class="app-squircle" title="JioHotstar">
+                    <svg viewBox="0 0 140 44" width="84" height="26" fill="none">
+                      <path d="M6 30 C 14 6, 46 2, 68 12" stroke="#00D2FF" stroke-width="2.6" stroke-linecap="round"/>
+                      <text x="8" y="29" font-family="'Plus Jakarta Sans', sans-serif" font-size="16" font-weight="900" fill="#FFFFFF" font-style="italic">Disney+</text>
+                      <polygon points="82,14 84,18 88.5,18.5 85,21.5 86,26 82,23.5 78,26 79,21.5 75.5,18.5 80,18" fill="#FFB703"/>
+                      <text x="91" y="24" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" font-weight="800" fill="#FFB703" letter-spacing="0.06em">HOTSTAR</text>
+                    </svg>
+                  </button>
+                  <span class="app-label">JioHotstar</span>
+                </div>
+
+                <!-- 4. YouTube -->
+                <div class="app-item" data-app="youtube" data-cat="movies livetv sports others">
+                  <button type="button" class="app-squircle" title="YouTube">
+                    <svg viewBox="0 0 68 48" width="46" height="32" fill="none">
+                      <rect width="68" height="48" rx="14" fill="#FF0000"/>
+                      <polygon points="27,15 47,24 27,33" fill="#FFFFFF"/>
+                    </svg>
+                  </button>
+                  <span class="app-label">YouTube</span>
+                </div>
+
+                <!-- 5. MX Player -->
+                <div class="app-item" data-app="mxplayer" data-cat="movies livetv">
+                  <button type="button" class="app-squircle" title="MX Player">
+                    <svg viewBox="0 0 54 54" width="38" height="38" fill="none">
+                      <circle cx="27" cy="27" r="24" fill="#0066FF"/>
+                      <polygon points="22,18 36,27 22,36" fill="#FFFFFF"/>
+                    </svg>
+                  </button>
+                  <span class="app-label">MX Player</span>
+                </div>
+
+                <!-- 6. Sony LIV -->
+                <div class="app-item" data-app="sonyliv" data-cat="movies livetv sports">
+                  <button type="button" class="app-squircle" title="Sony LIV">
+                    <svg viewBox="0 0 100 44" width="68" height="28" fill="none">
+                      <text x="4" y="16" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" font-weight="900" fill="#FFFFFF" letter-spacing="0.16em">SONY</text>
+                      <g transform="translate(4, 18)">
+                        <path d="M0 0h4v14h7v3H0z" fill="#E6007E"/>
+                        <path d="M14 0h4v17h-4z" fill="#FF8400"/>
+                        <path d="M22 0l4 13 4-13h4l-6 17h-4L22 0z" fill="#00A0E9"/>
+                      </g>
+                    </svg>
+                  </button>
+                  <span class="app-label">Sony LIV</span>
+                </div>
+
+                <!-- 7. ZEE5 -->
+                <div class="app-item" data-app="zee5" data-cat="movies livetv">
+                  <button type="button" class="app-squircle" title="ZEE5">
+                    <svg viewBox="0 0 100 44" width="70" height="28" fill="none">
+                      <circle cx="20" cy="22" r="14" fill="url(#zee-squircle-grad)" />
+                      <circle cx="20" cy="22" r="8" fill="#151822" />
+                      <path d="M18 17h4l-3 6h3v2h-5l3-6h-2z" fill="#FFFFFF" />
+                      <text x="40" y="27" font-family="'Plus Jakarta Sans', sans-serif" font-size="15" font-weight="900" fill="#FFFFFF" letter-spacing="0.04em">ZEE5</text>
+                      <defs>
+                        <linearGradient id="zee-squircle-grad" x1="6" y1="8" x2="34" y2="36" gradientUnits="userSpaceOnUse">
+                          <stop stop-color="#9C27B0"/>
+                          <stop offset="0.33" stop-color="#2196F3"/>
+                          <stop offset="0.66" stop-color="#4CAF50"/>
+                          <stop offset="1" stop-color="#FF9800"/>
+                        </linearGradient>
+                      </defs>
+                    </svg>
+                  </button>
+                  <span class="app-label">ZEE5</span>
+                </div>
+
+                <!-- 8. Crunchyroll -->
+                <div class="app-item" data-app="crunchyroll" data-cat="movies others">
+                  <button type="button" class="app-squircle" title="Crunchyroll">
+                    <svg viewBox="0 0 44 44" width="34" height="34" fill="none">
+                      <circle cx="22" cy="22" r="18" fill="#F47521"/>
+                      <circle cx="20" cy="22" r="8" fill="#151822"/>
+                      <circle cx="26" cy="22" r="3" fill="#F47521"/>
+                    </svg>
+                  </button>
+                  <span class="app-label">Crunchyroll</span>
+                </div>
+
+                <!-- 9. Hulu -->
+                <div class="app-item" data-app="hulu" data-cat="movies livetv">
+                  <button type="button" class="app-squircle" title="Hulu">
+                    <svg viewBox="0 0 90 32" width="60" height="22" fill="none">
+                      <text x="6" y="24" font-family="'Plus Jakarta Sans', sans-serif" font-size="24" font-weight="900" fill="#1CE783" letter-spacing="-0.04em">hulu</text>
+                    </svg>
+                  </button>
+                  <span class="app-label">Hulu</span>
+                </div>
+
+                <!-- 10. Apple TV -->
+                <div class="app-item" data-app="appletv" data-cat="movies">
+                  <button type="button" class="app-squircle" title="Apple TV">
+                    <svg viewBox="0 0 90 40" width="62" height="26" fill="none">
+                      <path d="M18.7 15.5c-.8 1-2.1 1.7-3.3 1.6-.2-1.3.4-2.6 1.1-3.4.8-1 2.2-1.7 3.2-1.7.2 1.4-.3 2.6-1 3.5zm3.5 1.7c-1.8-.1-3.3-1.1-4.2-1.1-.9 0-2.2 1-3.6 1-1.9 0-3.6-1.1-4.6-2.8-2-3.4-.5-8.5 1.4-11.3 1-1.4 2.1-2.9 3.7-2.9 1.5 0 2.1 1 3.9 1 1.8 0 2.3-1 3.9-1 1.6 0 2.7 1.4 3.6 2.8.7 1.1 1.1 1.7 1.6 2.8-3.4 1.3-3.9 6.2-.5 7.6-.8 1.9-1.9 3.9-3.2 5.9z" fill="#FFFFFF" transform="translate(6, 6) scale(0.9)"/>
+                      <text x="40" y="26" font-family="'Plus Jakarta Sans', sans-serif" font-size="16" font-weight="800" fill="#FFFFFF">tv</text>
+                    </svg>
+                  </button>
+                  <span class="app-label">Apple TV</span>
+                </div>
+
+                <!-- 11. Twitch -->
+                <div class="app-item" data-app="twitch" data-cat="livetv sports others">
+                  <button type="button" class="app-squircle" title="Twitch">
+                    <svg viewBox="0 0 44 44" width="34" height="34" fill="none">
+                      <path d="M8 6h28v20l-7 7h-6l-4 4v-4H8V6zm19 15h3V12h-3v9zm-8 0h3V12h-3v9z" fill="#9146FF"/>
+                    </svg>
+                  </button>
+                  <span class="app-label">Twitch</span>
+                </div>
+
+                <!-- 12. More Apps -->
+                <div class="app-item" data-app="more" data-cat="others">
+                  <button type="button" class="app-squircle" title="More Apps">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8b8f9e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="3" width="5" height="5" rx="1.5"></rect>
+                      <rect x="10" y="3" width="5" height="5" rx="1.5"></rect>
+                      <rect x="17" y="3" width="5" height="5" rx="1.5"></rect>
+                      <rect x="3" y="10" width="5" height="5" rx="1.5"></rect>
+                      <rect x="10" y="10" width="5" height="5" rx="1.5"></rect>
+                      <rect x="17" y="10" width="5" height="5" rx="1.5"></rect>
+                      <rect x="3" y="17" width="5" height="5" rx="1.5"></rect>
+                      <rect x="10" y="17" width="5" height="5" rx="1.5"></rect>
+                      <rect x="17" y="17" width="5" height="5" rx="1.5"></rect>
+                    </svg>
+                  </button>
+                  <span class="app-label">More Apps</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- View 4: YouTube View -->
+          <div id="hub-view-youtube" class="vault-view">
+            <div class="youtube-viewport">
+              <div id="hub-pane-youtube" class="hub-pane active">
+                <div class="pane-heading-bar" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+                  <div style="display: flex; align-items: center; gap: 14px;">
+                    <div class="yt-brand-logo-wrap" style="display: flex; align-items: center;">
+                      <svg viewBox="0 0 96 46" width="80" height="26" fill="none">
+                        <path d="M42 12c-.4-1.6-1.7-2.9-3.3-3.3C35.7 8 23.6 8 23.6 8s-12.1 0-15.1.7C6.9 9.1 5.6 10.4 5.2 12 4.5 15 4.5 23 4.5 23s0 8 .7 11c.4 1.6 1.7 2.9 3.3 3.3 3 .7 15.1.7 15.1.7s12.1 0 15.1-.7c1.6-.4 2.9-1.7 3.3-3.3.7-3 .7-11 .7-11s0-8-.7-11z" fill="#FF0000"/>
+                        <polygon points="20.2,18 29.5,23 20.2,28" fill="#FFFFFF"/>
+                        <text x="48" y="28" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="900" fill="#FFFFFF">YouTube</text>
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 class="pane-title" style="margin-bottom: 2px; font-size: 1.1rem;">Official YouTube Hub</h3>
+                      <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">Stream official YouTube videos &amp; shorts with room sync.</p>
+                    </div>
+                  </div>
+                </div>
+                <div id="yt-official-player-wrapper" style="width: 100%; height: 540px; border-radius: 14px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.1); background: #0f0f0f; box-shadow: 0 10px 32px rgba(0,0,0,0.8);">
+                  <iframe id="yt-official-iframe" src="/app/youtube" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width: 100%; height: 100%; border: none;"></iframe>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- View 5: Direct URL View -->
+          <div id="hub-view-url" class="vault-view">
+            <div class="direct-url-viewport">
+              <div id="hub-pane-url" class="hub-pane active">
+                <div class="pane-heading-bar" style="margin-bottom: 20px;">
+                  <span class="hub-eyebrow">DIRECT VIDEO MANIFEST</span>
+                  <h3 class="pane-title">Stream Any Web Video URL</h3>
+                </div>
+                <div class="input-group" style="margin-bottom: 16px;">
+                  <label class="input-label" for="input-media-url">Stream Manifest URL (.m3u8, .mp4, .webm)</label>
+                  <input type="url" id="input-media-url" class="input-field" placeholder="https://domain.com/video.m3u8" style="padding: 12px 14px; font-size: 0.95rem;">
+                </div>
+                <div class="input-group" style="margin-bottom: 20px;">
+                  <label class="input-label" for="input-media-title">Video Title (Optional)</label>
+                  <input type="text" id="input-media-title" class="input-field" placeholder="e.g. Action Feature" style="padding: 12px 14px; font-size: 0.95rem;">
+                </div>
+                <div style="margin-bottom: 28px;">
+                  <span class="input-label" style="display: block; margin-bottom: 8px;">Demo Streams:</span>
+                  <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                    <button type="button" class="btn btn-secondary btn-sm btn-preset" data-url="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" data-title="Big Buck Bunny (1080p MP4)">Big Buck Bunny (MP4)</button>
+                    <button type="button" class="btn btn-secondary btn-sm btn-preset" data-url="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4" data-title="Tears of Steel (Sci-Fi MP4)">Tears of Steel (MP4)</button>
+                    <button type="button" class="btn btn-secondary btn-sm btn-preset" data-url="https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8" data-title="HLS Adaptive Stream (M3U8)">HLS Adaptive (.m3u8)</button>
+                  </div>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                  <button type="button" id="btn-load-direct-stream" class="btn btn-primary" style="flex: 2; padding: 14px; font-size: 0.95rem;">Stream to Stage Now</button>
+                  <button type="button" id="btn-queue-direct-stream" class="btn btn-secondary" style="flex: 1; padding: 14px; font-size: 0.95rem;">+ Add to Queue</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- View 6: Local Video View -->
+          <div id="hub-view-local" class="vault-view">
+            <div class="local-video-viewport">
+              <div id="hub-pane-local" class="hub-pane active">
+                <div class="pane-heading-bar" style="margin-bottom: 16px;">
+                  <span class="hub-eyebrow">LOCAL CELLULOID</span>
+                  <h3 class="pane-title">Local Video File (Zero Upload)</h3>
+                </div>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px; line-height: 1.6;">
+                  Select a video file from your computer. Synchronizes with co-viewers who have the same file with zero upload latency.
+                </p>
+                <div class="input-group" style="margin-bottom: 24px;">
+                  <label class="input-label" for="input-local-file">Choose Video File (.mp4, .mkv, .webm)</label>
+                  <input type="file" id="input-local-file" class="input-field" accept="video/*" style="padding: 12px;">
+                </div>
+                <button type="button" id="btn-load-local-reel" class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 0.95rem;">Screen Local Video in Room</button>
+              </div>
+            </div>
+          </div>
+
+        </div> <!-- .hub-views-container -->
+      </div> <!-- .cinema-hub-container -->
+    </div> <!-- #media-modal -->
+
+    <!-- Stage Wallpaper Selector Modal -->
+    <div id="wallpaper-modal" class="wallpaper-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="wallpaper-modal-heading" style="display: none;">
+      <div class="wallpaper-modal-container">
+        <div class="wallpaper-modal-header">
+          <div class="wallpaper-header-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e5a93c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <polyline points="21 15 16 10 5 21"/>
+            </svg>
+            <h2 id="wallpaper-modal-heading">Stage Wallpaper</h2>
+          </div>
+          <button type="button" id="btn-close-wallpaper-modal" class="wallpaper-close-btn" title="Close" aria-label="Close">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        <div class="wallpaper-modal-body">
+          <p class="wallpaper-modal-subtext">Choose a cinematic backdrop for your screening stage. Synchronized across all room members.</p>
+          
+          <div class="wallpaper-grid" id="wallpaper-presets-grid">
+            <!-- Dynamic presets rendered via JS -->
+          </div>
+
+          <div class="wallpaper-custom-section">
+            <label class="wallpaper-custom-label" for="wallpaper-custom-url">Custom Image URL</label>
+            <div class="wallpaper-custom-row">
+              <input type="url" id="wallpaper-custom-url" class="wallpaper-custom-input" placeholder="https://example.com/wallpaper.jpg" autocomplete="off" aria-label="Custom image URL">
+              <button type="button" id="btn-apply-custom-wallpaper" class="wallpaper-apply-btn" aria-label="Apply custom wallpaper">Apply</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Room Settings Modal -->
+    <div id="settings-modal" class="wallpaper-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="settings-modal-heading" style="display: none;">
+      <div class="wallpaper-modal-container" style="max-width: 520px;">
+        <div class="wallpaper-modal-header">
+          <div class="wallpaper-header-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e5a93c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+            <h2 id="settings-modal-heading">Room Settings</h2>
+          </div>
+          <button type="button" id="btn-close-settings-modal" class="wallpaper-close-btn" title="Close" aria-label="Close Settings">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        <div class="wallpaper-modal-body" style="display: flex; flex-direction: column; gap: 20px;">
+          <!-- Host Control Toggle -->
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; background: rgba(255, 255, 255, 0.04); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08);">
+            <div>
+              <div style="font-size: 0.9rem; font-weight: 600; color: #f4f4f5;">Host-Only Controls</div>
+              <div style="font-size: 0.78rem; color: #8b8f9e;">Restrict playback, pause, and media changes to the room host</div>
+            </div>
+            <button type="button" id="btn-toggle-host-controls" class="btn btn-outline btn-sm" aria-label="Toggle Host-Only Controls" style="border-radius: 9999px; padding: 6px 14px;">
+              <span id="host-controls-status-text">Disabled</span>
+            </button>
+          </div>
+
+          <!-- Dual-Fader Audio Mixer (Stage Movie vs Voice Chat) -->
+          <div class="settings-audio-mixer-section" style="padding: 16px; background: rgba(255, 255, 255, 0.04); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08); display: flex; flex-direction: column; gap: 14px;">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="font-size: 0.9rem; font-weight: 600; color: #f4f4f5; display: flex; align-items: center; gap: 8px;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#e5a93c" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                Dual Audio Controls
+              </div>
+              <span class="badge-mini-gold" id="audio-ducking-status-badge">Auto-Ducking Ready</span>
+            </div>
+
+            <!-- Stage Movie Volume -->
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #a1a1aa;">
+                <span>Stage Movie Volume</span>
+                <span id="settings-stage-volume-val" style="font-weight: 600; color: #e5a93c;">100%</span>
+              </div>
+              <input type="range" id="settings-stage-volume" class="settings-volume-slider" min="0" max="1" step="0.05" value="1" aria-label="Stage Movie Volume">
+            </div>
+
+            <!-- Voice Chat Volume -->
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #a1a1aa;">
+                <span>Friends Voice Chat Volume</span>
+                <span id="settings-voice-volume-val" style="font-weight: 600; color: #00f2fe;">100%</span>
+              </div>
+              <input type="range" id="settings-voice-volume" class="settings-volume-slider" min="0" max="1" step="0.05" value="1" aria-label="Voice Chat Volume">
+            </div>
+
+            <!-- Smart Auto-Ducking Toggle -->
+            <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.06);">
+              <div>
+                <div style="font-size: 0.82rem; font-weight: 600; color: #f4f4f5;">Smart Voice Ducking</div>
+                <div style="font-size: 0.74rem; color: #8b8f9e;">Automatically lower movie audio when peers speak</div>
+              </div>
+              <button type="button" id="btn-toggle-voice-ducking" class="btn btn-outline btn-sm active" aria-label="Toggle Smart Voice Ducking" style="border-radius: 9999px; padding: 5px 12px; font-size: 0.75rem;">
+                <span id="voice-ducking-text">Enabled</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Stage Chat HUD Overlay Settings -->
+          <div class="settings-stage-chat-section" style="padding: 16px; background: rgba(255, 255, 255, 0.04); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08); display: flex; flex-direction: column; gap: 14px;">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="font-size: 0.9rem; font-weight: 600; color: #f4f4f5; display: flex; align-items: center; gap: 8px;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#e5a93c" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                In-Stage Live Chat HUD (C)
+              </div>
+              <button type="button" id="btn-toggle-stage-chat" class="btn btn-outline btn-sm active" aria-label="Toggle In-Stage Live Chat HUD" style="border-radius: 9999px; padding: 5px 12px; font-size: 0.75rem;">
+                <span id="stage-chat-status-text">Enabled</span>
+              </button>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #a1a1aa;">
+                <span>HUD Bubble Opacity</span>
+                <span id="settings-stage-chat-opacity-val" style="font-weight: 600; color: #e5a93c;">85%</span>
+              </div>
+              <input type="range" id="settings-stage-chat-opacity" class="settings-volume-slider" min="0.2" max="1" step="0.05" value="0.85" aria-label="Stage Chat HUD Opacity">
+            </div>
+          </div>
+
+          <!-- Cinema Audio Equalizer & Presets (Feature 3) -->
+          <div class="settings-audio-eq-section" style="padding: 16px; background: rgba(255, 255, 255, 0.04); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08); display: flex; flex-direction: column; gap: 12px;">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="font-size: 0.9rem; font-weight: 600; color: #f4f4f5; display: flex; align-items: center; gap: 8px;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#e5a93c" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                Cinema Audio Equalizer (DSP)
+              </div>
+              <span class="badge-mini-gold" id="eq-active-preset-badge">Flat Monitor</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <label for="settings-audio-preset" style="font-size: 0.8rem; color: #a1a1aa;">Acoustic EQ Profile</label>
+              <select id="settings-audio-preset" class="settings-select-custom" aria-label="Audio Equalizer Preset">
+                <option value="flat" selected>Flat (Studio Reference &mdash; Neutral)</option>
+                <option value="vocal">Vocal Clarity (Dialogue Boost 2.5kHz + Low Cut)</option>
+                <option value="night">Night Mode (Suppress Explosions &amp; Dynamics Compression)</option>
+                <option value="bass">Bass Punch (+6dB Sub-Woofer Kick 100Hz)</option>
+              </select>
+              <div id="settings-audio-preset-desc" style="font-size: 0.74rem; color: #8b8f9e; line-height: 1.4;">
+                Standard neutral studio frequency curve without colorization.
+              </div>
+            </div>
+          </div>
+
+          <!-- Dynamic Stage Ambilight Settings (Feature 1) -->
+          <div class="settings-ambilight-section" style="padding: 16px; background: rgba(255, 255, 255, 0.04); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08); display: flex; flex-direction: column; gap: 14px;">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <div>
+                <div style="font-size: 0.9rem; font-weight: 600; color: #f4f4f5; display: flex; align-items: center; gap: 8px;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#e5a93c" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                  Dynamic Living Ambilight
+                </div>
+                <div style="font-size: 0.74rem; color: #8b8f9e;">Real-time video edge-color glow around cinema stage</div>
+              </div>
+              <button type="button" id="btn-toggle-settings-ambilight" class="btn btn-outline btn-sm active" aria-label="Toggle Living Ambilight" style="border-radius: 9999px; padding: 5px 12px; font-size: 0.75rem;">
+                <span id="settings-ambilight-status-text">Enabled</span>
+              </button>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #a1a1aa;">
+                <span>Ambient Glow Spread</span>
+                <span id="settings-ambilight-blur-val" style="font-weight: 600; color: #e5a93c;">75px</span>
+              </div>
+              <input type="range" id="settings-ambilight-blur" class="settings-volume-slider" min="30" max="140" step="5" value="75" aria-label="Ambilight Blur Spread">
+            </div>
+          </div>
+
+          <!-- Room Link -->
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <label class="wallpaper-custom-label" for="settings-room-url">Invite Room Link</label>
+            <div class="wallpaper-custom-row">
+              <input type="text" id="settings-room-url" class="wallpaper-custom-input" readonly aria-label="Room invite URL">
+              <button type="button" id="btn-copy-settings-link" class="wallpaper-apply-btn" aria-label="Copy Invite Link">Copy</button>
+            </div>
+          </div>
+
+          <!-- DRM Acceleration Tip -->
+          <div style="padding: 12px 14px; background: rgba(229, 169, 60, 0.08); border: 1px solid rgba(229, 169, 60, 0.25); border-radius: 10px; font-size: 0.78rem; color: #e5a93c; line-height: 1.45;">
+            <strong>DRM Clarity Tip:</strong> If sharing Netflix or Prime via browser tab shows a black screen, turn OFF "Use graphics acceleration when available" in Chrome settings and relaunch.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Keyboard Shortcuts Cheat-Sheet Modal -->
+    <dialog id="shortcuts-modal" closedby="any" class="shortcuts-dialog" aria-labelledby="shortcuts-modal-title">
+      <div class="shortcuts-modal-container">
+        <div class="shortcuts-modal-header">
+          <div class="shortcuts-header-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e5a93c" stroke-width="2">
+              <rect x="2" y="4" width="20" height="16" rx="2"/>
+              <path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M6 12h.01M10 12h.01M14 12h.01M18 12h.01M8 16h8"/>
+            </svg>
+            <h2 id="shortcuts-modal-title">Keyboard Shortcuts</h2>
+          </div>
+          <button type="button" id="btn-close-shortcuts-modal" class="wallpaper-close-btn" title="Close (Esc)" aria-label="Close Shortcuts">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+
+        <div class="shortcuts-modal-body">
+          <div class="shortcuts-section">
+            <div class="shortcuts-section-title">Playback</div>
+            <div class="shortcuts-grid">
+              <div class="shortcut-row">
+                <span class="shortcut-desc">Play / Pause</span>
+                <span class="shortcut-keys"><kbd>Space</kbd> / <kbd>K</kbd></span>
+              </div>
+              <div class="shortcut-row">
+                <span class="shortcut-desc">Rewind / Forward 10s</span>
+                <span class="shortcut-keys"><kbd>&larr;</kbd> / <kbd>&rarr;</kbd></span>
+              </div>
+              <div class="shortcut-row">
+                <span class="shortcut-desc">Quick Seek 0%–90%</span>
+                <span class="shortcut-keys"><kbd>0</kbd>–<kbd>9</kbd></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="shortcuts-section">
+            <div class="shortcuts-section-title">Stage & Display</div>
+            <div class="shortcuts-grid">
+              <div class="shortcut-row">
+                <span class="shortcut-desc">Fullscreen</span>
+                <span class="shortcut-keys"><kbd>F</kbd></span>
+              </div>
+              <div class="shortcut-row">
+                <span class="shortcut-desc">Cinema Theater Mode</span>
+                <span class="shortcut-keys"><kbd>T</kbd></span>
+              </div>
+              <div class="shortcut-row">
+                <span class="shortcut-desc">Picture-in-Picture</span>
+                <span class="shortcut-keys"><kbd>P</kbd></span>
+              </div>
+              <div class="shortcut-row">
+                <span class="shortcut-desc">Stage Chat HUD Overlay</span>
+                <span class="shortcut-keys"><kbd>C</kbd></span>
+              </div>
+              <div class="shortcut-row">
+                <span class="shortcut-desc">1-Click Stage Snapshot</span>
+                <span class="shortcut-keys"><kbd>S</kbd></span>
+              </div>
+              <div class="shortcut-row">
+                <span class="shortcut-desc">Laser Pointer &amp; Telestrator</span>
+                <span class="shortcut-keys"><kbd>L</kbd></span>
+              </div>
+              <div class="shortcut-row">
+                <span class="shortcut-desc">Record 15s Party Clip</span>
+                <span class="shortcut-keys"><kbd>R</kbd></span>
+              </div>
+              <div class="shortcut-row">
+                <span class="shortcut-desc">Reaction Cannon Burst</span>
+                <span class="shortcut-keys"><kbd>E</kbd></span>
+              </div>
+              <div class="shortcut-row">
+                <span class="shortcut-desc">Streaming Apps Menu</span>
+                <span class="shortcut-keys"><kbd>A</kbd></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="shortcuts-section">
+            <div class="shortcuts-section-title">Audio & General</div>
+            <div class="shortcuts-grid">
+              <div class="shortcut-row">
+                <span class="shortcut-desc">Mute / Unmute</span>
+                <span class="shortcut-keys"><kbd>M</kbd></span>
+              </div>
+              <div class="shortcut-row">
+                <span class="shortcut-desc">Volume &plusmn;5%</span>
+                <span class="shortcut-keys"><kbd>&uarr;</kbd> / <kbd>&darr;</kbd></span>
+              </div>
+              <div class="shortcut-row">
+                <span class="shortcut-desc">Show Shortcuts</span>
+                <span class="shortcut-keys"><kbd>?</kbd></span>
+              </div>
+              <div class="shortcut-row">
+                <span class="shortcut-desc">Close Overlay / Menu</span>
+                <span class="shortcut-keys"><kbd>Esc</kbd></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </dialog>
+
+    <!-- Watch Party Poll & Trivia Creator Modal -->
+    <div id="poll-modal" class="wallpaper-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="poll-modal-heading" style="display: none;">
+      <div class="wallpaper-modal-container" style="max-width: 480px;">
+        <div class="wallpaper-modal-header">
+          <div class="wallpaper-header-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e5a93c" stroke-width="2">
+              <line x1="18" y1="20" x2="18" y2="10"/>
+              <line x1="12" y1="20" x2="12" y2="4"/>
+              <line x1="6" y1="20" x2="6" y2="14"/>
+            </svg>
+            <h2 id="poll-modal-heading">Watch Party Poll &amp; Trivia</h2>
+          </div>
+          <button type="button" id="btn-close-poll-modal" class="wallpaper-close-btn" title="Close" aria-label="Close Poll Modal">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <div class="wallpaper-modal-body" style="display: flex; flex-direction: column; gap: 14px;">
+          <!-- Poll Mode Toggle (Standard Poll vs Trivia Challenge) -->
+          <div style="display: flex; gap: 10px;">
+            <button type="button" id="btn-poll-mode-standard" class="btn btn-primary btn-sm active" style="flex: 1;">Standard Poll</button>
+            <button type="button" id="btn-poll-mode-trivia" class="btn btn-outline btn-sm" style="flex: 1;">Trivia Quiz Mode</button>
+          </div>
+
+          <div>
+            <label for="poll-question-input" style="font-size: 0.82rem; color: #a1a1aa; font-weight: 600; margin-bottom: 4px; display: block;">Question / Topic</label>
+            <input type="text" id="poll-question-input" class="settings-select-custom" style="width: 100%; padding: 8px 12px;" placeholder="e.g. Who survives this scene?" maxlength="180">
+          </div>
+
+          <div id="poll-options-inputs-container" style="display: flex; flex-direction: column; gap: 8px;">
+            <label style="font-size: 0.82rem; color: #a1a1aa; font-weight: 600;">Answer Options</label>
+            <input type="text" class="poll-option-input settings-select-custom" style="width: 100%; padding: 6px 10px;" placeholder="Option 1" maxlength="80">
+            <input type="text" class="poll-option-input settings-select-custom" style="width: 100%; padding: 6px 10px;" placeholder="Option 2" maxlength="80">
+            <input type="text" class="poll-option-input settings-select-custom" style="width: 100%; padding: 6px 10px;" placeholder="Option 3 (Optional)" maxlength="80">
+            <input type="text" class="poll-option-input settings-select-custom" style="width: 100%; padding: 6px 10px;" placeholder="Option 4 (Optional)" maxlength="80">
+          </div>
+
+          <div id="trivia-correct-wrapper" style="display: none; flex-direction: column; gap: 6px;">
+            <label for="trivia-correct-select" style="font-size: 0.82rem; color: #e5a93c; font-weight: 600;">Correct Answer (Trivia Mode)</label>
+            <select id="trivia-correct-select" class="settings-select-custom">
+              <option value="0">Option 1</option>
+              <option value="1">Option 2</option>
+              <option value="2">Option 3</option>
+              <option value="3">Option 4</option>
+            </select>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+            <button type="button" id="btn-cancel-poll" class="btn btn-secondary btn-sm">Cancel</button>
+            <button type="button" id="btn-create-poll-submit" class="btn btn-primary btn-sm">Launch to Party</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div id="toast-container"></div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/libs/hls/hls.min.js"></script>
+  <script src="/js/mediaSourceManager.js?v=3"></script>
+  <script src="/js/reactions.js?v=3"></script>
+  <script src="/js/player.js?v=10"></script>
+  <script src="/js/queue.js?v=3"></script>
+  <script src="/js/sync.js?v=5"></script>
+  <script src="/js/webrtc.js?v=5"></script>
+  <script src="/js/providers.js?v=5"></script>
+  <script src="/js/room.js?v=24"></script>
+</body>
+</html>

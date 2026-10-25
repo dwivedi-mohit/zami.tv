@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CineSync Party</title>
+  <style>
+    body {
+      width: 320px;
+      margin: 0;
+      padding: 16px;
+      background: #0f172a;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      box-sizing: border-box;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 14px;
+      color: #818cf8;
+    }
+    .desc {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-bottom: 14px;
+      line-height: 1.4;
+    }
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 12px;
+    }
+    label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #cbd5e1;
+    }
+    input {
+      padding: 8px 10px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 12px;
+      outline: none;
+    }
+    input:focus {
+      border-color: #6366f1;
+    }
+    button.btn-primary {
+      width: 100%;
+      padding: 10px;
+      background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      margin-top: 4px;
+      transition: opacity 0.2s;
+    }
+    button.btn-primary:hover {
+      opacity: 0.92;
+    }
+    .quick-links {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid #334155;
+      display: flex;
+      gap: 8px;
+    }
+    .link-pill {
+      flex: 1;
+      text-align: center;
+      padding: 6px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 4px;
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .link-pill:hover {
+      color: #fff;
+      border-color: #6366f1;
+    }
+    .status-msg {
+      margin-top: 10px;
+      font-size: 11px;
+      text-align: center;
+      min-height: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="brand">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="#f59e0b"/></svg>
+    <span>CineSync Watch Party</span>
+  </div>
+
+  <p class="desc">
+    Watch <strong>Netflix</strong>, <strong>Prime Video</strong>, <strong>Hotstar</strong>, <strong>MX Player</strong> &amp; <strong>Crunchyroll</strong> with friends with synchronized playback &amp; floating chat!
+  </p>
+
+  <div class="field-group">
+    <label for="room-id">Party Room Code</label>
+    <input type="text" id="room-id" placeholder="e.g. movie-squad-42">
+  </div>
+
+  <div class="field-group">
+    <label for="username">Your Nickname</label>
+    <input type="text" id="username" placeholder="e.g. Alex">
+  </div>
+
+  <div class="field-group">
+    <label for="server-url">CineSync Server</label>
+    <input type="text" id="server-url" value="http://localhost:3000">
+  </div>
+
+  <button id="btn-join" class="btn-primary">Connect to Party</button>
+
+  <div id="status-msg" class="status-msg"></div>
+
+  <div class="quick-links" style="flex-wrap: wrap;">
+    <a href="https://www.netflix.com" target="_blank" class="link-pill" style="min-width: 80px; color: #ef4444;">Netflix</a>
+    <a href="https://www.primevideo.com" target="_blank" class="link-pill" style="min-width: 80px; color: #0284c7;">Prime Video</a>
+    <a href="https://www.hotstar.com" target="_blank" class="link-pill" style="min-width: 80px; color: #10b981;">Hotstar</a>
+    <a href="https://www.mxplayer.in" target="_blank" class="link-pill" style="min-width: 80px; color: #3b82f6;">MX Player</a>
+    <a href="https://www.crunchyroll.com" target="_blank" class="link-pill" style="min-width: 80px; color: #f97316;">Crunchyroll</a>
+    <a href="https://www.youtube.com" target="_blank" class="link-pill" style="min-width: 80px; color: #f43f5e;">YouTube</a>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

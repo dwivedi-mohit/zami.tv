@@ -1,0 +1,536 @@
+/* --------------------------------------------------------------------------
+   CineSync — Claymorphism Design System (Clay Theme)
+   Tactile, 3D Inflated, Soft Pillowy Bevels with Dual-Tone Inset Highlights
+   -------------------------------------------------------------------------- */
+
+[data-theme="clay"] {
+  /* Clay Palette */
+  --bg-primary: #0e1017;
+  --bg-secondary: #161822;
+  --bg-tertiary: #1f222e;
+  --bg-surface: #272a39;
+  --bg-elevated: #313547;
+  --bg-glass: rgba(22, 24, 34, 0.92);
+
+  /* Clay Accents */
+  --accent-primary: #e6a84d;
+  --accent-primary-hover: #f3be6d;
+  --accent-gold: #e6a84d;
+  --accent-subtle: rgba(230, 168, 77, 0.16);
+  --accent-border: rgba(230, 168, 77, 0.4);
+
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-medium: rgba(255, 255, 255, 0.12);
+  --border-bright: rgba(255, 255, 255, 0.22);
+
+  /* Generous Pillowy Radii */
+  --radius-xs: 8px;
+  --radius-sm: 12px;
+  --radius-md: 18px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --radius-full: 9999px;
+
+  /* High-Performance Clay Shadows (Fast GPU Compositing) */
+  --shadow-sm: 3px 5px 12px rgba(0, 0, 0, 0.4),
+               inset 1.5px 1.5px 2px rgba(255, 255, 255, 0.14),
+               inset -2px -2px 3px rgba(0, 0, 0, 0.35);
+
+  --shadow-md: 6px 10px 20px rgba(0, 0, 0, 0.45),
+               inset 2px 2px 3px rgba(255, 255, 255, 0.1),
+               inset -2px -2px 4px rgba(0, 0, 0, 0.4);
+
+  --shadow-lg: 10px 16px 30px rgba(0, 0, 0, 0.55),
+               inset 2px 2px 4px rgba(255, 255, 255, 0.08),
+               inset -3px -3px 5px rgba(0, 0, 0, 0.45);
+
+  --shadow-glow: 0 8px 24px rgba(230, 168, 77, 0.3);
+
+  /* Type & Base Overrides */
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
+
+/* --------------------------------------------------------------------------
+   Claymorphism Elements & Components
+   -------------------------------------------------------------------------- */
+
+/* Clay Buttons */
+[data-theme="clay"] .btn {
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 4px 6px 14px rgba(0, 0, 0, 0.4),
+              -2px -2px 6px rgba(255, 255, 255, 0.04),
+              inset 2px 2px 3px rgba(255, 255, 255, 0.16),
+              inset -2px -2px 4px rgba(0, 0, 0, 0.4);
+  transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+[data-theme="clay"] .btn:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 6px 10px 20px rgba(0, 0, 0, 0.5),
+              -3px -3px 8px rgba(255, 255, 255, 0.06),
+              inset 2px 2px 4px rgba(255, 255, 255, 0.22),
+              inset -2px -2px 5px rgba(0, 0, 0, 0.45);
+}
+
+[data-theme="clay"] .btn:active {
+  transform: translateY(2px) scale(0.97);
+  box-shadow: 2px 3px 6px rgba(0, 0, 0, 0.5),
+              inset 3px 3px 6px rgba(0, 0, 0, 0.6),
+              inset -1px -1px 3px rgba(255, 255, 255, 0.08);
+}
+
+/* Primary Clay Button (Warm Golden Plasticine) */
+[data-theme="clay"] .btn-primary,
+[data-theme="clay"] .btn-gold {
+  background: linear-gradient(145deg, #f0be6b, #c28836);
+  color: #121008 !important;
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 6px 10px 22px rgba(194, 136, 54, 0.4),
+              -2px -2px 6px rgba(255, 255, 255, 0.2),
+              inset 2px 2px 4px rgba(255, 255, 255, 0.55),
+              inset -3px -3px 6px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="clay"] .btn-primary:hover,
+[data-theme="clay"] .btn-gold:hover {
+  background: linear-gradient(145deg, #f5cb7f, #cb923e);
+  color: #0e0c05 !important;
+  box-shadow: 8px 14px 26px rgba(194, 136, 54, 0.5),
+              inset 2px 2px 4px rgba(255, 255, 255, 0.65),
+              inset -3px -3px 6px rgba(0, 0, 0, 0.4);
+}
+
+/* Secondary Clay Button (Dark Matte Clay) */
+[data-theme="clay"] .btn-secondary {
+  background: linear-gradient(145deg, #282c3c, #1c1e28);
+  color: var(--text-main);
+  border-color: rgba(255, 255, 255, 0.07);
+}
+
+[data-theme="clay"] .btn-secondary:hover {
+  background: linear-gradient(145deg, #303548, #222532);
+  color: #ffffff;
+}
+
+/* Outline Clay Button */
+[data-theme="clay"] .btn-outline {
+  background: linear-gradient(145deg, #1f222e, #171822);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Icon Buttons */
+[data-theme="clay"] .btn-icon {
+  border-radius: var(--radius-full);
+  box-shadow: 3px 5px 12px rgba(0, 0, 0, 0.4),
+              inset 1.5px 1.5px 3px rgba(255, 255, 255, 0.16),
+              inset -2px -2px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* --------------------------------------------------------------------------
+   Clay Cards & Containers
+   -------------------------------------------------------------------------- */
+
+[data-theme="clay"] .hero-action-card,
+[data-theme="clay"] .feature-item,
+[data-theme="clay"] .stage-app-card,
+[data-theme="clay"] .guide-card,
+[data-theme="clay"] .voice-controls-card,
+[data-theme="clay"] .queue-header-card,
+[data-theme="clay"] .cinema-hub-container,
+[data-theme="clay"] .inbuilt-app-box,
+[data-theme="clay"] .inbuilt-browser-container,
+[data-theme="clay"] .browser-navbar,
+[data-theme="clay"] .custom-controls,
+[data-theme="clay"] .rave-dock,
+[data-theme="clay"] .player-placeholder {
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: var(--clay-card-bg, linear-gradient(145deg, #202432, #181a24));
+  box-shadow: 10px 16px 32px rgba(0, 0, 0, 0.6),
+              -4px -4px 12px rgba(255, 255, 255, 0.03),
+              inset 2px 2px 5px rgba(255, 255, 255, 0.1),
+              inset -3px -3px 7px rgba(0, 0, 0, 0.45);
+}
+
+/* Stage Apps Grid Clay Tiles */
+[data-theme="clay"] .stage-app-card {
+  border-radius: var(--radius-md);
+  padding: 16px 14px;
+  background: linear-gradient(145deg, #242938, #1b1e28);
+  box-shadow: 6px 10px 20px rgba(0, 0, 0, 0.5),
+              -2px -2px 6px rgba(255, 255, 255, 0.04),
+              inset 2px 2px 4px rgba(255, 255, 255, 0.12),
+              inset -2px -2px 5px rgba(0, 0, 0, 0.4);
+  transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+[data-theme="clay"] .stage-app-card:hover {
+  transform: translateY(-4px) scale(1.04);
+  background: linear-gradient(145deg, #2d3346, #202330);
+  box-shadow: 10px 18px 30px rgba(0, 0, 0, 0.65),
+              -3px -3px 8px rgba(255, 255, 255, 0.07),
+              inset 2px 2px 5px rgba(255, 255, 255, 0.18),
+              inset -2px -2px 5px rgba(0, 0, 0, 0.5);
+  border-color: rgba(230, 168, 77, 0.4);
+}
+
+[data-theme="clay"] .stage-app-card:active {
+  transform: translateY(2px) scale(0.96);
+  box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.5),
+              inset 3px 3px 6px rgba(0, 0, 0, 0.55),
+              inset -1px -1px 3px rgba(255, 255, 255, 0.06);
+}
+
+/* --------------------------------------------------------------------------
+   Clay Inset Inputs (Concave Deep Wells)
+   -------------------------------------------------------------------------- */
+
+[data-theme="clay"] .form-input,
+[data-theme="clay"] .chat-input,
+[data-theme="clay"] .browser-url-input,
+[data-theme="clay"] .hub-search-input,
+[data-theme="clay"] #stage-url-quick-input,
+[data-theme="clay"] #queue-quick-url {
+  border-radius: var(--radius-full);
+  background: #11131a !important;
+  border: 1px solid rgba(255, 255, 255, 0.04) !important;
+  box-shadow: inset 3px 4px 8px rgba(0, 0, 0, 0.7),
+              inset -2px -2px 4px rgba(255, 255, 255, 0.05) !important;
+  color: var(--text-main);
+  padding: 10px 18px;
+  transition: all 0.2s ease;
+}
+
+[data-theme="clay"] .form-input:focus,
+[data-theme="clay"] .chat-input:focus,
+[data-theme="clay"] .browser-url-input:focus,
+[data-theme="clay"] .hub-search-input:focus,
+[data-theme="clay"] #stage-url-quick-input:focus {
+  outline: none;
+  border-color: rgba(230, 168, 77, 0.5) !important;
+  box-shadow: inset 3px 4px 8px rgba(0, 0, 0, 0.8),
+              inset -2px -2px 4px rgba(255, 255, 255, 0.08),
+              0 0 16px rgba(230, 168, 77, 0.25) !important;
+}
+
+[data-theme="clay"] .browser-url-bar {
+  border-radius: var(--radius-full);
+  background: #11131a;
+  box-shadow: inset 3px 3px 7px rgba(0, 0, 0, 0.65),
+              inset -2px -2px 4px rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 3px 6px;
+}
+
+/* --------------------------------------------------------------------------
+   Clay Navigation & Masthead
+   -------------------------------------------------------------------------- */
+
+[data-theme="clay"] .room-navbar {
+  background: linear-gradient(180deg, #1c1e29, #151720);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5),
+              inset 0 1px 2px rgba(255, 255, 255, 0.1);
+  padding: 0 20px;
+}
+
+[data-theme="clay"] .brand-mark {
+  border-radius: var(--radius-full);
+  background: linear-gradient(145deg, #e6a84d, #b88235);
+  color: #121008;
+  font-weight: 800;
+  padding: 3px 10px;
+  box-shadow: 3px 5px 12px rgba(184, 130, 53, 0.4),
+              inset 1.5px 1.5px 3px rgba(255, 255, 255, 0.5),
+              inset -2px -2px 4px rgba(0, 0, 0, 0.35);
+  border: none;
+}
+
+[data-theme="clay"] .room-badge {
+  background: #12141c;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.6),
+              inset -1px -1px 3px rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="clay"] .sync-indicator {
+  background: #14161f;
+  border-radius: var(--radius-full);
+  padding: 5px 14px;
+  box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.6),
+              inset -1px -1px 3px rgba(255, 255, 255, 0.06);
+}
+
+/* --------------------------------------------------------------------------
+   Clay Stage & Video Wrapper
+   -------------------------------------------------------------------------- */
+
+[data-theme="clay"] .player-wrapper {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 14px 22px 50px rgba(0, 0, 0, 0.75),
+              -5px -5px 18px rgba(255, 255, 255, 0.03),
+              inset 2px 2px 5px rgba(255, 255, 255, 0.12),
+              inset -4px -4px 8px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="clay"] .remote-browser-canvas {
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8);
+}
+
+/* --------------------------------------------------------------------------
+   Clay Sidebar & Chat
+   -------------------------------------------------------------------------- */
+
+[data-theme="clay"] .room-sidebar {
+  background: linear-gradient(180deg, #181a24, #12131b);
+  border-left: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: -8px 0 24px rgba(0, 0, 0, 0.45),
+              inset 1px 0 2px rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="clay"] .sidebar-tabs {
+  background: #11131a;
+  border-radius: var(--radius-full);
+  margin: 10px 12px;
+  padding: 4px;
+  box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.6),
+              inset -1px -1px 3px rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+[data-theme="clay"] .sidebar-tab-btn {
+  border-radius: var(--radius-full);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  padding: 6px 12px;
+}
+
+[data-theme="clay"] .sidebar-tab-btn.active {
+  background: linear-gradient(145deg, #2f3446, #202330);
+  box-shadow: 4px 6px 14px rgba(0, 0, 0, 0.5),
+              inset 1.5px 1.5px 3px rgba(255, 255, 255, 0.2),
+              inset -2px -2px 4px rgba(0, 0, 0, 0.4);
+  color: var(--accent-gold);
+}
+
+/* Clay Chat Bubbles */
+[data-theme="clay"] .chat-message {
+  border-radius: 18px 18px 18px 4px;
+  background: linear-gradient(145deg, #222634, #181a24);
+  box-shadow: 4px 6px 14px rgba(0, 0, 0, 0.35),
+              inset 1.5px 1.5px 3px rgba(255, 255, 255, 0.1),
+              inset -2px -2px 4px rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 10px 14px;
+  margin-bottom: 10px;
+}
+
+[data-theme="clay"] .chat-message.system-msg {
+  border-radius: var(--radius-full);
+  background: #14161f;
+  box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.5),
+              inset -1px -1px 2px rgba(255, 255, 255, 0.04);
+}
+
+/* --------------------------------------------------------------------------
+   Clay Soundboard & Floating Reactions
+   -------------------------------------------------------------------------- */
+
+[data-theme="clay"] .btn-soundboard {
+  border-radius: var(--radius-full);
+  background: linear-gradient(145deg, #2b3042, #1c1f2a);
+  box-shadow: 4px 6px 12px rgba(0, 0, 0, 0.45),
+              inset 2px 2px 3px rgba(255, 255, 255, 0.2),
+              inset -2px -2px 4px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  cursor: pointer;
+}
+
+[data-theme="clay"] .btn-soundboard:hover {
+  transform: translateY(-2px) scale(1.08);
+  box-shadow: 6px 10px 18px rgba(0, 0, 0, 0.55),
+              inset 2px 2px 4px rgba(255, 255, 255, 0.28);
+}
+
+[data-theme="clay"] .btn-soundboard:active {
+  transform: translateY(2px) scale(0.92);
+  box-shadow: 2px 3px 6px rgba(0, 0, 0, 0.5),
+              inset 3px 3px 6px rgba(0, 0, 0, 0.6);
+}
+
+[data-theme="clay"] .reaction-btn {
+  border-radius: var(--radius-full);
+  background: linear-gradient(145deg, #2c3144, #1d202c);
+  box-shadow: 4px 6px 14px rgba(0, 0, 0, 0.45),
+              inset 2px 2px 3px rgba(255, 255, 255, 0.22),
+              inset -2px -2px 4px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+[data-theme="clay"] .reaction-btn:hover {
+  transform: translateY(-3px) scale(1.15);
+}
+
+/* --------------------------------------------------------------------------
+   Clay Custom Controls Bar
+   -------------------------------------------------------------------------- */
+
+[data-theme="clay"] .custom-controls {
+  border-radius: var(--radius-lg);
+  margin: 12px 18px;
+  background: linear-gradient(145deg, #222634, #181a24);
+  box-shadow: 6px 10px 22px rgba(0, 0, 0, 0.5),
+              inset 2px 2px 4px rgba(255, 255, 255, 0.1),
+              inset -2px -2px 4px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transform: translateZ(0);
+}
+
+[data-theme="clay"] .player-wrapper,
+[data-theme="clay"] .remote-browser-canvas,
+[data-theme="clay"] .remote-browser-container {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+[data-theme="clay"] .progress-bar-container {
+  border-radius: var(--radius-full);
+  background: #11131a;
+  box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.7),
+              inset -1px -1px 2px rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="clay"] .progress-filled {
+  border-radius: var(--radius-full);
+  background: linear-gradient(90deg, #d4a359, #f5cb7f);
+  box-shadow: 0 0 12px rgba(212, 163, 89, 0.5);
+}
+
+/* --------------------------------------------------------------------------
+   Clay Peer Tiles (Webcam & Presence)
+   -------------------------------------------------------------------------- */
+
+[data-theme="clay"] .peer-tile {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: 6px 10px 20px rgba(0, 0, 0, 0.5),
+              inset 2px 2px 3px rgba(255, 255, 255, 0.1),
+              inset -2px -2px 4px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* --------------------------------------------------------------------------
+   Clay Cinema Vault Hub Modal
+   -------------------------------------------------------------------------- */
+
+[data-theme="clay"] .cinema-hub-container {
+  border-radius: var(--radius-xl);
+  background: linear-gradient(150deg, #1c1f2b, #12131b);
+  box-shadow: 20px 30px 60px rgba(0, 0, 0, 0.8),
+              inset 2px 2px 6px rgba(255, 255, 255, 0.12),
+              inset -4px -4px 10px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="clay"] .hub-filter-pill,
+[data-theme="clay"] .hub-nav-tab {
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 3px 5px 12px rgba(0, 0, 0, 0.4),
+              inset 1.5px 1.5px 3px rgba(255, 255, 255, 0.14),
+              inset -2px -2px 4px rgba(0, 0, 0, 0.35);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+[data-theme="clay"] .hub-filter-pill.active,
+[data-theme="clay"] .hub-nav-tab.active {
+  background: linear-gradient(145deg, #e6a84d, #b88235);
+  color: #121008;
+  font-weight: 700;
+  box-shadow: 5px 8px 18px rgba(184, 130, 53, 0.4),
+              inset 2px 2px 4px rgba(255, 255, 255, 0.5),
+              inset -2px -2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* --------------------------------------------------------------------------
+   Clay Theme Switcher Button Style
+   -------------------------------------------------------------------------- */
+
+.theme-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-sans);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  background: linear-gradient(145deg, #2b3040, #1e222e);
+  color: #f5f5f3;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 4px 6px 14px rgba(0, 0, 0, 0.4),
+              inset 1.5px 1.5px 3px rgba(255, 255, 255, 0.16),
+              inset -2px -2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.theme-toggle-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 6px 9px 18px rgba(0, 0, 0, 0.5),
+              inset 2px 2px 4px rgba(255, 255, 255, 0.22);
+}
+
+.theme-toggle-btn:active {
+  transform: translateY(1px) scale(0.97);
+  box-shadow: 2px 3px 6px rgba(0, 0, 0, 0.5),
+              inset 3px 3px 6px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="clay"] .theme-toggle-btn {
+  background: linear-gradient(145deg, #f0be6b, #c28836);
+  color: #121008;
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 5px 8px 18px rgba(194, 136, 54, 0.4),
+              inset 2px 2px 4px rgba(255, 255, 255, 0.55),
+              inset -2px -2px 4px rgba(0, 0, 0, 0.35);
+}
+
+/* Canvas Active Typing Focus Ring */
+.remote-browser-canvas:focus {
+  outline: none;
+  box-shadow: 0 0 0 2.5px var(--accent-gold), 0 10px 30px rgba(0, 0, 0, 0.8) !important;
+}
+
+[data-theme="clay"] .remote-stage-unmute-pill {
+  background: linear-gradient(145deg, #f0be6b, #c28836);
+  color: #121008;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 6px 10px 24px rgba(194, 136, 54, 0.45),
+              inset 2px 2px 4px rgba(255, 255, 255, 0.6),
+              inset -2px -2px 4px rgba(0, 0, 0, 0.35);
+  font-weight: 800;
+}
+[data-theme="clay"] .remote-stage-unmute-pill:hover {
+  background: linear-gradient(145deg, #fcd084, #d49a46);
+  color: #0b0c10;
+  transform: translateX(-50%) scale(1.06);
+}
+
