@@ -14,22 +14,23 @@
 
   <style>
     /* --------------------------------------------------------------------------
-       ZAMI — Mobile-First Responsive Design System
-       Pixel-perfect match to reference showcase across Mobile, Tablet & Desktop.
+       ZAMI — Premium Cinematic Responsive System
+       Spacious desktop layout (1360px max width, 42% / 58% hero ratio,
+       60px–76px fluid headline, enlarged media player, subtle living room bg).
        -------------------------------------------------------------------------- */
     :root {
-      --zami-bg: #090a0f;
-      --zami-card-bg: #12141a;
-      --zami-card-border: rgba(255, 255, 255, 0.08);
+      --zami-bg: #08090d;
+      --zami-card-bg: #12141c;
+      --zami-card-border: rgba(255, 255, 255, 0.09);
       --zami-gold: #f3a93b;
       --zami-gold-light: #f7b447;
       --zami-gold-dark: #eb9c2d;
-      --zami-gold-glow: rgba(243, 169, 59, 0.45);
+      --zami-gold-glow: rgba(243, 169, 59, 0.42);
       --zami-text: #ffffff;
-      --zami-text-muted: #9da0ae;
-      --zami-text-dim: #606272;
-      --zami-glass-btn: rgba(24, 26, 36, 0.72);
-      --zami-glass-border: rgba(255, 255, 255, 0.12);
+      --zami-text-muted: #a4a7b7;
+      --zami-text-dim: #646777;
+      --zami-glass-btn: rgba(24, 27, 38, 0.72);
+      --zami-glass-border: rgba(255, 255, 255, 0.13);
     }
 
     * {
@@ -50,17 +51,48 @@
       -moz-osx-font-smoothing: grayscale;
     }
 
-    /* Ambient Background Atmosphere */
-    body {
-      background-image: 
-        radial-gradient(ellipse 60% 50% at 20% 25%, rgba(243, 169, 59, 0.06) 0%, transparent 70%),
-        radial-gradient(ellipse 50% 45% at 85% 40%, rgba(220, 130, 40, 0.05) 0%, transparent 65%),
-        radial-gradient(circle at 50% 100%, rgba(18, 20, 28, 0.95) 0%, #090a0f 100%);
-      background-repeat: no-repeat;
-      background-attachment: fixed;
+    /* Subtle Cinematic Living-Room Backdrop with Strong Dark Gradient */
+    .cinematic-backdrop-layer {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .backdrop-couch-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 75%;
+      opacity: 0.22;
+      filter: contrast(1.15) brightness(0.9);
+      transition: opacity 0.5s ease;
+    }
+    .backdrop-dark-scrim {
+      position: absolute;
+      inset: 0;
+      background: 
+        radial-gradient(ellipse 70% 60% at 25% 45%, rgba(8, 9, 13, 0.96) 0%, rgba(8, 9, 13, 0.88) 55%, rgba(8, 9, 13, 0.98) 100%),
+        linear-gradient(180deg, rgba(8, 9, 13, 0.94) 0%, rgba(8, 9, 13, 0.68) 40%, rgba(8, 9, 13, 0.96) 100%);
+    }
+    .backdrop-ambient-glow {
+      position: absolute;
+      top: 25%;
+      left: 20%;
+      width: 45vw;
+      height: 45vw;
+      max-width: 600px;
+      max-height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(243, 169, 59, 0.09) 0%, rgba(220, 130, 40, 0.03) 50%, transparent 70%);
+      filter: blur(60px);
     }
 
-    /* Root Page Wrapper */
+    /* Root Page Wrapper - Spacious & Generous Content Width (1360px) */
     .landing-wrapper {
       position: relative;
       width: 100%;
@@ -68,9 +100,9 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      max-width: 1440px;
+      max-width: 1360px;
       margin: 0 auto;
-      padding: max(16px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
+      padding: max(20px, env(safe-area-inset-top)) clamp(20px, 3.5vw, 56px) max(24px, env(safe-area-inset-bottom));
       z-index: 1;
     }
 
@@ -82,7 +114,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 6px 0 18px;
+      padding: 6px 0 24px;
       position: relative;
       z-index: 20;
     }
@@ -111,7 +143,7 @@
     }
     .zami-text-logo .z-cursive {
       font-family: 'Pinyon Script', 'Brush Script MT', cursive;
-      font-size: clamp(2.4rem, 2rem + 1.2vw, 3.1rem);
+      font-size: clamp(2.4rem, 2rem + 1.2vw, 3.2rem);
       font-style: italic;
       font-weight: 400;
       margin-right: -2px;
@@ -120,7 +152,7 @@
     }
     .zami-text-logo .ami-serif {
       font-family: 'Playfair Display', 'Didot', serif;
-      font-size: clamp(1.6rem, 1.3rem + 0.8vw, 2.05rem);
+      font-size: clamp(1.6rem, 1.3rem + 0.8vw, 2.15rem);
       font-style: italic;
       font-weight: 700;
       letter-spacing: -0.01em;
@@ -131,12 +163,12 @@
     .desktop-nav-links {
       display: none;
       align-items: center;
-      gap: 32px;
+      gap: clamp(28px, 3vw, 40px);
     }
     .nav-link {
-      color: rgba(255, 255, 255, 0.76);
+      color: rgba(255, 255, 255, 0.78);
       text-decoration: none;
-      font-size: 0.92rem;
+      font-size: 0.95rem;
       font-weight: 500;
       letter-spacing: 0.01em;
       transition: color 0.18s ease;
@@ -149,16 +181,16 @@
     .desktop-nav-actions {
       display: none;
       align-items: center;
-      gap: 14px;
+      gap: 16px;
     }
     .btn-nav-signin {
       background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.13);
       border-radius: 999px;
       color: #ffffff;
-      padding: 9px 22px;
+      padding: 10px 24px;
       font-family: inherit;
-      font-size: 0.88rem;
+      font-size: 0.9rem;
       font-weight: 600;
       cursor: pointer;
       backdrop-filter: blur(8px);
@@ -167,16 +199,16 @@
     }
     .btn-nav-signin:hover {
       background: rgba(255, 255, 255, 0.12);
-      border-color: rgba(255, 255, 255, 0.24);
+      border-color: rgba(255, 255, 255, 0.25);
     }
     .btn-nav-create {
       background: linear-gradient(180deg, var(--zami-gold-light) 0%, var(--zami-gold-dark) 100%);
-      color: #0d0f14;
+      color: #0c0e14;
       border: none;
       border-radius: 999px;
-      padding: 9px 22px;
+      padding: 10px 24px;
       font-family: inherit;
-      font-size: 0.88rem;
+      font-size: 0.9rem;
       font-weight: 700;
       display: inline-flex;
       align-items: center;
@@ -225,34 +257,38 @@
     }
 
     /* --------------------------------------------------------------------------
-       Main Hero Grid Layout
+       Main Hero Grid Layout - 42% Text / 58% Enlarged Media Player
        -------------------------------------------------------------------------- */
     .hero-container {
       width: 100%;
       display: flex;
       flex-direction: column;
-      gap: 28px;
+      gap: 32px;
       margin: auto 0;
-      padding: 10px 0 24px;
+      padding: 16px 0 32px;
       position: relative;
       z-index: 10;
+      flex: 1;
     }
 
-    /* Left Column / Mobile Top: Hero Info */
+    /* Left Column: Hero Text, Subtitle, Buttons, and Features */
     .hero-content-col {
       display: flex;
       flex-direction: column;
       width: 100%;
-      max-width: 100%;
+      min-width: 0;
     }
 
+    /* 60px–76px Fluid Headline on Desktop */
     .hero-headline {
-      font-size: clamp(2.35rem, 1.7rem + 3.2vw, 4.3rem);
-      line-height: 1.08;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: clamp(2.35rem, 1.8rem + 3.2vw, 3.2rem);
+      line-height: 1.06;
       font-weight: 800;
-      letter-spacing: -0.03em;
+      letter-spacing: -0.035em;
       color: #ffffff;
-      margin-bottom: 18px;
+      margin-bottom: 22px;
+      text-wrap: balance;
     }
     .headline-line {
       display: block;
@@ -266,21 +302,22 @@
     }
 
     .hero-subtitle {
-      font-size: clamp(0.96rem, 0.88rem + 0.35vw, 1.15rem);
-      line-height: 1.55;
+      font-size: clamp(1rem, 0.94rem + 0.3vw, 1.2rem);
+      line-height: 1.6;
       color: var(--zami-text-muted);
-      max-width: 480px;
-      margin-bottom: clamp(24px, 2.5vw, 36px);
+      max-width: 490px;
+      margin-bottom: clamp(26px, 2.6vw, 38px);
       font-weight: 400;
+      text-wrap: pretty;
     }
 
     /* Hero CTA Buttons Group */
     .hero-cta-group {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
       width: 100%;
-      margin-bottom: 32px;
+      margin-bottom: clamp(32px, 3.2vw, 44px);
     }
 
     /* Primary Gold Pill: Create a room */
@@ -291,13 +328,13 @@
       gap: 12px;
       width: 100%;
       min-height: 52px;
-      padding: 14px 26px;
+      padding: 15px 30px;
       border-radius: 999px;
       border: none;
       background: linear-gradient(180deg, var(--zami-gold-light) 0%, var(--zami-gold-dark) 100%);
-      color: #0c0e13;
+      color: #0c0e14;
       font-family: inherit;
-      font-size: 1.02rem;
+      font-size: 1.04rem;
       font-weight: 700;
       letter-spacing: 0.01em;
       cursor: pointer;
@@ -336,7 +373,7 @@
       gap: 10px;
       width: 100%;
       min-height: 52px;
-      padding: 14px 26px;
+      padding: 15px 28px;
       border-radius: 999px;
       border: 1px solid var(--zami-glass-border);
       background: var(--zami-glass-btn);
@@ -344,7 +381,7 @@
       -webkit-backdrop-filter: blur(16px);
       color: #ffffff;
       font-family: inherit;
-      font-size: 1.02rem;
+      font-size: 1.04rem;
       font-weight: 600;
       letter-spacing: 0.01em;
       cursor: pointer;
@@ -352,21 +389,21 @@
       user-select: none;
     }
     .btn-cta-join:hover {
-      background: rgba(30, 33, 46, 0.88);
-      border-color: rgba(255, 255, 255, 0.25);
+      background: rgba(32, 35, 48, 0.88);
+      border-color: rgba(255, 255, 255, 0.26);
       transform: translateY(-1px);
     }
     .btn-cta-join:active {
       transform: translateY(0);
     }
 
-    /* Desktop Features List (Under Buttons in Desktop View) */
+    /* Desktop Features List (Under Buttons in Left Column) */
     .desktop-features-row {
       display: none;
       align-items: center;
-      gap: 28px;
-      margin-top: 14px;
-      padding-top: 10px;
+      gap: clamp(20px, 2.2vw, 32px);
+      padding-top: 18px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
     }
     .feature-item {
       display: inline-flex;
@@ -375,13 +412,13 @@
       cursor: default;
     }
     .feature-icon-circle {
-      width: 38px;
-      height: 38px;
-      min-width: 38px;
-      min-height: 38px;
+      width: 40px;
+      height: 40px;
+      min-width: 40px;
+      min-height: 40px;
       border-radius: 50%;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      background: rgba(22, 24, 32, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      background: rgba(22, 25, 34, 0.75);
       backdrop-filter: blur(10px);
       display: flex;
       align-items: center;
@@ -394,18 +431,19 @@
       transform: translateY(-1px);
     }
     .feature-label {
-      font-size: 0.85rem;
+      font-size: 0.88rem;
       font-weight: 500;
-      color: #b5b7c4;
+      color: #b8bbc8;
       white-space: nowrap;
     }
 
     /* --------------------------------------------------------------------------
-       Right Column / Below Hero: Cinematic Media-Player Preview Card
+       Right Column: Enlarged Main-Focus Cinematic Media-Player Preview
        -------------------------------------------------------------------------- */
     .player-preview-wrapper {
       position: relative;
       width: 100%;
+      min-width: 0;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -416,10 +454,10 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 108%;
-      height: 108%;
-      background: radial-gradient(ellipse 65% 55% at 50% 50%, rgba(243, 169, 59, 0.12) 0%, rgba(200, 110, 30, 0.04) 50%, transparent 75%);
-      filter: blur(48px);
+      width: 110%;
+      height: 110%;
+      background: radial-gradient(ellipse 65% 55% at 50% 50%, rgba(243, 169, 59, 0.14) 0%, rgba(200, 110, 30, 0.04) 55%, transparent 75%);
+      filter: blur(52px);
       pointer-events: none;
       z-index: 0;
     }
@@ -429,24 +467,24 @@
       z-index: 1;
       width: 100%;
       max-width: 100%;
-      background: #0f1118;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: #0e1017;
+      border: 1px solid rgba(255, 255, 255, 0.11);
       border-radius: clamp(16px, 1.8vw, 24px);
       box-shadow: 
-        0 24px 60px rgba(0, 0, 0, 0.85),
-        0 0 40px rgba(243, 169, 59, 0.06),
-        0 1px 0 rgba(255, 255, 255, 0.08) inset;
+        0 28px 70px rgba(0, 0, 0, 0.88),
+        0 0 45px rgba(243, 169, 59, 0.08),
+        0 1px 0 rgba(255, 255, 255, 0.1) inset;
       overflow: hidden;
       display: flex;
       flex-direction: column;
     }
 
-    /* Screen Container */
+    /* Video Screen Container - Fluid Cinematic 16:9.4 */
     .preview-screen-container {
       position: relative;
       width: 100%;
-      aspect-ratio: 16 / 9.6;
-      background: #090a0f;
+      aspect-ratio: 16 / 9.4;
+      background: #08090d;
       overflow: hidden;
     }
 
@@ -463,8 +501,8 @@
       position: absolute;
       inset: 0;
       background: 
-        linear-gradient(180deg, rgba(7, 8, 12, 0.65) 0%, rgba(7, 8, 12, 0.1) 28%, rgba(7, 8, 12, 0.1) 65%, rgba(7, 8, 12, 0.82) 100%),
-        radial-gradient(ellipse 80% 60% at 50% 50%, transparent 40%, rgba(0, 0, 0, 0.4) 100%);
+        linear-gradient(180deg, rgba(7, 8, 12, 0.6) 0%, rgba(7, 8, 12, 0.08) 28%, rgba(7, 8, 12, 0.08) 65%, rgba(7, 8, 12, 0.82) 100%),
+        radial-gradient(ellipse 80% 60% at 50% 50%, transparent 42%, rgba(0, 0, 0, 0.4) 100%);
       pointer-events: none;
     }
 
@@ -485,21 +523,21 @@
       display: inline-flex;
       align-items: center;
       gap: 7px;
-      padding: clamp(5px, 0.8vw, 7px) clamp(10px, 1.2vw, 14px);
+      padding: clamp(5px, 0.8vw, 8px) clamp(10px, 1.2vw, 15px);
       border-radius: 999px;
-      background: rgba(14, 16, 24, 0.78);
+      background: rgba(14, 16, 24, 0.82);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.13);
       color: #ffffff;
-      font-size: clamp(0.72rem, 0.68rem + 0.2vw, 0.82rem);
+      font-size: clamp(0.72rem, 0.68rem + 0.2vw, 0.84rem);
       font-weight: 500;
       white-space: nowrap;
       user-select: none;
     }
 
     .pill-status {
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
     }
     .status-pulse-dot {
       width: 7px;
@@ -516,13 +554,13 @@
     .pill-room {
       cursor: pointer;
       color: #d1d3dc;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
       transition: all 0.18s ease;
       text-decoration: none;
     }
     .pill-room:hover,
     .pill-room:focus-visible {
-      background: rgba(22, 25, 38, 0.92);
+      background: rgba(22, 25, 38, 0.94);
       border-color: rgba(243, 169, 59, 0.45);
       color: #ffffff;
       outline: none;
@@ -553,12 +591,12 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%) scale(0.9);
-      background: rgba(18, 20, 28, 0.94);
+      background: rgba(18, 20, 28, 0.95);
       border: 1px solid var(--zami-gold);
       color: #ffffff;
-      padding: 10px 18px;
+      padding: 10px 20px;
       border-radius: 999px;
-      font-size: 0.85rem;
+      font-size: 0.88rem;
       font-weight: 600;
       box-shadow: 0 12px 30px rgba(0, 0, 0, 0.8), 0 0 16px rgba(243, 169, 59, 0.35);
       backdrop-filter: blur(12px);
@@ -575,7 +613,7 @@
     /* Participant Avatars: Desktop Vertical Stack */
     .preview-avatars-desktop {
       position: absolute;
-      right: clamp(12px, 1.8vw, 20px);
+      right: clamp(14px, 1.8vw, 22px);
       top: 50%;
       transform: translateY(-50%);
       display: none;
@@ -585,10 +623,10 @@
     }
     .avatar-item {
       position: relative;
-      width: 36px;
-      height: 36px;
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
-      border: 2px solid rgba(255, 255, 255, 0.15);
+      border: 2px solid rgba(255, 255, 255, 0.16);
       background: #181a24;
       display: flex;
       align-items: center;
@@ -628,9 +666,9 @@
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
     }
     .avatar-count {
-      background: #1c1f2b;
-      border-color: rgba(255, 255, 255, 0.16);
-      font-size: 0.72rem;
+      background: #1e212d;
+      border-color: rgba(255, 255, 255, 0.18);
+      font-size: 0.74rem;
       font-weight: 700;
       color: #d8dae3;
     }
@@ -649,7 +687,7 @@
       width: 28px;
       height: 28px;
       border-radius: 50%;
-      border: 1.5px solid #090a0f;
+      border: 1.5px solid #08090d;
       background: #181a24;
       margin-left: -7px;
       display: flex;
@@ -692,7 +730,7 @@
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border-top: 1px solid rgba(255, 255, 255, 0.08);
-      padding: clamp(8px, 1.2vw, 14px) clamp(12px, 1.8vw, 20px);
+      padding: clamp(9px, 1.2vw, 15px) clamp(14px, 1.8vw, 22px);
       display: flex;
       align-items: center;
       gap: clamp(8px, 1.2vw, 16px);
@@ -703,10 +741,10 @@
       background: transparent;
       border: none;
       color: #d1d3df;
-      width: 32px;
-      height: 32px;
-      min-width: 32px;
-      min-height: 32px;
+      width: 34px;
+      height: 34px;
+      min-width: 34px;
+      min-height: 34px;
       padding: 0;
       border-radius: 8px;
       display: inline-flex;
@@ -731,9 +769,9 @@
 
     .ctrl-time {
       font-family: 'JetBrains Mono', monospace;
-      font-size: clamp(0.72rem, 0.68rem + 0.15vw, 0.82rem);
+      font-size: clamp(0.74rem, 0.7rem + 0.15vw, 0.84rem);
       font-weight: 500;
-      color: #9da0ae;
+      color: #a4a7b7;
       white-space: nowrap;
       user-select: none;
       flex-shrink: 0;
@@ -753,7 +791,7 @@
       position: relative;
       width: 100%;
       height: 4px;
-      background: rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.18);
       border-radius: 999px;
       overflow: visible;
       transition: height 0.18s ease;
@@ -773,16 +811,16 @@
       position: absolute;
       top: 50%;
       transform: translate(-50%, -50%);
-      width: 12px;
-      height: 12px;
+      width: 13px;
+      height: 13px;
       border-radius: 50%;
       background: #ffffff;
       border: 2px solid var(--zami-gold);
-      box-shadow: 0 0 8px rgba(243, 169, 59, 0.6);
+      box-shadow: 0 0 10px rgba(243, 169, 59, 0.6);
       transition: transform 0.15s ease;
     }
     .ctrl-scrubber:hover .scrubber-knob {
-      transform: translate(-50%, -50%) scale(1.2);
+      transform: translate(-50%, -50%) scale(1.25);
     }
 
     .ctrl-actions-right {
@@ -800,7 +838,7 @@
       grid-template-columns: repeat(3, 1fr);
       gap: 12px;
       width: 100%;
-      padding: 16px 4px 6px;
+      padding: 18px 4px 6px;
       margin-top: 10px;
     }
     .mob-feature-item {
@@ -816,42 +854,18 @@
       min-width: 44px;
       min-height: 44px;
       border-radius: 50%;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      background: rgba(20, 22, 30, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      background: rgba(20, 22, 30, 0.72);
       display: flex;
       align-items: center;
       justify-content: center;
       color: var(--zami-gold);
     }
     .mob-feature-text {
-      font-size: 0.74rem;
+      font-size: 0.75rem;
       font-weight: 500;
-      color: #a0a3b2;
+      color: #a4a7b7;
       line-height: 1.3;
-    }
-
-    /* --------------------------------------------------------------------------
-       Desktop Couch Silhouette Backdrop (>= 768px only)
-       -------------------------------------------------------------------------- */
-    .desktop-couch-backdrop {
-      display: none;
-      position: fixed;
-      left: 0;
-      bottom: 0;
-      width: 100%;
-      pointer-events: none;
-      z-index: 2;
-    }
-    .desktop-couch-img {
-      width: 100%;
-      height: auto;
-      max-height: 46vh;
-      object-fit: cover;
-      object-position: center bottom;
-      display: block;
-      opacity: 0.88;
-      -webkit-mask-image: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.2) 20%, #000000 65%, #000000 100%);
-      mask-image: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.2) 20%, #000000 65%, #000000 100%);
     }
 
     /* --------------------------------------------------------------------------
@@ -873,10 +887,10 @@
     }
 
     .dialog-card {
-      background: #13151d;
+      background: #13151e;
       border: 1px solid rgba(255, 255, 255, 0.14);
       border-radius: 24px;
-      padding: 26px 24px 22px;
+      padding: 28px 24px 24px;
       box-shadow: 0 24px 60px rgba(0, 0, 0, 0.9), 0 0 35px rgba(243, 169, 59, 0.08);
       display: flex;
       flex-direction: column;
@@ -895,7 +909,7 @@
       margin-bottom: 4px;
     }
     .dialog-title-group p {
-      font-size: 0.86rem;
+      font-size: 0.88rem;
       color: var(--zami-text-muted);
       line-height: 1.45;
     }
@@ -1179,10 +1193,10 @@
       }
     }
 
-    /* Tablet (768px - 1023px) */
+    /* Tablet (768px - 1023px) - Stacked with Generous Spacing */
     @media (min-width: 768px) {
       .landing-wrapper {
-        padding: 24px 32px 28px;
+        padding: 24px 36px 30px;
       }
       .zami-nav {
         padding: 8px 0 24px;
@@ -1194,23 +1208,37 @@
         display: none;
       }
 
-      /* Tablet Stacked / Two-Column Hero */
       .hero-container {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
+        display: flex;
+        flex-direction: column;
         gap: 36px;
         align-items: center;
+        text-align: center;
         padding: 20px 0 32px;
+      }
+
+      .hero-content-col {
+        align-items: center;
+        max-width: 640px;
+      }
+
+      .hero-headline {
+        font-size: clamp(2.8rem, 2.2rem + 1.8vw, 3.8rem);
+      }
+
+      .hero-subtitle {
+        max-width: 540px;
       }
 
       .hero-cta-group {
         flex-direction: row;
+        justify-content: center;
         width: auto;
-        gap: 14px;
+        gap: 16px;
       }
       .btn-cta-create, .btn-cta-join {
         width: auto;
-        padding: 15px 28px;
+        padding: 15px 30px;
       }
 
       .mobile-features-row {
@@ -1218,54 +1246,110 @@
       }
       .desktop-features-row {
         display: flex;
+        justify-content: center;
         flex-wrap: wrap;
-        gap: 20px;
+        gap: 28px;
+        width: 100%;
+        max-width: 680px;
       }
 
-      /* Avatars switch to vertical desktop layout */
+      .player-preview-wrapper {
+        max-width: 700px;
+      }
+
       .preview-avatars-desktop {
         display: flex;
       }
       .preview-avatars-mobile {
         display: none;
       }
-
-      /* Ambient couch backdrop on tablet/desktop */
-      .desktop-couch-backdrop {
-        display: block;
-      }
     }
 
-    /* Laptop / Desktop (1024px+) */
+    /* Desktop (1024px and wider) - Balanced 42% / 58% Two-Column Hero */
     @media (min-width: 1024px) {
       .landing-wrapper {
-        padding: 28px 48px 36px;
+        padding: 28px clamp(24px, 3.5vw, 56px) 36px;
       }
       .desktop-nav-links {
         display: flex;
       }
+
       .hero-container {
-        grid-template-columns: 1.05fr 1.15fr;
-        gap: 56px;
-        padding: 32px 0 48px;
+        display: grid;
+        grid-template-columns: minmax(0, 42fr) minmax(0, 58fr);
+        gap: clamp(36px, 3.8vw, 64px);
+        align-items: center;
+        text-align: left;
+        padding: 28px 0 44px;
+        min-height: calc(100dvh - 140px);
       }
+
+      .hero-content-col {
+        align-items: flex-start;
+        max-width: 100%;
+      }
+
+      /* 60px–76px Fluid Headline on Desktop */
+      .hero-headline {
+        font-size: clamp(3.75rem, 2.5rem + 2.5vw, 4.75rem); /* 60px to 76px */
+        line-height: 1.05;
+        margin-bottom: 24px;
+      }
+
+      .hero-subtitle {
+        max-width: 490px;
+        margin-bottom: clamp(30px, 2.8vw, 42px);
+      }
+
+      .hero-cta-group {
+        flex-direction: row;
+        justify-content: flex-start;
+        gap: 16px;
+        margin-bottom: clamp(36px, 3.5vw, 50px);
+      }
+
       .desktop-features-row {
-        gap: 32px;
+        justify-content: flex-start;
+        max-width: 100%;
+        gap: clamp(20px, 2vw, 32px);
       }
-      .desktop-couch-img {
-        max-height: 48vh;
+
+      .player-preview-wrapper {
+        max-width: 100%;
       }
     }
 
-    /* Ultrawide Displays (1440px+) */
+    /* Intermediate Laptop Adjustments (1024px - 1240px) */
+    @media (min-width: 1024px) and (max-width: 1240px) {
+      .hero-cta-group {
+        gap: 12px;
+      }
+      .btn-cta-create, .btn-cta-join {
+        padding: 13px 18px;
+        font-size: 0.94rem;
+        min-height: 48px;
+      }
+    }
+
+    /* Large Displays (1440px+) */
     @media (min-width: 1440px) {
       .hero-container {
-        gap: 72px;
+        gap: 64px;
+      }
+      .hero-headline {
+        font-size: 4.75rem; /* Exactly 76px on large desktop! */
       }
     }
   </style>
 </head>
 <body>
+  <!-- Subtle Cinematic Living-Room Backdrop with Strong Dark Gradient -->
+  <div class="cinematic-backdrop-layer" aria-hidden="true">
+    <img src="/img/couch_seamless_blend_2x.png" alt="" class="backdrop-couch-img" loading="lazy">
+    <div class="backdrop-dark-scrim"></div>
+    <div class="backdrop-ambient-glow"></div>
+  </div>
+
   <div class="landing-wrapper">
     <!-- Top Navigation Bar -->
     <header class="zami-nav" id="top-nav">
@@ -1302,7 +1386,7 @@
       </button>
     </header>
 
-    <!-- Main Hero Container -->
+    <!-- Main Hero Container (42% Text / 58% Media Player on Desktop) -->
     <main class="hero-container">
       <!-- Left Column / Hero Text and CTAs -->
       <section class="hero-content-col">
@@ -1340,7 +1424,7 @@
           </button>
         </div>
 
-        <!-- Desktop Features Row (visible >= 768px) -->
+        <!-- Desktop Features Row (visible >= 768px in left column) -->
         <div class="desktop-features-row" id="desktop-features">
           <div class="feature-item">
             <div class="feature-icon-circle">
@@ -1376,14 +1460,14 @@
         </div>
       </section>
 
-      <!-- Right Column / Mobile: Cinematic Media-Player Preview Card -->
+      <!-- Right Column: Enlarged Main-Focus Cinematic Media Player Preview -->
       <section class="player-preview-wrapper" aria-label="Cinematic synchronized player preview">
         <div class="player-glow-ambient"></div>
 
         <div class="player-preview-card" id="player-preview-card">
-          <!-- Screen Area with Sunset Planet -->
+          <!-- Screen Area with Pristine Sunset Celestial Planet -->
           <div class="preview-screen-container">
-            <img src="/img/sunset_planet_preview.jpg" alt="Synchronized sunset planet stream preview" class="preview-screen-img" width="800" height="622" loading="eager" fetchpriority="high">
+            <img src="/img/sunset_planet_preview.jpg" alt="Synchronized sunset planet stream preview" class="preview-screen-img" width="960" height="420" loading="eager" fetchpriority="high">
             <div class="preview-screen-scrim"></div>
 
             <!-- Top Floating Status Badges -->
@@ -1499,7 +1583,7 @@
               <button type="button" class="ctrl-btn ctrl-btn-gear" id="btn-preview-gear" aria-label="Settings">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <circle cx="12" cy="12" r="3"/>
-                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
                 </svg>
               </button>
             </div>
@@ -1542,11 +1626,6 @@
         </div>
       </footer>
     </main>
-
-    <!-- Desktop Couch Silhouette Backdrop (hidden on mobile) -->
-    <div class="desktop-couch-backdrop" aria-hidden="true">
-      <img src="/img/couch_seamless_blend_2x.png" alt="" class="desktop-couch-img" loading="lazy">
-    </div>
   </div>
 
   <!-- Modal Dialog: Join with Code -->
@@ -1626,12 +1705,12 @@
       <form id="form-profile" onsubmit="return false;">
         <div style="display: flex; flex-direction: column; gap: 14px;">
           <div>
-            <label for="input-display-name" style="display: block; font-size: 0.8rem; font-weight: 600; color: #a0a3b2; margin-bottom: 6px;">DISPLAY NAME</label>
+            <label for="input-display-name" style="display: block; font-size: 0.8rem; font-weight: 600; color: #a4a7b7; margin-bottom: 6px;">DISPLAY NAME</label>
             <input type="text" id="input-display-name" class="dialog-input" style="padding-left: 14px;" placeholder="Your nickname" spellcheck="false">
           </div>
 
           <div>
-            <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #a0a3b2; margin-bottom: 8px;">AVATAR COLOR ACCENT</label>
+            <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #a4a7b7; margin-bottom: 8px;">AVATAR COLOR ACCENT</label>
             <div class="color-picker-row">
               <button type="button" class="color-dot selected" data-color="#f3a93b" style="background: #f3a93b;" aria-label="Gold Accent"></button>
               <button type="button" class="color-dot" data-color="#38bdf8" style="background: #38bdf8;" aria-label="Sky Blue Accent"></button>
