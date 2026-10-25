@@ -69,6 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Stage Wallpaper Management & Room Defaults
   // --------------------------------------------------------------------------
   const STAGE_WALLPAPER_PRESETS = [
+    { id: 'tv-static', name: 'Television Static (Video)', url: '/video/tv-static.mp4', poster: '/img/tv_static_poster.jpg', isVideo: true },
     { id: 'astronaut', name: 'Cosmic Astronaut', url: '/img/backdrop_astronaut.jpg' },
     { id: 'sunset', name: 'Sunset Silhouettes', url: '/img/backdrop_sunset.jpg' },
     { id: 'neon', name: 'Neon Cyberpunk', url: '/img/backdrop_neon.jpg' },
@@ -76,22 +77,20 @@ document.addEventListener('DOMContentLoaded', () => {
     { id: 'interstellar', name: 'Interstellar Horizon', url: '/img/interstellar-still.jpg' }
   ];
 
+  function isVideoBackdrop(url) {
+    if (!url || typeof url !== 'string') return false;
+    const clean = url.toLowerCase().split('?')[0];
+    return clean.endsWith('.mp4') || clean.endsWith('.webm') || clean.endsWith('.ogg') || clean.includes('/video/');
+  }
+
   function getRoomDefaultBackdrop(rId) {
     try {
       const localSaved = localStorage.getItem('zami_room_backdrop_' + rId);
-      if (localSaved) return localSaved;
+      if (localSaved && localSaved !== '/img/backdrop_astronaut.jpg' && localSaved !== '/img/backdrop_sunset.jpg' && localSaved !== '/img/backdrop_neon.jpg') {
+        return localSaved;
+      }
     } catch (e) {}
-    const r = (rId || '').toLowerCase();
-    if (r.includes('midnight') || r.includes('astronaut') || r.includes('space') || r.includes('vault')) {
-      return '/img/backdrop_astronaut.jpg';
-    }
-    if (r.includes('cinema') || r.includes('party') || r.includes('sunset') || r.includes('lounge')) {
-      return '/img/backdrop_sunset.jpg';
-    }
-    if (r.includes('bollywood') || r.includes('squad') || r.includes('neon') || r.includes('noir')) {
-      return '/img/backdrop_neon.jpg';
-    }
-    return '/img/backdrop_astronaut.jpg';
+    return '/video/tv-static.mp4';
   }
 
   let currentStageBackdrop = getRoomDefaultBackdrop(roomId);
@@ -104,14 +103,49 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('zami_room_backdrop_' + roomId, url);
       } catch (e) {}
     }
-    document.documentElement.style.setProperty('--stage-backdrop-url', `url('${url}')`);
+
+    const bgLayer = document.getElementById('room-bg-layer');
+    const bgVideo = document.getElementById('room-bg-video');
+    const isVid = isVideoBackdrop(url);
+
+    if (isVid) {
+      if (bgVideo) {
+        const cur = bgVideo.currentSrc || bgVideo.src || '';
+        if (!cur.includes(url)) {
+          bgVideo.src = url;
+          bgVideo.load();
+        }
+        bgVideo.style.display = 'block';
+        bgVideo.style.opacity = '1';
+        bgVideo.muted = true;
+        const playPromise = bgVideo.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(() => {});
+        }
+      }
+      if (bgLayer) {
+        bgLayer.style.backgroundImage = 'none';
+      }
+      document.documentElement.style.setProperty('--stage-backdrop-url', 'none');
+    } else {
+      if (bgVideo) {
+        bgVideo.pause();
+        bgVideo.style.display = 'none';
+        bgVideo.style.opacity = '0';
+      }
+      if (bgLayer) {
+        bgLayer.style.backgroundImage = `url('${url}')`;
+      }
+      document.documentElement.style.setProperty('--stage-backdrop-url', `url('${url}')`);
+    }
+
     const roomContainer = document.querySelector('.room-container');
     if (roomContainer) {
-      roomContainer.style.setProperty('--stage-backdrop-url', `url('${url}')`);
+      roomContainer.style.backgroundImage = isVid ? 'none' : `url('${url}')`;
     }
     const placeholderEl = document.getElementById('player-placeholder');
     if (placeholderEl) {
-      placeholderEl.style.setProperty('--stage-backdrop-url', `url('${url}')`);
+      placeholderEl.style.backgroundImage = 'none';
     }
     updateWallpaperModalActiveState(url);
   }
@@ -173,7 +207,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const card = document.createElement('div');
         card.className = 'wallpaper-card' + (preset.url === currentStageBackdrop ? ' active' : '');
         card.setAttribute('data-url', preset.url);
-        card.style.backgroundImage = `url('${preset.url}')`;
+        const thumb = preset.poster || preset.url;
+        card.style.backgroundImage = `url('${thumb}')`;
         card.innerHTML = `
           <div class="wallpaper-card-scrim">
             <span class="wallpaper-card-name">${preset.name}</span>
@@ -208,9 +243,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // Ensure background video plays smoothly upon user interaction if browser blocked it
+  const initBgVideoAutoplay = () => {
+    const bgVideo = document.getElementById('room-bg-video');
+    if (bgVideo && isVideoBackdrop(currentStageBackdrop)) {
+      bgVideo.muted = true;
+      const p = bgVideo.play();
+      if (p !== undefined) {
+        p.catch(() => {
+          const resume = () => {
+            bgVideo.play().catch(() => {});
+            window.removeEventListener('click', resume);
+            window.removeEventListener('keydown', resume);
+            window.removeEventListener('touchstart', resume);
+          };
+          window.addEventListener('click', resume, { once: true });
+          window.addEventListener('keydown', resume, { once: true });
+          window.addEventListener('touchstart', resume, { once: true });
+        });
+      }
+    }
+  };
+
   // Immediately apply initial backdrop & initialize wallpaper manager
   setStageBackdrop(currentStageBackdrop, false);
   initWallpaperManager();
+  initBgVideoAutoplay();
 
   function updateUnreadBadge() {
     const badge = document.getElementById('chat-unread-badge');

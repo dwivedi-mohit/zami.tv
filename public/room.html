@@ -20,7 +20,14 @@
 </head>
 <body>
   <div class="room-container">
-    <!-- Top Masthead / Cinematic Lounge Top Bar -->
+    <!-- Dynamic Cinema Video & Image Stage Backdrop Layer -->
+    <div class="room-bg-layer" id="room-bg-layer" aria-hidden="true">
+      <video id="room-bg-video" class="room-bg-video" autoplay loop muted playsinline preload="auto" poster="/img/tv_static_poster.jpg">
+        <source src="/video/tv-static.mp4" type="video/mp4">
+      </video>
+      <div class="room-bg-scrim" id="room-bg-scrim"></div>
+    </div>
+
     <!-- Top Masthead / Cinematic Lounge Top Bar -->
     <header class="room-navbar">
       <div class="nav-left">

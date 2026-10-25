@@ -288,17 +288,7 @@ app.use('/libs/hls', express.static(path.join(__dirname, 'node_modules/hls.js/di
 const rooms = new Map();
 
 function getDefaultRoomBackdrop(roomId) {
-  const r = (roomId || '').toLowerCase();
-  if (r.includes('midnight') || r.includes('astronaut') || r.includes('space') || r.includes('vault')) {
-    return '/img/backdrop_astronaut.jpg';
-  }
-  if (r.includes('cinema') || r.includes('party') || r.includes('sunset') || r.includes('lounge')) {
-    return '/img/backdrop_sunset.jpg';
-  }
-  if (r.includes('bollywood') || r.includes('squad') || r.includes('neon') || r.includes('noir')) {
-    return '/img/backdrop_neon.jpg';
-  }
-  return '/img/backdrop_astronaut.jpg';
+  return '/video/tv-static.mp4';
 }
 
 /**
