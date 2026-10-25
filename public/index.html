@@ -2,83 +2,98 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ZAMI — Watch together. Feel closer.</title>
-  <meta name="description" content="ZAMI is a premium social watch-party platform. Stream movies, series, and live tabs with friends in perfect real-time synchronization.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>ZAMI — Your people. Your screen. In sync.</title>
+  <meta name="description" content="Watch movies, shows, and videos together, wherever you are. Seamless sub-second synchronization across any browser and device.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Pinyon+Script&family=Playfair+Display:ital,wght@1,600;1,700;1,800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Pinyon+Script&family=Playfair+Display:ital,wght@1,600;1,700;1,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/clay.css">
   <script src="/js/theme.js"></script>
+
   <style>
     /* --------------------------------------------------------------------------
-       ZAMI — Exact Reference Match Theme
-       Deep noir canvas, warm ambient glow, pixel-precise room entry card.
+       ZAMI — Mobile-First Responsive Design System
+       Pixel-perfect match to reference showcase across Mobile, Tablet & Desktop.
        -------------------------------------------------------------------------- */
     :root {
-      --zami-bg: #07080a;
+      --zami-bg: #090a0f;
       --zami-card-bg: #12141a;
       --zami-card-border: rgba(255, 255, 255, 0.08);
       --zami-gold: #f3a93b;
       --zami-gold-light: #f7b447;
       --zami-gold-dark: #eb9c2d;
       --zami-gold-glow: rgba(243, 169, 59, 0.45);
-      --zami-input-bg: #0f1116;
-      --zami-btn-dark: #171922;
       --zami-text: #ffffff;
-      --zami-text-muted: #8e909d;
-      --zami-text-dim: #5c5e6d;
+      --zami-text-muted: #9da0ae;
+      --zami-text-dim: #606272;
+      --zami-glass-btn: rgba(24, 26, 36, 0.72);
+      --zami-glass-border: rgba(255, 255, 255, 0.12);
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    body {
+    html, body {
+      width: 100%;
+      min-height: 100dvh;
+      overflow-x: hidden;
       background-color: var(--zami-bg);
+      color: var(--zami-text);
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Ambient Background Atmosphere */
+    body {
       background-image: 
-        radial-gradient(ellipse 40% 45% at 94% 45%, rgba(215, 125, 45, 0.08) 0%, transparent 70%),
-        radial-gradient(ellipse 50% 50% at 30% 35%, rgba(243, 169, 59, 0.04) 0%, transparent 75%);
+        radial-gradient(ellipse 60% 50% at 20% 25%, rgba(243, 169, 59, 0.06) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 45% at 85% 40%, rgba(220, 130, 40, 0.05) 0%, transparent 65%),
+        radial-gradient(circle at 50% 100%, rgba(18, 20, 28, 0.95) 0%, #090a0f 100%);
       background-repeat: no-repeat;
       background-attachment: fixed;
-      color: var(--zami-text);
-      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
     }
 
-    .landing-container {
-      width: 100%;
-      max-width: 100%;
-      min-height: 100vh;
-      margin: 0 auto;
-      padding: 24px 3.2vw 20px;
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      justify-content: space-between;
+    /* Root Page Wrapper */
+    .landing-wrapper {
       position: relative;
-      box-sizing: border-box;
+      width: 100%;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: max(16px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
+      z-index: 1;
     }
 
-    /* Top Masthead */
-    .landing-header {
+    /* --------------------------------------------------------------------------
+       Top Navigation Bar
+       -------------------------------------------------------------------------- */
+    .zami-nav {
+      width: 100%;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      padding: 6px 0 24px;
+      justify-content: space-between;
+      padding: 6px 0 18px;
+      position: relative;
+      z-index: 20;
     }
+
+    /* Brand Logo: Cursive 'Z' + Italic Serif 'ami' */
     .brand-group {
       display: inline-flex;
-      align-items: center;
-      gap: 0;
+      align-items: baseline;
       text-decoration: none;
+      line-height: 1;
+      user-select: none;
       transition: transform 0.2s ease, opacity 0.2s ease;
     }
     .brand-group:hover {
@@ -89,833 +104,825 @@
       display: inline-flex;
       align-items: baseline;
       line-height: 1;
-      text-decoration: none;
-      background: linear-gradient(135deg, #ffffff 0%, #fae29c 35%, #e5a93c 70%, #d49228 100%);
+      background: linear-gradient(135deg, #ffffff 0%, #fae29c 32%, #e5a93c 70%, #d49228 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      filter: drop-shadow(0 2px 10px rgba(229, 169, 60, 0.3));
-      user-select: none;
+      filter: drop-shadow(0 2px 10px rgba(229, 169, 60, 0.35));
     }
     .zami-text-logo .z-cursive {
-      font-family: 'Pinyon Script', 'Brush Script MT', 'Apple Chancery', cursive;
-      font-size: 2.6rem;
+      font-family: 'Pinyon Script', 'Brush Script MT', cursive;
+      font-size: clamp(2.4rem, 2rem + 1.2vw, 3.1rem);
       font-style: italic;
       font-weight: 400;
-      margin-right: -3px;
+      margin-right: -2px;
       transform: translateY(3px);
       display: inline-block;
     }
     .zami-text-logo .ami-serif {
-      font-family: 'Playfair Display', 'Didot', 'Bodoni MT', 'Cinzel', serif;
-      font-size: 1.75rem;
+      font-family: 'Playfair Display', 'Didot', serif;
+      font-size: clamp(1.6rem, 1.3rem + 0.8vw, 2.05rem);
       font-style: italic;
       font-weight: 700;
       letter-spacing: -0.01em;
       display: inline-block;
     }
-    .header-left {
-      display: flex;
+
+    /* Desktop Navigation Links */
+    .desktop-nav-links {
+      display: none;
       align-items: center;
       gap: 32px;
     }
-    .brand-tagline-badge,
-    .brand-version-badge {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.62rem;
-      font-weight: 700;
-      color: var(--zami-gold);
-      background: rgba(243, 169, 59, 0.12);
-      border: 1px solid rgba(243, 169, 59, 0.28);
-      border-radius: 999px;
-      padding: 3px 10px;
-      margin-left: 12px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      user-select: none;
-    }
-    .header-nav,
-    .landing-nav-center {
-      display: flex;
-      align-items: center;
-      gap: 22px;
-    }
-    .header-nav-link,
-    .landing-nav-link {
-      font-size: 0.84rem;
-      font-weight: 500;
-      color: #9da0ae;
+    .nav-link {
+      color: rgba(255, 255, 255, 0.76);
       text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
+      font-size: 0.92rem;
+      font-weight: 500;
+      letter-spacing: 0.01em;
       transition: color 0.18s ease;
-      cursor: pointer;
-      background: transparent;
-      border: none;
-      padding: 0;
-      font-family: inherit;
     }
-    .header-nav-link:hover,
-    .landing-nav-link:hover {
+    .nav-link:hover {
       color: #ffffff;
     }
-    .btn-nav-link {
-      font-family: inherit;
-      font-size: 0.84rem;
-      font-weight: 500;
-      color: #9da0ae;
-    }
-    .live-pulse-badge,
-    .header-live-pulse {
-      display: inline-flex;
+
+    /* Desktop Nav Actions */
+    .desktop-nav-actions {
+      display: none;
       align-items: center;
-      gap: 7px;
-      padding: 5px 12px;
+      gap: 14px;
+    }
+    .btn-nav-signin {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 999px;
-      background: rgba(16, 185, 129, 0.08);
-      border: 1px solid rgba(16, 185, 129, 0.24);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
+      color: #ffffff;
+      padding: 9px 22px;
+      font-family: inherit;
+      font-size: 0.88rem;
       font-weight: 600;
-      color: #10b981;
-      user-select: none;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      transition: all 0.2s ease;
     }
-    .live-pulse-dot,
-    .pulse-dot-green {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #10b981;
-      box-shadow: 0 0 8px #10b981;
-      animation: livePulse 2s infinite ease-in-out;
+    .btn-nav-signin:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.24);
     }
-    .recent-live-dot {
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: #10b981;
-      box-shadow: 0 0 5px #10b981;
-      display: inline-block;
-    }
-    @keyframes livePulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.35; transform: scale(0.85); }
-    }
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .btn-help-pill {
+    .btn-nav-create {
+      background: linear-gradient(180deg, var(--zami-gold-light) 0%, var(--zami-gold-dark) 100%);
+      color: #0d0f14;
+      border: none;
+      border-radius: 999px;
+      padding: 9px 22px;
+      font-family: inherit;
+      font-size: 0.88rem;
+      font-weight: 700;
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 7px 18px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      background: transparent;
-      color: #e5e6ec;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 0.85rem;
-      font-weight: 500;
       cursor: pointer;
-      text-decoration: none;
-      transition: all 0.18s ease;
+      box-shadow: 0 4px 18px rgba(243, 169, 59, 0.35);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .btn-help-pill:hover {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(255, 255, 255, 0.3);
-      color: #ffffff;
-    }
-    .btn-clay-pill {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 7px 22px;
-      border-radius: 999px;
-      border: none;
-      background: var(--zami-gold);
-      color: #12141a;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 0.85rem;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 4px 18px rgba(243, 169, 59, 0.45);
-      transition: all 0.2s ease;
-    }
-    .btn-clay-pill:hover {
-      background: #f7b447;
+    .btn-nav-create:hover {
       transform: translateY(-1px);
-      box-shadow: 0 6px 24px rgba(243, 169, 59, 0.6);
+      box-shadow: 0 6px 22px rgba(243, 169, 59, 0.5);
     }
 
-    /* Main Two-Column Hero Grid */
-    .landing-hero-grid {
-      display: grid;
-      grid-template-columns: 1.16fr 0.84fr;
-      gap: 36px;
-      align-items: center;
-      width: 100%;
-      margin: auto 0;
-      padding: 6px 0 16px;
-    }
-
-    /* Left Column: Couch Watching Scene - 100% Seamless Blend */
-    /* Left Column: Couch Watching Scene - 100% Seamless Blend */
-    .hero-couch-wrapper {
-      position: relative;
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      background: transparent !important;
-      border: none !important;
-      border-radius: 0 !important;
-      box-shadow: none !important;
-      overflow: visible !important;
-      -webkit-mask-image: radial-gradient(ellipse 84% 80% at 48% 48%, #000 38%, transparent 88%);
-      mask-image: radial-gradient(ellipse 84% 80% at 48% 48%, #000 38%, transparent 88%);
-    }
-    .hero-couch-wrapper::after {
-      display: none !important;
-    }
-    .couch-ambilight-glow {
-      position: absolute;
-      top: 12%;
-      left: 15%;
-      width: 58%;
-      height: 48%;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(243, 169, 59, 0.16) 0%, rgba(243, 169, 59, 0.04) 50%, transparent 75%);
-      filter: blur(48px);
-      pointer-events: none;
-      z-index: 0;
-      transition: background 0.5s ease;
-    }
-    .hero-couch-img {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      max-width: 1020px;
-      height: auto;
-      max-height: 720px;
-      display: block;
-      border: none !important;
-      border-radius: 0 !important;
-      box-shadow: none !important;
-      object-fit: contain;
-      object-position: left center;
-      pointer-events: none;
-      user-select: none;
-      -webkit-mask-image: radial-gradient(ellipse 86% 82% at 48% 48%, #000 40%, transparent 90%);
-      mask-image: radial-gradient(ellipse 86% 82% at 48% 48%, #000 40%, transparent 90%);
-    }
-    .hero-couch-img-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      max-width: 1020px;
-      max-height: 720px;
-      opacity: 0;
-      z-index: 2;
-      pointer-events: none;
-      user-select: none;
-      object-fit: contain;
-      object-position: left center;
-      transition: opacity 0.38s cubic-bezier(0.16, 1, 0.3, 1);
-      -webkit-mask-image: radial-gradient(ellipse 86% 82% at 48% 48%, #000 40%, transparent 90%);
-      mask-image: radial-gradient(ellipse 86% 82% at 48% 48%, #000 40%, transparent 90%);
-    }
-    .hero-couch-img-overlay.active {
-      opacity: 1;
-    }
-
-    /* Right Column: The Access Room Card */
-    .hero-action-column {
+    /* Mobile Hamburger Menu Toggle Button */
+    .btn-hamburger {
       display: flex;
       flex-direction: column;
       justify-content: center;
-      align-items: flex-start;
-      width: 100%;
-      position: relative;
+      align-items: center;
+      gap: 5px;
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
+      min-height: 44px;
+      padding: 0;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      cursor: pointer;
+      color: #ffffff;
+      transition: background 0.18s, border-color 0.18s;
     }
-    .hero-action-column::before {
-      content: '';
+    .btn-hamburger:hover,
+    .btn-hamburger:focus-visible {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.25);
+      outline: none;
+    }
+    .hamburger-bar {
+      display: block;
+      width: 20px;
+      height: 2px;
+      background-color: #ffffff;
+      border-radius: 2px;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    /* --------------------------------------------------------------------------
+       Main Hero Grid Layout
+       -------------------------------------------------------------------------- */
+    .hero-container {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      margin: auto 0;
+      padding: 10px 0 24px;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Left Column / Mobile Top: Hero Info */
+    .hero-content-col {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .hero-headline {
+      font-size: clamp(2.35rem, 1.7rem + 3.2vw, 4.3rem);
+      line-height: 1.08;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #ffffff;
+      margin-bottom: 18px;
+    }
+    .headline-line {
+      display: block;
+    }
+    .headline-gold {
+      color: var(--zami-gold);
+      background: linear-gradient(135deg, #ffffff 0%, #fad074 35%, #f3a93b 70%, #e09628 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 2px 14px rgba(243, 169, 59, 0.3));
+    }
+
+    .hero-subtitle {
+      font-size: clamp(0.96rem, 0.88rem + 0.35vw, 1.15rem);
+      line-height: 1.55;
+      color: var(--zami-text-muted);
+      max-width: 480px;
+      margin-bottom: clamp(24px, 2.5vw, 36px);
+      font-weight: 400;
+    }
+
+    /* Hero CTA Buttons Group */
+    .hero-cta-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      margin-bottom: 32px;
+    }
+
+    /* Primary Gold Pill: Create a room */
+    .btn-cta-create {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+      min-height: 52px;
+      padding: 14px 26px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(180deg, var(--zami-gold-light) 0%, var(--zami-gold-dark) 100%);
+      color: #0c0e13;
+      font-family: inherit;
+      font-size: 1.02rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      box-shadow: 0 8px 28px rgba(243, 169, 59, 0.42);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      user-select: none;
+    }
+    .btn-cta-create:hover {
+      background: linear-gradient(180deg, #f9bd5a 0%, #ef9f30 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 10px 32px rgba(243, 169, 59, 0.58);
+    }
+    .btn-cta-create:active {
+      transform: translateY(0);
+    }
+    .cta-play-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .cta-arrow-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.18s ease;
+    }
+    .btn-cta-create:hover .cta-arrow-icon {
+      transform: translateX(2px);
+    }
+
+    /* Secondary Glass Pill: Join with code */
+    .btn-cta-join {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      min-height: 52px;
+      padding: 14px 26px;
+      border-radius: 999px;
+      border: 1px solid var(--zami-glass-border);
+      background: var(--zami-glass-btn);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 1.02rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+    .btn-cta-join:hover {
+      background: rgba(30, 33, 46, 0.88);
+      border-color: rgba(255, 255, 255, 0.25);
+      transform: translateY(-1px);
+    }
+    .btn-cta-join:active {
+      transform: translateY(0);
+    }
+
+    /* Desktop Features List (Under Buttons in Desktop View) */
+    .desktop-features-row {
+      display: none;
+      align-items: center;
+      gap: 28px;
+      margin-top: 14px;
+      padding-top: 10px;
+    }
+    .feature-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      cursor: default;
+    }
+    .feature-icon-circle {
+      width: 38px;
+      height: 38px;
+      min-width: 38px;
+      min-height: 38px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(22, 24, 32, 0.7);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--zami-gold);
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .feature-item:hover .feature-icon-circle {
+      border-color: rgba(243, 169, 59, 0.45);
+      transform: translateY(-1px);
+    }
+    .feature-label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #b5b7c4;
+      white-space: nowrap;
+    }
+
+    /* --------------------------------------------------------------------------
+       Right Column / Below Hero: Cinematic Media-Player Preview Card
+       -------------------------------------------------------------------------- */
+    .player-preview-wrapper {
+      position: relative;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .player-glow-ambient {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 130%;
-      height: 130%;
-      background: radial-gradient(ellipse 65% 55% at 50% 50%, rgba(243, 169, 59, 0.05) 0%, rgba(18, 20, 26, 0.02) 60%, transparent 80%);
+      width: 108%;
+      height: 108%;
+      background: radial-gradient(ellipse 65% 55% at 50% 50%, rgba(243, 169, 59, 0.12) 0%, rgba(200, 110, 30, 0.04) 50%, transparent 75%);
       filter: blur(48px);
       pointer-events: none;
       z-index: 0;
     }
-    .access-card {
-      width: 100%;
-      max-width: 550px;
-      background: rgba(16, 18, 24, 0.82);
-      backdrop-filter: blur(28px);
-      -webkit-backdrop-filter: blur(28px);
-      border: 1px solid rgba(255, 255, 255, 0.07);
-      border-radius: 22px;
-      padding: 30px 30px 26px;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.75), 0 0 35px rgba(243, 169, 59, 0.04), 0 1px 0 rgba(255, 255, 255, 0.05) inset;
-      display: flex;
-      flex-direction: column;
+
+    .player-preview-card {
       position: relative;
       z-index: 1;
-    }
-
-    /* --------------------------------------------------------------------------
-       Hero Narrative: Headline & Value Proposition
-       -------------------------------------------------------------------------- */
-    .hero-narrative {
       width: 100%;
-      max-width: 550px;
-      margin-bottom: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      position: relative;
-      z-index: 1;
-    }
-    .hero-eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      width: fit-content;
-      padding: 4px 12px;
-      border-radius: 999px;
-      background: rgba(243, 169, 59, 0.08);
-      border: 1px solid rgba(243, 169, 59, 0.22);
-    }
-    .eyebrow-text {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.68rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: #f3a93b;
-    }
-    .eyebrow-sep {
-      color: rgba(255, 255, 255, 0.2);
-      font-size: 0.65rem;
-    }
-    .eyebrow-pill {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 0.7rem;
-      font-weight: 600;
-      color: #ffffff;
-    }
-    .hero-headline {
-      font-size: 2.35rem;
-      line-height: 1.15;
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      color: #ffffff;
-      margin: 0;
-    }
-    .headline-serif-italic {
-      font-family: 'Playfair Display', serif;
-      font-style: italic;
-      font-weight: 600;
-      background: linear-gradient(135deg, #ffffff 0%, #fae29c 40%, #e5a93c 80%, #d49228 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      padding-right: 4px;
-    }
-    .hero-subheading {
-      font-size: 0.94rem;
-      line-height: 1.55;
-      color: #9da0ae;
-      margin: 0;
-    }
-
-    /* Performance micro-chips */
-    .hero-perf-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 2px;
-    }
-    .perf-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 5px 10px;
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      font-size: 0.74rem;
-      font-weight: 500;
-      color: #c9ccd6;
-    }
-    .perf-chip svg {
-      color: #f3a93b;
-      flex-shrink: 0;
-    }
-
-    /* --------------------------------------------------------------------------
-       Instant Room Presets / Mood Selector
-       -------------------------------------------------------------------------- */
-    .room-presets-bar {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 14px;
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-    .room-presets-bar::-webkit-scrollbar {
-      display: none;
-    }
-    .presets-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.64rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      color: #727686;
-      text-transform: uppercase;
-      margin-right: 4px;
-      white-space: nowrap;
-    }
-    .preset-pill {
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      font-size: 0.74rem;
-      font-weight: 500;
-      color: #a3a6b4;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.16s ease;
-      font-family: inherit;
-    }
-    .preset-pill:hover,
-    .preset-pill.active {
-      background: rgba(243, 169, 59, 0.14);
-      border-color: rgba(243, 169, 59, 0.35);
-      color: #f3a93b;
-    }
-
-    /* --------------------------------------------------------------------------
-       Service Compatibility Badges Strip
-       -------------------------------------------------------------------------- */
-    .services-compatibility-block {
-      margin-top: 20px;
-      padding-top: 16px;
-      border-top: 1px solid rgba(255, 255, 255, 0.06);
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .services-block-title {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: #727686;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .services-badges-grid {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 6px;
-    }
-    .service-badge {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
-      padding: 8px 4px 7px;
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.07);
-      text-decoration: none;
-      color: #c9ccd6;
-      cursor: pointer;
-      transition: all 0.18s ease;
-      font-family: inherit;
-    }
-    .service-badge:hover {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(243, 169, 59, 0.4);
-      transform: translateY(-2px);
-      color: #ffffff;
-    }
-    .service-badge-icon {
-      width: 20px;
-      height: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .service-badge-name {
-      font-size: 0.64rem;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-
-    /* --------------------------------------------------------------------------
-       Chrome Extension Callout Banner
-       -------------------------------------------------------------------------- */
-    .extension-callout-banner {
-      margin-top: 16px;
-      padding: 10px 14px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, rgba(243, 169, 59, 0.06) 0%, rgba(20, 22, 28, 0.45) 100%);
-      border: 1px solid rgba(243, 169, 59, 0.2);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-    .ext-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .ext-icon-circle {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      background: rgba(243, 169, 59, 0.12);
-      border: 1px solid rgba(243, 169, 59, 0.3);
-      color: #f3a93b;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-    .ext-text {
-      display: flex;
-      flex-direction: column;
-      gap: 1px;
-    }
-    .ext-title {
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: #ffffff;
-    }
-    .ext-sub {
-      font-size: 0.69rem;
-      color: #8b8f9e;
-    }
-    .btn-ext-download {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 6px 12px;
-      border-radius: 8px;
-      background: rgba(243, 169, 59, 0.18);
-      border: 1px solid rgba(243, 169, 59, 0.4);
-      color: #f3a93b;
-      font-size: 0.74rem;
-      font-weight: 700;
-      text-decoration: none;
-      white-space: nowrap;
-      transition: all 0.18s ease;
-      font-family: inherit;
-    }
-    .btn-ext-download:hover {
-      background: var(--zami-gold);
-      color: #12141a;
-      transform: translateY(-1px);
-    }
-
-    /* --------------------------------------------------------------------------
-       Upgraded Recent Rooms Badges
-       -------------------------------------------------------------------------- */
-    .recent-room-badge {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.58rem;
-      font-weight: 700;
-      padding: 2px 6px;
-      border-radius: 4px;
-      background: rgba(0, 0, 0, 0.65);
-      backdrop-filter: blur(4px);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      color: #e5a93c;
-      letter-spacing: 0.02em;
-    }
-    .recent-room-live {
-      position: absolute;
-      top: 6px;
-      right: 6px;
-      z-index: 3;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 2px 6px;
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.7);
-      border: 1px solid rgba(16, 185, 129, 0.35);
-      color: #10b981;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.56rem;
-      font-weight: 700;
-    }
-
-    /* --------------------------------------------------------------------------
-       Bottom 4-Card Features Showcase
-       -------------------------------------------------------------------------- */
-    .landing-features-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      width: 100%;
-      margin-top: 26px;
-      padding-top: 20px;
-      border-top: 1px solid rgba(255, 255, 255, 0.06);
-    }
-    .feature-card {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      padding: 14px 16px;
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      transition: all 0.2s ease;
-    }
-    .feature-card:hover {
-      background: rgba(255, 255, 255, 0.04);
-      border-color: rgba(243, 169, 59, 0.3);
-      transform: translateY(-2px);
-    }
-    .feature-card-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      background: rgba(243, 169, 59, 0.1);
-      border: 1px solid rgba(243, 169, 59, 0.25);
-      color: #f3a93b;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-    .feature-card-body {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-    }
-    .feature-card-body h4 {
-      font-size: 0.88rem;
-      font-weight: 700;
-      color: #ffffff;
-      margin: 0;
-    }
-    .feature-card-body p {
-      font-size: 0.74rem;
-      color: #8b8f9e;
-      line-height: 1.45;
-      margin: 0;
-    }
-
-    /* Card Row 1: Top Bar with Avatar Pill */
-    .card-top-bar {
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      margin-bottom: 14px;
-      position: relative;
-    }
-    .profile-pill {
-      background: #181a22;
+      max-width: 100%;
+      background: #0f1118;
       border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 999px;
-      padding: 4px 10px 4px 4px;
+      border-radius: clamp(16px, 1.8vw, 24px);
+      box-shadow: 
+        0 24px 60px rgba(0, 0, 0, 0.85),
+        0 0 40px rgba(243, 169, 59, 0.06),
+        0 1px 0 rgba(255, 255, 255, 0.08) inset;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Screen Container */
+    .preview-screen-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9.6;
+      background: #090a0f;
+      overflow: hidden;
+    }
+
+    .preview-screen-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+      transition: transform 0.4s ease;
+    }
+
+    .preview-screen-scrim {
+      position: absolute;
+      inset: 0;
+      background: 
+        linear-gradient(180deg, rgba(7, 8, 12, 0.65) 0%, rgba(7, 8, 12, 0.1) 28%, rgba(7, 8, 12, 0.1) 65%, rgba(7, 8, 12, 0.82) 100%),
+        radial-gradient(ellipse 80% 60% at 50% 50%, transparent 40%, rgba(0, 0, 0, 0.4) 100%);
+      pointer-events: none;
+    }
+
+    /* Top Floating Status Badges */
+    .preview-top-bar {
+      position: absolute;
+      top: clamp(10px, 1.8vw, 18px);
+      left: clamp(10px, 1.8vw, 18px);
+      right: clamp(10px, 1.8vw, 18px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      z-index: 5;
+    }
+
+    .preview-pill {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      transition: all 0.18s ease;
+      gap: 7px;
+      padding: clamp(5px, 0.8vw, 7px) clamp(10px, 1.2vw, 14px);
+      border-radius: 999px;
+      background: rgba(14, 16, 24, 0.78);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #ffffff;
+      font-size: clamp(0.72rem, 0.68rem + 0.2vw, 0.82rem);
+      font-weight: 500;
+      white-space: nowrap;
       user-select: none;
     }
-    .profile-pill:hover {
-      background: #20232e;
-      border-color: rgba(255, 255, 255, 0.22);
+
+    .pill-status {
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
     }
-    .profile-pill[aria-expanded="true"] {
-      background: #232634;
-      border-color: var(--zami-gold);
-    }
-    .profile-avatar-circle {
-      width: 28px;
-      height: 28px;
+    .status-pulse-dot {
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
-      border: 1.5px solid var(--zami-gold);
+      background: #22c55e;
+      box-shadow: 0 0 8px #22c55e;
+      flex-shrink: 0;
+    }
+    .status-pill-text {
+      color: #f1f2f6;
+    }
+
+    .pill-room {
+      cursor: pointer;
+      color: #d1d3dc;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+      transition: all 0.18s ease;
+      text-decoration: none;
+    }
+    .pill-room:hover,
+    .pill-room:focus-visible {
+      background: rgba(22, 25, 38, 0.92);
+      border-color: rgba(243, 169, 59, 0.45);
+      color: #ffffff;
+      outline: none;
+    }
+    .pill-room-icon {
+      color: var(--zami-gold);
+      flex-shrink: 0;
+    }
+    .room-code-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      color: #ffffff;
+      letter-spacing: -0.01em;
+    }
+    .pill-copy-icon {
+      color: #8c8e9b;
+      margin-left: 2px;
+      flex-shrink: 0;
+      transition: color 0.18s;
+    }
+    .pill-room:hover .pill-copy-icon {
+      color: #ffffff;
+    }
+
+    /* Toast Notification for Copying */
+    .preview-toast {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.9);
+      background: rgba(18, 20, 28, 0.94);
+      border: 1px solid var(--zami-gold);
+      color: #ffffff;
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.8), 0 0 16px rgba(243, 169, 59, 0.35);
+      backdrop-filter: blur(12px);
+      z-index: 20;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .preview-toast.active {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    /* Participant Avatars: Desktop Vertical Stack */
+    .preview-avatars-desktop {
+      position: absolute;
+      right: clamp(12px, 1.8vw, 20px);
+      top: 50%;
+      transform: translateY(-50%);
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 5;
+    }
+    .avatar-item {
+      position: relative;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      background: #181a24;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+      transition: transform 0.2s ease, border-color 0.2s ease;
+      cursor: default;
+    }
+    .avatar-item:hover {
+      transform: scale(1.1);
+      border-color: #ffffff;
+      z-index: 2;
+    }
+    .avatar-host {
+      border-color: var(--zami-gold);
+      box-shadow: 0 0 12px rgba(243, 169, 59, 0.45);
+    }
+    .avatar-thumb {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
       object-fit: cover;
       display: block;
     }
-    .profile-chevron {
-      color: #8e909d;
-      transition: transform 0.2s ease;
-    }
-    .profile-pill[aria-expanded="true"] .profile-chevron {
-      transform: rotate(180deg);
-    }
-
-    /* Profile Popover Drawer */
-    .profile-drawer {
+    .crown-badge {
       position: absolute;
-      top: calc(100% + 8px);
-      right: 0;
-      width: 270px;
-      background: #181a23;
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      border-radius: 16px;
-      padding: 16px;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8);
-      z-index: 100;
+      top: -6px;
+      right: -6px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #10121a;
+      border: 1px solid var(--zami-gold);
       display: flex;
-      flex-direction: column;
-      gap: 12px;
-      animation: popoverFadeIn 0.18s ease;
-    }
-    .profile-drawer[hidden] {
-      display: none !important;
-    }
-    @keyframes popoverFadeIn {
-      from { opacity: 0; transform: translateY(-4px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .visually-hidden {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
-    }
-    .drawer-label {
-      font-size: 0.68rem;
-      font-family: 'JetBrains Mono', monospace;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--zami-text-dim);
-    }
-    .drawer-input {
-      width: 100%;
-      padding: 9px 12px;
-      background: #0f1116;
-      border: 1px solid var(--zami-card-border);
-      border-radius: 8px;
-      color: var(--zami-text);
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 0.85rem;
-      outline: none;
-      transition: border-color 0.18s;
-    }
-    .drawer-input:focus {
-      border-color: var(--zami-gold);
-    }
-    .color-picker-row {
-      display: flex;
-      gap: 8px;
       align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
     }
-    .color-choice {
-      width: 24px;
-      height: 24px;
-      border-radius: 6px;
-      cursor: pointer;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 0;
-      transition: transform 0.18s, border-color 0.18s;
-    }
-    .color-choice:hover {
-      transform: scale(1.15);
-      border-color: #ffffff;
-    }
-    .color-choice.selected {
-      border-color: #ffffff;
-      transform: scale(1.15);
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
-    }
-
-    /* Card Row 2: Create a Room Primary Gold Button */
-    .btn-create-room {
-      width: 100%;
-      min-height: 58px;
-      background: linear-gradient(180deg, var(--zami-gold-light) 0%, var(--zami-gold-dark) 100%);
-      color: #12141a;
-      border-radius: 16px;
-      border: none;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 1.06rem;
+    .avatar-count {
+      background: #1c1f2b;
+      border-color: rgba(255, 255, 255, 0.16);
+      font-size: 0.72rem;
       font-weight: 700;
-      letter-spacing: 0.01em;
-      box-shadow: 0 8px 32px var(--zami-gold-glow);
+      color: #d8dae3;
+    }
+
+    /* Participant Avatars: Mobile Horizontal Stack Overlay */
+    .preview-avatars-mobile {
+      position: absolute;
+      right: 12px;
+      bottom: 12px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      padding: 0 24px;
-      cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 5;
     }
-    .btn-create-room:hover {
-      background: linear-gradient(180deg, #f9bd5c 0%, #f0a73b 100%);
-      transform: translateY(-1px);
-      box-shadow: 0 10px 36px rgba(243, 169, 59, 0.6);
-    }
-    .btn-create-room:active {
-      transform: translateY(0);
-    }
-    .btn-create-left {
-      display: inline-flex;
+    .mob-avatar {
+      position: relative;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1.5px solid #090a0f;
+      background: #181a24;
+      margin-left: -7px;
+      display: flex;
       align-items: center;
-      gap: 12px;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
     }
-    .btn-create-icon {
+    .mob-avatar:first-child {
+      margin-left: 0;
+    }
+    .mob-avatar.avatar-host {
+      border-color: var(--zami-gold);
+      z-index: 4;
+    }
+    .crown-badge-mob {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #10121a;
+      border: 1px solid var(--zami-gold);
       display: flex;
       align-items: center;
       justify-content: center;
     }
+    .avatar-count-mob {
+      background: #1e212d;
+      color: #e2e4ee;
+      font-size: 0.64rem;
+      font-weight: 700;
+      border-color: rgba(255, 255, 255, 0.2);
+    }
 
-    /* Card Row 3: Subtle OR Separator */
-    .or-divider {
+    /* Bottom Playback Controls Bar */
+    .preview-controls-bar {
+      width: 100%;
+      background: rgba(14, 16, 24, 0.96);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding: clamp(8px, 1.2vw, 14px) clamp(12px, 1.8vw, 20px);
       display: flex;
       align-items: center;
-      text-align: center;
-      gap: 16px;
-      margin: 18px 0;
-      color: var(--zami-text-dim);
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-    }
-    .or-divider::before,
-    .or-divider::after {
-      content: '';
-      flex: 1;
-      border-bottom: 1px solid var(--zami-card-border);
+      gap: clamp(8px, 1.2vw, 16px);
+      z-index: 6;
     }
 
-    /* Card Row 4: Join Room Form Row */
-    .join-row {
+    .ctrl-btn {
+      background: transparent;
+      border: none;
+      color: #d1d3df;
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
+      min-height: 32px;
+      padding: 0;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: color 0.18s, background 0.18s;
+      flex-shrink: 0;
+    }
+    .ctrl-btn:hover,
+    .ctrl-btn:focus-visible {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.08);
+      outline: none;
+    }
+    .ctrl-play {
+      color: #ffffff;
+    }
+    .ctrl-play:hover {
+      color: var(--zami-gold);
+    }
+
+    .ctrl-time {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(0.72rem, 0.68rem + 0.15vw, 0.82rem);
+      font-weight: 500;
+      color: #9da0ae;
+      white-space: nowrap;
+      user-select: none;
+      flex-shrink: 0;
+    }
+
+    /* Scrubber Progress Bar */
+    .ctrl-scrubber {
+      flex: 1;
+      height: 24px;
       display: flex;
-      gap: 10px;
+      align-items: center;
+      cursor: pointer;
+      position: relative;
+      touch-action: none;
+    }
+    .scrubber-track {
+      position: relative;
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.16);
+      border-radius: 999px;
+      overflow: visible;
+      transition: height 0.18s ease;
+    }
+    .ctrl-scrubber:hover .scrubber-track {
+      height: 6px;
+    }
+    .scrubber-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      background: linear-gradient(90deg, #e5a93c 0%, #f7b447 100%);
+      border-radius: 999px;
+    }
+    .scrubber-knob {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 2px solid var(--zami-gold);
+      box-shadow: 0 0 8px rgba(243, 169, 59, 0.6);
+      transition: transform 0.15s ease;
+    }
+    .ctrl-scrubber:hover .scrubber-knob {
+      transform: translate(-50%, -50%) scale(1.2);
+    }
+
+    .ctrl-actions-right {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    /* --------------------------------------------------------------------------
+       Mobile Features Row (Shown below player on mobile < 768px)
+       -------------------------------------------------------------------------- */
+    .mobile-features-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      width: 100%;
+      padding: 16px 4px 6px;
+      margin-top: 10px;
+    }
+    .mob-feature-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 8px;
+    }
+    .mob-feature-icon {
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
+      min-height: 44px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(20, 22, 30, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--zami-gold);
+    }
+    .mob-feature-text {
+      font-size: 0.74rem;
+      font-weight: 500;
+      color: #a0a3b2;
+      line-height: 1.3;
+    }
+
+    /* --------------------------------------------------------------------------
+       Desktop Couch Silhouette Backdrop (>= 768px only)
+       -------------------------------------------------------------------------- */
+    .desktop-couch-backdrop {
+      display: none;
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .desktop-couch-img {
+      width: 100%;
+      height: auto;
+      max-height: 46vh;
+      object-fit: cover;
+      object-position: center bottom;
+      display: block;
+      opacity: 0.88;
+      -webkit-mask-image: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.2) 20%, #000000 65%, #000000 100%);
+      mask-image: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.2) 20%, #000000 65%, #000000 100%);
+    }
+
+    /* --------------------------------------------------------------------------
+       Modal Dialogs: Join Room, Mobile Nav, Profile & Help
+       -------------------------------------------------------------------------- */
+    .zami-dialog {
+      border: none;
+      padding: 0;
+      background: transparent;
+      max-width: 460px;
+      width: calc(100% - 32px);
+      margin: auto;
+      border-radius: 24px;
+    }
+    .zami-dialog::backdrop {
+      background: rgba(0, 0, 0, 0.82);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .dialog-card {
+      background: #13151d;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 24px;
+      padding: 26px 24px 22px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.9), 0 0 35px rgba(243, 169, 59, 0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      color: #ffffff;
+    }
+    .dialog-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .dialog-title-group h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 4px;
+    }
+    .dialog-title-group p {
+      font-size: 0.86rem;
+      color: var(--zami-text-muted);
+      line-height: 1.45;
+    }
+    .btn-dialog-close {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--zami-text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.18s;
+      flex-shrink: 0;
+    }
+    .btn-dialog-close:hover {
+      background: rgba(255, 255, 255, 0.14);
+      color: #ffffff;
+    }
+
+    .dialog-input-wrap {
+      position: relative;
       width: 100%;
     }
-    .join-input-wrap {
-      position: relative;
-      flex: 1;
-    }
-    .join-link-icon {
+    .dialog-input-icon {
       position: absolute;
       left: 14px;
       top: 50%;
@@ -923,700 +930,771 @@
       color: var(--zami-text-dim);
       pointer-events: none;
     }
-    .join-input {
+    .dialog-input {
       width: 100%;
-      min-height: 52px;
+      min-height: 50px;
       padding: 12px 14px 12px 44px;
-      background: var(--zami-input-bg);
-      border: 1px solid var(--zami-card-border);
+      background: #0a0b10;
+      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 14px;
       color: #ffffff;
-      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-family: inherit;
       font-size: 0.95rem;
       outline: none;
-      transition: border-color 0.18s, box-shadow 0.18s;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
-    .join-input:focus {
+    .dialog-input:focus {
       border-color: var(--zami-gold);
       box-shadow: 0 0 0 1px var(--zami-gold);
     }
-    .join-input::placeholder {
-      color: var(--zami-text-dim);
-    }
-    .btn-join {
-      min-height: 52px;
-      padding: 0 24px;
-      background: var(--zami-btn-dark);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 14px;
-      color: #ffffff;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      white-space: nowrap;
-      transition: all 0.18s ease;
-    }
-    .btn-join:hover {
-      background: #222530;
-      border-color: rgba(255, 255, 255, 0.25);
+    .dialog-input::placeholder {
+      color: #5c5e6f;
     }
 
-    /* Card Row 5: Recent Rooms */
-    .recent-rooms-block {
-      margin-top: 22px;
+    .dialog-actions {
       display: flex;
-      flex-direction: column;
-    }
-    .recent-header {
-      display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 6px;
     }
-    .recent-title {
+    .btn-dialog-cancel {
+      min-height: 46px;
+      padding: 0 18px;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      color: var(--zami-text-muted);
+      font-family: inherit;
       font-size: 0.92rem;
       font-weight: 600;
-      color: #ffffff;
-    }
-    .recent-see-all {
-      font-size: 0.82rem;
-      font-weight: 500;
-      color: var(--zami-gold);
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      cursor: pointer;
-      transition: opacity 0.18s ease;
-    }
-    .recent-see-all:hover {
-      opacity: 0.85;
-    }
-    .recent-cards-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-    }
-    .recent-room-card {
-      position: relative;
-      aspect-ratio: 16/9;
-      border-radius: 12px;
-      overflow: hidden;
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      text-decoration: none;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      padding: 8px 10px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
-      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s, box-shadow 0.2s;
-    }
-    .recent-room-card:hover,
-    .recent-room-card:focus-visible,
-    .recent-room-card.active-preview {
-      transform: translateY(-2px) scale(1.02);
-      border-color: var(--zami-gold);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7), 0 0 14px rgba(243, 169, 59, 0.4);
-      outline: none;
-    }
-    .recent-room-scrim {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(180deg, rgba(7, 8, 10, 0.15) 0%, rgba(7, 8, 10, 0.4) 40%, rgba(7, 8, 10, 0.92) 100%);
-      pointer-events: none;
-      transition: background 0.2s;
-    }
-    .recent-room-card:hover .recent-room-scrim,
-    .recent-room-card:focus-visible .recent-room-scrim,
-    .recent-room-card.active-preview .recent-room-scrim {
-      background: linear-gradient(180deg, rgba(7, 8, 10, 0.05) 0%, rgba(7, 8, 10, 0.3) 40%, rgba(7, 8, 10, 0.88) 100%);
-    }
-    .recent-room-info {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 4px;
-      width: 100%;
-    }
-    .recent-room-name {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
-      font-weight: 500;
-      color: #ffffff;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
-      letter-spacing: -0.01em;
-    }
-
-    /* Bottom Features Row */
-    .landing-features-bar {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 32px;
-      padding: 16px 0 8px;
-      margin-top: auto;
-      width: 100%;
-    }
-    .feature-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      cursor: default;
-    }
-    .feature-icon-circle {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      background: #13151b;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--zami-gold);
-      transition: all 0.2s ease;
-    }
-    .feature-icon-circle.sync-circle {
-      color: #ffffff;
-    }
-    .feature-item:hover .feature-icon-circle {
-      border-color: rgba(243, 169, 59, 0.4);
-      transform: translateY(-2px);
-    }
-    .feature-label {
-      font-size: 0.82rem;
-      font-weight: 500;
-      color: #9da0ae;
-      text-align: center;
-      white-space: nowrap;
-    }
-    .feature-divider {
-      width: 1px;
-      height: 32px;
-      background: rgba(255, 255, 255, 0.06);
-    }
-
-    /* Dedicated Help & Guide Dialog */
-    .zami-help-dialog {
-      border: none;
-      padding: 0;
-      background: transparent;
-      max-width: 600px;
-      width: calc(100% - 32px);
-      margin: auto;
-      border-radius: 20px;
-    }
-    .zami-help-dialog::backdrop {
-      background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(8px);
-    }
-    .zami-help-container {
-      background: var(--zami-card-bg);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 20px;
-      padding: 28px;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8);
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-    .help-dialog-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-bottom: 14px;
-      border-bottom: 1px solid var(--zami-card-border);
-    }
-    .help-dialog-title {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: #ffffff;
-    }
-    .btn-close-help {
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid var(--zami-card-border);
-      color: var(--zami-text-muted);
-      border-radius: 8px;
-      width: 32px;
-      height: 32px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
       cursor: pointer;
       transition: all 0.18s;
     }
-    .btn-close-help:hover {
-      background: rgba(255, 255, 255, 0.14);
+    .btn-dialog-cancel:hover {
+      background: rgba(255, 255, 255, 0.08);
       color: #ffffff;
     }
-    .help-dialog-body {
+    .btn-dialog-primary {
+      min-height: 46px;
+      padding: 0 22px;
+      background: linear-gradient(180deg, var(--zami-gold-light) 0%, var(--zami-gold-dark) 100%);
+      border: none;
+      border-radius: 12px;
+      color: #101218;
+      font-family: inherit;
+      font-size: 0.92rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(243, 169, 59, 0.4);
+      transition: all 0.18s;
+    }
+    .btn-dialog-primary:hover {
+      background: #f7b447;
+      transform: translateY(-1px);
+    }
+
+    /* Mobile Nav Drawer Sheet */
+    .mobile-nav-dialog {
+      border: none;
+      padding: 0;
+      background: transparent;
+      width: 100%;
+      max-width: 100%;
+      height: 100dvh;
+      max-height: 100dvh;
+      margin: 0;
+      top: 0;
+      left: 0;
+      position: fixed;
+    }
+    .mobile-nav-dialog::backdrop {
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+    }
+    .mobile-nav-sheet {
+      width: 100%;
+      height: 100%;
+      background: #0f1118;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      padding: max(20px, env(safe-area-inset-top)) 24px max(24px, env(safe-area-inset-bottom));
+      box-sizing: border-box;
     }
-    .help-card {
+    .mobile-nav-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .mobile-nav-links {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 32px 0;
+    }
+    .mobile-nav-link {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #ffffff;
+      text-decoration: none;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .mobile-nav-link::after {
+      content: '→';
+      color: var(--zami-gold);
+      font-weight: 400;
+    }
+    .mobile-nav-actions {
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-top: 20px;
+    }
+    .btn-mob-signin {
+      width: 100%;
+      min-height: 50px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-mob-create {
+      width: 100%;
+      min-height: 50px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, var(--zami-gold-light) 0%, var(--zami-gold-dark) 100%);
+      border: none;
+      color: #101218;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    /* Help & Guide Dialog */
+    .help-dialog {
+      max-width: 580px;
+    }
+    .help-cards-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .help-item-card {
       display: flex;
       gap: 14px;
       padding: 14px;
-      background: #161820;
-      border: 1px solid var(--zami-card-border);
-      border-radius: 12px;
+      background: #171922;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
     }
-    .help-card-icon {
+    .help-item-icon {
       color: var(--zami-gold);
       flex-shrink: 0;
       margin-top: 2px;
     }
-    .help-card-content h4 {
-      font-size: 0.92rem;
+    .help-item-info h4 {
+      font-size: 0.94rem;
       font-weight: 600;
       color: #ffffff;
       margin-bottom: 4px;
     }
-    .help-card-content p {
-      font-size: 0.82rem;
+    .help-item-info p {
+      font-size: 0.84rem;
       color: var(--zami-text-muted);
-      line-height: 1.5;
+      line-height: 1.45;
+    }
+
+    /* Profile / Settings Dialog */
+    .color-picker-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .color-dot {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: transform 0.18s, border-color 0.18s;
+    }
+    .color-dot:hover {
+      transform: scale(1.15);
+    }
+    .color-dot.selected {
+      border-color: #ffffff;
+      transform: scale(1.15);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
     }
 
     /* --------------------------------------------------------------------------
-       Mobile Responsiveness
+       RESPONSIVE BREAKPOINTS: Mobile -> Tablet -> Desktop
        -------------------------------------------------------------------------- */
-    @media (max-width: 900px) {
-      .landing-container {
-        padding: 16px 20px 24px;
-      }
-      .landing-header {
-        padding: 4px 0 12px;
-      }
-      .landing-hero-grid {
-        grid-template-columns: 1fr;
-        gap: 16px;
-        padding: 0 0 16px;
-      }
-      .hero-couch-wrapper {
-        width: 100%;
-        max-width: 100%;
-        justify-content: center;
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-      }
-      .hero-couch-img,
-      .hero-couch-img-overlay {
-        max-width: 100%;
-        max-height: 250px;
-        object-fit: contain;
-        object-position: center;
-      }
-      .couch-ambilight-glow {
-        top: 8%;
-        left: 10%;
-        width: 80%;
-        height: 70%;
-        filter: blur(36px);
-      }
-      .hero-action-column {
-        align-items: center;
-      }
-      .access-card {
-        max-width: 100%;
-        padding: 20px 18px;
-        border-radius: 18px;
-      }
-      .btn-create-room {
-        min-height: 50px;
-        padding: 0 16px;
-        font-size: 0.96rem;
-      }
-      .join-row {
-        flex-direction: row;
-      }
-      .join-input {
-        min-height: 46px;
-        font-size: 0.88rem;
-      }
-      .btn-join {
-        min-height: 46px;
-        padding: 0 16px;
-      }
-      .landing-nav-center,
-      .header-nav {
-        display: none !important;
-      }
-      .hero-narrative {
-        max-width: 100%;
-        text-align: center;
-        align-items: center;
+
+    /* Small Mobile (320px - 360px) Adjustments */
+    @media (max-width: 360px) {
+      .landing-wrapper {
+        padding-left: 14px;
+        padding-right: 14px;
       }
       .hero-headline {
-        font-size: 1.85rem;
+        font-size: 2.15rem;
       }
-      .hero-perf-row {
-        justify-content: center;
+      .btn-cta-create, .btn-cta-join {
+        font-size: 0.94rem;
+        min-height: 48px;
+        padding: 12px 18px;
       }
-      .services-badges-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 8px;
+      .preview-pill {
+        padding: 4px 8px;
+        font-size: 0.68rem;
       }
-      .landing-features-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-        margin-top: 18px;
-        padding-top: 16px;
+      .ctrl-time {
+        font-size: 0.68rem;
       }
-      .recent-cards-grid {
-        gap: 8px;
+      .ctrl-btn-gear {
+        display: none;
       }
-      .recent-room-card {
-        padding: 6px 8px;
-        border-radius: 10px;
-      }
-      .recent-room-name {
-        font-size: 0.64rem;
+      .mob-feature-text {
+        font-size: 0.68rem;
       }
     }
-    @media (max-width: 580px) {
-      .landing-features-grid {
-        grid-template-columns: 1fr;
+
+    /* Tablet (768px - 1023px) */
+    @media (min-width: 768px) {
+      .landing-wrapper {
+        padding: 24px 32px 28px;
       }
-      .hero-headline {
-        font-size: 1.6rem;
+      .zami-nav {
+        padding: 8px 0 24px;
       }
-      .extension-callout-banner {
-        flex-direction: column;
-        align-items: flex-start;
+      .desktop-nav-actions {
+        display: flex;
       }
-      .btn-ext-download {
-        align-self: flex-end;
+      .btn-hamburger {
+        display: none;
+      }
+
+      /* Tablet Stacked / Two-Column Hero */
+      .hero-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 36px;
+        align-items: center;
+        padding: 20px 0 32px;
+      }
+
+      .hero-cta-group {
+        flex-direction: row;
+        width: auto;
+        gap: 14px;
+      }
+      .btn-cta-create, .btn-cta-join {
+        width: auto;
+        padding: 15px 28px;
+      }
+
+      .mobile-features-row {
+        display: none;
+      }
+      .desktop-features-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+
+      /* Avatars switch to vertical desktop layout */
+      .preview-avatars-desktop {
+        display: flex;
+      }
+      .preview-avatars-mobile {
+        display: none;
+      }
+
+      /* Ambient couch backdrop on tablet/desktop */
+      .desktop-couch-backdrop {
+        display: block;
+      }
+    }
+
+    /* Laptop / Desktop (1024px+) */
+    @media (min-width: 1024px) {
+      .landing-wrapper {
+        padding: 28px 48px 36px;
+      }
+      .desktop-nav-links {
+        display: flex;
+      }
+      .hero-container {
+        grid-template-columns: 1.05fr 1.15fr;
+        gap: 56px;
+        padding: 32px 0 48px;
+      }
+      .desktop-features-row {
+        gap: 32px;
+      }
+      .desktop-couch-img {
+        max-height: 48vh;
+      }
+    }
+
+    /* Ultrawide Displays (1440px+) */
+    @media (min-width: 1440px) {
+      .hero-container {
+        gap: 72px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="landing-container">
-    <!-- Top Masthead -->
-    <header class="landing-header">
-      <div class="header-left">
-        <a href="/" class="brand-group" aria-label="Zami Home">
-          <span class="zami-text-logo">
-            <span class="z-cursive">Z</span><span class="ami-serif">ami</span>
-          </span>
-          <span class="brand-tagline-badge">Cinema 2.0</span>
-        </a>
+  <div class="landing-wrapper">
+    <!-- Top Navigation Bar -->
+    <header class="zami-nav" id="top-nav">
+      <a href="/" class="brand-group" aria-label="ZAMI Home">
+        <span class="zami-text-logo">
+          <span class="z-cursive">Z</span><span class="ami-serif">ami</span>
+        </span>
+      </a>
 
-        <nav class="header-nav" aria-label="Primary Navigation">
-          <a href="#services" class="header-nav-link" id="nav-link-services">Platforms</a>
-          <a href="#features" class="header-nav-link" id="nav-link-features">Features</a>
-          <a href="/api/download-extension" class="header-nav-link" target="_blank" rel="noopener">Extension</a>
-          <button type="button" class="header-nav-link btn-nav-link" id="btn-nav-help">Guide</button>
-        </nav>
-      </div>
+      <!-- Desktop Nav Links -->
+      <nav class="desktop-nav-links" aria-label="Main Navigation">
+        <a href="#how-it-works" class="nav-link" id="link-how-it-works">How it works</a>
+        <a href="#features" class="nav-link" id="link-features">Features</a>
+        <a href="#supported-apps" class="nav-link" id="link-supported-apps">Supported Apps</a>
+      </nav>
 
-      <div class="header-actions">
-        <div class="live-pulse-badge" title="Active users streaming across Zami rooms right now">
-          <span class="live-pulse-dot"></span>
-          <span class="live-pulse-text"><strong>14,280</strong> Online</span>
-        </div>
-
-        <button type="button" class="btn-help-pill" id="btn-open-help" title="Setup and Streaming Help">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"/>
-            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
-            <line x1="12" y1="17" x2="12.01" y2="17"/>
+      <!-- Desktop Nav Actions -->
+      <div class="desktop-nav-actions">
+        <button type="button" class="btn-nav-signin" id="btn-nav-signin">Sign in</button>
+        <button type="button" class="btn-nav-create" id="btn-nav-create">
+          <span>Create a room</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <polyline points="12 5 19 12 12 19"/>
           </svg>
-          <span>Help</span>
         </button>
       </div>
+
+      <!-- Mobile Hamburger Button (< 768px) -->
+      <button type="button" class="btn-hamburger" id="btn-hamburger" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-nav-dialog">
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+      </button>
     </header>
 
-    <!-- Main Two-Column Hero Grid -->
-    <main class="landing-hero-grid">
-      <!-- Left Column: Cinematic Couch Visual with Dynamic TV Preview -->
-      <section class="hero-couch-wrapper" id="hero-couch-wrapper">
-        <div class="couch-ambilight-glow" id="couch-ambilight-glow"></div>
-        <img src="/img/couch_seamless_blend_2x.png" alt="Friends watching synchronized cinema on sofa" class="hero-couch-img" id="couch-img-default" data-scene="default" width="1090" height="800">
-        <img src="/img/couch_scene_astronaut_2x.png" alt="Astronaut screening on TV" class="hero-couch-img hero-couch-img-overlay" id="couch-img-astronaut" data-scene="astronaut" width="1090" height="800">
-        <img src="/img/couch_scene_sunset_2x.png" alt="Sunset silhouettes screening on TV" class="hero-couch-img hero-couch-img-overlay" id="couch-img-sunset" data-scene="sunset" width="1090" height="800">
-        <img src="/img/couch_scene_neon_2x.png" alt="Neon noir screening on TV" class="hero-couch-img hero-couch-img-overlay" id="couch-img-neon" data-scene="neon" width="1090" height="800">
-      </section>
+    <!-- Main Hero Container -->
+    <main class="hero-container">
+      <!-- Left Column / Hero Text and CTAs -->
+      <section class="hero-content-col">
+        <h1 class="hero-headline">
+          <span class="headline-line">Your people.</span>
+          <span class="headline-line">Your screen.</span>
+          <span class="headline-line headline-gold">In sync.</span>
+        </h1>
 
-      <!-- Right Column: Editorial Hero & Full-Featured Access Hub -->
-      <section class="hero-action-column">
-        <!-- Hero Narrative Block: Value Proposition & Live Performance Chips -->
-        <div class="hero-narrative">
-          <span class="hero-eyebrow">Universal Watch Party Experience</span>
-          <h1 class="hero-headline">Watch Together.<br><span class="headline-serif-italic">Feel Closer.</span></h1>
-          <p class="hero-subheading">Sync YouTube, streaming platforms, tabs &amp; local 4K movies with friends anywhere in the world. Ultra-low latency, crystal-clear audio.</p>
-          <div class="hero-perf-chips">
-            <span class="perf-chip"><span class="perf-chip-dot"></span>8ms Sync Mesh</span>
-            <span class="perf-chip"><span class="perf-chip-dot"></span>Zero Lag</span>
-            <span class="perf-chip"><span class="perf-chip-dot"></span>Full HD 1080p</span>
-            <span class="perf-chip"><span class="perf-chip-dot"></span>100% Free &amp; Private</span>
-          </div>
-        </div>
+        <p class="hero-subtitle">Watch movies, shows, and videos together, wherever you are.</p>
 
-        <div class="access-card" id="access-card">
-          <!-- Room Mood Presets Selector -->
-          <div class="room-presets-bar" id="room-presets-bar">
-            <span class="presets-label">Quick Mood:</span>
-            <button type="button" class="preset-pill active" data-preset="movie-night" data-scene="astronaut" title="Movie Night Mode">Movie Night</button>
-            <button type="button" class="preset-pill" data-preset="anime-vault" data-scene="neon" title="Anime Vault Mode">Anime Vault</button>
-            <button type="button" class="preset-pill" data-preset="chill-lounge" data-scene="sunset" title="Chill Lounge Mode">Chill Lounge</button>
-            <button type="button" class="preset-pill" data-preset="bollywood" data-scene="neon" title="Bollywood Squad Mode">Bollywood Squad</button>
-          </div>
-
-          <!-- Card Primary Action: Create a Room Primary Button -->
-          <button id="btn-create-room" class="btn-create-room" type="button">
-            <span class="btn-create-left">
-              <span class="btn-create-icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                  <circle cx="12" cy="12" r="11" fill="#121419"/>
-                  <line x1="12" y1="7.5" x2="12" y2="16.5" stroke="#f5b042" stroke-width="2.4" stroke-linecap="round"/>
-                  <line x1="7.5" y1="12" x2="16.5" y2="12" stroke="#f5b042" stroke-width="2.4" stroke-linecap="round"/>
-                </svg>
-              </span>
-              <span>Create a Room</span>
+        <!-- CTA Buttons -->
+        <div class="hero-cta-group">
+          <button type="button" class="btn-cta-create" id="btn-hero-create">
+            <span class="cta-play-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="6 4 20 12 6 20 6 4"/>
+              </svg>
             </span>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#121419" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="5" y1="12" x2="19" y2="12"/>
-              <polyline points="12 5 19 12 12 19"/>
-            </svg>
+            <span>Create a room</span>
+            <span class="cta-arrow-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"/>
+                <polyline points="12 5 19 12 12 19"/>
+              </svg>
+            </span>
           </button>
 
-          <!-- Card Row: OR Divider -->
-          <div class="or-divider">
-            <span>OR</span>
-          </div>
+          <button type="button" class="btn-cta-join" id="btn-hero-join">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+            </svg>
+            <span>Join with code</span>
+          </button>
+        </div>
 
-          <!-- Card Row: Join Room Form Row -->
-          <form id="form-join-room" class="join-row" onsubmit="return false;">
-            <label for="input-join-code" class="visually-hidden">Room Code or Link</label>
-            <div class="join-input-wrap">
-              <svg class="join-link-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+        <!-- Desktop Features Row (visible >= 768px) -->
+        <div class="desktop-features-row" id="desktop-features">
+          <div class="feature-item">
+            <div class="feature-icon-circle">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
               </svg>
-              <input type="text" id="input-join-code" class="join-input" placeholder="Enter room code or paste link" autocomplete="off" spellcheck="false" aria-label="Enter room code or link">
             </div>
-            <button id="btn-join-room" class="btn-join" type="submit" aria-label="Join Room">
-              <span>Join</span>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </button>
-          </form>
-
-          <!-- Supported Streaming Platforms Quick-Launch -->
-          <div class="services-compatibility-block" id="services">
-            <div class="services-header">
-              <span class="services-title">Supported Streaming Hubs</span>
-              <span class="services-sub">Instant 1-Click Launch</span>
-            </div>
-            <div class="services-badges-grid">
-              <button type="button" class="service-badge" data-service="youtube" title="Watch YouTube Together">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-                <span>YouTube</span>
-              </button>
-              <button type="button" class="service-badge" data-service="netflix" title="Watch Netflix Together">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M5.398 0v24L9.1 19.333V0H5.398zm13.204 0v24L14.9 19.333V0h3.702zM9.1 0l5.8 24h-3.702L5.398 4.667V0H9.1z"/></svg>
-                <span>Netflix</span>
-              </button>
-              <button type="button" class="service-badge" data-service="prime" title="Watch Prime Video Together">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                <span>Prime Video</span>
-              </button>
-              <button type="button" class="service-badge" data-service="hotstar" title="Watch Disney+ Hotstar Together">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M10 8l6 4-6 4V8z"/></svg>
-                <span>Hotstar</span>
-              </button>
-              <button type="button" class="service-badge" data-service="local" title="Watch Local 4K Movies Together">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-                <span>Local 4K</span>
-              </button>
-              <button type="button" class="service-badge" data-service="tabcast" title="Tab &amp; Screen WebRTC Broadcast">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-                <span>Tab Cast</span>
-              </button>
-            </div>
+            <span class="feature-label">Synchronized playback</span>
           </div>
 
-          <!-- Chrome Companion Extension Callout -->
-          <div class="extension-callout-banner">
-            <div class="ext-callout-left">
-              <div class="ext-callout-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f5b042" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          <div class="feature-item">
+            <div class="feature-icon-circle">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+              </svg>
+            </div>
+            <span class="feature-label">Low-latency sync</span>
+          </div>
+
+          <div class="feature-item">
+            <div class="feature-icon-circle">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="4" width="14" height="11" rx="2" ry="2"/>
+                <rect x="12" y="9" width="10" height="12" rx="2" ry="2"/>
+                <line x1="6" y1="18" x2="10" y2="18"/>
+              </svg>
+            </div>
+            <span class="feature-label">Works across devices</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column / Mobile: Cinematic Media-Player Preview Card -->
+      <section class="player-preview-wrapper" aria-label="Cinematic synchronized player preview">
+        <div class="player-glow-ambient"></div>
+
+        <div class="player-preview-card" id="player-preview-card">
+          <!-- Screen Area with Sunset Planet -->
+          <div class="preview-screen-container">
+            <img src="/img/sunset_planet_preview.jpg" alt="Synchronized sunset planet stream preview" class="preview-screen-img" width="800" height="622" loading="eager" fetchpriority="high">
+            <div class="preview-screen-scrim"></div>
+
+            <!-- Top Floating Status Badges -->
+            <div class="preview-top-bar">
+              <div class="preview-pill pill-status">
+                <span class="status-pulse-dot"></span>
+                <span class="status-pill-text">Everyone is in sync</span>
+              </div>
+
+              <button type="button" class="preview-pill pill-room" id="btn-copy-preview-room" title="Click to copy room link" aria-label="Copy Room link for zami-7f3k">
+                <svg class="pill-room-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
                 </svg>
+                <span class="room-pill-label">Room • <span class="room-code-tag">zami-7f3k</span></span>
+                <svg class="pill-copy-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Toast notification for link copying -->
+            <div class="preview-toast" id="preview-toast" role="status" aria-live="polite">Room link copied!</div>
+
+            <!-- Desktop Avatars Column (vertical stack on right edge) -->
+            <div class="preview-avatars-desktop" aria-label="Participants in room">
+              <div class="avatar-item avatar-host" title="Host">
+                <img src="/img/avatar_p1.png" alt="Host avatar" class="avatar-thumb">
+                <span class="crown-badge" title="Room Host">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="#f3a93b">
+                    <path d="M2 4l3 12h14l3-12-6 7-4-11-4 11-6-7z"/>
+                  </svg>
+                </span>
               </div>
-              <div class="ext-callout-content">
-                <div class="ext-callout-title">Sync Netflix, Hotstar &amp; Web Players</div>
-                <div class="ext-callout-desc">Get the companion extension for automated playback &amp; DRM audio sync.</div>
+              <div class="avatar-item" title="Sarah">
+                <img src="/img/avatar_p2.png" alt="Participant 2 avatar" class="avatar-thumb">
+              </div>
+              <div class="avatar-item" title="Alex">
+                <img src="/img/avatar_p3.png" alt="Participant 3 avatar" class="avatar-thumb">
+              </div>
+              <div class="avatar-item" title="Maya">
+                <img src="/img/avatar_p4.png" alt="Participant 4 avatar" class="avatar-thumb">
+              </div>
+              <div class="avatar-item avatar-count" title="2 more viewers">
+                <span>+2</span>
               </div>
             </div>
-            <a href="/api/download-extension" class="btn-ext-download" target="_blank" rel="noopener">Install Extension</a>
+
+            <!-- Mobile Avatars Overlay (horizontal stack at bottom-right) -->
+            <div class="preview-avatars-mobile" aria-label="Participants in room">
+              <div class="mob-avatar avatar-host">
+                <img src="/img/avatar_p1.png" alt="Host avatar" class="avatar-thumb">
+                <span class="crown-badge-mob">
+                  <svg width="9" height="9" viewBox="0 0 24 24" fill="#f3a93b">
+                    <path d="M2 4l3 12h14l3-12-6 7-4-11-4 11-6-7z"/>
+                  </svg>
+                </span>
+              </div>
+              <div class="mob-avatar">
+                <img src="/img/avatar_p2.png" alt="Participant 2 avatar" class="avatar-thumb">
+              </div>
+              <div class="mob-avatar">
+                <img src="/img/avatar_p3.png" alt="Participant 3 avatar" class="avatar-thumb">
+              </div>
+              <div class="mob-avatar avatar-count-mob">
+                <span>+2</span>
+              </div>
+            </div>
           </div>
 
-          <!-- Card Row: Recent Rooms Visual Grid -->
-          <div class="recent-rooms-block">
-            <div class="recent-header">
-              <span class="recent-title">Recent Active Rooms</span>
-              <a href="javascript:void(0)" class="recent-see-all" id="btn-see-all-rooms">
-                <span>See all</span>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-              </a>
+          <!-- Bottom Playback Controls Bar -->
+          <div class="preview-controls-bar">
+            <button type="button" class="ctrl-btn ctrl-play" id="btn-preview-play" aria-label="Toggle Play/Pause">
+              <svg class="icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="6 4 20 12 6 20 6 4"/>
+              </svg>
+              <svg class="icon-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display: none;">
+                <rect x="6" y="4" width="4" height="16"/>
+                <rect x="14" y="4" width="4" height="16"/>
+              </svg>
+            </button>
+
+            <span class="ctrl-time" id="preview-time-display">28:14 / 1:56:20</span>
+
+            <div class="ctrl-scrubber" id="preview-scrubber" role="progressbar" aria-valuenow="24" aria-valuemin="0" aria-valuemax="100" tabindex="0" aria-label="Playback scrubber">
+              <div class="scrubber-track">
+                <div class="scrubber-fill" style="width: 24.2%;"></div>
+                <div class="scrubber-knob" style="left: 24.2%;"></div>
+              </div>
             </div>
 
-            <div class="recent-cards-grid" id="recent-cards-grid">
-              <a href="/room/midnight-crew-75" class="recent-room-card" data-scene="astronaut" style="background-image: url('/img/recent_backdrop_1.png');" title="Preview &amp; Join midnight-crew-75">
-                <div class="recent-room-scrim"></div>
-                <span class="recent-room-live"><span class="recent-live-dot"></span>4 live</span>
-                <div class="recent-room-info">
-                  <span class="recent-room-badge">Cosmic</span>
-                  <span class="recent-room-name">midnight-crew-75</span>
-                </div>
-              </a>
-              <a href="/room/cinema-party-35" class="recent-room-card" data-scene="sunset" style="background-image: url('/img/recent_backdrop_2.png');" title="Preview &amp; Join cinema-party-35">
-                <div class="recent-room-scrim"></div>
-                <span class="recent-room-live"><span class="recent-live-dot"></span>2 live</span>
-                <div class="recent-room-info">
-                  <span class="recent-room-badge">Sunset</span>
-                  <span class="recent-room-name">cinema-party-35</span>
-                </div>
-              </a>
-              <a href="/room/bollywood-squad-98" class="recent-room-card" data-scene="neon" style="background-image: url('/img/recent_backdrop_3.png');" title="Preview &amp; Join bollywood-squad-98">
-                <div class="recent-room-scrim"></div>
-                <span class="recent-room-live"><span class="recent-live-dot"></span>6 live</span>
-                <div class="recent-room-info">
-                  <span class="recent-room-badge">Neon</span>
-                  <span class="recent-room-name">bollywood-squad-98</span>
-                </div>
-              </a>
+            <div class="ctrl-actions-right">
+              <button type="button" class="ctrl-btn" id="btn-preview-vol" aria-label="Toggle Mute">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                </svg>
+              </button>
+
+              <button type="button" class="ctrl-btn" id="btn-preview-fs" aria-label="Toggle Fullscreen">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+                </svg>
+              </button>
+
+              <button type="button" class="ctrl-btn ctrl-btn-chat" id="btn-preview-chat" aria-label="Room Chat">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+              </button>
+
+              <button type="button" class="ctrl-btn ctrl-btn-gear" id="btn-preview-gear" aria-label="Settings">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="3"/>
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+              </button>
             </div>
           </div>
         </div>
       </section>
+
+      <!-- Mobile 3-Item Features Row (visible < 768px at bottom) -->
+      <footer class="mobile-features-row" id="mobile-features">
+        <div class="mob-feature-item">
+          <div class="mob-feature-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </div>
+          <span class="mob-feature-text">Synchronized playback</span>
+        </div>
+
+        <div class="mob-feature-item">
+          <div class="mob-feature-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            </svg>
+          </div>
+          <span class="mob-feature-text">Low-latency sync</span>
+        </div>
+
+        <div class="mob-feature-item">
+          <div class="mob-feature-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="4" width="14" height="11" rx="2" ry="2"/>
+              <rect x="12" y="9" width="10" height="12" rx="2" ry="2"/>
+              <line x1="6" y1="18" x2="10" y2="18"/>
+            </svg>
+          </div>
+          <span class="mob-feature-text">Works across devices</span>
+        </div>
+      </footer>
     </main>
 
-    <!-- Bottom Features Showcase -->
-    <footer class="landing-features-grid" id="features">
-      <div class="feature-card">
-        <div class="feature-card-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f5b042" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"/>
-            <polyline points="12 6 12 12 16 14"/>
-          </svg>
-        </div>
-        <div class="feature-card-body">
-          <h4>Sub-Second Sync</h4>
-          <p>Millisecond precision drift correction keeps all viewers synced within frame-level lock.</p>
-        </div>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-card-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f5b042" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-            <line x1="12" y1="19" x2="12" y2="23"/>
-            <line x1="8" y1="23" x2="16" y2="23"/>
-          </svg>
-        </div>
-        <div class="feature-card-body">
-          <h4>Dual-Audio Mixer</h4>
-          <p>Separate streams for room voice chat and movie stereo audio with independent volume dials.</p>
-        </div>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-card-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f5b042" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-          </svg>
-        </div>
-        <div class="feature-card-body">
-          <h4>Stage Reactions</h4>
-          <p>Interactive floating applause, popcorn, and heart particles broadcast in real time across the room.</p>
-        </div>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-card-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f5b042" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-            <line x1="8" y1="21" x2="16" y2="21"/>
-            <line x1="12" y1="17" x2="12" y2="21"/>
-          </svg>
-        </div>
-        <div class="feature-card-body">
-          <h4>Zero Setup</h4>
-          <p>No accounts, no plugins required for guests. Send one link and start watching instantly.</p>
-        </div>
-      </div>
-    </footer>
+    <!-- Desktop Couch Silhouette Backdrop (hidden on mobile) -->
+    <div class="desktop-couch-backdrop" aria-hidden="true">
+      <img src="/img/couch_seamless_blend_2x.png" alt="" class="desktop-couch-img" loading="lazy">
+    </div>
   </div>
 
-  <!-- Dedicated Help & Guide Dialog -->
-  <dialog id="help-modal" class="zami-help-dialog" closedby="any">
-    <div class="zami-help-container">
-      <div class="help-dialog-header">
-        <h3 class="help-dialog-title">Help &amp; Screening Modes</h3>
-        <button type="button" class="btn-close-help" id="btn-close-help" aria-label="Close dialog">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  <!-- Modal Dialog: Join with Code -->
+  <dialog id="join-modal" class="zami-dialog" closedby="any" aria-labelledby="join-dialog-title">
+    <div class="dialog-card">
+      <div class="dialog-header">
+        <div class="dialog-title-group">
+          <h3 id="join-dialog-title">Join a Watch Party</h3>
+          <p>Enter a room code or paste an invite link to jump right in.</p>
+        </div>
+        <button type="button" class="btn-dialog-close" id="btn-close-join" aria-label="Close dialog">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
-      <div class="help-dialog-body">
-        <div class="help-card">
-          <div class="help-card-icon">
+
+      <form id="form-join-modal" onsubmit="return false;">
+        <div class="dialog-input-wrap">
+          <svg class="dialog-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+          </svg>
+          <input type="text" id="input-modal-code" class="dialog-input" placeholder="e.g. velvet-room-24 or room URL" autocomplete="off" spellcheck="false" required aria-label="Room code or link">
+        </div>
+
+        <div class="dialog-actions">
+          <button type="button" class="btn-dialog-cancel" id="btn-cancel-join">Cancel</button>
+          <button type="submit" class="btn-dialog-primary" id="btn-submit-join">
+            <span>Join Room</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Modal Dialog: Mobile Navigation Drawer -->
+  <dialog id="mobile-nav-dialog" class="mobile-nav-dialog" closedby="any" aria-label="Navigation Menu">
+    <div class="mobile-nav-sheet">
+      <div class="mobile-nav-header">
+        <span class="zami-text-logo">
+          <span class="z-cursive">Z</span><span class="ami-serif">ami</span>
+        </span>
+        <button type="button" class="btn-dialog-close" id="btn-close-mobile-nav" aria-label="Close navigation menu">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <nav class="mobile-nav-links">
+        <a href="#how-it-works" class="mobile-nav-link" id="mob-link-how">How it works</a>
+        <a href="#features" class="mobile-nav-link" id="mob-link-features">Features</a>
+        <a href="#supported-apps" class="mobile-nav-link" id="mob-link-apps">Supported Apps</a>
+      </nav>
+
+      <div class="mobile-nav-actions">
+        <button type="button" class="btn-mob-signin" id="btn-mob-signin">Sign in / Customize</button>
+        <button type="button" class="btn-mob-create" id="btn-mob-create">
+          <span>Create a room</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Modal Dialog: Sign in / Profile Customizer -->
+  <dialog id="profile-dialog" class="zami-dialog" closedby="any" aria-labelledby="profile-dialog-title">
+    <div class="dialog-card">
+      <div class="dialog-header">
+        <div class="dialog-title-group">
+          <h3 id="profile-dialog-title">Profile &amp; Appearance</h3>
+          <p>Personalize how your friends see you in the watch room.</p>
+        </div>
+        <button type="button" class="btn-dialog-close" id="btn-close-profile" aria-label="Close dialog">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <form id="form-profile" onsubmit="return false;">
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+          <div>
+            <label for="input-display-name" style="display: block; font-size: 0.8rem; font-weight: 600; color: #a0a3b2; margin-bottom: 6px;">DISPLAY NAME</label>
+            <input type="text" id="input-display-name" class="dialog-input" style="padding-left: 14px;" placeholder="Your nickname" spellcheck="false">
+          </div>
+
+          <div>
+            <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #a0a3b2; margin-bottom: 8px;">AVATAR COLOR ACCENT</label>
+            <div class="color-picker-row">
+              <button type="button" class="color-dot selected" data-color="#f3a93b" style="background: #f3a93b;" aria-label="Gold Accent"></button>
+              <button type="button" class="color-dot" data-color="#38bdf8" style="background: #38bdf8;" aria-label="Sky Blue Accent"></button>
+              <button type="button" class="color-dot" data-color="#ec4899" style="background: #ec4899;" aria-label="Pink Accent"></button>
+              <button type="button" class="color-dot" data-color="#22c55e" style="background: #22c55e;" aria-label="Emerald Accent"></button>
+              <button type="button" class="color-dot" data-color="#a855f7" style="background: #a855f7;" aria-label="Purple Accent"></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="dialog-actions">
+          <button type="button" class="btn-dialog-primary" id="btn-save-profile" style="width: 100%; justify-content: center;">
+            <span>Save &amp; Continue</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Modal Dialog: How It Works & Help -->
+  <dialog id="help-modal" class="zami-dialog help-dialog" closedby="any" aria-labelledby="help-dialog-title">
+    <div class="dialog-card">
+      <div class="dialog-header">
+        <div class="dialog-title-group">
+          <h3 id="help-dialog-title">How ZAMI Works</h3>
+          <p>Cinematic streaming with sub-second synchronization across all devices.</p>
+        </div>
+        <button type="button" class="btn-dialog-close" id="btn-close-help" aria-label="Close dialog">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="help-cards-list">
+        <div class="help-item-card">
+          <div class="help-item-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f3a93b" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
           </div>
-          <div class="help-card-content">
-            <h4>Universal Cloud Streaming</h4>
-            <p>Browse thousands of movies and series directly inside ZAMI. Fast, high-definition streaming with synchronized room playback and 4K trailer integration.</p>
+          <div class="help-item-info">
+            <h4>Universal Synchronized Cinema</h4>
+            <p>Stream cinema, YouTube, and direct video links in perfect sync. Any play, pause, or seek is replicated instantaneously for all viewers.</p>
           </div>
         </div>
 
-        <div class="help-card">
-          <div class="help-card-icon">
+        <div class="help-item-card">
+          <div class="help-item-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f3a93b" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
           </div>
-          <div class="help-card-content">
-            <h4>Screen &amp; Tab Audio Cast</h4>
-            <p>Stream Disney+ Hotstar, Netflix, or any browser tab using peer-to-peer WebRTC with live stereo audio. Zero software installs required for guests.</p>
+          <div class="help-item-info">
+            <h4>Screen &amp; Browser Audio Cast</h4>
+            <p>Stream Netflix, Hotstar, or any browser tab using peer-to-peer WebRTC with crisp stereo audio and zero guest software install.</p>
           </div>
         </div>
 
-        <div class="help-card">
-          <div class="help-card-icon">
+        <div class="help-item-card">
+          <div class="help-item-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f3a93b" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           </div>
-          <div class="help-card-content">
-            <h4>ZAMI Chrome Extension</h4>
-            <p>Synchronize external streaming video controls directly across browser tabs.</p>
-            <a href="/api/download-extension" class="btn-help-pill" style="margin-top: 10px; display: inline-flex; width: fit-content;">
-              Download Extension (.zip)
+          <div class="help-item-info">
+            <h4>ZAMI Companion Extension</h4>
+            <p>Sync external streaming controls directly across browser tabs.</p>
+            <a href="/api/download-extension" class="btn-dialog-cancel" style="display: inline-flex; margin-top: 8px; text-decoration: none; align-items: center; gap: 6px;">
+              Download Companion Extension (.zip)
             </a>
-          </div>
-        </div>
-
-        <div class="help-card">
-          <div class="help-card-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f3a93b" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          </div>
-          <div class="help-card-content">
-            <h4>Zero-Lag Local File Sync</h4>
-            <p>Open identical local video files (.mp4, .mkv, .webm) on your computers. Media decodes natively from your disk with sub-second sync over the network.</p>
           </div>
         </div>
       </div>

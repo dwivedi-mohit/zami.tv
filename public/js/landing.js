@@ -1,114 +1,147 @@
 /**
  * ZAMI — Landing Page Controller
- * Handles room creation, code-based joining, profile management, and session history.
+ * Handles room creation, modal join with code, mobile drawer navigation,
+ * profile customizer, interactive player preview, and modern dialog fallbacks.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Elements
-  const inputUsername = document.getElementById('landing-username');
-  const btnToggleProfile = document.getElementById('btn-toggle-profile');
-  const profileDrawer = document.getElementById('profile-drawer');
-  const profileAvatarImg = document.getElementById('profile-avatar-img');
-  const avatarColors = document.querySelectorAll('.color-choice');
+  // --------------------------------------------------------------------------
+  // User Profile & Preferences
+  // --------------------------------------------------------------------------
+  let currentUsername = localStorage.getItem('zami_username') ||
+                        localStorage.getItem('cinesync_username') ||
+                        `Viewer-${Math.floor(100 + Math.random() * 900)}`;
 
-  const btnCreateRoom = document.getElementById('btn-create-room');
-  const formJoinRoom = document.getElementById('form-join-room');
-  const btnJoinRoom = document.getElementById('btn-join-room');
-  const inputRoomCode = document.getElementById('input-join-code');
+  let selectedColor = localStorage.getItem('zami_color') ||
+                      localStorage.getItem('cinesync_color') ||
+                      '#f3a93b';
 
-  const recentCardsGrid = document.getElementById('recent-cards-grid');
-  const btnSeeAllRooms = document.getElementById('btn-see-all-rooms');
+  function saveProfile(name, color) {
+    if (name) {
+      currentUsername = name.trim();
+      localStorage.setItem('zami_username', currentUsername);
+      localStorage.setItem('cinesync_username', currentUsername);
+    }
+    if (color) {
+      selectedColor = color;
+      localStorage.setItem('zami_color', selectedColor);
+      localStorage.setItem('cinesync_color', selectedColor);
+    }
+  }
 
-  const helpModal = document.getElementById('help-modal');
-  const btnOpenHelp = document.getElementById('btn-open-help');
-  const btnNavHelp = document.getElementById('btn-nav-help');
-  const btnCloseHelp = document.getElementById('btn-close-help');
-
-  const presetPills = document.querySelectorAll('.preset-pill');
-  const serviceBadges = document.querySelectorAll('.service-badge');
-
-  let activePreset = 'movie-night';
-
-  // Preset pill selection
-  presetPills.forEach(pill => {
-    pill.addEventListener('click', () => {
-      presetPills.forEach(p => p.classList.remove('active'));
-      pill.classList.add('active');
-      activePreset = pill.getAttribute('data-preset') || 'movie-night';
-      const scene = pill.getAttribute('data-scene') || 'astronaut';
-      if (typeof window.triggerLandingScene === 'function') {
-        window.triggerLandingScene(scene);
+  // --------------------------------------------------------------------------
+  // Modal Dialog Helper with Light-Dismiss Fallback
+  // --------------------------------------------------------------------------
+  function openModal(dialog) {
+    if (!dialog) return;
+    if (typeof dialog.showModal === 'function') {
+      try {
+        dialog.showModal();
+      } catch (err) {
+        dialog.setAttribute('open', '');
       }
-    });
-  });
+    } else {
+      dialog.setAttribute('open', '');
+    }
+  }
 
-  // Streaming service badge 1-click room launcher
-  serviceBadges.forEach(badge => {
-    badge.addEventListener('click', () => {
-      const service = badge.getAttribute('data-service') || 'youtube';
-      saveProfile();
-      const num = Math.floor(10 + Math.random() * 90);
-      const roomId = `${service}-${activePreset}-${num}`;
-      saveRecentRoom(roomId);
-      window.location.href = `/room/${roomId}?app=${encodeURIComponent(service)}`;
-    });
-  });
+  function closeModal(dialog) {
+    if (!dialog) return;
+    if (typeof dialog.close === 'function') {
+      try {
+        dialog.close();
+      } catch (err) {
+        dialog.removeAttribute('open');
+      }
+    } else {
+      dialog.removeAttribute('open');
+    }
+  }
 
-  // Room generation helpers
+  // Modern Web Guidance: Fallback for browsers without native closedby support
+  function setupDialogBackdropDismiss(dialog) {
+    if (!dialog) return;
+    if (!('closedBy' in HTMLDialogElement.prototype)) {
+      dialog.addEventListener('click', (event) => {
+        if (event.target !== dialog) return;
+        const rect = dialog.getBoundingClientRect();
+        const isDialogContent = (
+          rect.top <= event.clientY &&
+          event.clientY <= rect.top + rect.height &&
+          rect.left <= event.clientX &&
+          event.clientX <= rect.left + rect.width
+        );
+        if (!isDialogContent) {
+          closeModal(dialog);
+        }
+      });
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // Room ID Generator
+  // --------------------------------------------------------------------------
   const adjectives = ['midnight', 'cinema', 'bollywood', 'velvet', 'solis', 'astral', 'squad', 'chill', 'lounge'];
   const nouns = ['crew', 'party', 'squad', 'room', 'theater', 'vault', 'loft', 'session'];
 
   function generateRoomId() {
-    if (activePreset && activePreset !== 'default') {
-      const num = Math.floor(10 + Math.random() * 90);
-      return `${activePreset}-${num}`;
-    }
     const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
     const noun = nouns[Math.floor(Math.random() * nouns.length)];
     const num = Math.floor(10 + Math.random() * 90);
     return `${adj}-${noun}-${num}`;
   }
 
-  function saveProfile() {
-    const nameToSave = (inputUsername && inputUsername.value.trim()) ? inputUsername.value.trim() : currentUsername;
-    localStorage.setItem('zami_username', nameToSave);
-    localStorage.setItem('cinesync_username', nameToSave);
-    localStorage.setItem('zami_color', selectedColor);
-    localStorage.setItem('cinesync_color', selectedColor);
+  // --------------------------------------------------------------------------
+  // Create Room Action
+  // --------------------------------------------------------------------------
+  function createRoomAndNavigate() {
+    saveProfile();
+    const newRoomId = generateRoomId();
+    window.location.href = `/room/${newRoomId}`;
   }
 
-  function saveRecentRoom(roomId) {
-    try {
-      let recents = JSON.parse(localStorage.getItem('zami_recent_rooms') || localStorage.getItem('cinesync_recent_rooms') || '[]');
-      recents = recents.filter(id => id !== roomId);
-      recents.unshift(roomId);
-      if (recents.length > 8) recents.pop();
-      localStorage.setItem('zami_recent_rooms', JSON.stringify(recents));
-      localStorage.setItem('cinesync_recent_rooms', JSON.stringify(recents));
-    } catch (e) {}
+  const btnHeroCreate = document.getElementById('btn-hero-create');
+  const btnNavCreate = document.getElementById('btn-nav-create');
+  const btnMobCreate = document.getElementById('btn-mob-create');
+
+  if (btnHeroCreate) btnHeroCreate.addEventListener('click', createRoomAndNavigate);
+  if (btnNavCreate) btnNavCreate.addEventListener('click', createRoomAndNavigate);
+  if (btnMobCreate) btnMobCreate.addEventListener('click', createRoomAndNavigate);
+
+  // --------------------------------------------------------------------------
+  // Join Room with Code Modal
+  // --------------------------------------------------------------------------
+  const joinModal = document.getElementById('join-modal');
+  const btnHeroJoin = document.getElementById('btn-hero-join');
+  const btnCloseJoin = document.getElementById('btn-close-join');
+  const btnCancelJoin = document.getElementById('btn-cancel-join');
+  const formJoinModal = document.getElementById('form-join-modal');
+  const inputModalCode = document.getElementById('input-modal-code');
+
+  setupDialogBackdropDismiss(joinModal);
+
+  function openJoinModal() {
+    if (joinModal) {
+      openModal(joinModal);
+      if (inputModalCode) {
+        setTimeout(() => inputModalCode.focus(), 50);
+      }
+    }
   }
 
-  // Create Room
-  if (btnCreateRoom) {
-    btnCreateRoom.addEventListener('click', () => {
-      saveProfile();
-      const newRoomId = generateRoomId();
-      saveRecentRoom(newRoomId);
-      window.location.href = `/room/${newRoomId}`;
-    });
-  }
+  if (btnHeroJoin) btnHeroJoin.addEventListener('click', openJoinModal);
+  if (btnCloseJoin) btnCloseJoin.addEventListener('click', () => closeModal(joinModal));
+  if (btnCancelJoin) btnCancelJoin.addEventListener('click', () => closeModal(joinModal));
 
-  // Join Room
-  function handleJoin() {
-    if (!inputRoomCode) return;
-    let code = inputRoomCode.value.trim();
+  function handleJoinSubmit() {
+    if (!inputModalCode) return;
+    let code = inputModalCode.value.trim();
     if (!code) {
-      alert('Please enter a room code or link!');
-      inputRoomCode.focus();
+      inputModalCode.focus();
       return;
     }
 
-    // If user pasted a full URL or room path
+    // Parse full URL if pasted
     if (code.includes('/room/')) {
       const parts = code.split('/room/');
       code = parts[1].split('?')[0].split('#')[0];
@@ -123,241 +156,220 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     code = code.replace(/^\/+|\/+$/g, '');
+    if (!code) return;
 
     saveProfile();
-    saveRecentRoom(code);
     window.location.href = `/room/${code}`;
   }
 
-  if (formJoinRoom) {
-    formJoinRoom.addEventListener('submit', (e) => {
+  if (formJoinModal) {
+    formJoinModal.addEventListener('submit', (e) => {
       e.preventDefault();
-      handleJoin();
+      handleJoinSubmit();
     });
   }
-  if (btnJoinRoom) {
-    btnJoinRoom.addEventListener('click', (e) => {
-      e.preventDefault();
-      handleJoin();
-    });
-  }
-
-  // Render recent rooms dynamically if available, otherwise preserve default cards
-  try {
-    const recents = JSON.parse(localStorage.getItem('zami_recent_rooms') || localStorage.getItem('cinesync_recent_rooms') || '[]');
-    const thumbs = ['/img/recent_backdrop_1.png', '/img/recent_backdrop_2.png', '/img/recent_backdrop_3.png'];
-
-    if (Array.isArray(recents) && recents.length > 0 && recentCardsGrid) {
-      // If user has stored recent rooms, update cards
-      recentCardsGrid.innerHTML = '';
-      const displayRooms = recents.slice(0, 3);
-
-      // If fewer than 3, pad with default fallback rooms
-      const defaultRooms = ['midnight-crew-75', 'cinema-party-35', 'bollywood-squad-98'];
-      defaultRooms.forEach(def => {
-        if (displayRooms.length < 3 && !displayRooms.includes(def)) {
-          displayRooms.push(def);
-        }
-      });
-
-      const scenes = ['astronaut', 'sunset', 'neon'];
-      const badges = ['Cosmic', 'Sunset', 'Neon'];
-      const liveCounts = [4, 2, 6];
-      displayRooms.forEach((roomId, index) => {
-        const item = document.createElement('a');
-        item.className = 'recent-room-card';
-        item.href = `/room/${roomId}`;
-        item.title = `Preview & Join ${roomId}`;
-        const scene = scenes[index % scenes.length];
-        item.setAttribute('data-scene', scene);
-        const thumbSrc = thumbs[index % thumbs.length];
-        item.style.backgroundImage = `url('${thumbSrc}')`;
-        const badgeName = badges[index % badges.length];
-        const liveCount = liveCounts[index % liveCounts.length];
-        item.innerHTML = `
-          <div class="recent-room-scrim"></div>
-          <span class="recent-room-live"><span class="recent-live-dot"></span>${liveCount} live</span>
-          <div class="recent-room-info">
-            <span class="recent-room-badge">${badgeName}</span>
-            <span class="recent-room-name">${roomId}</span>
-          </div>
-        `;
-        recentCardsGrid.appendChild(item);
-      });
-    }
-  } catch (e) {}
 
   // --------------------------------------------------------------------------
-  // Interactive TV Screen Preview on Recent Rooms Hover & Selection
+  // Mobile Navigation Drawer
   // --------------------------------------------------------------------------
-  function initTvScreenPreview() {
-    const ambilightGlow = document.getElementById('couch-ambilight-glow');
-    const overlayAstronaut = document.getElementById('couch-img-astronaut');
-    const overlaySunset = document.getElementById('couch-img-sunset');
-    const overlayNeon = document.getElementById('couch-img-neon');
+  const mobileNavDialog = document.getElementById('mobile-nav-dialog');
+  const btnHamburger = document.getElementById('btn-hamburger');
+  const btnCloseMobileNav = document.getElementById('btn-close-mobile-nav');
+  const mobLinkHow = document.getElementById('mob-link-how');
+  const mobLinkFeatures = document.getElementById('mob-link-features');
+  const mobLinkApps = document.getElementById('mob-link-apps');
+  const btnMobSignin = document.getElementById('btn-mob-signin');
 
-    const sceneMap = {
-      astronaut: overlayAstronaut,
-      sunset: overlaySunset,
-      neon: overlayNeon
-    };
+  setupDialogBackdropDismiss(mobileNavDialog);
 
-    const glowColors = {
-      default: 'radial-gradient(circle, rgba(243, 169, 59, 0.16) 0%, rgba(243, 169, 59, 0.04) 50%, transparent 75%)',
-      astronaut: 'radial-gradient(circle, rgba(56, 189, 248, 0.24) 0%, rgba(14, 165, 233, 0.08) 50%, transparent 75%)',
-      sunset: 'radial-gradient(circle, rgba(249, 115, 22, 0.25) 0%, rgba(239, 68, 68, 0.09) 50%, transparent 75%)',
-      neon: 'radial-gradient(circle, rgba(20, 184, 166, 0.24) 0%, rgba(139, 92, 246, 0.09) 50%, transparent 75%)'
-    };
-
-    let pinnedScene = 'default';
-
-    function setScene(scene) {
-      Object.keys(sceneMap).forEach(key => {
-        const el = sceneMap[key];
-        if (!el) return;
-        if (key === scene) {
-          el.classList.add('active');
-        } else {
-          el.classList.remove('active');
-        }
-      });
-
-      if (ambilightGlow) {
-        ambilightGlow.style.background = glowColors[scene] || glowColors.default;
-      }
-    }
-
-    window.triggerLandingScene = (scene) => {
-      setScene(scene);
-      pinnedScene = scene;
-    };
-
-    const cards = document.querySelectorAll('.recent-room-card');
-    cards.forEach((card, idx) => {
-      const scenes = ['astronaut', 'sunset', 'neon'];
-      const scene = card.getAttribute('data-scene') || scenes[idx % scenes.length];
-      card.setAttribute('data-scene', scene);
-
-      card.addEventListener('mouseenter', () => {
-        setScene(scene);
-      });
-
-      card.addEventListener('pointerenter', () => {
-        setScene(scene);
-      });
-
-      card.addEventListener('touchstart', () => {
-        setScene(scene);
-      }, { passive: true });
-
-      card.addEventListener('focus', () => {
-        setScene(scene);
-      });
-
-      card.addEventListener('mouseleave', () => {
-        setScene(pinnedScene);
-      });
-
-      card.addEventListener('blur', () => {
-        setScene(pinnedScene);
-      });
-
-      card.addEventListener('click', (e) => {
-        pinnedScene = scene;
-        cards.forEach(c => c.classList.remove('active-preview'));
-        card.classList.add('active-preview');
-        setScene(scene);
-
-        const roomNameEl = card.querySelector('.recent-room-name');
-        if (roomNameEl) {
-          const rName = roomNameEl.textContent.trim();
-          if (inputJoinCode) {
-            inputJoinCode.value = rName;
-          }
-          const backdropMap = {
-            astronaut: '/img/backdrop_astronaut.jpg',
-            sunset: '/img/backdrop_sunset.jpg',
-            neon: '/img/backdrop_neon.jpg'
-          };
-          if (backdropMap[scene]) {
-            try {
-              localStorage.setItem('zami_room_backdrop_' + rName, backdropMap[scene]);
-            } catch (err) {}
-          }
-        }
-      });
+  if (btnHamburger && mobileNavDialog) {
+    btnHamburger.addEventListener('click', () => {
+      openModal(mobileNavDialog);
+      btnHamburger.setAttribute('aria-expanded', 'true');
     });
 
-    const grid = document.getElementById('recent-cards-grid');
-    if (grid) {
-      grid.addEventListener('mouseleave', () => {
-        setScene(pinnedScene);
-      });
-    }
-  }
-
-  // Initialize interactive TV screen preview
-  initTvScreenPreview();
-
-  if (btnSeeAllRooms) {
-    btnSeeAllRooms.addEventListener('click', () => {
-      openHelp();
+    mobileNavDialog.addEventListener('close', () => {
+      btnHamburger.setAttribute('aria-expanded', 'false');
     });
   }
 
-  // Help Modal handlers
-  function openHelp() {
-    if (helpModal) {
-      if (typeof helpModal.showModal === 'function') {
-        helpModal.showModal();
-      } else {
-        helpModal.setAttribute('open', '');
-      }
-    }
-  }
-
-  function closeHelp() {
-    if (helpModal) {
-      if (typeof helpModal.close === 'function') {
-        helpModal.close();
-      } else {
-        helpModal.removeAttribute('open');
-      }
-    }
-  }
-
-  if (btnOpenHelp) {
-    btnOpenHelp.addEventListener('click', openHelp);
-  }
-  if (btnNavHelp) {
-    btnNavHelp.addEventListener('click', openHelp);
-  }
-  if (btnCloseHelp) {
-    btnCloseHelp.addEventListener('click', closeHelp);
-  }
-  if (helpModal) {
-    helpModal.addEventListener('click', (e) => {
-      if (e.target === helpModal) {
-        closeHelp();
-      }
+  if (btnCloseMobileNav && mobileNavDialog) {
+    btnCloseMobileNav.addEventListener('click', () => {
+      closeModal(mobileNavDialog);
     });
   }
 
-  const navServices = document.getElementById('nav-link-services');
-  if (navServices) {
-    navServices.addEventListener('click', (e) => {
+  if (mobLinkHow) {
+    mobLinkHow.addEventListener('click', (e) => {
       e.preventDefault();
-      const el = document.getElementById('services');
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      closeModal(mobileNavDialog);
+      openHelpModal();
     });
   }
 
-  const navFeatures = document.getElementById('nav-link-features');
-  if (navFeatures) {
-    navFeatures.addEventListener('click', (e) => {
+  if (mobLinkFeatures) {
+    mobLinkFeatures.addEventListener('click', (e) => {
       e.preventDefault();
-      const el = document.getElementById('features');
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      closeModal(mobileNavDialog);
+      const feat = document.getElementById('mobile-features') || document.getElementById('desktop-features');
+      if (feat) feat.scrollIntoView({ behavior: 'smooth' });
+    });
+  }
+
+  if (mobLinkApps) {
+    mobLinkApps.addEventListener('click', (e) => {
+      e.preventDefault();
+      closeModal(mobileNavDialog);
+      openHelpModal();
+    });
+  }
+
+  // --------------------------------------------------------------------------
+  // Profile / Settings Modal
+  // --------------------------------------------------------------------------
+  const profileDialog = document.getElementById('profile-dialog');
+  const btnNavSignin = document.getElementById('btn-nav-signin');
+  const btnCloseProfile = document.getElementById('btn-close-profile');
+  const inputDisplayName = document.getElementById('input-display-name');
+  const btnSaveProfile = document.getElementById('btn-save-profile');
+  const colorDots = document.querySelectorAll('.color-dot');
+
+  setupDialogBackdropDismiss(profileDialog);
+
+  function openProfileModal() {
+    if (profileDialog) {
+      if (inputDisplayName) inputDisplayName.value = currentUsername;
+      colorDots.forEach(dot => {
+        dot.classList.toggle('selected', dot.dataset.color === selectedColor);
+      });
+      openModal(profileDialog);
+      if (inputDisplayName) {
+        setTimeout(() => inputDisplayName.focus(), 50);
+      }
+    }
+  }
+
+  if (btnNavSignin) btnNavSignin.addEventListener('click', openProfileModal);
+  if (btnMobSignin) {
+    btnMobSignin.addEventListener('click', () => {
+      closeModal(mobileNavDialog);
+      openProfileModal();
+    });
+  }
+  if (btnCloseProfile) btnCloseProfile.addEventListener('click', () => closeModal(profileDialog));
+
+  colorDots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      colorDots.forEach(d => d.classList.remove('selected'));
+      dot.classList.add('selected');
+      selectedColor = dot.dataset.color || '#f3a93b';
+    });
+  });
+
+  if (btnSaveProfile) {
+    btnSaveProfile.addEventListener('click', () => {
+      const name = inputDisplayName ? inputDisplayName.value.trim() : currentUsername;
+      saveProfile(name, selectedColor);
+      closeModal(profileDialog);
+    });
+  }
+
+  // --------------------------------------------------------------------------
+  // Help Modal
+  // --------------------------------------------------------------------------
+  const helpModal = document.getElementById('help-modal');
+  const linkHowItWorks = document.getElementById('link-how-it-works');
+  const linkFeatures = document.getElementById('link-features');
+  const linkSupportedApps = document.getElementById('link-supported-apps');
+  const btnCloseHelp = document.getElementById('btn-close-help');
+
+  setupDialogBackdropDismiss(helpModal);
+
+  function openHelpModal() {
+    if (helpModal) openModal(helpModal);
+  }
+
+  if (linkHowItWorks) linkHowItWorks.addEventListener('click', (e) => { e.preventDefault(); openHelpModal(); });
+  if (linkFeatures) linkFeatures.addEventListener('click', (e) => { e.preventDefault(); openHelpModal(); });
+  if (linkSupportedApps) linkSupportedApps.addEventListener('click', (e) => { e.preventDefault(); openHelpModal(); });
+  if (btnCloseHelp) btnCloseHelp.addEventListener('click', () => closeModal(helpModal));
+
+  // --------------------------------------------------------------------------
+  // Interactive Cinematic Media-Player Preview
+  // --------------------------------------------------------------------------
+  const btnCopyPreviewRoom = document.getElementById('btn-copy-preview-room');
+  const previewToast = document.getElementById('preview-toast');
+
+  if (btnCopyPreviewRoom) {
+    btnCopyPreviewRoom.addEventListener('click', async () => {
+      const roomUrl = `${window.location.origin}/room/zami-7f3k`;
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(roomUrl);
+        }
+      } catch (e) {}
+
+      if (previewToast) {
+        previewToast.classList.add('active');
+        setTimeout(() => {
+          previewToast.classList.remove('active');
+        }, 2200);
+      }
+    });
+  }
+
+  const btnPreviewPlay = document.getElementById('btn-preview-play');
+  if (btnPreviewPlay) {
+    const iconPlay = btnPreviewPlay.querySelector('.icon-play');
+    const iconPause = btnPreviewPlay.querySelector('.icon-pause');
+    let isPlaying = true;
+
+    btnPreviewPlay.addEventListener('click', () => {
+      isPlaying = !isPlaying;
+      if (iconPlay && iconPause) {
+        iconPlay.style.display = isPlaying ? 'none' : 'block';
+        iconPause.style.display = isPlaying ? 'block' : 'none';
+      }
+    });
+  }
+
+  // Interactive scrubber progress bar
+  const previewScrubber = document.getElementById('preview-scrubber');
+  if (previewScrubber) {
+    const fill = previewScrubber.querySelector('.scrubber-fill');
+    const knob = previewScrubber.querySelector('.scrubber-knob');
+    const timeDisplay = document.getElementById('preview-time-display');
+
+    function updateScrubber(e) {
+      const rect = previewScrubber.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      let ratio = (clientX - rect.left) / rect.width;
+      ratio = Math.max(0, Math.min(1, ratio));
+      const pct = (ratio * 100).toFixed(1) + '%';
+
+      if (fill) fill.style.width = pct;
+      if (knob) knob.style.left = pct;
+      previewScrubber.setAttribute('aria-valuenow', Math.round(ratio * 100));
+
+      if (timeDisplay) {
+        const totalSecs = 1 * 3600 + 56 * 60 + 20; // 1:56:20 = 6980s
+        const curSecs = Math.floor(totalSecs * ratio);
+        const mins = Math.floor(curSecs / 60);
+        const secs = curSecs % 60;
+        timeDisplay.textContent = `${mins}:${secs < 10 ? '0' : ''}${secs} / 1:56:20`;
+      }
+    }
+
+    previewScrubber.addEventListener('click', updateScrubber);
+  }
+
+  // Volume toggle
+  const btnPreviewVol = document.getElementById('btn-preview-vol');
+  if (btnPreviewVol) {
+    let isMuted = false;
+    btnPreviewVol.addEventListener('click', () => {
+      isMuted = !isMuted;
+      btnPreviewVol.style.opacity = isMuted ? '0.5' : '1';
     });
   }
 });
