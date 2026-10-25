@@ -21,87 +21,48 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const helpModal = document.getElementById('help-modal');
   const btnOpenHelp = document.getElementById('btn-open-help');
+  const btnNavHelp = document.getElementById('btn-nav-help');
   const btnCloseHelp = document.getElementById('btn-close-help');
 
-  // Load existing username & color or generate defaults (backward compatible)
-  let currentUsername = localStorage.getItem('zami_username') ||
-                        localStorage.getItem('cinesync_username') ||
-                        `Viewer-${Math.floor(100 + Math.random() * 900)}`;
+  const presetPills = document.querySelectorAll('.preset-pill');
+  const serviceBadges = document.querySelectorAll('.service-badge');
 
-  let selectedColor = localStorage.getItem('zami_color') ||
-                      localStorage.getItem('cinesync_color') ||
-                      '#f3a93b';
+  let activePreset = 'movie-night';
 
-  // Apply to UI
-  if (profileAvatarImg) {
-    profileAvatarImg.style.borderColor = selectedColor;
-  }
-  if (inputUsername) {
-    inputUsername.value = currentUsername;
-    inputUsername.addEventListener('input', (e) => {
-      const val = e.target.value.trim() || 'Viewer';
-      currentUsername = val;
-      localStorage.setItem('zami_username', val);
-      localStorage.setItem('cinesync_username', val);
-    });
-  }
-
-  // Color picker
-  avatarColors.forEach(circle => {
-    if (circle.dataset.color === selectedColor) {
-      circle.classList.add('selected');
-    }
-    circle.addEventListener('click', (e) => {
-      e.stopPropagation();
-      avatarColors.forEach(c => c.classList.remove('selected'));
-      circle.classList.add('selected');
-      selectedColor = circle.dataset.color;
-      if (profileAvatarImg) {
-        profileAvatarImg.style.borderColor = selectedColor;
+  // Preset pill selection
+  presetPills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      presetPills.forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      activePreset = pill.getAttribute('data-preset') || 'movie-night';
+      const scene = pill.getAttribute('data-scene') || 'astronaut';
+      if (typeof window.triggerLandingScene === 'function') {
+        window.triggerLandingScene(scene);
       }
-      localStorage.setItem('zami_color', selectedColor);
-      localStorage.setItem('cinesync_color', selectedColor);
     });
   });
 
-  // Profile Drawer Toggle & Outside-Click Handling
-  if (btnToggleProfile && profileDrawer) {
-    btnToggleProfile.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const isHidden = profileDrawer.hasAttribute('hidden');
-      if (isHidden) {
-        profileDrawer.removeAttribute('hidden');
-        btnToggleProfile.setAttribute('aria-expanded', 'true');
-        if (inputUsername) inputUsername.focus();
-      } else {
-        profileDrawer.setAttribute('hidden', '');
-        btnToggleProfile.setAttribute('aria-expanded', 'false');
-      }
+  // Streaming service badge 1-click room launcher
+  serviceBadges.forEach(badge => {
+    badge.addEventListener('click', () => {
+      const service = badge.getAttribute('data-service') || 'youtube';
+      saveProfile();
+      const num = Math.floor(10 + Math.random() * 90);
+      const roomId = `${service}-${activePreset}-${num}`;
+      saveRecentRoom(roomId);
+      window.location.href = `/room/${roomId}?app=${encodeURIComponent(service)}`;
     });
-
-    document.addEventListener('click', (e) => {
-      if (!profileDrawer.hasAttribute('hidden')) {
-        if (!profileDrawer.contains(e.target) && !btnToggleProfile.contains(e.target)) {
-          profileDrawer.setAttribute('hidden', '');
-          btnToggleProfile.setAttribute('aria-expanded', 'false');
-        }
-      }
-    });
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && !profileDrawer.hasAttribute('hidden')) {
-        profileDrawer.setAttribute('hidden', '');
-        btnToggleProfile.setAttribute('aria-expanded', 'false');
-        btnToggleProfile.focus();
-      }
-    });
-  }
+  });
 
   // Room generation helpers
   const adjectives = ['midnight', 'cinema', 'bollywood', 'velvet', 'solis', 'astral', 'squad', 'chill', 'lounge'];
   const nouns = ['crew', 'party', 'squad', 'room', 'theater', 'vault', 'loft', 'session'];
 
   function generateRoomId() {
+    if (activePreset && activePreset !== 'default') {
+      const num = Math.floor(10 + Math.random() * 90);
+      return `${activePreset}-${num}`;
+    }
     const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
     const noun = nouns[Math.floor(Math.random() * nouns.length)];
     const num = Math.floor(10 + Math.random() * 90);
@@ -200,6 +161,8 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       const scenes = ['astronaut', 'sunset', 'neon'];
+      const badges = ['Cosmic', 'Sunset', 'Neon'];
+      const liveCounts = [4, 2, 6];
       displayRooms.forEach((roomId, index) => {
         const item = document.createElement('a');
         item.className = 'recent-room-card';
@@ -209,9 +172,13 @@ document.addEventListener('DOMContentLoaded', () => {
         item.setAttribute('data-scene', scene);
         const thumbSrc = thumbs[index % thumbs.length];
         item.style.backgroundImage = `url('${thumbSrc}')`;
+        const badgeName = badges[index % badges.length];
+        const liveCount = liveCounts[index % liveCounts.length];
         item.innerHTML = `
           <div class="recent-room-scrim"></div>
+          <span class="recent-room-live"><span class="recent-live-dot"></span>${liveCount} live</span>
           <div class="recent-room-info">
+            <span class="recent-room-badge">${badgeName}</span>
             <span class="recent-room-name">${roomId}</span>
           </div>
         `;
@@ -259,6 +226,11 @@ document.addEventListener('DOMContentLoaded', () => {
         ambilightGlow.style.background = glowColors[scene] || glowColors.default;
       }
     }
+
+    window.triggerLandingScene = (scene) => {
+      setScene(scene);
+      pinnedScene = scene;
+    };
 
     const cards = document.querySelectorAll('.recent-room-card');
     cards.forEach((card, idx) => {
@@ -357,6 +329,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnOpenHelp) {
     btnOpenHelp.addEventListener('click', openHelp);
   }
+  if (btnNavHelp) {
+    btnNavHelp.addEventListener('click', openHelp);
+  }
   if (btnCloseHelp) {
     btnCloseHelp.addEventListener('click', closeHelp);
   }
@@ -365,6 +340,24 @@ document.addEventListener('DOMContentLoaded', () => {
       if (e.target === helpModal) {
         closeHelp();
       }
+    });
+  }
+
+  const navServices = document.getElementById('nav-link-services');
+  if (navServices) {
+    navServices.addEventListener('click', (e) => {
+      e.preventDefault();
+      const el = document.getElementById('services');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  }
+
+  const navFeatures = document.getElementById('nav-link-features');
+  if (navFeatures) {
+    navFeatures.addEventListener('click', (e) => {
+      e.preventDefault();
+      const el = document.getElementById('features');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   }
 });

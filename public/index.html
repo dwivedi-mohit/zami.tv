@@ -113,10 +113,98 @@
       letter-spacing: -0.01em;
       display: inline-block;
     }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+    .brand-tagline-badge,
+    .brand-version-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      font-weight: 700;
+      color: var(--zami-gold);
+      background: rgba(243, 169, 59, 0.12);
+      border: 1px solid rgba(243, 169, 59, 0.28);
+      border-radius: 999px;
+      padding: 3px 10px;
+      margin-left: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      user-select: none;
+    }
+    .header-nav,
+    .landing-nav-center {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+    }
+    .header-nav-link,
+    .landing-nav-link {
+      font-size: 0.84rem;
+      font-weight: 500;
+      color: #9da0ae;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.18s ease;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      padding: 0;
+      font-family: inherit;
+    }
+    .header-nav-link:hover,
+    .landing-nav-link:hover {
+      color: #ffffff;
+    }
+    .btn-nav-link {
+      font-family: inherit;
+      font-size: 0.84rem;
+      font-weight: 500;
+      color: #9da0ae;
+    }
+    .live-pulse-badge,
+    .header-live-pulse {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.24);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #10b981;
+      user-select: none;
+    }
+    .live-pulse-dot,
+    .pulse-dot-green {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+      animation: livePulse 2s infinite ease-in-out;
+    }
+    .recent-live-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 5px #10b981;
+      display: inline-block;
+    }
+    @keyframes livePulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.35; transform: scale(0.85); }
+    }
     .header-actions {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
     }
     .btn-help-pill {
       display: inline-flex;
@@ -282,12 +370,364 @@
       z-index: 1;
     }
 
+    /* --------------------------------------------------------------------------
+       Hero Narrative: Headline & Value Proposition
+       -------------------------------------------------------------------------- */
+    .hero-narrative {
+      width: 100%;
+      max-width: 550px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: rgba(243, 169, 59, 0.08);
+      border: 1px solid rgba(243, 169, 59, 0.22);
+    }
+    .eyebrow-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #f3a93b;
+    }
+    .eyebrow-sep {
+      color: rgba(255, 255, 255, 0.2);
+      font-size: 0.65rem;
+    }
+    .eyebrow-pill {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #ffffff;
+    }
+    .hero-headline {
+      font-size: 2.35rem;
+      line-height: 1.15;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #ffffff;
+      margin: 0;
+    }
+    .headline-serif-italic {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-weight: 600;
+      background: linear-gradient(135deg, #ffffff 0%, #fae29c 40%, #e5a93c 80%, #d49228 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      padding-right: 4px;
+    }
+    .hero-subheading {
+      font-size: 0.94rem;
+      line-height: 1.55;
+      color: #9da0ae;
+      margin: 0;
+    }
+
+    /* Performance micro-chips */
+    .hero-perf-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 2px;
+    }
+    .perf-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.74rem;
+      font-weight: 500;
+      color: #c9ccd6;
+    }
+    .perf-chip svg {
+      color: #f3a93b;
+      flex-shrink: 0;
+    }
+
+    /* --------------------------------------------------------------------------
+       Instant Room Presets / Mood Selector
+       -------------------------------------------------------------------------- */
+    .room-presets-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 14px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .room-presets-bar::-webkit-scrollbar {
+      display: none;
+    }
+    .presets-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.64rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: #727686;
+      text-transform: uppercase;
+      margin-right: 4px;
+      white-space: nowrap;
+    }
+    .preset-pill {
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.74rem;
+      font-weight: 500;
+      color: #a3a6b4;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.16s ease;
+      font-family: inherit;
+    }
+    .preset-pill:hover,
+    .preset-pill.active {
+      background: rgba(243, 169, 59, 0.14);
+      border-color: rgba(243, 169, 59, 0.35);
+      color: #f3a93b;
+    }
+
+    /* --------------------------------------------------------------------------
+       Service Compatibility Badges Strip
+       -------------------------------------------------------------------------- */
+    .services-compatibility-block {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .services-block-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #727686;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .services-badges-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+    }
+    .service-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 8px 4px 7px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      text-decoration: none;
+      color: #c9ccd6;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      font-family: inherit;
+    }
+    .service-badge:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(243, 169, 59, 0.4);
+      transform: translateY(-2px);
+      color: #ffffff;
+    }
+    .service-badge-icon {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .service-badge-name {
+      font-size: 0.64rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    /* --------------------------------------------------------------------------
+       Chrome Extension Callout Banner
+       -------------------------------------------------------------------------- */
+    .extension-callout-banner {
+      margin-top: 16px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(243, 169, 59, 0.06) 0%, rgba(20, 22, 28, 0.45) 100%);
+      border: 1px solid rgba(243, 169, 59, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .ext-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .ext-icon-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(243, 169, 59, 0.12);
+      border: 1px solid rgba(243, 169, 59, 0.3);
+      color: #f3a93b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .ext-text {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+    .ext-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+    .ext-sub {
+      font-size: 0.69rem;
+      color: #8b8f9e;
+    }
+    .btn-ext-download {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: rgba(243, 169, 59, 0.18);
+      border: 1px solid rgba(243, 169, 59, 0.4);
+      color: #f3a93b;
+      font-size: 0.74rem;
+      font-weight: 700;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: all 0.18s ease;
+      font-family: inherit;
+    }
+    .btn-ext-download:hover {
+      background: var(--zami-gold);
+      color: #12141a;
+      transform: translateY(-1px);
+    }
+
+    /* --------------------------------------------------------------------------
+       Upgraded Recent Rooms Badges
+       -------------------------------------------------------------------------- */
+    .recent-room-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: #e5a93c;
+      letter-spacing: 0.02em;
+    }
+    .recent-room-live {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      z-index: 3;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.7);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #10b981;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.56rem;
+      font-weight: 700;
+    }
+
+    /* --------------------------------------------------------------------------
+       Bottom 4-Card Features Showcase
+       -------------------------------------------------------------------------- */
+    .landing-features-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      width: 100%;
+      margin-top: 26px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .feature-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: all 0.2s ease;
+    }
+    .feature-card:hover {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(243, 169, 59, 0.3);
+      transform: translateY(-2px);
+    }
+    .feature-card-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: rgba(243, 169, 59, 0.1);
+      border: 1px solid rgba(243, 169, 59, 0.25);
+      color: #f3a93b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .feature-card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .feature-card-body h4 {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin: 0;
+    }
+    .feature-card-body p {
+      font-size: 0.74rem;
+      color: #8b8f9e;
+      line-height: 1.45;
+      margin: 0;
+    }
+
     /* Card Row 1: Top Bar with Avatar Pill */
     .card-top-bar {
       display: flex;
       justify-content: flex-end;
       align-items: center;
-      margin-bottom: 20px;
+      margin-bottom: 14px;
       position: relative;
     }
     .profile-pill {
@@ -603,8 +1043,9 @@
       position: relative;
       z-index: 2;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
       width: 100%;
     }
     .recent-room-name {
@@ -812,17 +1253,30 @@
         min-height: 46px;
         padding: 0 16px;
       }
-      .landing-features-bar {
-        gap: 20px;
-        padding: 12px 0 0;
+      .landing-nav-center,
+      .header-nav {
+        display: none !important;
       }
-      .feature-icon-circle {
-        width: 40px;
-        height: 40px;
-        border-radius: 12px;
+      .hero-narrative {
+        max-width: 100%;
+        text-align: center;
+        align-items: center;
       }
-      .feature-label {
-        font-size: 0.74rem;
+      .hero-headline {
+        font-size: 1.85rem;
+      }
+      .hero-perf-row {
+        justify-content: center;
+      }
+      .services-badges-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+      }
+      .landing-features-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-top: 18px;
+        padding-top: 16px;
       }
       .recent-cards-grid {
         gap: 8px;
@@ -834,8 +1288,20 @@
       .recent-room-name {
         font-size: 0.64rem;
       }
-      .feature-divider {
-        display: none;
+    }
+    @media (max-width: 580px) {
+      .landing-features-grid {
+        grid-template-columns: 1fr;
+      }
+      .hero-headline {
+        font-size: 1.6rem;
+      }
+      .extension-callout-banner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .btn-ext-download {
+        align-self: flex-end;
       }
     }
   </style>
@@ -844,13 +1310,28 @@
   <div class="landing-container">
     <!-- Top Masthead -->
     <header class="landing-header">
-      <a href="/" class="brand-group" aria-label="Zami Home">
-        <span class="zami-text-logo">
-          <span class="z-cursive">Z</span><span class="ami-serif">ami</span>
-        </span>
-      </a>
+      <div class="header-left">
+        <a href="/" class="brand-group" aria-label="Zami Home">
+          <span class="zami-text-logo">
+            <span class="z-cursive">Z</span><span class="ami-serif">ami</span>
+          </span>
+          <span class="brand-tagline-badge">Cinema 2.0</span>
+        </a>
+
+        <nav class="header-nav" aria-label="Primary Navigation">
+          <a href="#services" class="header-nav-link" id="nav-link-services">Platforms</a>
+          <a href="#features" class="header-nav-link" id="nav-link-features">Features</a>
+          <a href="/api/download-extension" class="header-nav-link" target="_blank" rel="noopener">Extension</a>
+          <button type="button" class="header-nav-link btn-nav-link" id="btn-nav-help">Guide</button>
+        </nav>
+      </div>
 
       <div class="header-actions">
+        <div class="live-pulse-badge" title="Active users streaming across Zami rooms right now">
+          <span class="live-pulse-dot"></span>
+          <span class="live-pulse-text"><strong>14,280</strong> Online</span>
+        </div>
+
         <button type="button" class="btn-help-pill" id="btn-open-help" title="Setup and Streaming Help">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"/>
@@ -873,9 +1354,31 @@
         <img src="/img/couch_scene_neon_2x.png" alt="Neon noir screening on TV" class="hero-couch-img hero-couch-img-overlay" id="couch-img-neon" data-scene="neon" width="1090" height="800">
       </section>
 
-      <!-- Right Column: The Exact Reference Access Card -->
+      <!-- Right Column: Editorial Hero & Full-Featured Access Hub -->
       <section class="hero-action-column">
+        <!-- Hero Narrative Block: Value Proposition & Live Performance Chips -->
+        <div class="hero-narrative">
+          <span class="hero-eyebrow">Universal Watch Party Experience</span>
+          <h1 class="hero-headline">Watch Together.<br><span class="headline-serif-italic">Feel Closer.</span></h1>
+          <p class="hero-subheading">Sync YouTube, streaming platforms, tabs &amp; local 4K movies with friends anywhere in the world. Ultra-low latency, crystal-clear audio.</p>
+          <div class="hero-perf-chips">
+            <span class="perf-chip"><span class="perf-chip-dot"></span>8ms Sync Mesh</span>
+            <span class="perf-chip"><span class="perf-chip-dot"></span>Zero Lag</span>
+            <span class="perf-chip"><span class="perf-chip-dot"></span>Full HD 1080p</span>
+            <span class="perf-chip"><span class="perf-chip-dot"></span>100% Free &amp; Private</span>
+          </div>
+        </div>
+
         <div class="access-card" id="access-card">
+          <!-- Room Mood Presets Selector -->
+          <div class="room-presets-bar" id="room-presets-bar">
+            <span class="presets-label">Quick Mood:</span>
+            <button type="button" class="preset-pill active" data-preset="movie-night" data-scene="astronaut" title="Movie Night Mode">Movie Night</button>
+            <button type="button" class="preset-pill" data-preset="anime-vault" data-scene="neon" title="Anime Vault Mode">Anime Vault</button>
+            <button type="button" class="preset-pill" data-preset="chill-lounge" data-scene="sunset" title="Chill Lounge Mode">Chill Lounge</button>
+            <button type="button" class="preset-pill" data-preset="bollywood" data-scene="neon" title="Bollywood Squad Mode">Bollywood Squad</button>
+          </div>
+
           <!-- Card Primary Action: Create a Room Primary Button -->
           <button id="btn-create-room" class="btn-create-room" type="button">
             <span class="btn-create-left">
@@ -894,12 +1397,12 @@
             </svg>
           </button>
 
-          <!-- Card Row 3: OR Divider -->
+          <!-- Card Row: OR Divider -->
           <div class="or-divider">
             <span>OR</span>
           </div>
 
-          <!-- Card Row 4: Join Room Form Row -->
+          <!-- Card Row: Join Room Form Row -->
           <form id="form-join-room" class="join-row" onsubmit="return false;">
             <label for="input-join-code" class="visually-hidden">Room Code or Link</label>
             <div class="join-input-wrap">
@@ -907,7 +1410,7 @@
                 <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
                 <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
               </svg>
-              <input type="text" id="input-join-code" class="join-input" placeholder="Enter room code" autocomplete="off" spellcheck="false" aria-label="Enter room code or link">
+              <input type="text" id="input-join-code" class="join-input" placeholder="Enter room code or paste link" autocomplete="off" spellcheck="false" aria-label="Enter room code or link">
             </div>
             <button id="btn-join-room" class="btn-join" type="submit" aria-label="Join Room">
               <span>Join</span>
@@ -915,10 +1418,60 @@
             </button>
           </form>
 
-          <!-- Card Row 5: Recent Rooms Visual Grid -->
+          <!-- Supported Streaming Platforms Quick-Launch -->
+          <div class="services-compatibility-block" id="services">
+            <div class="services-header">
+              <span class="services-title">Supported Streaming Hubs</span>
+              <span class="services-sub">Instant 1-Click Launch</span>
+            </div>
+            <div class="services-badges-grid">
+              <button type="button" class="service-badge" data-service="youtube" title="Watch YouTube Together">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                <span>YouTube</span>
+              </button>
+              <button type="button" class="service-badge" data-service="netflix" title="Watch Netflix Together">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M5.398 0v24L9.1 19.333V0H5.398zm13.204 0v24L14.9 19.333V0h3.702zM9.1 0l5.8 24h-3.702L5.398 4.667V0H9.1z"/></svg>
+                <span>Netflix</span>
+              </button>
+              <button type="button" class="service-badge" data-service="prime" title="Watch Prime Video Together">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                <span>Prime Video</span>
+              </button>
+              <button type="button" class="service-badge" data-service="hotstar" title="Watch Disney+ Hotstar Together">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M10 8l6 4-6 4V8z"/></svg>
+                <span>Hotstar</span>
+              </button>
+              <button type="button" class="service-badge" data-service="local" title="Watch Local 4K Movies Together">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                <span>Local 4K</span>
+              </button>
+              <button type="button" class="service-badge" data-service="tabcast" title="Tab &amp; Screen WebRTC Broadcast">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                <span>Tab Cast</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Chrome Companion Extension Callout -->
+          <div class="extension-callout-banner">
+            <div class="ext-callout-left">
+              <div class="ext-callout-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f5b042" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+              </div>
+              <div class="ext-callout-content">
+                <div class="ext-callout-title">Sync Netflix, Hotstar &amp; Web Players</div>
+                <div class="ext-callout-desc">Get the companion extension for automated playback &amp; DRM audio sync.</div>
+              </div>
+            </div>
+            <a href="/api/download-extension" class="btn-ext-download" target="_blank" rel="noopener">Install Extension</a>
+          </div>
+
+          <!-- Card Row: Recent Rooms Visual Grid -->
           <div class="recent-rooms-block">
             <div class="recent-header">
-              <span class="recent-title">Recent Rooms</span>
+              <span class="recent-title">Recent Active Rooms</span>
               <a href="javascript:void(0)" class="recent-see-all" id="btn-see-all-rooms">
                 <span>See all</span>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -926,21 +1479,27 @@
             </div>
 
             <div class="recent-cards-grid" id="recent-cards-grid">
-              <a href="/room/midnight-crew-75" class="recent-room-card" data-scene="astronaut" style="background-image: url('/img/recent_backdrop_1.png');" title="Preview & Join midnight-crew-75">
+              <a href="/room/midnight-crew-75" class="recent-room-card" data-scene="astronaut" style="background-image: url('/img/recent_backdrop_1.png');" title="Preview &amp; Join midnight-crew-75">
                 <div class="recent-room-scrim"></div>
+                <span class="recent-room-live"><span class="recent-live-dot"></span>4 live</span>
                 <div class="recent-room-info">
+                  <span class="recent-room-badge">Cosmic</span>
                   <span class="recent-room-name">midnight-crew-75</span>
                 </div>
               </a>
-              <a href="/room/cinema-party-35" class="recent-room-card" data-scene="sunset" style="background-image: url('/img/recent_backdrop_2.png');" title="Preview & Join cinema-party-35">
+              <a href="/room/cinema-party-35" class="recent-room-card" data-scene="sunset" style="background-image: url('/img/recent_backdrop_2.png');" title="Preview &amp; Join cinema-party-35">
                 <div class="recent-room-scrim"></div>
+                <span class="recent-room-live"><span class="recent-live-dot"></span>2 live</span>
                 <div class="recent-room-info">
+                  <span class="recent-room-badge">Sunset</span>
                   <span class="recent-room-name">cinema-party-35</span>
                 </div>
               </a>
-              <a href="/room/bollywood-squad-98" class="recent-room-card" data-scene="neon" style="background-image: url('/img/recent_backdrop_3.png');" title="Preview & Join bollywood-squad-98">
+              <a href="/room/bollywood-squad-98" class="recent-room-card" data-scene="neon" style="background-image: url('/img/recent_backdrop_3.png');" title="Preview &amp; Join bollywood-squad-98">
                 <div class="recent-room-scrim"></div>
+                <span class="recent-room-live"><span class="recent-live-dot"></span>6 live</span>
                 <div class="recent-room-info">
+                  <span class="recent-room-badge">Neon</span>
                   <span class="recent-room-name">bollywood-squad-98</span>
                 </div>
               </a>
@@ -950,43 +1509,60 @@
       </section>
     </main>
 
-    <!-- Bottom Features Bar matching Reference Image -->
-    <footer class="landing-features-bar">
-      <div class="feature-item">
-        <div class="feature-icon-circle">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+    <!-- Bottom Features Showcase -->
+    <footer class="landing-features-grid" id="features">
+      <div class="feature-card">
+        <div class="feature-card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f5b042" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
           </svg>
         </div>
-        <span class="feature-label">Watch Together</span>
+        <div class="feature-card-body">
+          <h4>Sub-Second Sync</h4>
+          <p>Millisecond precision drift correction keeps all viewers synced within frame-level lock.</p>
+        </div>
       </div>
 
-      <div class="feature-divider"></div>
-
-      <div class="feature-item">
-        <div class="feature-icon-circle sync-circle">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-            <circle cx="9" cy="7" r="4"/>
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      <div class="feature-card">
+        <div class="feature-card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f5b042" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <line x1="12" y1="19" x2="12" y2="23"/>
+            <line x1="8" y1="23" x2="16" y2="23"/>
           </svg>
         </div>
-        <span class="feature-label">Real-Time Sync</span>
+        <div class="feature-card-body">
+          <h4>Dual-Audio Mixer</h4>
+          <p>Separate streams for room voice chat and movie stereo audio with independent volume dials.</p>
+        </div>
       </div>
 
-      <div class="feature-divider"></div>
+      <div class="feature-card">
+        <div class="feature-card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f5b042" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+        </div>
+        <div class="feature-card-body">
+          <h4>Stage Reactions</h4>
+          <p>Interactive floating applause, popcorn, and heart particles broadcast in real time across the room.</p>
+        </div>
+      </div>
 
-      <div class="feature-item">
-        <div class="feature-icon-circle">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="2" y="3" width="20" height="14" rx="3" ry="3"/>
-            <line x1="12" y1="17" x2="12" y2="21"/>
+      <div class="feature-card">
+        <div class="feature-card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f5b042" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
             <line x1="8" y1="21" x2="16" y2="21"/>
+            <line x1="12" y1="17" x2="12" y2="21"/>
           </svg>
         </div>
-        <span class="feature-label">Any Platform</span>
+        <div class="feature-card-body">
+          <h4>Zero Setup</h4>
+          <p>No accounts, no plugins required for guests. Send one link and start watching instantly.</p>
+        </div>
       </div>
     </footer>
   </div>
