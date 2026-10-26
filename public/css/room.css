@@ -6066,7 +6066,7 @@
     overflow: hidden !important;
     position: fixed !important;
     inset: 0 !important;
-    touch-action: pan-y !important;
+    touch-action: manipulation !important;
   }
 
   .room-nav-rail {
@@ -6087,9 +6087,103 @@
     flex-direction: column !important;
   }
 
-  /* Fixed bottom bar on mobile (Frosted Glassmorphism) */
+  /* Mobile Fixed Bottom Navigation Bar (Native Icon-Only Dock) */
   .mobile-bottom-nav {
-    display: none !important;
+    display: flex !important;
+    position: relative !important;
+    flex-shrink: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: calc(52px + env(safe-area-inset-bottom, 0px)) !important;
+    min-height: calc(52px + env(safe-area-inset-bottom, 0px)) !important;
+    padding: 0 12px env(safe-area-inset-bottom, 0px) !important;
+    background: rgba(10, 12, 18, 0.98) !important;
+    backdrop-filter: blur(24px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+    z-index: 100 !important;
+    justify-content: space-around !important;
+    align-items: center !important;
+    box-sizing: border-box !important;
+  }
+
+  .mobile-nav-btn {
+    flex: 1 !important;
+    max-width: 72px !important;
+    height: 48px !important;
+    min-height: 48px !important;
+    display: inline-flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    background: transparent !important;
+    border: none !important;
+    cursor: pointer !important;
+    color: rgba(255, 255, 255, 0.45) !important;
+    transition: color 0.16s ease, transform 0.12s ease !important;
+    -webkit-tap-highlight-color: transparent !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .mobile-nav-btn svg {
+    transition: transform 0.16s ease, filter 0.16s ease, stroke 0.16s ease !important;
+  }
+
+  .mobile-nav-btn:active {
+    transform: scale(0.88) !important;
+  }
+
+  .mobile-nav-btn.active {
+    color: #e5a93c !important;
+  }
+
+  .mobile-nav-btn.active svg {
+    transform: translateY(-2px) !important;
+    filter: drop-shadow(0 0 8px rgba(229, 169, 60, 0.55)) !important;
+    stroke-width: 2.3 !important;
+  }
+
+  .mobile-nav-btn.active::after {
+    content: '' !important;
+    position: absolute !important;
+    bottom: 5px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 14px !important;
+    height: 2.5px !important;
+    background: #e5a93c !important;
+    border-radius: 999px !important;
+    box-shadow: 0 0 8px rgba(229, 169, 60, 0.7) !important;
+  }
+
+  .mob-nav-badge {
+    position: absolute !important;
+    top: 5px !important;
+    right: calc(50% - 15px) !important;
+    background: #e5a93c !important;
+    color: #08090d !important;
+    font-size: 0.65rem !important;
+    font-weight: 800 !important;
+    min-width: 15px !important;
+    height: 15px !important;
+    border-radius: 999px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 3px !important;
+    box-sizing: border-box !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6) !important;
+    line-height: 1 !important;
+  }
+
+  .mob-nav-btn-media {
+    color: rgba(229, 169, 60, 0.8) !important;
+  }
+  .mob-nav-btn-media:hover,
+  .mob-nav-btn-media:active {
+    color: #e5a93c !important;
   }
 
   /* Top Navbar adjustments on mobile */
@@ -6216,8 +6310,8 @@
   .room-body-container {
     flex-direction: column !important;
     flex: 1 1 0 !important;
-    height: calc(100dvh - 48px) !important;
-    max-height: calc(100dvh - 48px) !important;
+    height: auto !important;
+    max-height: none !important;
     min-height: 0 !important;
     overflow: hidden !important;
     padding: 0 !important;
@@ -6400,31 +6494,13 @@
     background: #0a0c12 !important;
   }
 
+  /* Hide duplicate top tabs on mobile - replaced by icon-only bottom dock */
   .sidebar-header-bar {
-    flex: 0 0 44px !important;
-    height: 44px !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    padding: 0 10px !important;
-    background: rgba(14, 16, 23, 0.98) !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.07) !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
+    display: none !important;
   }
 
   .sidebar-tabs {
-    display: flex !important;
-    align-items: center !important;
-    gap: 4px !important;
-    width: 100% !important;
-  }
-
-  .sidebar-tab-btn {
-    flex: 1 !important;
-    justify-content: center !important;
-    padding: 6px 8px !important;
-    font-size: 0.76rem !important;
+    display: none !important;
   }
 
   .sidebar-collapse-trigger {
@@ -6445,6 +6521,37 @@
     width: 100% !important;
     max-width: 100% !important;
     background: #0a0c12 !important;
+  }
+
+  /* Smooth Native Tab Slide Transitions */
+  @keyframes tabSlideFromRight {
+    from {
+      opacity: 0.35;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes tabSlideFromLeft {
+    from {
+      opacity: 0.35;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .tab-pane.slide-from-right {
+    animation: tabSlideFromRight 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  }
+
+  .tab-pane.slide-from-left {
+    animation: tabSlideFromLeft 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
   }
 
   /* Chat Pane on Mobile - Flex stretching down to docked input bar */
@@ -6511,7 +6618,7 @@
     box-sizing: border-box !important;
     display: flex !important;
     flex-shrink: 0 !important;
-    padding: 8px 10px calc(8px + env(safe-area-inset-bottom, 0px)) !important;
+    padding: 8px 10px !important;
     background: rgba(12, 15, 21, 0.96) !important;
     backdrop-filter: blur(20px) !important;
     -webkit-backdrop-filter: blur(20px) !important;
@@ -6616,7 +6723,7 @@
 
   .queue-quick-add {
     flex-shrink: 0 !important;
-    padding: 8px 10px calc(8px + env(safe-area-inset-bottom, 0px)) !important;
+    padding: 8px 10px !important;
     background: rgba(14, 17, 24, 0.98) !important;
     border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
   }
@@ -6638,7 +6745,7 @@
 
   .voice-panel {
     flex: 1 1 auto !important;
-    padding: 12px 12px calc(16px + env(safe-area-inset-bottom, 0px)) !important;
+    padding: 12px 12px 14px !important;
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch !important;
   }

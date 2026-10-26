@@ -64,6 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentUsersList = [];
   let activeSidebarTab = 'chat';
   let unreadChatCount = 0;
+  const ROOM_TABS = ['chat', 'voice', 'queue'];
 
   // --------------------------------------------------------------------------
   // Stage Wallpaper Management & Room Defaults
@@ -272,13 +273,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function updateUnreadBadge() {
     const badge = document.getElementById('chat-unread-badge');
-    if (!badge) return;
-    if (unreadChatCount > 0) {
-      badge.style.display = 'inline-block';
-      badge.textContent = unreadChatCount > 99 ? '99+' : unreadChatCount;
-    } else {
-      badge.style.display = 'none';
-      badge.textContent = '0';
+    const mobBadge = document.getElementById('mob-chat-badge');
+    const countStr = unreadChatCount > 99 ? '99+' : String(unreadChatCount);
+
+    if (badge) {
+      if (unreadChatCount > 0) {
+        badge.style.display = 'inline-block';
+        badge.textContent = countStr;
+      } else {
+        badge.style.display = 'none';
+        badge.textContent = '0';
+      }
+    }
+
+    if (mobBadge) {
+      if (unreadChatCount > 0) {
+        mobBadge.style.display = 'flex';
+        mobBadge.textContent = countStr;
+      } else {
+        mobBadge.style.display = 'none';
+        mobBadge.textContent = '0';
+      }
     }
   }
 
@@ -671,27 +686,167 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Sidebar Tab Switcher
-  const tabBtns = document.querySelectorAll('.sidebar-tab-btn');
-  const tabPanes = document.querySelectorAll('.tab-pane');
-  tabBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const targetTab = btn.dataset.tab;
-      activeSidebarTab = targetTab;
+  // Unified Room Tab Switcher (Desktop Tabs + Mobile Icon Dock + Gesture Navigation)
+  function switchRoomTab(targetTab, direction = null) {
+    if (!ROOM_TABS.includes(targetTab)) return;
+    activeSidebarTab = targetTab;
 
-      if (activeSidebarTab === 'chat') {
-        unreadChatCount = 0;
-        updateUnreadBadge();
+    if (activeSidebarTab === 'chat') {
+      unreadChatCount = 0;
+      updateUnreadBadge();
+    }
+
+    // Update Desktop Tabs
+    document.querySelectorAll('.sidebar-tab-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.tab === targetTab);
+    });
+
+    // Update Mobile Bottom Dock Buttons
+    document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+      if (btn.dataset.tab) {
+        btn.classList.toggle('active', btn.dataset.tab === targetTab);
       }
+    });
 
-      tabBtns.forEach(b => b.classList.remove('active'));
-      tabPanes.forEach(p => p.classList.remove('active'));
+    // Switch Panes with Directional Animations
+    document.querySelectorAll('.tab-pane').forEach(pane => {
+      pane.classList.remove('active', 'slide-from-left', 'slide-from-right');
+    });
 
-      btn.classList.add('active');
-      const pane = document.getElementById(`tab-pane-${targetTab}`);
-      if (pane) pane.classList.add('active');
+    const activePane = document.getElementById(`tab-pane-${targetTab}`);
+    if (activePane) {
+      activePane.classList.add('active');
+      if (direction === 'next') {
+        activePane.classList.add('slide-from-right');
+      } else if (direction === 'prev') {
+        activePane.classList.add('slide-from-left');
+      }
+    }
+
+    // Scroll chat to bottom when switching to chat
+    if (targetTab === 'chat') {
+      const chatMsgs = document.getElementById('chat-messages');
+      if (chatMsgs) {
+        requestAnimationFrame(() => {
+          chatMsgs.scrollTop = chatMsgs.scrollHeight;
+        });
+      }
+    }
+
+    // Modern micro-haptic feedback
+    if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
+      try {
+        navigator.vibrate(10);
+      } catch (e) {}
+    }
+  }
+  window.switchRoomTab = switchRoomTab;
+  window.getActiveSidebarTab = () => activeSidebarTab;
+
+  // Sidebar Tab Click Listeners (Desktop)
+  document.querySelectorAll('.sidebar-tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      switchRoomTab(btn.dataset.tab);
     });
   });
+
+  // Mobile Icon-Only Bottom Navigation Dock
+  document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tab = btn.dataset.tab;
+      const action = btn.dataset.action;
+
+      if (tab) {
+        switchRoomTab(tab);
+      } else if (action === 'media') {
+        const modal = document.getElementById('media-modal');
+        if (modal) {
+          modal.classList.add('active');
+          modal.style.display = 'flex';
+          if (window.showVaultView) window.showVaultView('menu');
+        }
+        if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
+          try { navigator.vibrate(12); } catch (e) {}
+        }
+      }
+    });
+  });
+
+  // Native Gesture Navigation: Smooth horizontal swipe between Chat ↔ People ↔ Queue
+  (function initMobileGestureNav() {
+    const swipeSurface = document.getElementById('room-sidebar') || document.getElementById('room-body-container');
+    if (!swipeSurface) return;
+
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchStartTime = 0;
+    let lastTouchX = 0;
+    let lastTouchY = 0;
+    let isSwiping = false;
+
+    swipeSurface.addEventListener('touchstart', (e) => {
+      const touch = e.touches && e.touches[0];
+      if (!touch) return;
+      // Do not intercept taps on video stage, form controls, or horizontal soundboard
+      if (e.target.closest('#room-stage, input, textarea, select, button, .soundboard-buttons, .modal-overlay')) {
+        return;
+      }
+      touchStartX = touch.clientX;
+      touchStartY = touch.clientY;
+      lastTouchX = touch.clientX;
+      lastTouchY = touch.clientY;
+      touchStartTime = Date.now();
+      isSwiping = true;
+    }, { passive: true });
+
+    swipeSurface.addEventListener('touchmove', (e) => {
+      if (!isSwiping) return;
+      const touch = (e.touches && e.touches[0]) || (e.changedTouches && e.changedTouches[0]);
+      if (!touch) return;
+      lastTouchX = touch.clientX;
+      lastTouchY = touch.clientY;
+
+      const diffX = lastTouchX - touchStartX;
+      const diffY = lastTouchY - touchStartY;
+
+      // Only cancel if vertical scrolling is significant and clearly dominant
+      if (Math.abs(diffY) > 20 && Math.abs(diffY) > Math.abs(diffX) * 1.3) {
+        isSwiping = false;
+      }
+    }, { passive: true });
+
+    function handleTouchEnd(e) {
+      if (!isSwiping) return;
+      isSwiping = false;
+
+      const touch = (e.changedTouches && e.changedTouches[0]) || (e.touches && e.touches[0]);
+      const endX = touch ? touch.clientX : lastTouchX;
+      const endY = touch ? touch.clientY : lastTouchY;
+
+      const diffX = endX - touchStartX;
+      const diffY = endY - touchStartY;
+      const elapsed = Date.now() - touchStartTime;
+
+      // Minimum swipe distance: 35px, predominantly horizontal, completed within 600ms
+      if (Math.abs(diffX) >= 35 && Math.abs(diffX) > Math.abs(diffY) * 1.15 && elapsed < 600) {
+        const curIdx = ROOM_TABS.indexOf(activeSidebarTab);
+        if (diffX < 0) {
+          // Swipe Left -> next tab
+          if (curIdx >= 0 && curIdx < ROOM_TABS.length - 1) {
+            switchRoomTab(ROOM_TABS[curIdx + 1], 'next');
+          }
+        } else {
+          // Swipe Right -> previous tab
+          if (curIdx > 0) {
+            switchRoomTab(ROOM_TABS[curIdx - 1], 'prev');
+          }
+        }
+      }
+    }
+
+    swipeSurface.addEventListener('touchend', handleTouchEnd, { passive: true });
+    swipeSurface.addEventListener('touchcancel', handleTouchEnd, { passive: true });
+  })();
 
   // Sound effects toggle button
   const btnToggleSound = document.getElementById('btn-toggle-sound');
@@ -1742,64 +1897,7 @@ function setupCinemaDiscoveryHub(socket) {
     });
   }
 
-  // Mobile Bottom Navigation Bar Wiring
-  const mobNavRoom = document.getElementById('mob-nav-room');
-  const mobNavChat = document.getElementById('mob-nav-chat');
-  const mobNavPeople = document.getElementById('mob-nav-people');
-  const mobNavMore = document.getElementById('mob-nav-more');
 
-  function setMobileNavActive(btn) {
-    document.querySelectorAll('.mobile-nav-btn').forEach(b => b.classList.remove('active'));
-    if (btn) btn.classList.add('active');
-  }
-
-  if (mobNavRoom) {
-    mobNavRoom.addEventListener('click', () => {
-      setMobileNavActive(mobNavRoom);
-      closeModal();
-      const sidebar = document.getElementById('room-sidebar');
-      if (sidebar) {
-        sidebar.classList.remove('collapsed');
-      }
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-  }
-
-  if (mobNavChat) {
-    mobNavChat.addEventListener('click', () => {
-      setMobileNavActive(mobNavChat);
-      closeModal();
-      const chatTab = document.querySelector('.sidebar-tab-btn[data-tab="chat"]');
-      if (chatTab) chatTab.click();
-      const sidebar = document.getElementById('room-sidebar');
-      if (sidebar) {
-        sidebar.classList.remove('collapsed');
-      }
-      const chatInput = document.getElementById('chat-input');
-      if (chatInput) chatInput.focus();
-    });
-  }
-
-  if (mobNavPeople) {
-    mobNavPeople.addEventListener('click', () => {
-      setMobileNavActive(mobNavPeople);
-      closeModal();
-      const voiceTab = document.querySelector('.sidebar-tab-btn[data-tab="voice"]');
-      if (voiceTab) voiceTab.click();
-      const sidebar = document.getElementById('room-sidebar');
-      if (sidebar) {
-        sidebar.classList.remove('collapsed');
-      }
-    });
-  }
-
-  if (mobNavMore) {
-    mobNavMore.addEventListener('click', () => {
-      setMobileNavActive(mobNavMore);
-      openModal();
-      showVaultView('menu');
-    });
-  }
 
   // Mobile Playing Stage Controls
   const btnPlayingBack = document.getElementById('btn-mobile-playing-back');
@@ -3106,6 +3204,8 @@ function setupCinemaDiscoveryHub(socket) {
 function renderUsers(users, webrtcMgr, currentUserId) {
   const countEl = document.getElementById('user-count-badge');
   if (countEl) countEl.textContent = `${users.length}`;
+  const mobPeopleBadge = document.getElementById('mob-people-badge');
+  if (mobPeopleBadge) mobPeopleBadge.textContent = `${users.length}`;
 
   // Update Top Masthead Presence Stack & Live Counter
   const navCircles = document.getElementById('nav-avatar-circles');

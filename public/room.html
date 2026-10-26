@@ -1131,41 +1131,48 @@
     </main>
     </div> <!-- .room-body-container -->
 
-    <!-- Mobile Fixed Bottom Navigation Bar -->
+    <!-- Mobile Fixed Bottom Navigation Bar (Native Icon-Only Dock) -->
     <nav class="mobile-bottom-nav" id="mobile-bottom-nav" aria-label="Mobile Navigation">
-      <button type="button" class="mobile-nav-btn active" data-nav="stage" id="mob-nav-room">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-          <polyline points="9 22 9 12 15 12 15 22"></polyline>
-        </svg>
-        <span>Room</span>
-      </button>
-
-      <button type="button" class="mobile-nav-btn" data-nav="chat" id="mob-nav-chat">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <button type="button" class="mobile-nav-btn active" data-tab="chat" id="mob-nav-chat" aria-label="Live Chat" title="Live Chat">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
         </svg>
-        <span>Chat</span>
-        <span class="mobile-nav-dot" id="mob-chat-dot" style="display: none;"></span>
+        <span class="mob-nav-badge" id="mob-chat-badge" style="display: none;">0</span>
       </button>
 
-      <button type="button" class="mobile-nav-btn" data-nav="people" id="mob-nav-people">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <button type="button" class="mobile-nav-btn" data-tab="voice" id="mob-nav-people" aria-label="Participants &amp; Voice" title="Participants &amp; Voice">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
           <circle cx="9" cy="7" r="4"></circle>
           <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
           <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
         </svg>
-        <span>People</span>
+        <span class="mob-nav-badge" id="mob-people-badge">1</span>
       </button>
 
-      <button type="button" class="mobile-nav-btn" data-nav="more" id="mob-nav-more">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="1.5"></circle>
-          <circle cx="19" cy="12" r="1.5"></circle>
-          <circle cx="5" cy="12" r="1.5"></circle>
+      <button type="button" class="mobile-nav-btn" data-tab="queue" id="mob-nav-queue" aria-label="Media Queue" title="Media Queue">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="8" y1="6" x2="21" y2="6"></line>
+          <line x1="8" y1="12" x2="21" y2="12"></line>
+          <line x1="8" y1="18" x2="21" y2="18"></line>
+          <line x1="3" y1="6" x2="3.01" y2="6"></line>
+          <line x1="3" y1="12" x2="3.01" y2="12"></line>
+          <line x1="3" y1="18" x2="3.01" y2="18"></line>
         </svg>
-        <span>More</span>
+        <span class="mob-nav-badge" id="mob-queue-badge" style="display: none;">0</span>
+      </button>
+
+      <button type="button" class="mobile-nav-btn mob-nav-btn-media" data-action="media" id="mob-nav-media" aria-label="Load Media" title="Load Media">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
+          <line x1="7" y1="2" x2="7" y2="22"></line>
+          <line x1="17" y1="2" x2="17" y2="22"></line>
+          <line x1="2" y1="12" x2="22" y2="12"></line>
+          <line x1="2" y1="7" x2="7" y2="7"></line>
+          <line x1="2" y1="17" x2="7" y2="17"></line>
+          <line x1="17" y1="17" x2="22" y2="17"></line>
+          <line x1="17" y1="7" x2="22" y2="7"></line>
+        </svg>
       </button>
     </nav>
 
@@ -2120,6 +2127,6 @@
   <script src="/js/sync.js?v=5"></script>
   <script src="/js/webrtc.js?v=6"></script>
   <script src="/js/providers.js?v=5"></script>
-  <script src="/js/room.js?v=25"></script>
+  <script src="/js/room.js?v=28"></script>
 </body>
 </html>

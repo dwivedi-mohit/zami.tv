@@ -107,6 +107,11 @@ class RoomQueueManager {
     if (this.badge) {
       this.badge.textContent = this.playlist.length;
     }
+    const mobQueueBadge = document.getElementById('mob-queue-badge');
+    if (mobQueueBadge) {
+      mobQueueBadge.textContent = this.playlist.length;
+      mobQueueBadge.style.display = this.playlist.length > 0 ? 'flex' : 'none';
+    }
 
     if (!this.container) return;
 
