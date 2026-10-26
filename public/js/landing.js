@@ -638,18 +638,86 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // --------------------------------------------------------------------------
-  // Feature Cards Interactions
+  // Showcase Video Reel & Canvas Ambient Renderer
   // --------------------------------------------------------------------------
-  document.querySelectorAll(".card-hotspot").forEach((card) => {
-    card.addEventListener("click", () => {
-      const feat = card.getAttribute("data-feature");
-      const titles = {
-        sync: "Sync in Real-Time — Sub-second lag",
-        anything: "Watch Anything — MP4, MKV, YouTube, Streams",
-        together: "Be Together — Spatial audio & chat",
-        device: "On Any Device — Mobile, Tablet & Desktop"
-      };
-      showToast(titles[feat] || "Feature Selected");
+  const showcaseVideo = document.getElementById("showcase-reel-video");
+  const showcaseCanvas = document.getElementById("showcase-reel-canvas");
+  const btnShowcaseSound = document.getElementById("btn-showcase-sound");
+  const iconShowcaseSound = document.getElementById("icon-showcase-sound");
+
+  if (showcaseVideo && showcaseCanvas) {
+    const ctx = showcaseCanvas.getContext("2d", { alpha: true });
+    let animFrameId = null;
+
+    function resizeCanvas() {
+      const w = showcaseVideo.videoWidth || 720;
+      const h = showcaseVideo.videoHeight || 540;
+      if (showcaseCanvas.width !== w || showcaseCanvas.height !== h) {
+        showcaseCanvas.width = w;
+        showcaseCanvas.height = h;
+      }
+    }
+
+    function renderLoop() {
+      if (!showcaseVideo.paused && !showcaseVideo.ended) {
+        if (showcaseCanvas.width !== (showcaseVideo.videoWidth || 720)) {
+          resizeCanvas();
+        }
+        ctx.drawImage(showcaseVideo, 0, 0, showcaseCanvas.width, showcaseCanvas.height);
+      }
+      animFrameId = requestAnimationFrame(renderLoop);
+    }
+
+    showcaseVideo.addEventListener("loadedmetadata", resizeCanvas);
+    showcaseVideo.addEventListener("canplay", () => {
+      resizeCanvas();
+      if (!animFrameId) {
+        animFrameId = requestAnimationFrame(renderLoop);
+      }
     });
-  });
+    showcaseVideo.addEventListener("play", () => {
+      if (!animFrameId) {
+        animFrameId = requestAnimationFrame(renderLoop);
+      }
+    });
+
+    const playPromise = showcaseVideo.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {
+        showcaseVideo.muted = true;
+        showcaseVideo.play().catch(() => {});
+      });
+    }
+
+    if (showcaseVideo.readyState >= 2) {
+      resizeCanvas();
+      animFrameId = requestAnimationFrame(renderLoop);
+    }
+  }
+
+  if (showcaseVideo && btnShowcaseSound) {
+    btnShowcaseSound.addEventListener("click", () => {
+      showcaseVideo.muted = !showcaseVideo.muted;
+      if (showcaseVideo.muted) {
+        if (iconShowcaseSound) {
+          iconShowcaseSound.innerHTML = `
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+            <line x1="23" y1="9" x2="17" y2="15"/>
+            <line x1="17" y1="9" x2="23" y2="15"/>
+          `;
+        }
+        btnShowcaseSound.setAttribute("aria-label", "Unmute showcase audio");
+        showToast("Showcase audio muted");
+      } else {
+        if (iconShowcaseSound) {
+          iconShowcaseSound.innerHTML = `
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+          `;
+        }
+        btnShowcaseSound.setAttribute("aria-label", "Mute showcase audio");
+        showToast("Showcase audio unmuted");
+      }
+    });
+  }
 });

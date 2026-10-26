@@ -864,63 +864,74 @@
     }
 
     /* --------------------------------------------------------------------------
-       4 FEATURE CARDS (FULL-WIDTH 4-COLUMN ROW)
+       STREAMING SHOWCASE VIDEO REEL (SEAMLESS AMBIENT BLEND)
        -------------------------------------------------------------------------- */
-    .feature-cards-row {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 22px;
+    .showcase-video-section {
       width: 100%;
-      margin-top: 12px;
-    }
-    .feature-card-item {
-      background: var(--bg-card);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-card);
-      padding: 26px 22px;
+      max-width: 1100px;
+      margin: 14px auto 0;
       display: flex;
       flex-direction: column;
-      align-items: flex-start;
-      gap: 10px;
-      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
-      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-    }
-    .feature-card-item:hover {
-      transform: translateY(-3px);
-      border-color: rgba(255, 184, 77, 0.3);
-      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6), 0 0 30px rgba(255, 184, 77, 0.1);
-    }
-    .feature-icon-badge {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: rgba(255, 184, 77, 0.12);
-      border: 1px solid rgba(255, 184, 77, 0.24);
-      color: var(--color-gold-primary);
-      display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 4px;
-      box-shadow: 0 0 16px rgba(255, 184, 77, 0.15);
+      position: relative;
+      background: transparent;
     }
-    .feature-icon-badge.coral {
-      background: rgba(248, 113, 113, 0.12);
-      border-color: rgba(248, 113, 113, 0.24);
-      color: #F87171;
-      box-shadow: 0 0 16px rgba(248, 113, 113, 0.15);
+
+    .showcase-video-container {
+      position: relative;
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: transparent;
     }
-    .feature-title {
-      font-size: 1.15rem;
-      font-weight: 700;
+
+    .showcase-canvas-player {
+      width: 100%;
+      max-width: 900px;
+      height: auto;
+      aspect-ratio: 4 / 3;
+      display: block;
+      margin: 0 auto;
+      background: transparent;
+      pointer-events: none;
+      -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, #000 35%, transparent 75%);
+      mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, #000 35%, transparent 75%);
+    }
+
+    .showcase-video-player-source {
+      display: none;
+    }
+
+    .btn-showcase-audio {
+      position: absolute;
+      bottom: 20px;
+      right: 24px;
+      z-index: 5;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(28, 22, 18, 0.78);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 224, 190, 0.18);
       color: var(--text-main);
-      letter-spacing: -0.01em;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0.75;
+      transition: opacity 0.2s ease, transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
     }
-    .feature-desc {
-      font-size: 0.90rem;
-      color: var(--text-secondary);
-      line-height: 1.45;
+    .btn-showcase-audio:hover {
+      opacity: 1;
+      transform: scale(1.08);
+      border-color: var(--color-gold-primary);
+      background: rgba(45, 35, 28, 0.95);
+      box-shadow: 0 0 16px rgba(255, 184, 77, 0.3);
     }
 
     /* --------------------------------------------------------------------------
@@ -1132,8 +1143,14 @@
       .hero-subtitle {
         max-width: 600px;
       }
-      .feature-cards-row {
-        grid-template-columns: repeat(2, 1fr);
+      .showcase-video-section {
+        margin-top: 20px;
+      }
+      .showcase-video-container {
+        max-width: 700px;
+      }
+      .showcase-canvas-player {
+        max-width: 700px;
       }
     }
 
@@ -1224,8 +1241,23 @@
         padding: 0 14px;
         font-size: 0.82rem;
       }
-      .feature-cards-row {
-        grid-template-columns: 1fr;
+      .showcase-video-section {
+        margin-top: 14px;
+        width: 100%;
+      }
+      .showcase-video-container {
+        max-width: 100%;
+      }
+      .showcase-canvas-player {
+        max-width: 100%;
+        -webkit-mask-image: radial-gradient(ellipse 72% 62% at 50% 50%, #000 35%, transparent 75%);
+        mask-image: radial-gradient(ellipse 72% 62% at 50% 50%, #000 35%, transparent 75%);
+      }
+      .btn-showcase-audio {
+        bottom: 8px;
+        right: 10px;
+        width: 32px;
+        height: 32px;
       }
     }
   </style>
@@ -1444,50 +1476,31 @@
       </section>
     </main>
 
-    <!-- 4 Feature Cards (Spanning Across Bottom) -->
-    <section class="feature-cards-row" id="features" aria-label="Platform Features">
-      <!-- Card 1 -->
-      <div class="feature-card-item">
-        <div class="feature-icon-badge">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+    <!-- Streaming Showcase 3D Reel Section -->
+    <section class="showcase-video-section" id="features" aria-label="Streaming Showcase Reel">
+      <div class="showcase-video-container">
+        <video 
+          id="showcase-reel-video"
+          class="showcase-video-player-source"
+          autoplay 
+          loop 
+          muted 
+          playsinline 
+          webkit-playsinline
+          preload="auto"
+          aria-label="Interactive 3D Carousel Showcase Reel"
+          style="display: none;"
+        >
+          <source src="/video/showcase_carousel.mp4" type="video/mp4">
+        </video>
+        <canvas id="showcase-reel-canvas" class="showcase-canvas-player" aria-label="Interactive 3D Carousel Showcase Reel"></canvas>
+        <button type="button" class="btn-showcase-audio" id="btn-showcase-sound" aria-label="Toggle showcase audio" title="Toggle audio">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-showcase-sound">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+            <line x1="23" y1="9" x2="17" y2="15"/>
+            <line x1="17" y1="9" x2="23" y2="15"/>
           </svg>
-        </div>
-        <h3 class="feature-title">Sync in Real-Time</h3>
-        <p class="feature-desc">Everyone stays perfectly in sync, always.</p>
-      </div>
-
-      <!-- Card 2 -->
-      <div class="feature-card-item">
-        <div class="feature-icon-badge">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
-          </svg>
-        </div>
-        <h3 class="feature-title">Watch Anything</h3>
-        <p class="feature-desc">Movies, shows, videos and more.</p>
-      </div>
-
-      <!-- Card 3 -->
-      <div class="feature-card-item">
-        <div class="feature-icon-badge coral">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-          </svg>
-        </div>
-        <h3 class="feature-title">Be Together</h3>
-        <p class="feature-desc">Chat, react and make it more fun.</p>
-      </div>
-
-      <!-- Card 4 -->
-      <div class="feature-card-item">
-        <div class="feature-icon-badge">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7l-2 3v1h8v-1l-2-3h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 12H3V4h18v10z"/>
-          </svg>
-        </div>
-        <h3 class="feature-title">On Any Device</h3>
-        <p class="feature-desc">Works smoothly on mobile, tablet and desktop.</p>
+        </button>
       </div>
     </section>
   </div>
