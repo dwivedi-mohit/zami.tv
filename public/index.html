@@ -399,121 +399,126 @@
       transform: translateY(0);
     }
 
-    /* --------------------------------------------------------------------------
-       Right Column: Refined Shared Watch Party Media Player Preview
-       -------------------------------------------------------------------------- */
-    .player-preview-wrapper {
+    /* ==========================================================================
+       Interactive Blended Living Cinema Stage (Seamless Edge Fade & Micro-Interactions)
+       Modern Web Guidance: soft-edge-content-fade via radial-gradient mask-image
+       ========================================================================== */
+    .stage-interactive-wrapper {
       position: relative;
       width: 100%;
       min-width: 0;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
+      gap: 16px;
     }
 
-    /* Soft warm ambient backlight behind preview card */
-    .player-glow-ambient {
+    /* Ambient Backlight Glow projecting movie atmosphere onto the warm charcoal room */
+    .stage-ambient-glow {
       position: absolute;
-      top: 50%;
+      top: 40%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 106%;
-      height: 106%;
-      background: radial-gradient(ellipse 65% 55% at 50% 50%, rgba(245, 158, 11, 0.16) 0%, rgba(251, 146, 60, 0.05) 50%, transparent 75%);
-      filter: blur(50px);
+      width: 115%;
+      height: 110%;
+      background: radial-gradient(ellipse 65% 55% at 50% 50%, rgba(245, 158, 11, 0.22) 0%, rgba(251, 146, 60, 0.08) 50%, transparent 75%);
+      filter: blur(60px);
       pointer-events: none;
       z-index: 0;
+      transition: background 0.8s ease;
     }
 
-    .player-preview-card {
+    /* Seamless Cinema Viewport with Organic Feathered Mask (soft-edge-content-fade) */
+    .stage-cinema-viewport {
       position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      border-radius: 28px;
+      overflow: hidden;
+      cursor: pointer;
+      user-select: none;
+      -webkit-mask-image: radial-gradient(ellipse 95% 90% at 50% 50%, black 72%, transparent 100%);
+      mask-image: radial-gradient(ellipse 95% 90% at 50% 50%, black 72%, transparent 100%);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
       z-index: 1;
-      width: 100%;
-      max-width: 100%;
-      background: rgba(22, 19, 18, 0.85);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 1px solid rgba(255, 255, 255, 0.11);
-      border-radius: clamp(18px, 2vw, 24px);
-      box-shadow: 
-        0 32px 80px rgba(0, 0, 0, 0.8),
-        0 0 50px rgba(245, 158, 11, 0.06),
-        0 1px 0 rgba(255, 255, 255, 0.12) inset;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
-    }
-    .player-preview-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 
-        0 38px 90px rgba(0, 0, 0, 0.85),
-        0 0 60px rgba(245, 158, 11, 0.1),
-        0 1px 0 rgba(255, 255, 255, 0.16) inset;
     }
 
-    /* Video Screen Container */
-    .preview-screen-container {
-      position: relative;
+    .stage-cinema-viewport:hover {
+      transform: scale(1.015);
+    }
+
+    .stage-scenes-layer {
+      position: absolute;
+      inset: 0;
       width: 100%;
-      aspect-ratio: 16 / 9.4;
+      height: 100%;
       background: #0d0b0a;
-      overflow: hidden;
     }
 
-    .preview-screen-img {
+    .stage-scene-img {
+      position: absolute;
+      inset: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
       object-position: center;
-      display: block;
-      transition: transform 0.4s ease;
+      opacity: 0;
+      transition: opacity 0.8s ease, transform 12s ease-out;
+      transform: scale(1);
     }
 
-    .preview-screen-scrim {
+    .stage-scene-img.active {
+      opacity: 1;
+      transform: scale(1.04);
+    }
+
+    .stage-scene-vignette {
       position: absolute;
       inset: 0;
       background: 
-        linear-gradient(180deg, rgba(13, 11, 10, 0.6) 0%, rgba(13, 11, 10, 0.05) 30%, rgba(13, 11, 10, 0.05) 65%, rgba(13, 11, 10, 0.85) 100%),
-        radial-gradient(ellipse 80% 60% at 50% 50%, transparent 45%, rgba(0, 0, 0, 0.45) 100%);
+        linear-gradient(180deg, rgba(19, 17, 16, 0.45) 0%, transparent 35%, transparent 60%, rgba(19, 17, 16, 0.75) 100%),
+        radial-gradient(ellipse 85% 75% at 50% 50%, transparent 45%, rgba(19, 17, 16, 0.6) 100%);
       pointer-events: none;
     }
 
-    /* Top Floating Status Badges */
-    .preview-top-bar {
+    /* Top HUD: Sync Pill & Mood Tabs */
+    .stage-top-hud {
       position: absolute;
-      top: clamp(10px, 1.6vw, 16px);
-      left: clamp(10px, 1.6vw, 16px);
-      right: clamp(10px, 1.6vw, 16px);
+      top: clamp(12px, 2vw, 18px);
+      left: clamp(12px, 2vw, 18px);
+      right: clamp(12px, 2vw, 18px);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
-      z-index: 5;
+      gap: 10px;
+      z-index: 10;
     }
 
-    .preview-pill {
+    .hud-pill {
       display: inline-flex;
       align-items: center;
       gap: 7px;
-      padding: clamp(5px, 0.8vw, 7px) clamp(10px, 1.2vw, 14px);
+      padding: 6px 14px;
       border-radius: 999px;
-      background: rgba(20, 17, 16, 0.82);
+      background: rgba(22, 19, 17, 0.82);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
       border: 1px solid rgba(255, 255, 255, 0.12);
       color: #f5f5f4;
       font-size: clamp(0.72rem, 0.68rem + 0.2vw, 0.82rem);
       font-weight: 500;
-      white-space: nowrap;
-      user-select: none;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+      cursor: pointer;
+      transition: background 0.18s, transform 0.18s;
     }
 
-    .pill-status {
-      border-color: rgba(16, 185, 129, 0.25);
+    .hud-pill:hover {
+      background: rgba(36, 30, 26, 0.95);
+      transform: translateY(-1px);
     }
-    .status-pulse-dot {
+
+    .hud-pulse-dot {
       width: 7px;
       height: 7px;
       border-radius: 50%;
@@ -521,249 +526,245 @@
       box-shadow: 0 0 8px rgba(16, 185, 129, 0.8);
       animation: pulseSync 2.5s ease-in-out infinite;
     }
-    @keyframes pulseSync {
-      0%, 100% {
-        opacity: 1;
-        transform: scale(1);
-      }
-      50% {
-        opacity: 0.55;
-        transform: scale(0.9);
-      }
-    }
 
-    .pill-room {
-      cursor: pointer;
-      border-color: rgba(245, 158, 11, 0.25);
-      background: rgba(24, 20, 18, 0.85);
-      transition: background 0.18s, border-color 0.18s, transform 0.18s;
-      font-family: inherit;
-    }
-    .pill-room:hover {
-      background: rgba(36, 30, 26, 0.95);
-      border-color: rgba(245, 158, 11, 0.45);
-      transform: translateY(-1px);
-    }
-    .room-code-tag {
-      font-family: 'JetBrains Mono', monospace;
-      color: #fbbf24;
-      font-weight: 600;
-    }
-    .pill-room-icon, .pill-copy-icon {
-      color: var(--zami-text-muted);
-    }
-
-    /* Copy Link Toast */
-    .preview-toast {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(0.92);
-      background: rgba(18, 15, 14, 0.95);
-      border: 1px solid rgba(245, 158, 11, 0.4);
-      color: #fafaf9;
-      padding: 9px 18px;
+    .hud-mood-tabs {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(22, 19, 17, 0.82);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 3px;
       border-radius: 999px;
-      font-size: 0.84rem;
-      font-weight: 600;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(245, 158, 11, 0.25);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-      z-index: 20;
-    }
-    .preview-toast.show {
-      opacity: 1;
-      transform: translate(-50%, -50%) scale(1);
     }
 
-    /* Avatars Stack: Desktop Right Edge Column */
-    .preview-avatars-desktop {
+    .mood-tab {
+      background: transparent;
+      border: none;
+      color: var(--zami-text-muted);
+      font-family: inherit;
+      font-size: 0.76rem;
+      font-weight: 600;
+      padding: 4px 11px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .mood-tab:hover {
+      color: #ffffff;
+    }
+
+    .mood-tab.active {
+      background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);
+      color: #12100e;
+      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.35);
+    }
+
+    /* Dynamic Live Chat Whispers */
+    .stage-whispers-container {
       position: absolute;
-      top: 50%;
-      right: clamp(10px, 1.6vw, 16px);
-      transform: translateY(-50%);
+      top: 38%;
+      left: clamp(12px, 2.5vw, 22px);
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      z-index: 5;
+      gap: 10px;
+      z-index: 8;
+      pointer-events: none;
+      max-width: 75%;
     }
 
-    .avatar-item {
-      position: relative;
-      width: clamp(28px, 2.4vw, 34px);
-      height: clamp(28px, 2.4vw, 34px);
-      border-radius: 50%;
-      cursor: pointer;
+    .stage-whisper-bubble {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 12px 5px 6px;
+      border-radius: 999px;
+      background: rgba(20, 17, 16, 0.78);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fafaf9;
+      font-size: 0.78rem;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+      animation: whisperFloat 6s ease-in-out infinite alternate;
     }
-    .avatar-thumb {
+
+    .whisper-avatar {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1.5px solid #f59e0b;
+    }
+
+    @keyframes whisperFloat {
+      0% {
+        transform: translateY(0px);
+        opacity: 0.9;
+      }
+      100% {
+        transform: translateY(-6px);
+        opacity: 1;
+      }
+    }
+
+    /* Particle Canvas Overlay */
+    .stage-particle-canvas {
+      position: absolute;
+      inset: 0;
       width: 100%;
       height: 100%;
-      object-fit: cover;
-      border-radius: 50%;
-      border: 2px solid rgba(245, 158, 11, 0.35);
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-      display: block;
-      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
-    }
-    .avatar-item:hover .avatar-thumb,
-    .mob-avatar:hover .avatar-thumb {
-      transform: scale(1.1);
-      border-color: #f59e0b;
-    }
-    .crown-badge, .crown-badge-mob {
-      position: absolute;
-      top: -4px;
-      right: -3px;
-      background: #181513;
-      border: 1px solid rgba(245, 158, 11, 0.5);
-      border-radius: 50%;
-      width: 14px;
-      height: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .avatar-count {
-      background: rgba(28, 24, 22, 0.92);
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      color: #fed7aa;
-      font-size: 0.72rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
-    }
-    .avatar-count:hover {
-      transform: scale(1.1);
-      border-color: #f59e0b;
+      pointer-events: none;
+      z-index: 12;
     }
 
-    /* Mobile Avatars Stack (horizontal row at bottom-right) */
-    .preview-avatars-mobile {
-      display: none;
+    /* Floating Party Avatars Dock */
+    .stage-party-dock {
       position: absolute;
-      bottom: 12px;
-      right: 12px;
+      bottom: clamp(12px, 2vw, 18px);
+      right: clamp(12px, 2vw, 18px);
+      display: flex;
       align-items: center;
       gap: 6px;
-      z-index: 5;
+      z-index: 10;
+      background: rgba(20, 17, 16, 0.78);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 4px 8px 4px 6px;
+      border-radius: 999px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
     }
-    .mob-avatar {
+
+    .party-avatar-item {
       position: relative;
       width: 26px;
       height: 26px;
       border-radius: 50%;
+      cursor: pointer;
+      transition: transform 0.2s ease;
     }
-    .avatar-count-mob {
-      background: rgba(28, 24, 22, 0.92);
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      color: #fed7aa;
-      font-size: 0.68rem;
+
+    .party-avatar-item:hover {
+      transform: scale(1.15);
+    }
+
+    .party-avatar-img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1.5px solid rgba(245, 158, 11, 0.4);
+    }
+
+    .party-crown-badge {
+      position: absolute;
+      top: -4px;
+      right: -3px;
+      background: #181513;
+      border: 1px solid rgba(245, 158, 11, 0.6);
+      border-radius: 50%;
+      width: 13px;
+      height: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .party-count-badge {
+      font-size: 0.72rem;
       font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-    }
-
-    /* Bottom Playback Controls Bar */
-    .preview-controls-bar {
-      display: flex;
-      align-items: center;
-      gap: clamp(8px, 1.4vw, 14px);
-      padding: clamp(10px, 1.2vw, 14px) clamp(12px, 1.6vw, 18px);
-      background: rgba(18, 15, 14, 0.95);
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .ctrl-btn {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      background: transparent;
-      border: none;
-      color: #e7e5e4;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      color: #fed7aa;
+      padding: 0 4px;
       cursor: pointer;
-      transition: background 0.18s, color 0.18s, transform 0.18s;
-      flex-shrink: 0;
-    }
-    .ctrl-btn:hover {
-      background: rgba(255, 255, 255, 0.1);
-      color: #ffffff;
-      transform: scale(1.05);
-    }
-    .ctrl-btn:active {
-      transform: scale(0.96);
-    }
-    .ctrl-play {
-      color: #fbbf24;
     }
 
-    .ctrl-time {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: clamp(0.72rem, 0.68rem + 0.15vw, 0.8rem);
-      color: var(--zami-text-muted);
-      white-space: nowrap;
-      user-select: none;
-      flex-shrink: 0;
-    }
-
-    .ctrl-scrubber {
-      flex: 1;
-      height: 20px;
-      display: flex;
-      align-items: center;
-      cursor: pointer;
-      position: relative;
-      touch-action: none;
-    }
-    .scrubber-track {
+    /* Interactive Tap-to-React Floating Dock */
+    .stage-reaction-dock {
       position: relative;
       width: 100%;
-      height: 4px;
-      background: rgba(255, 255, 255, 0.16);
-      border-radius: 999px;
-      overflow: visible;
-      transition: height 0.18s ease;
-    }
-    .ctrl-scrubber:hover .scrubber-track {
-      height: 6px;
-    }
-    .scrubber-fill {
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: 100%;
-      background: linear-gradient(90deg, #d97706 0%, #f59e0b 50%, #fbbf24 100%);
-      border-radius: 999px;
-    }
-    .scrubber-knob {
-      position: absolute;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: #ffffff;
-      border: 2px solid #f59e0b;
-      box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
-      transition: transform 0.15s ease;
-    }
-    .ctrl-scrubber:hover .scrubber-knob {
-      transform: translate(-50%, -50%) scale(1.25);
-    }
-
-    .ctrl-actions-right {
+      max-width: 540px;
       display: flex;
       align-items: center;
-      gap: 4px;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(26, 22, 20, 0.75);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+      z-index: 10;
+    }
+
+    .reaction-dock-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--zami-text-muted);
+      white-space: nowrap;
+    }
+
+    .reaction-buttons-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: nowrap;
+    }
+
+    .btn-react-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(40, 34, 30, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fafaf9;
+      font-family: inherit;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+      user-select: none;
+    }
+
+    .btn-react-pill:hover {
+      background: rgba(56, 47, 42, 0.95);
+      border-color: rgba(245, 158, 11, 0.4);
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+    }
+
+    .btn-react-pill:active {
+      transform: scale(0.95);
+    }
+
+    .btn-react-pill svg {
+      color: #f59e0b;
       flex-shrink: 0;
+    }
+
+    .reaction-stats-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.28);
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: #fbbf24;
+      white-space: nowrap;
+      user-select: none;
+      transition: transform 0.2s ease;
+    }
+
+    .reaction-stats-pill.pulse {
+      transform: scale(1.15);
     }
 
     /* --------------------------------------------------------------------------
@@ -984,29 +985,55 @@
         min-height: 48px;
         padding: 12px 18px;
       }
-      .preview-pill {
+      .hud-pill {
         padding: 4px 8px;
         font-size: 0.68rem;
       }
-      .ctrl-time {
-        font-size: 0.68rem;
-      }
-      .ctrl-btn-gear {
-        display: none;
+      .btn-react-pill {
+        padding: 5px 8px;
+        font-size: 0.7rem;
       }
     }
 
-    /* Mobile (<= 767px): Stacked Vertically, Optimized Padding */
+    /* Mobile (<= 767px): Stacked Vertically, Native Touch Comfort */
     @media (max-width: 767px) {
-      .preview-avatars-desktop {
-        display: none;
-      }
-      .preview-avatars-mobile {
-        display: flex;
-      }
       .hero-container {
         gap: 32px;
-        padding: 8px 0 20px;
+        padding: 8px 0 24px;
+      }
+      .stage-interactive-wrapper {
+        gap: 12px;
+        width: 100%;
+      }
+      .stage-cinema-viewport {
+        aspect-ratio: 16 / 10.5;
+        border-radius: 20px;
+        -webkit-mask-image: radial-gradient(ellipse 96% 92% at 50% 50%, black 74%, transparent 100%);
+        mask-image: radial-gradient(ellipse 96% 92% at 50% 50%, black 74%, transparent 100%);
+      }
+      .stage-reaction-dock {
+        width: 100%;
+        padding: 8px 10px;
+        justify-content: space-between;
+      }
+      .reaction-dock-label {
+        display: none;
+      }
+      .reaction-buttons-group {
+        flex: 1;
+        justify-content: space-between;
+      }
+      .btn-react-pill {
+        padding: 7px 10px;
+        font-size: 0.74rem;
+        gap: 4px;
+        min-height: 38px;
+      }
+      .stage-whispers-container {
+        max-width: 85%;
+      }
+      .stage-whisper-bubble.whisper-2 {
+        display: none;
       }
     }
 
@@ -1044,7 +1071,7 @@
         width: auto;
         padding: 14px 30px;
       }
-      .player-preview-wrapper {
+      .stage-interactive-wrapper {
         max-width: 740px;
         width: 100%;
       }
@@ -1091,7 +1118,7 @@
       .btn-cta-create, .btn-cta-join {
         width: auto;
       }
-      .player-preview-wrapper {
+      .stage-interactive-wrapper {
         max-width: 100%;
       }
     }
@@ -1175,133 +1202,109 @@
         </div>
       </section>
 
-      <!-- Right Column: Enlarged Main-Focus Cinematic Media Player Preview -->
-      <section class="player-preview-wrapper" aria-label="Cinematic synchronized player preview">
-        <div class="player-glow-ambient"></div>
+      <!-- Right Column: Interactive Blended Living Cinema Stage -->
+      <section class="stage-interactive-wrapper" aria-label="Interactive shared watch lounge">
+        <!-- Ambient Backlight Diffuser -->
+        <div class="stage-ambient-glow" id="stage-ambient-glow"></div>
 
-        <div class="player-preview-card" id="player-preview-card">
-          <!-- Screen Area with Pristine Sunset Celestial Planet -->
-          <div class="preview-screen-container">
-            <img src="/img/sunset_planet_preview.jpg" alt="Synchronized sunset planet stream preview" class="preview-screen-img" width="960" height="420" loading="eager" fetchpriority="high">
-            <div class="preview-screen-scrim"></div>
+        <!-- Blended Cinema Frame with Organic Feathered Mask -->
+        <div class="stage-cinema-viewport" id="stage-cinema-viewport" role="region" aria-label="Interactive cinema screen, tap to react">
+          <!-- Active Scene Images with Crossfade -->
+          <div class="stage-scenes-layer">
+            <img src="/img/sunset_planet_preview.jpg" alt="Sunset Vista" class="stage-scene-img active" id="scene-img-1" loading="eager" fetchpriority="high">
+            <img src="/img/backdrop_astronaut.jpg" alt="Deep Space" class="stage-scene-img" id="scene-img-2" loading="lazy">
+            <img src="/img/backdrop_neon.jpg" alt="Neon Midnight" class="stage-scene-img" id="scene-img-3" loading="lazy">
+            <div class="stage-scene-vignette"></div>
+          </div>
 
-            <!-- Top Floating Status Badges -->
-            <div class="preview-top-bar">
-              <div class="preview-pill pill-status">
-                <span class="status-pulse-dot"></span>
-                <span class="status-pill-text">Everyone is in sync</span>
-              </div>
-
-              <button type="button" class="preview-pill pill-room" id="btn-copy-preview-room" title="Click to copy room link" aria-label="Copy Room link for zami-7f3k">
-                <svg class="pill-room-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
-                </svg>
-                <span class="room-pill-label">Room &bull; <span class="room-code-tag">zami-7f3k</span></span>
-                <svg class="pill-copy-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-                </svg>
-              </button>
+          <!-- Top Status Bar: Live Sync Pill & Scene Mood Switcher -->
+          <div class="stage-top-hud">
+            <div class="hud-pill hud-sync" id="hud-sync-pill" title="Click to ping room sync">
+              <span class="hud-pulse-dot"></span>
+              <span class="hud-sync-text">In sync &bull; 0.0s delay</span>
             </div>
 
-            <!-- Toast notification for link copying -->
-            <div class="preview-toast" id="preview-toast" role="status" aria-live="polite">Room link copied!</div>
-
-            <!-- Desktop Avatars Column (vertical stack on right edge) -->
-            <div class="preview-avatars-desktop" aria-label="Participants in room">
-              <div class="avatar-item avatar-host" title="Host">
-                <img src="/img/avatar_p1.png" alt="Host avatar" class="avatar-thumb">
-                <span class="crown-badge" title="Room Host">
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="#f59e0b">
-                    <path d="M2 4l3 12h14l3-12-6 7-4-11-4 11-6-7z"/>
-                  </svg>
-                </span>
-              </div>
-              <div class="avatar-item" title="Sarah">
-                <img src="/img/avatar_p2.png" alt="Participant 2 avatar" class="avatar-thumb">
-              </div>
-              <div class="avatar-item" title="Alex">
-                <img src="/img/avatar_p3.png" alt="Participant 3 avatar" class="avatar-thumb">
-              </div>
-              <div class="avatar-item" title="Maya">
-                <img src="/img/avatar_p4.png" alt="Participant 4 avatar" class="avatar-thumb">
-              </div>
-              <div class="avatar-item avatar-count" title="2 more viewers">
-                <span>+2</span>
-              </div>
-            </div>
-
-            <!-- Mobile Avatars Overlay (horizontal stack at bottom-right) -->
-            <div class="preview-avatars-mobile" aria-label="Participants in room">
-              <div class="mob-avatar avatar-host">
-                <img src="/img/avatar_p1.png" alt="Host avatar" class="avatar-thumb">
-                <span class="crown-badge-mob">
-                  <svg width="9" height="9" viewBox="0 0 24 24" fill="#f59e0b">
-                    <path d="M2 4l3 12h14l3-12-6 7-4-11-4 11-6-7z"/>
-                  </svg>
-                </span>
-              </div>
-              <div class="mob-avatar">
-                <img src="/img/avatar_p2.png" alt="Participant 2 avatar" class="avatar-thumb">
-              </div>
-              <div class="mob-avatar">
-                <img src="/img/avatar_p3.png" alt="Participant 3 avatar" class="avatar-thumb">
-              </div>
-              <div class="mob-avatar avatar-count-mob">
-                <span>+2</span>
-              </div>
+            <div class="hud-mood-tabs" role="tablist" aria-label="Cinema moods">
+              <button type="button" class="mood-tab active" data-scene="1" aria-label="Sunset Vista">Sunset</button>
+              <button type="button" class="mood-tab" data-scene="2" aria-label="Deep Space">Cosmic</button>
+              <button type="button" class="mood-tab" data-scene="3" aria-label="Neon Midnight">Neon</button>
             </div>
           </div>
 
-          <!-- Bottom Playback Controls Bar -->
-          <div class="preview-controls-bar">
-            <button type="button" class="ctrl-btn ctrl-play" id="btn-preview-play" aria-label="Toggle Play/Pause">
-              <svg class="icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                <polygon points="6 4 20 12 6 20 6 4"/>
+          <!-- Live Floating Chat Whispers -->
+          <div class="stage-whispers-container" id="stage-whispers">
+            <div class="stage-whisper-bubble whisper-1">
+              <img src="/img/avatar_p2.png" alt="Sarah" class="whisper-avatar">
+              <span class="whisper-text">Sarah: This scene looks unreal!</span>
+            </div>
+            <div class="stage-whisper-bubble whisper-2">
+              <img src="/img/avatar_p3.png" alt="Alex" class="whisper-avatar">
+              <span class="whisper-text">Alex: Popcorn ready, don't pause</span>
+            </div>
+          </div>
+
+          <!-- Particle Canvas for Interactive Bursts -->
+          <canvas class="stage-particle-canvas" id="stage-particle-canvas"></canvas>
+
+          <!-- Floating Participant Avatars Dock -->
+          <div class="stage-party-dock" aria-label="Party participants">
+            <div class="party-avatar-item" title="Room Host">
+              <img src="/img/avatar_p1.png" alt="Host" class="party-avatar-img">
+              <span class="party-crown-badge">
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="#f59e0b">
+                  <path d="M2 4l3 12h14l3-12-6 7-4-11-4 11-6-7z"/>
+                </svg>
+              </span>
+            </div>
+            <div class="party-avatar-item" title="Sarah">
+              <img src="/img/avatar_p2.png" alt="Sarah" class="party-avatar-img">
+            </div>
+            <div class="party-avatar-item" title="Alex">
+              <img src="/img/avatar_p3.png" alt="Alex" class="party-avatar-img">
+            </div>
+            <div class="party-avatar-item" title="Maya">
+              <img src="/img/avatar_p4.png" alt="Maya" class="party-avatar-img">
+            </div>
+            <div class="party-count-badge" id="party-count-badge" title="4 friends watching">+2</div>
+          </div>
+        </div>
+
+        <!-- Interactive Tap-to-React Floating Dock -->
+        <div class="stage-reaction-dock">
+          <span class="reaction-dock-label">Tap to react:</span>
+          <div class="reaction-buttons-group">
+            <button type="button" class="btn-react-pill" data-type="popcorn" aria-label="Popcorn reaction">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8a3 3 0 0 0-3-3 3 3 0 0 0-4.5 1.5A3 3 0 0 0 6 8a3 3 0 0 0 .5 5.5L7 21h10l.5-7.5A3 3 0 0 0 18 8z"/>
               </svg>
-              <svg class="icon-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display: none;">
-                <rect x="6" y="4" width="4" height="16"/>
-                <rect x="14" y="4" width="4" height="16"/>
-              </svg>
+              <span>Popcorn</span>
             </button>
 
-            <span class="ctrl-time" id="preview-time-display">28:14 / 1:56:20</span>
+            <button type="button" class="btn-react-pill" data-type="heart" aria-label="Heart reaction">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+              </svg>
+              <span>Love</span>
+            </button>
 
-            <div class="ctrl-scrubber" id="preview-scrubber" role="progressbar" aria-valuenow="24" aria-valuemin="0" aria-valuemax="100" tabindex="0" aria-label="Playback scrubber">
-              <div class="scrubber-track">
-                <div class="scrubber-fill" style="width: 24.2%;"></div>
-                <div class="scrubber-knob" style="left: 24.2%;"></div>
-              </div>
-            </div>
+            <button type="button" class="btn-react-pill" data-type="fire" aria-label="Fire reaction">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2c-.3 2.1-1.8 3.9-3 5.4C7.7 9 6.5 11 6.5 13.5c0 3 2.5 5.5 5.5 5.5s5.5-2.5 5.5-5.5c0-2.4-1.2-4.5-2.5-6.1-1.2-1.5-2.7-3.3-3-5.4zm0 8.5c1.4 0 2.5 1.1 2.5 2.5s-1.1 2.5-2.5 2.5-2.5-1.1-2.5-2.5 1.1-2.5 2.5-2.5z"/>
+              </svg>
+              <span>Hype</span>
+            </button>
 
-            <div class="ctrl-actions-right">
-              <button type="button" class="ctrl-btn" id="btn-preview-vol" aria-label="Toggle Mute">
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
-                </svg>
-              </button>
+            <button type="button" class="btn-react-pill" data-type="spark" aria-label="Magic reaction">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+              <span>Magic</span>
+            </button>
+          </div>
 
-              <button type="button" class="ctrl-btn" id="btn-preview-fs" aria-label="Toggle Fullscreen">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
-                </svg>
-              </button>
-
-              <button type="button" class="ctrl-btn ctrl-btn-chat" id="btn-preview-chat" aria-label="Room Chat">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                </svg>
-              </button>
-
-              <button type="button" class="ctrl-btn ctrl-btn-gear" id="btn-preview-gear" aria-label="Settings">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="12" r="3"/>
-                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-                </svg>
-              </button>
-            </div>
+          <div class="reaction-stats-pill" id="reaction-stats-pill" title="Total reactions sent">
+            <span class="stats-count" id="reaction-counter">42</span>
+            <span class="stats-label">bursts</span>
           </div>
         </div>
       </section>

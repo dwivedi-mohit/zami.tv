@@ -295,103 +295,253 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnCloseHelp) btnCloseHelp.addEventListener('click', () => closeModal(helpModal));
 
   // --------------------------------------------------------------------------
-  // Interactive Cinematic Media-Player Preview
+  // Interactive Blended Living Cinema Stage Controller
   // --------------------------------------------------------------------------
-  const btnCopyPreviewRoom = document.getElementById('btn-copy-preview-room');
-  const previewToast = document.getElementById('preview-toast');
+  const cinemaViewport = document.getElementById('stage-cinema-viewport');
+  const ambientGlow = document.getElementById('stage-ambient-glow');
+  const particleCanvas = document.getElementById('stage-particle-canvas');
+  const moodTabs = document.querySelectorAll('.mood-tab');
+  const sceneImages = document.querySelectorAll('.stage-scene-img');
+  const reactionCounter = document.getElementById('reaction-counter');
+  const reactionPill = document.getElementById('reaction-stats-pill');
+  const syncPill = document.getElementById('hud-sync-pill');
 
-  if (btnCopyPreviewRoom) {
-    btnCopyPreviewRoom.addEventListener('click', async () => {
-      const roomUrl = `${window.location.origin}/room/zami-7f3k`;
-      try {
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          await navigator.clipboard.writeText(roomUrl);
-        }
-      } catch (e) {}
+  // 1. Cinematic Scene Mood Switcher
+  const glowMoods = {
+    '1': 'radial-gradient(ellipse 65% 55% at 50% 50%, rgba(245, 158, 11, 0.24) 0%, rgba(251, 146, 60, 0.08) 50%, transparent 75%)',
+    '2': 'radial-gradient(ellipse 65% 55% at 50% 50%, rgba(99, 102, 241, 0.24) 0%, rgba(56, 189, 248, 0.08) 50%, transparent 75%)',
+    '3': 'radial-gradient(ellipse 65% 55% at 50% 50%, rgba(236, 72, 153, 0.24) 0%, rgba(168, 85, 247, 0.08) 50%, transparent 75%)'
+  };
 
-      if (previewToast) {
-        previewToast.classList.add('active');
+  moodTabs.forEach((tab) => {
+    tab.addEventListener('click', (e) => {
+      e.stopPropagation();
+      moodTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+
+      const sceneId = tab.getAttribute('data-scene');
+      sceneImages.forEach(img => {
+        img.classList.toggle('active', img.id === `scene-img-${sceneId}`);
+      });
+
+      if (ambientGlow && glowMoods[sceneId]) {
+        ambientGlow.style.background = glowMoods[sceneId];
+      }
+    });
+  });
+
+  // 2. High-Performance Canvas Particle Engine (Reaction Cannon)
+  let particles = [];
+  let animFrameId = null;
+  let totalReactions = parseInt(localStorage.getItem('zami_reaction_count') || '42', 10);
+  if (reactionCounter) reactionCounter.textContent = totalReactions;
+
+  function resizeCanvas() {
+    if (!particleCanvas || !cinemaViewport) return;
+    const rect = cinemaViewport.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    particleCanvas.width = rect.width * dpr;
+    particleCanvas.height = rect.height * dpr;
+  }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  function spawnParticles(type, originX, originY) {
+    if (!particleCanvas) return;
+    const dpr = window.devicePixelRatio || 1;
+    const rect = cinemaViewport.getBoundingClientRect();
+    const startX = originX !== undefined ? (originX - rect.left) * dpr : (rect.width * 0.5) * dpr;
+    const startY = originY !== undefined ? (originY - rect.top) * dpr : (rect.height * 0.85) * dpr;
+
+    const count = 10 + Math.floor(Math.random() * 5);
+    for (let i = 0; i < count; i++) {
+      particles.push({
+        x: startX + (Math.random() - 0.5) * 36 * dpr,
+        y: startY + (Math.random() - 0.5) * 16 * dpr,
+        vx: (Math.random() - 0.5) * 2.8 * dpr,
+        vy: -(2.5 + Math.random() * 4) * dpr,
+        size: (12 + Math.random() * 10) * dpr,
+        rotation: Math.random() * Math.PI * 2,
+        vRot: (Math.random() - 0.5) * 0.1,
+        alpha: 1,
+        decay: 0.012 + Math.random() * 0.014,
+        type: type || 'popcorn'
+      });
+    }
+
+    totalReactions++;
+    if (reactionCounter) reactionCounter.textContent = totalReactions;
+    localStorage.setItem('zami_reaction_count', totalReactions.toString());
+
+    if (reactionPill) {
+      reactionPill.classList.add('pulse');
+      setTimeout(() => reactionPill.classList.remove('pulse'), 250);
+    }
+
+    if (!animFrameId) {
+      animFrameId = requestAnimationFrame(renderParticles);
+    }
+  }
+
+  function drawHeart(ctx, x, y, size) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.beginPath();
+    const topCurveHeight = size * 0.3;
+    ctx.moveTo(0, topCurveHeight);
+    ctx.bezierCurveTo(0, 0, -size / 2, 0, -size / 2, topCurveHeight);
+    ctx.bezierCurveTo(-size / 2, (size + topCurveHeight) / 2, 0, (size + topCurveHeight) / 1.4, 0, size);
+    ctx.bezierCurveTo(0, (size + topCurveHeight) / 1.4, size / 2, (size + topCurveHeight) / 2, size / 2, topCurveHeight);
+    ctx.bezierCurveTo(size / 2, 0, 0, 0, 0, topCurveHeight);
+    ctx.closePath();
+    ctx.fillStyle = '#f43f5e';
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawStar(ctx, x, y, size) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.beginPath();
+    for (let i = 0; i < 4; i++) {
+      ctx.lineTo(Math.cos((18 + i * 90) * Math.PI / 180) * size, -Math.sin((18 + i * 90) * Math.PI / 180) * size);
+      ctx.lineTo(Math.cos((63 + i * 90) * Math.PI / 180) * (size * 0.38), -Math.sin((63 + i * 90) * Math.PI / 180) * (size * 0.38));
+    }
+    ctx.closePath();
+    ctx.fillStyle = '#fbbf24';
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawFlame(ctx, x, y, size) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.beginPath();
+    ctx.moveTo(0, -size);
+    ctx.quadraticCurveTo(size * 0.6, -size * 0.2, size * 0.4, size * 0.5);
+    ctx.quadraticCurveTo(0, size * 0.8, -size * 0.4, size * 0.5);
+    ctx.quadraticCurveTo(-size * 0.6, -size * 0.2, 0, -size);
+    ctx.closePath();
+    ctx.fillStyle = '#f97316';
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawPopcorn(ctx, x, y, size) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.beginPath();
+    ctx.arc(-size * 0.25, -size * 0.1, size * 0.35, 0, Math.PI * 2);
+    ctx.arc(size * 0.25, -size * 0.1, size * 0.35, 0, Math.PI * 2);
+    ctx.arc(0, size * 0.2, size * 0.38, 0, Math.PI * 2);
+    ctx.closePath();
+    ctx.fillStyle = '#fef08a';
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function renderParticles() {
+    if (!particleCanvas) return;
+    const ctx = particleCanvas.getContext('2d');
+    ctx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rotation += p.vRot;
+      p.alpha -= p.decay;
+
+      if (p.alpha <= 0) {
+        particles.splice(i, 1);
+        continue;
+      }
+
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, p.alpha);
+
+      if (p.type === 'heart') {
+        drawHeart(ctx, p.x, p.y, p.size);
+      } else if (p.type === 'fire') {
+        drawFlame(ctx, p.x, p.y, p.size);
+      } else if (p.type === 'spark') {
+        drawStar(ctx, p.x, p.y, p.size);
+      } else {
+        drawPopcorn(ctx, p.x, p.y, p.size);
+      }
+
+      ctx.restore();
+    }
+
+    if (particles.length > 0) {
+      animFrameId = requestAnimationFrame(renderParticles);
+    } else {
+      animFrameId = null;
+    }
+  }
+
+  // 3. Reaction Buttons Trigger
+  const reactionButtons = document.querySelectorAll('.btn-react-pill');
+  reactionButtons.forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const type = btn.getAttribute('data-type') || 'popcorn';
+      const rect = btn.getBoundingClientRect();
+      spawnParticles(type, rect.left + rect.width * 0.5, rect.top);
+    });
+  });
+
+  // 4. Direct Viewport Tap / Click Trigger
+  if (cinemaViewport) {
+    cinemaViewport.addEventListener('click', (e) => {
+      // Don't trigger if clicking top HUD or party dock
+      if (e.target.closest('.stage-top-hud') || e.target.closest('.stage-party-dock')) return;
+      const types = ['heart', 'popcorn', 'fire', 'spark'];
+      const randomType = types[Math.floor(Math.random() * types.length)];
+      spawnParticles(randomType, e.clientX, e.clientY);
+    });
+  }
+
+  // 5. Interactive Sync Pill Ping
+  if (syncPill) {
+    syncPill.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const syncText = syncPill.querySelector('.hud-sync-text');
+      if (syncText) {
+        const orig = syncText.textContent;
+        syncText.textContent = 'Sync Ping: 8ms (Locked)';
+        spawnParticles('spark');
         setTimeout(() => {
-          previewToast.classList.remove('active');
+          syncText.textContent = orig;
         }, 2200);
       }
     });
   }
 
-  const btnPreviewPlay = document.getElementById('btn-preview-play');
-  if (btnPreviewPlay) {
-    const iconPlay = btnPreviewPlay.querySelector('.icon-play');
-    const iconPause = btnPreviewPlay.querySelector('.icon-pause');
-    let isPlaying = true;
+  // 6. Dynamic Whisper Chat Rotation
+  const whisperTexts = [
+    { name: 'Sarah', avatar: '/img/avatar_p2.png', text: 'Sarah: This sunset scene looks unreal!' },
+    { name: 'Alex', avatar: '/img/avatar_p3.png', text: 'Alex: Popcorn ready, don\'t pause' },
+    { name: 'Maya', avatar: '/img/avatar_p4.png', text: 'Maya: The soundtrack is so cozy' },
+    { name: 'Host', avatar: '/img/avatar_p1.png', text: 'Host: Sub-second sync locked' }
+  ];
+  let whisperIdx = 0;
+  const whisperEl1 = document.querySelector('.stage-whisper-bubble.whisper-1');
+  const whisperEl2 = document.querySelector('.stage-whisper-bubble.whisper-2');
 
-    btnPreviewPlay.addEventListener('click', () => {
-      isPlaying = !isPlaying;
-      if (iconPlay && iconPause) {
-        iconPlay.style.display = isPlaying ? 'none' : 'block';
-        iconPause.style.display = isPlaying ? 'block' : 'none';
-      }
-    });
-  }
-
-  // Interactive scrubber progress bar
-  const previewScrubber = document.getElementById('preview-scrubber');
-  if (previewScrubber) {
-    const fill = previewScrubber.querySelector('.scrubber-fill');
-    const knob = previewScrubber.querySelector('.scrubber-knob');
-    const timeDisplay = document.getElementById('preview-time-display');
-
-    function updateScrubber(e) {
-      const rect = previewScrubber.getBoundingClientRect();
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      let ratio = (clientX - rect.left) / rect.width;
-      ratio = Math.max(0, Math.min(1, ratio));
-      const pct = (ratio * 100).toFixed(1) + '%';
-
-      if (fill) fill.style.width = pct;
-      if (knob) knob.style.left = pct;
-      previewScrubber.setAttribute('aria-valuenow', Math.round(ratio * 100));
-
-      if (timeDisplay) {
-        const totalSecs = 1 * 3600 + 56 * 60 + 20; // 1:56:20 = 6980s
-        const curSecs = Math.floor(totalSecs * ratio);
-        const mins = Math.floor(curSecs / 60);
-        const secs = curSecs % 60;
-        timeDisplay.textContent = `${mins}:${secs < 10 ? '0' : ''}${secs} / 1:56:20`;
-      }
+  setInterval(() => {
+    whisperIdx = (whisperIdx + 1) % whisperTexts.length;
+    const nextItem = whisperTexts[whisperIdx];
+    if (whisperEl1) {
+      whisperEl1.style.opacity = '0';
+      setTimeout(() => {
+        const avatar = whisperEl1.querySelector('.whisper-avatar');
+        const text = whisperEl1.querySelector('.whisper-text');
+        if (avatar) avatar.src = nextItem.avatar;
+        if (text) text.textContent = nextItem.text;
+        whisperEl1.style.opacity = '1';
+      }, 400);
     }
-
-    previewScrubber.addEventListener('click', updateScrubber);
-  }
-
-  // Volume toggle
-  const btnPreviewVol = document.getElementById('btn-preview-vol');
-  if (btnPreviewVol) {
-    let isMuted = false;
-    btnPreviewVol.addEventListener('click', () => {
-      isMuted = !isMuted;
-      btnPreviewVol.style.opacity = isMuted ? '0.5' : '1';
-    });
-  }
-
-  // --------------------------------------------------------------------------
-  // Animated Video Background Auto-playback Handler
-  // --------------------------------------------------------------------------
-  const bgVideo = document.getElementById('landing-bg-video');
-  if (bgVideo) {
-    const playPromise = bgVideo.play();
-    if (playPromise !== undefined) {
-      playPromise.catch(() => {
-        const startVideo = () => {
-          bgVideo.play();
-          window.removeEventListener('click', startVideo);
-          window.removeEventListener('touchstart', startVideo);
-          window.removeEventListener('keydown', startVideo);
-        };
-        window.addEventListener('click', startVideo, { once: true });
-        window.addEventListener('touchstart', startVideo, { once: true });
-        window.addEventListener('keydown', startVideo, { once: true });
-      });
-    }
-  }
+  }, 6500);
 });
 
