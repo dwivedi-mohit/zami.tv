@@ -277,34 +277,6 @@
       min-width: 0;
     }
 
-    /* Subtle Cozy Pill Badge */
-    .hero-pill-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 5px 13px;
-      border-radius: 999px;
-      background: rgba(245, 158, 11, 0.08);
-      border: 1px solid rgba(245, 158, 11, 0.22);
-      margin-bottom: 20px;
-      width: fit-content;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-    }
-    .badge-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background-color: #f59e0b;
-      box-shadow: 0 0 8px #f59e0b;
-    }
-    .badge-label {
-      font-size: 0.8rem;
-      font-weight: 600;
-      letter-spacing: 0.01em;
-      color: #fbbf24;
-    }
-
     /* Clear, Warm Headline: "Watch together, feel closer." */
     .hero-headline {
       font-family: 'Plus Jakarta Sans', sans-serif;
@@ -344,7 +316,7 @@
       flex-direction: column;
       gap: 14px;
       width: 100%;
-      margin-bottom: 26px;
+      margin-bottom: 0;
     }
 
     /* Primary Warm Amber Button */
@@ -425,30 +397,6 @@
     }
     .btn-cta-join:active {
       transform: translateY(0);
-    }
-
-    /* Micro Perks / Feature Highlights */
-    .hero-perks-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-    .hero-perk {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.82rem;
-      font-weight: 500;
-      color: var(--zami-text-muted);
-    }
-    .hero-perk svg {
-      flex-shrink: 0;
-    }
-    .hero-perk-divider {
-      color: var(--zami-text-dim);
-      font-size: 0.8rem;
-      user-select: none;
     }
 
     /* --------------------------------------------------------------------------
@@ -1060,9 +1008,6 @@
         gap: 32px;
         padding: 8px 0 20px;
       }
-      .hero-perks-row {
-        justify-content: flex-start;
-      }
     }
 
     /* Tablet (768px - 1023px): Stacked Layout with Generous Spacing */
@@ -1085,10 +1030,6 @@
         align-items: center;
         max-width: 640px;
       }
-      .hero-pill-badge {
-        margin-left: auto;
-        margin-right: auto;
-      }
       .hero-subtitle {
         margin-left: auto;
         margin-right: auto;
@@ -1097,13 +1038,11 @@
         flex-direction: row;
         justify-content: center;
         width: auto;
+        margin-bottom: 0;
       }
       .btn-cta-create, .btn-cta-join {
         width: auto;
         padding: 14px 30px;
-      }
-      .hero-perks-row {
-        justify-content: center;
       }
       .player-preview-wrapper {
         max-width: 740px;
@@ -1131,10 +1070,6 @@
         align-items: flex-start;
         max-width: 100%;
       }
-      .hero-pill-badge {
-        margin-left: 0;
-        margin-right: 0;
-      }
       .hero-headline {
         font-size: clamp(3.2rem, 2.2rem + 2.2vw, 4.3rem);
         line-height: 1.06;
@@ -1150,14 +1085,11 @@
         flex-direction: row;
         justify-content: flex-start;
         gap: 16px;
-        margin-bottom: 28px;
+        margin-bottom: 0;
         width: 100%;
       }
       .btn-cta-create, .btn-cta-join {
         width: auto;
-      }
-      .hero-perks-row {
-        justify-content: flex-start;
       }
       .player-preview-wrapper {
         max-width: 100%;
@@ -1209,17 +1141,12 @@
     <main class="hero-container">
       <!-- Left Column / Hero Text and CTAs -->
       <section class="hero-content-col">
-        <div class="hero-pill-badge">
-          <span class="badge-dot"></span>
-          <span class="badge-label">Synchronized Cinema &amp; Streaming</span>
-        </div>
-
         <h1 class="hero-headline">
           <span class="headline-part">Watch together,</span>
           <span class="headline-part headline-glow">feel closer.</span>
         </h1>
 
-        <p class="hero-subtitle">Stream movies, shows, and shared moments with your favorite people in real time, from anywhere in the world.</p>
+        <p class="hero-subtitle">Watch movies, shows, and videos together, wherever you are.</p>
 
         <!-- CTA Buttons -->
         <div class="hero-cta-group">
@@ -1245,33 +1172,6 @@
             </svg>
             <span>Join with code</span>
           </button>
-        </div>
-
-        <!-- Micro Feature Highlights -->
-        <div class="hero-perks-row">
-          <div class="hero-perk">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/>
-              <polyline points="12 6 12 12 16 14"/>
-            </svg>
-            <span>Zero Sync Drift</span>
-          </div>
-          <div class="hero-perk-divider" aria-hidden="true">&bull;</div>
-          <div class="hero-perk">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-            </svg>
-            <span>Private &amp; Free</span>
-          </div>
-          <div class="hero-perk-divider" aria-hidden="true">&bull;</div>
-          <div class="hero-perk">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-              <line x1="8" y1="21" x2="16" y2="21"/>
-              <line x1="12" y1="17" x2="12" y2="21"/>
-            </svg>
-            <span>No Install Needed</span>
-          </div>
         </div>
       </section>
 
