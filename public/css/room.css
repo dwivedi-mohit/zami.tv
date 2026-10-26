@@ -508,6 +508,8 @@
   height: 100%;
   object-fit: contain;
   background: transparent !important;
+  position: relative;
+  z-index: 2;
 }
 
 #yt-player-container {
@@ -7123,6 +7125,42 @@ kbd {
 /* ==========================================================================
    FEATURE 1: Dynamic Stage Ambilight (Living Backlight Mode)
    ========================================================================== */
+:root {
+  --ambilight-blur: 75px;
+  --ambilight-sat: 2.4;
+  --ambilight-brightness: 1.15;
+  --ambilight-opacity: 0.88;
+  --ambilight-wall-opacity: 0.75;
+  --ambilight-c-top: rgba(229, 169, 60, 0.25);
+  --ambilight-c-bottom: rgba(229, 169, 60, 0.22);
+  --ambilight-c-left: rgba(229, 169, 60, 0.22);
+  --ambilight-c-right: rgba(229, 169, 60, 0.22);
+  --ambilight-c-center: rgba(229, 169, 60, 0.18);
+}
+
+/* Layer 1: Hardware-Accelerated Behind-Screen Projection Canvas */
+.stage-ambilight-canvas {
+  position: absolute;
+  inset: -24px;
+  width: calc(100% + 48px);
+  height: calc(100% + 48px);
+  border-radius: 28px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0;
+  transform: scale(1.14) translateZ(0);
+  filter: blur(var(--ambilight-blur, 75px)) saturate(var(--ambilight-sat, 2.4)) brightness(var(--ambilight-brightness, 1.15));
+  mix-blend-mode: screen;
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.2s ease, transform 0.2s ease;
+  will-change: filter, transform, opacity;
+}
+.stage-ambilight-canvas.active,
+.room-container.is-playing .stage-ambilight-canvas.active,
+.player-wrapper.is-playing .stage-ambilight-canvas.active {
+  opacity: var(--ambilight-opacity, 0.88);
+}
+
+/* Layer 2: Radiant Edge-Aura Box Shadow */
 .stage-ambilight-glow {
   position: absolute;
   inset: -45px;
@@ -7130,16 +7168,102 @@ kbd {
   pointer-events: none;
   z-index: 0;
   opacity: 0;
-  filter: blur(75px) saturate(2.2) brightness(0.9);
-  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s linear;
+  filter: blur(var(--ambilight-blur, 75px)) saturate(var(--ambilight-sat, 2.2));
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s linear;
   will-change: box-shadow, opacity;
 }
+.stage-ambilight-glow.active,
 .room-container.is-playing .stage-ambilight-glow.active,
 .player-wrapper.is-playing .stage-ambilight-glow.active {
-  opacity: 0.85;
+  opacity: var(--ambilight-opacity, 0.85);
+}
+
+/* Layer 3: Room Wall Atmospheric Light Diffuser */
+.room-ambilight-wall {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  opacity: 0;
+  background:
+    radial-gradient(circle at 50% 50%, var(--ambilight-c-center, rgba(229,169,60,0.18)) 0%, transparent 65%),
+    radial-gradient(ellipse at 50% 0%, var(--ambilight-c-top, rgba(229,169,60,0.25)) 0%, transparent 60%),
+    radial-gradient(ellipse at 0% 50%, var(--ambilight-c-left, rgba(229,169,60,0.22)) 0%, transparent 55%),
+    radial-gradient(ellipse at 100% 50%, var(--ambilight-c-right, rgba(229,169,60,0.22)) 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 100%, var(--ambilight-c-bottom, rgba(229,169,60,0.22)) 0%, transparent 60%);
+  filter: blur(50px);
+  mix-blend-mode: screen;
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, background;
+}
+.room-ambilight-wall.active,
+.room-container.is-playing .room-ambilight-wall.active,
+.player-wrapper.is-playing .room-ambilight-wall.active {
+  opacity: var(--ambilight-wall-opacity, 0.75);
+}
+
+/* Ambilight Player Bar Button Active Halo */
+#ctrl-ambilight {
+  position: relative;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 #ctrl-ambilight.active {
-  color: #f59e0b;
+  color: #f59e0b !important;
+  background: rgba(229, 169, 60, 0.16) !important;
+  border-color: rgba(229, 169, 60, 0.45) !important;
+  box-shadow: 0 0 14px rgba(229, 169, 60, 0.45) !important;
+}
+#ctrl-ambilight.active svg {
+  filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.85));
+  animation: ambilightPulse 3s ease-in-out infinite;
+}
+@keyframes ambilightPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.08); opacity: 0.9; }
+}
+
+/* Preset Buttons */
+.btn-ambilight-preset {
+  padding: 5px 12px;
+  font-size: 0.73rem;
+  font-weight: 600;
+  color: #a1a1aa;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-ambilight-preset:hover {
+  color: #f4f4f5;
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.btn-ambilight-preset.active {
+  color: #0b0c10 !important;
+  background: linear-gradient(135deg, #f59e0b, #e5a93c) !important;
+  border-color: #f59e0b !important;
+  box-shadow: 0 0 12px rgba(229, 169, 60, 0.4) !important;
+}
+
+/* Switch styling for settings */
+.settings-ambilight-section .switch input:checked + .slider {
+  background-color: #f59e0b !important;
+}
+.settings-ambilight-section .switch .slider:before {
+  position: absolute;
+  content: "";
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  bottom: 3px;
+  background-color: #ffffff;
+  transition: .25s ease;
+  border-radius: 50%;
+}
+.settings-ambilight-section .switch input:checked + .slider:before {
+  transform: translateX(18px);
 }
 
 /* ==========================================================================

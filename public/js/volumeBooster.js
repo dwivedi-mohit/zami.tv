@@ -51,6 +51,9 @@
         const sourceNode = ctx.createMediaElementSource(mediaEl);
         const gainNode = ctx.createGain();
         const compressor = ctx.createDynamicsCompressor();
+        const analyser = ctx.createAnalyser();
+        analyser.fftSize = 64;
+        analyser.smoothingTimeConstant = 0.8;
 
         // Studio-grade transparent limiter parameters
         compressor.threshold.setValueAtTime(-10, ctx.currentTime);
@@ -63,9 +66,11 @@
 
         sourceNode.connect(gainNode);
         gainNode.connect(compressor);
-        compressor.connect(ctx.destination);
+        compressor.connect(analyser);
+        analyser.connect(ctx.destination);
 
-        this.attachedElements.set(mediaEl, { sourceNode, gainNode, compressor });
+        const dataArray = new Uint8Array(analyser.frequencyBinCount);
+        this.attachedElements.set(mediaEl, { sourceNode, gainNode, compressor, analyser, dataArray });
       } catch (err) {
         // Fallback gracefully for CORS-restricted cross-origin sources
         console.warn('[VolumeBooster] Web Audio attach fallback:', err.message);
@@ -105,6 +110,24 @@
     setVoiceVolume(volume) {
       this.voiceVolume = Math.max(0, Math.min(3, volume));
       localStorage.setItem('zami_voice_volume', this.voiceVolume.toString());
+    }
+
+    getAudioEnergy(mediaEl) {
+      if (!mediaEl) return 0;
+      const entry = this.attachedElements.get(mediaEl);
+      if (!entry || !entry.analyser || !entry.dataArray) return 0;
+      try {
+        entry.analyser.getByteFrequencyData(entry.dataArray);
+        // Average low-frequency bass & mid bins (0 to 8)
+        let sum = 0;
+        const count = Math.min(8, entry.dataArray.length);
+        for (let i = 0; i < count; i++) {
+          sum += entry.dataArray[i];
+        }
+        return (sum / (count * 255.0)); // normalized 0.0 to 1.0
+      } catch (e) {
+        return 0;
+      }
     }
 
     cycleBoost(currentVol) {

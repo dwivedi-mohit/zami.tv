@@ -523,7 +523,7 @@ class UniversalPlayer {
     // Dynamic Living Ambilight (Feature 1)
     if (this.btnAmbilight) {
       this.btnAmbilight.addEventListener('click', () => {
-        this.toggleAmbilight();
+        this.cycleAmbilightMode();
       });
     }
 
@@ -676,6 +676,10 @@ class UniversalPlayer {
         case 'KeyP':
           e.preventDefault();
           this.togglePiP();
+          break;
+        case 'KeyB':
+          e.preventDefault();
+          this.cycleAmbilightMode();
           break;
         case 'KeyL':
           e.preventDefault();
@@ -964,35 +968,76 @@ class UniversalPlayer {
   }
 
   /* ==========================================================================
-     FEATURE 1: Dynamic Stage Ambilight (Living Backlight Mode)
+     FEATURE 1: Dynamic Cinema Ambilight (Living Backlight & Room Projector)
      ========================================================================== */
   initAmbilightEngine() {
     this.ambilightGlowEl = document.getElementById('stage-ambilight-glow');
+    this.ambilightScreenCanvas = document.getElementById('stage-ambilight-canvas');
+    this.ambilightScreenCtx = this.ambilightScreenCanvas ? this.ambilightScreenCanvas.getContext('2d') : null;
+    this.ambilightWallEl = document.getElementById('room-ambilight-wall');
+
     this.ambilightEnabled = localStorage.getItem('zami_ambilight_enabled') !== 'false';
+    this.ambilightMode = localStorage.getItem('zami_ambilight_mode') || 'cinema'; // 'cinema' | 'soft' | 'pulse' | 'subtle'
     this.ambilightSpread = parseInt(localStorage.getItem('zami_ambilight_blur') || '75', 10);
+    this.ambilightIntensity = parseInt(localStorage.getItem('zami_ambilight_intensity') || '100', 10);
+    this.ambilightWallEnabled = localStorage.getItem('zami_ambilight_wall') !== 'false';
+
     this.ambilightLoopActive = false;
     this.ambilightRafId = null;
     this.lastAmbilightSample = 0;
 
-    // Offscreen downscaled canvas for fast GPU color sampling
+    // Smoothed color state for organic transitions without harsh flickering
+    this.curAmbilightColors = {
+      top: [20, 20, 28],
+      bottom: [20, 20, 28],
+      left: [20, 20, 28],
+      right: [20, 20, 28],
+      center: [20, 20, 28]
+    };
+
+    // Offscreen downscaled canvas for ultra-fast GPU color sampling
     this.ambilightCanvas = document.createElement('canvas');
     this.ambilightCanvas.width = 32;
     this.ambilightCanvas.height = 18;
     this.ambilightCtx = this.ambilightCanvas.getContext('2d', { willReadFrequently: true });
 
-    // Sync button state
-    if (this.btnAmbilight) {
-      this.btnAmbilight.classList.toggle('active', this.ambilightEnabled);
-    }
+    // Sync button state & tooltip
+    this.updateAmbilightUI();
+
+    // Wire settings modal controls
     const settingsToggle = document.getElementById('btn-toggle-settings-ambilight');
-    const settingsStatus = document.getElementById('settings-ambilight-status-text');
     if (settingsToggle) {
-      settingsToggle.classList.toggle('active', this.ambilightEnabled);
-    }
-    if (settingsStatus) {
-      settingsStatus.textContent = this.ambilightEnabled ? 'Enabled' : 'Disabled';
+      settingsToggle.addEventListener('click', () => {
+        this.toggleAmbilight();
+      });
     }
 
+    // Preset buttons in settings modal
+    const presetBtns = document.querySelectorAll('.btn-ambilight-preset');
+    presetBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const mode = btn.dataset.mode;
+        if (mode) {
+          this.setAmbilightMode(mode);
+        }
+      });
+    });
+
+    // Intensity slider
+    const intensitySlider = document.getElementById('settings-ambilight-intensity');
+    const intensityVal = document.getElementById('settings-ambilight-intensity-val');
+    if (intensitySlider) {
+      intensitySlider.value = this.ambilightIntensity;
+      if (intensityVal) intensityVal.textContent = `${this.ambilightIntensity}%`;
+      intensitySlider.addEventListener('input', (e) => {
+        this.ambilightIntensity = parseInt(e.target.value, 10);
+        localStorage.setItem('zami_ambilight_intensity', this.ambilightIntensity);
+        if (intensityVal) intensityVal.textContent = `${this.ambilightIntensity}%`;
+        this.applyAmbilightStyles();
+      });
+    }
+
+    // Blur spread slider
     const blurSlider = document.getElementById('settings-ambilight-blur');
     const blurVal = document.getElementById('settings-ambilight-blur-val');
     if (blurSlider) {
@@ -1002,30 +1047,136 @@ class UniversalPlayer {
         this.ambilightSpread = parseInt(e.target.value, 10);
         localStorage.setItem('zami_ambilight_blur', this.ambilightSpread);
         if (blurVal) blurVal.textContent = `${this.ambilightSpread}px`;
+        this.applyAmbilightStyles();
       });
     }
 
-    if (settingsToggle) {
-      settingsToggle.addEventListener('click', () => {
-        this.toggleAmbilight();
+    // Room wall light spill checkbox
+    const wallCheck = document.getElementById('settings-ambilight-wall');
+    if (wallCheck) {
+      wallCheck.checked = this.ambilightWallEnabled;
+      wallCheck.addEventListener('change', (e) => {
+        this.ambilightWallEnabled = e.target.checked;
+        localStorage.setItem('zami_ambilight_wall', this.ambilightWallEnabled);
+        this.applyAmbilightStyles();
       });
     }
-  }
 
-  isPlaying() {
-    if (this.activeType === 'youtube' && this.ytPlayer && typeof this.ytPlayer.getPlayerState === 'function') {
-      return this.ytPlayer.getPlayerState() === 1;
+    // Context menu / right click on player bar button opens Settings modal
+    if (this.btnAmbilight) {
+      this.btnAmbilight.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        const settingsModal = document.getElementById('settings-modal');
+        if (settingsModal) {
+          settingsModal.style.display = 'flex';
+          const ambilightSection = settingsModal.querySelector('.settings-ambilight-section');
+          if (ambilightSection) {
+            ambilightSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }
+      });
     }
-    return this.videoEl ? (!this.videoEl.paused && !this.videoEl.ended) : false;
+
+    this.applyAmbilightStyles();
   }
 
-  toggleAmbilight(force) {
-    this.ambilightEnabled = force !== undefined ? Boolean(force) : !this.ambilightEnabled;
-    localStorage.setItem('zami_ambilight_enabled', this.ambilightEnabled);
+  setAmbilightMode(mode) {
+    this.ambilightMode = mode;
+    localStorage.setItem('zami_ambilight_mode', mode);
+    if (!this.ambilightEnabled) {
+      this.toggleAmbilight(true);
+    } else {
+      this.applyAmbilightStyles();
+      this.updateAmbilightUI();
+      if (this.isPlaying()) {
+        this.startAmbilightLoop();
+      }
+    }
 
+    const modeLabels = {
+      cinema: 'Cinema Vivid Glow',
+      soft: 'Soft Ambient Glow',
+      pulse: 'Audio-Reactive Cinema Pulse',
+      subtle: 'Subtle Halo'
+    };
+    if (window.showToast) {
+      window.showToast(`Ambilight: ${modeLabels[mode] || mode}`, 'info', 2000);
+    }
+  }
+
+  cycleAmbilightMode() {
+    if (!this.ambilightEnabled) {
+      this.ambilightEnabled = true;
+      this.ambilightMode = 'cinema';
+      localStorage.setItem('zami_ambilight_enabled', 'true');
+      localStorage.setItem('zami_ambilight_mode', 'cinema');
+      this.updateAmbilightUI();
+      this.applyAmbilightStyles();
+      if (this.isPlaying()) this.startAmbilightLoop();
+      if (window.showToast) window.showToast('Ambilight: Cinema Vivid Glow', 'info', 2000);
+      return;
+    }
+
+    // Cycle sequence: cinema -> pulse -> soft -> subtle -> off
+    const order = ['cinema', 'pulse', 'soft', 'subtle', 'off'];
+    const currentIdx = order.indexOf(this.ambilightMode);
+    const nextMode = order[(currentIdx + 1) % order.length];
+
+    if (nextMode === 'off') {
+      this.toggleAmbilight(false);
+    } else {
+      this.setAmbilightMode(nextMode);
+    }
+  }
+
+  applyAmbilightStyles() {
+    const root = document.documentElement;
+    const intensityNorm = Math.max(0.2, Math.min(1.5, (this.ambilightIntensity || 100) / 100));
+    const blur = this.ambilightSpread || 75;
+
+    let sat = 2.4;
+    let brightness = 1.15;
+    let opacity = 0.88 * intensityNorm;
+    let wallOpacity = this.ambilightWallEnabled ? (0.75 * intensityNorm) : 0;
+
+    if (this.ambilightMode === 'soft') {
+      sat = 1.5;
+      brightness = 0.95;
+      opacity = 0.65 * intensityNorm;
+      wallOpacity = this.ambilightWallEnabled ? (0.45 * intensityNorm) : 0;
+    } else if (this.ambilightMode === 'pulse') {
+      sat = 2.5;
+      brightness = 1.15;
+      opacity = 0.9 * intensityNorm;
+      wallOpacity = this.ambilightWallEnabled ? (0.78 * intensityNorm) : 0;
+    } else if (this.ambilightMode === 'subtle') {
+      sat = 1.2;
+      brightness = 0.85;
+      opacity = 0.45 * intensityNorm;
+      wallOpacity = 0; // Subtle mode disables room wall spill
+    }
+
+    root.style.setProperty('--ambilight-blur', `${blur}px`);
+    root.style.setProperty('--ambilight-sat', sat.toString());
+    root.style.setProperty('--ambilight-brightness', brightness.toString());
+    root.style.setProperty('--ambilight-opacity', opacity.toString());
+    root.style.setProperty('--ambilight-wall-opacity', wallOpacity.toString());
+  }
+
+  updateAmbilightUI() {
     if (this.btnAmbilight) {
       this.btnAmbilight.classList.toggle('active', this.ambilightEnabled);
+      const modeTitles = {
+        cinema: 'Ambilight: Cinema Vivid (Click to Cycle / Right-Click Settings)',
+        soft: 'Ambilight: Soft Ambient (Click to Cycle / Right-Click Settings)',
+        pulse: 'Ambilight: Audio-Reactive Pulse (Click to Cycle / Right-Click Settings)',
+        subtle: 'Ambilight: Subtle Halo (Click to Cycle / Right-Click Settings)'
+      };
+      this.btnAmbilight.title = this.ambilightEnabled
+        ? (modeTitles[this.ambilightMode] || 'Dynamic Living Ambilight')
+        : 'Dynamic Living Ambilight (Disabled - Click to Enable)';
     }
+
     const settingsToggle = document.getElementById('btn-toggle-settings-ambilight');
     const settingsStatus = document.getElementById('settings-ambilight-status-text');
     if (settingsToggle) {
@@ -1035,12 +1186,42 @@ class UniversalPlayer {
       settingsStatus.textContent = this.ambilightEnabled ? 'Enabled' : 'Disabled';
     }
 
+    const presetBtns = document.querySelectorAll('.btn-ambilight-preset');
+    presetBtns.forEach(btn => {
+      btn.classList.toggle('active', this.ambilightEnabled && btn.dataset.mode === this.ambilightMode);
+    });
+
+    const wallCheck = document.getElementById('settings-ambilight-wall');
+    if (wallCheck) {
+      wallCheck.checked = this.ambilightWallEnabled;
+    }
+  }
+
+  isPlaying() {
+    if (this.activeType === 'youtube' && this.ytPlayer && typeof this.ytPlayer.getPlayerState === 'function') {
+      return this.ytPlayer.getPlayerState() === 1;
+    }
+    const rCanvas = document.getElementById('remote-browser-canvas');
+    const browserContainer = document.getElementById('inbuilt-browser-container');
+    if (rCanvas && browserContainer && browserContainer.style.display !== 'none') {
+      return true;
+    }
+    return this.videoEl ? (!this.videoEl.paused && !this.videoEl.ended) : false;
+  }
+
+  toggleAmbilight(force) {
+    this.ambilightEnabled = force !== undefined ? Boolean(force) : !this.ambilightEnabled;
+    localStorage.setItem('zami_ambilight_enabled', this.ambilightEnabled);
+
+    this.updateAmbilightUI();
+    this.applyAmbilightStyles();
+
     if (this.ambilightEnabled) {
       if (this.isPlaying()) {
         this.startAmbilightLoop();
       }
       if (window.showToast) {
-        window.showToast('Dynamic Living Ambilight Enabled', 'info', 2000);
+        window.showToast('Dynamic Cinema Ambilight Enabled', 'info', 2000);
       }
     } else {
       this.stopAmbilightLoop();
@@ -1053,13 +1234,16 @@ class UniversalPlayer {
   startAmbilightLoop() {
     if (!this.ambilightEnabled || this.ambilightLoopActive) return;
     this.ambilightLoopActive = true;
-    if (this.ambilightGlowEl) {
-      this.ambilightGlowEl.classList.add('active');
+
+    if (this.ambilightGlowEl) this.ambilightGlowEl.classList.add('active');
+    if (this.ambilightScreenCanvas) this.ambilightScreenCanvas.classList.add('active');
+    if (this.ambilightWallEl && this.ambilightWallEnabled && this.ambilightMode !== 'subtle') {
+      this.ambilightWallEl.classList.add('active');
     }
 
     const loop = (timestamp) => {
       if (!this.ambilightLoopActive) return;
-      if (timestamp - this.lastAmbilightSample >= 45) { // ~22fps sampling
+      if (timestamp - this.lastAmbilightSample >= 40) { // 25fps sampling
         this.lastAmbilightSample = timestamp;
         this.sampleAmbilightColor();
       }
@@ -1079,30 +1263,62 @@ class UniversalPlayer {
       this.ambilightGlowEl.classList.remove('active');
       this.ambilightGlowEl.style.boxShadow = 'none';
     }
+    if (this.ambilightScreenCanvas) {
+      this.ambilightScreenCanvas.classList.remove('active');
+    }
+    if (this.ambilightWallEl) {
+      this.ambilightWallEl.classList.remove('active');
+    }
   }
 
   sampleAmbilightColor() {
     if (!this.ambilightGlowEl || !this.ambilightCtx) return;
 
-    let sourceReady = false;
+    let sourceEl = null;
     if (this.videoEl && this.videoEl.videoWidth > 0 && this.videoEl.style.display !== 'none' && !this.videoEl.paused) {
-      try {
-        this.ambilightCtx.drawImage(this.videoEl, 0, 0, 32, 18);
-        sourceReady = true;
-      } catch (e) {}
+      sourceEl = this.videoEl;
     } else {
       const rCanvas = document.getElementById('remote-browser-canvas');
-      if (rCanvas && rCanvas.width > 0 && rCanvas.style.display !== 'none') {
+      const browserContainer = document.getElementById('inbuilt-browser-container');
+      if (rCanvas && rCanvas.width > 0 && browserContainer && browserContainer.style.display !== 'none') {
+        sourceEl = rCanvas;
+      }
+    }
+
+    let sourceReady = false;
+
+    if (sourceEl) {
+      // 1. Draw into on-screen blurred canvas projection (Layer 1)
+      if (this.ambilightScreenCanvas && this.ambilightScreenCtx && this.ambilightMode !== 'subtle') {
         try {
-          this.ambilightCtx.drawImage(rCanvas, 0, 0, 32, 18);
+          this.ambilightScreenCtx.drawImage(sourceEl, 0, 0, 64, 36);
           sourceReady = true;
         } catch (e) {}
       }
+
+      // 2. Draw into off-screen canvas for pixel extraction (Layers 2 & 3)
+      try {
+        this.ambilightCtx.drawImage(sourceEl, 0, 0, 32, 18);
+        sourceReady = true;
+      } catch (e) {}
     }
 
     const spread = this.ambilightSpread || 75;
 
+    // Audio-reactive modulation (when in 'pulse' mode)
+    let audioEnergy = 0;
+    if (this.ambilightMode === 'pulse' && window.volumeBooster) {
+      audioEnergy = window.volumeBooster.getAudioEnergy(this.videoEl);
+      if (this.ambilightScreenCanvas) {
+        const pulseScale = 1.14 + (audioEnergy * 0.08);
+        const pulseBright = 1.15 + (audioEnergy * 0.45);
+        this.ambilightScreenCanvas.style.transform = `scale(${pulseScale.toFixed(3)}) translateZ(0)`;
+        this.ambilightScreenCanvas.style.filter = `blur(${spread}px) saturate(2.6) brightness(${pulseBright.toFixed(2)})`;
+      }
+    }
+
     if (!sourceReady) {
+      // Graceful fallback for cross-origin / idle
       this.ambilightGlowEl.style.boxShadow = `0 0 ${spread}px rgba(229, 169, 60, 0.35)`;
       return;
     }
@@ -1115,12 +1331,18 @@ class UniversalPlayer {
       let rB = 0, gB = 0, bB = 0, cB = 0;
       let rL = 0, gL = 0, bL = 0, cL = 0;
       let rR = 0, gR = 0, bR = 0, cR = 0;
+      let rC = 0, gC = 0, bC = 0, cC = 0;
 
       for (let y = 0; y < 18; y++) {
         for (let x = 0; x < 32; x++) {
           const idx = (y * 32 + x) * 4;
           const r = data[idx], g = data[idx + 1], b = data[idx + 2];
 
+          // Center sample
+          if (x >= 8 && x <= 24 && y >= 4 && y <= 14) {
+            rC += r; gC += g; bC += b; cC++;
+          }
+          // Perimeter edges
           if (y < 4) { rT += r; gT += g; bT += b; cT++; }
           if (y >= 14) { rB += r; gB += g; bB += b; cB++; }
           if (x < 6) { rL += r; gL += g; bL += b; cL++; }
@@ -1132,19 +1354,47 @@ class UniversalPlayer {
       rB = Math.round(rB / (cB || 1)); gB = Math.round(gB / (cB || 1)); bB = Math.round(bB / (cB || 1));
       rL = Math.round(rL / (cL || 1)); gL = Math.round(gL / (cL || 1)); bL = Math.round(bL / (cL || 1));
       rR = Math.round(rR / (cR || 1)); gR = Math.round(gR / (cR || 1)); bR = Math.round(bR / (cR || 1));
+      rC = Math.round(rC / (cC || 1)); gC = Math.round(gC / (cC || 1)); bC = Math.round(bC / (cC || 1));
 
+      // Luma clamp so pitch-black scenes still maintain subtle warm ambient atmosphere
       const maxLuma = Math.max(rT, gT, bT, rB, gB, bB, rL, gL, bL, rR, gR, bR);
       if (maxLuma < 12) {
         rT = 20; gT = 20; bT = 28;
         rB = 20; gB = 20; bB = 28;
         rL = 20; gL = 20; bL = 28;
         rR = 20; gR = 20; bR = 28;
+        rC = 20; gC = 20; bC = 28;
       }
 
-      const shadowStr = `0 -${Math.round(spread * 0.35)}px ${spread}px rgba(${rT},${gT},${bT},0.85), ` +
-                        `${Math.round(spread * 0.35)}px 0 ${spread}px rgba(${rR},${gR},${bR},0.85), ` +
-                        `0 ${Math.round(spread * 0.35)}px ${spread}px rgba(${rB},${gB},${bB},0.85), ` +
-                        `-${Math.round(spread * 0.35)}px 0 ${spread}px rgba(${rL},${gL},${bL},0.85)`;
+      // Smooth LERP interpolation (factor 0.2) to prevent flashing
+      const factor = 0.2;
+      const cur = this.curAmbilightColors;
+      cur.top[0] += (rT - cur.top[0]) * factor; cur.top[1] += (gT - cur.top[1]) * factor; cur.top[2] += (bT - cur.top[2]) * factor;
+      cur.bottom[0] += (rB - cur.bottom[0]) * factor; cur.bottom[1] += (gB - cur.bottom[1]) * factor; cur.bottom[2] += (bB - cur.bottom[2]) * factor;
+      cur.left[0] += (rL - cur.left[0]) * factor; cur.left[1] += (gL - cur.left[1]) * factor; cur.left[2] += (bL - cur.left[2]) * factor;
+      cur.right[0] += (rR - cur.right[0]) * factor; cur.right[1] += (gR - cur.right[1]) * factor; cur.right[2] += (bR - cur.right[2]) * factor;
+      cur.center[0] += (rC - cur.center[0]) * factor; cur.center[1] += (gC - cur.center[1]) * factor; cur.center[2] += (bC - cur.center[2]) * factor;
+
+      const cT_str = `${Math.round(cur.top[0])}, ${Math.round(cur.top[1])}, ${Math.round(cur.top[2])}`;
+      const cB_str = `${Math.round(cur.bottom[0])}, ${Math.round(cur.bottom[1])}, ${Math.round(cur.bottom[2])}`;
+      const cL_str = `${Math.round(cur.left[0])}, ${Math.round(cur.left[1])}, ${Math.round(cur.left[2])}`;
+      const cR_str = `${Math.round(cur.right[0])}, ${Math.round(cur.right[1])}, ${Math.round(cur.right[2])}`;
+      const cC_str = `${Math.round(cur.center[0])}, ${Math.round(cur.center[1])}, ${Math.round(cur.center[2])}`;
+
+      // Update CSS custom properties for room wall projection
+      const root = document.documentElement;
+      root.style.setProperty('--ambilight-c-top', `rgba(${cT_str}, 0.28)`);
+      root.style.setProperty('--ambilight-c-bottom', `rgba(${cB_str}, 0.25)`);
+      root.style.setProperty('--ambilight-c-left', `rgba(${cL_str}, 0.25)`);
+      root.style.setProperty('--ambilight-c-right', `rgba(${cR_str}, 0.25)`);
+      root.style.setProperty('--ambilight-c-center', `rgba(${cC_str}, 0.22)`);
+
+      // Update multi-edge box shadow on stage glow
+      const shadowAlpha = (0.85 + audioEnergy * 0.15).toFixed(2);
+      const shadowStr = `0 -${Math.round(spread * 0.35)}px ${spread}px rgba(${cT_str}, ${shadowAlpha}), ` +
+                        `${Math.round(spread * 0.35)}px 0 ${spread}px rgba(${cR_str}, ${shadowAlpha}), ` +
+                        `0 ${Math.round(spread * 0.35)}px ${spread}px rgba(${cB_str}, ${shadowAlpha}), ` +
+                        `-${Math.round(spread * 0.35)}px 0 ${spread}px rgba(${cL_str}, ${shadowAlpha})`;
 
       this.ambilightGlowEl.style.boxShadow = shadowStr;
     } catch (corsErr) {
@@ -2492,3 +2742,4 @@ class UniversalPlayer {
 }
 
 window.universalPlayer = new UniversalPlayer();
+window.player = window.universalPlayer;

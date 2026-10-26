@@ -223,6 +223,9 @@
 
       <!-- Workspace: Stage + Sidebar -->
       <main class="room-workspace">
+      <!-- Dynamic Room Wall Ambilight Projector -->
+      <div id="room-ambilight-wall" class="room-ambilight-wall" aria-hidden="true"></div>
+
       <!-- Stage: Video Player Area -->
       <section class="room-stage">
         <div class="player-wrapper">
@@ -252,7 +255,8 @@
             </div>
           </div>
 
-          <!-- Ambient Cinema Glow / Backdrop Ambilight -->
+          <!-- Dynamic Stage Ambilight Living Projection Layers -->
+          <canvas id="stage-ambilight-canvas" class="stage-ambilight-canvas" width="64" height="36" aria-hidden="true"></canvas>
           <div id="stage-ambilight" class="stage-ambilight"></div>
           <div id="stage-ambilight-glow" class="stage-ambilight-glow"></div>
 
@@ -756,7 +760,7 @@
                 </button>
 
                 <!-- Dynamic Stage Ambilight Glow -->
-                <button id="ctrl-ambilight" class="ctrl-btn active" title="Dynamic Living Ambilight" aria-label="Toggle Dynamic Ambilight">
+                <button id="ctrl-ambilight" class="ctrl-btn active" title="Dynamic Cinema Ambilight (B) &mdash; Click to cycle, right-click for settings" aria-label="Dynamic Cinema Ambilight">
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="5"/>
                     <line x1="12" y1="1" x2="12" y2="3"/>
@@ -1834,20 +1838,54 @@
               <div>
                 <div style="font-size: 0.9rem; font-weight: 600; color: #f4f4f5; display: flex; align-items: center; gap: 8px;">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#e5a93c" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-                  Dynamic Living Ambilight
+                  Dynamic Cinema Ambilight
                 </div>
-                <div style="font-size: 0.74rem; color: #8b8f9e;">Real-time video edge-color glow around cinema stage</div>
+                <div style="font-size: 0.74rem; color: #8b8f9e;">Real-time living ambient glow projected onto room &amp; stage</div>
               </div>
               <button type="button" id="btn-toggle-settings-ambilight" class="btn btn-outline btn-sm active" aria-label="Toggle Living Ambilight" style="border-radius: 9999px; padding: 5px 12px; font-size: 0.75rem;">
                 <span id="settings-ambilight-status-text">Enabled</span>
               </button>
             </div>
+
+            <!-- Mode Presets -->
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <span style="font-size: 0.78rem; color: #a1a1aa; font-weight: 500;">Cinema Glow Profile</span>
+              <div class="ambilight-presets-row" style="display: flex; gap: 6px; flex-wrap: wrap;">
+                <button type="button" class="btn-ambilight-preset active" data-mode="cinema">Cinema Vivid</button>
+                <button type="button" class="btn-ambilight-preset" data-mode="soft">Soft Ambient</button>
+                <button type="button" class="btn-ambilight-preset" data-mode="pulse">Audio Reactive</button>
+                <button type="button" class="btn-ambilight-preset" data-mode="subtle">Subtle Halo</button>
+              </div>
+            </div>
+
+            <!-- Intensity Slider -->
             <div style="display: flex; flex-direction: column; gap: 6px;">
               <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #a1a1aa;">
-                <span>Ambient Glow Spread</span>
+                <span>Glow Intensity</span>
+                <span id="settings-ambilight-intensity-val" style="font-weight: 600; color: #e5a93c;">100%</span>
+              </div>
+              <input type="range" id="settings-ambilight-intensity" class="settings-volume-slider" min="20" max="150" step="5" value="100" aria-label="Ambilight Intensity">
+            </div>
+
+            <!-- Spread Slider -->
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #a1a1aa;">
+                <span>Atmospheric Spread</span>
                 <span id="settings-ambilight-blur-val" style="font-weight: 600; color: #e5a93c;">75px</span>
               </div>
               <input type="range" id="settings-ambilight-blur" class="settings-volume-slider" min="30" max="140" step="5" value="75" aria-label="Ambilight Blur Spread">
+            </div>
+
+            <!-- Wall Projector Toggle -->
+            <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 4px; border-top: 1px solid rgba(255, 255, 255, 0.06);">
+              <div style="display: flex; flex-direction: column;">
+                <span style="font-size: 0.8rem; color: #e4e4e7; font-weight: 500;">Room Wall Light Spill</span>
+                <span style="font-size: 0.72rem; color: #71717a;">Diffuse light across the surrounding room background</span>
+              </div>
+              <label class="switch" style="position: relative; display: inline-block; width: 38px; height: 20px; margin: 0;">
+                <input type="checkbox" id="settings-ambilight-wall" checked style="opacity: 0; width: 0; height: 0;">
+                <span class="slider round" style="position: absolute; cursor: pointer; inset: 0; background-color: rgba(255,255,255,0.18); transition: .3s; border-radius: 20px;"></span>
+              </label>
             </div>
           </div>
 
@@ -1929,6 +1967,10 @@
               <div class="shortcut-row">
                 <span class="shortcut-desc">Laser Pointer &amp; Telestrator</span>
                 <span class="shortcut-keys"><kbd>L</kbd></span>
+              </div>
+              <div class="shortcut-row">
+                <span class="shortcut-desc">Dynamic Cinema Ambilight</span>
+                <span class="shortcut-keys"><kbd>B</kbd></span>
               </div>
               <div class="shortcut-row">
                 <span class="shortcut-desc">Record 15s Party Clip</span>

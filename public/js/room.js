@@ -1167,6 +1167,15 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
+      // B / b -> Dynamic Cinema Ambilight Cycle
+      if (key === 'b' || key === 'B') {
+        e.preventDefault();
+        if (window.universalPlayer && typeof window.universalPlayer.cycleAmbilightMode === 'function') {
+          window.universalPlayer.cycleAmbilightMode();
+        }
+        return;
+      }
+
       // E / e -> Reaction Cannon Burst
       if (key === 'e' || key === 'E') {
         e.preventDefault();
