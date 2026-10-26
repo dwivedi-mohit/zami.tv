@@ -113,6 +113,19 @@ class RoomQueueManager {
       mobQueueBadge.style.display = this.playlist.length > 0 ? 'flex' : 'none';
     }
 
+    const btnSkip = document.getElementById('btn-queue-skip');
+    const btnClear = document.getElementById('btn-queue-clear');
+    if (btnSkip) {
+      btnSkip.disabled = this.playlist.length === 0;
+      btnSkip.style.opacity = this.playlist.length === 0 ? '0.45' : '1';
+      btnSkip.style.pointerEvents = this.playlist.length === 0 ? 'none' : 'auto';
+    }
+    if (btnClear) {
+      btnClear.disabled = this.playlist.length === 0;
+      btnClear.style.opacity = this.playlist.length === 0 ? '0.45' : '1';
+      btnClear.style.pointerEvents = this.playlist.length === 0 ? 'none' : 'auto';
+    }
+
     if (!this.container) return;
 
     if (this.playlist.length === 0) {
@@ -122,9 +135,24 @@ class RoomQueueManager {
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
           </div>
           <div class="queue-empty-title">Queue is empty</div>
-          <div class="queue-empty-desc">Add movies from Explorer, YouTube clips, or paste links below to queue up party reels!</div>
+          <div class="queue-empty-desc">Paste any video or YouTube link below, or browse movies to queue up shows for everyone.</div>
+          <button type="button" class="btn btn-secondary btn-xs" id="btn-empty-queue-load" style="margin-top: 10px; display: inline-flex; align-items: center; gap: 6px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line></svg>
+            <span>Browse Media</span>
+          </button>
         </div>
       `;
+      const emptyLoadBtn = this.container.querySelector('#btn-empty-queue-load');
+      if (emptyLoadBtn) {
+        emptyLoadBtn.addEventListener('click', () => {
+          const modal = document.getElementById('media-modal');
+          if (modal) {
+            modal.classList.add('active');
+            modal.style.display = 'flex';
+            if (window.showVaultView) window.showVaultView('menu');
+          }
+        });
+      }
       return;
     }
 

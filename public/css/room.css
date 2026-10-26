@@ -508,7 +508,8 @@
   height: 100%;
   object-fit: contain;
   background: transparent !important;
-  position: relative;
+  position: absolute;
+  inset: 0;
   z-index: 2;
 }
 
@@ -5317,6 +5318,23 @@
   border-color: rgba(239, 68, 68, 0.5);
 }
 
+.mobile-nav-actions {
+  display: none !important;
+}
+
+/* Screen reader only utility */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
 /* Left Navigation Rail */
 .room-nav-rail {
   width: 72px;
@@ -5388,7 +5406,8 @@
 }
 
 /* Empty Stage: Dynamic Room Stage Backdrop & Glowing Double-Ring halo */
-.player-placeholder.empty-stage-minimal {
+.player-placeholder.empty-stage-minimal,
+.player-placeholder.empty-stage-hub {
   position: absolute;
   inset: 0;
   display: flex;
@@ -5446,103 +5465,226 @@
   transform: translateY(-1px);
 }
 
-.empty-stage-center-box {
+/* First Watch Hub (Stage Call-to-Action) */
+.empty-stage-top-bar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 18px;
+  position: relative;
+  z-index: 10;
+}
+
+.empty-stage-room-info {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.room-status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.7);
+}
+
+.room-code-tag {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #e5a93c;
+  background: rgba(229, 169, 60, 0.1);
+  padding: 3px 9px;
+  border-radius: 6px;
+  border: 1px solid rgba(229, 169, 60, 0.25);
+}
+
+.empty-stage-invite-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #cbd5e1;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.empty-stage-invite-btn:hover {
+  background: rgba(229, 169, 60, 0.18);
+  border-color: rgba(229, 169, 60, 0.45);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.empty-stage-content {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  position: relative;
-  z-index: 2;
-  background: rgba(8, 10, 15, 0.72);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  padding: 38px 46px;
-  border-radius: 24px;
-  border: 1px solid rgba(229, 169, 60, 0.24);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.06);
-  max-width: 520px;
+  margin: auto 0;
   width: 100%;
+  max-width: 640px;
+  padding: 10px 16px;
+  position: relative;
+  z-index: 10;
 }
 
-.empty-stage-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: none;
-  border: none;
-  cursor: pointer;
-  outline: none;
-  padding: 10px;
-}
-
-/* Outer Glowing Gold Halo */
-.empty-stage-halo-outer {
-  width: 106px;
-  height: 106px;
-  border-radius: 50%;
-  border: 2px solid rgba(229, 169, 60, 0.72);
-  box-shadow: 0 0 45px rgba(229, 169, 60, 0.45), inset 0 0 20px rgba(229, 169, 60, 0.16);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.24s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* Inner Solid Charcoal Circle with Gold Plus */
-.empty-stage-icon-circle {
-  width: 66px;
-  height: 66px;
-  border-radius: 50%;
-  background: #13151c;
-  border: 1.5px solid rgba(229, 169, 60, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
-  transition: all 0.24s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.empty-stage-btn:hover .empty-stage-halo-outer {
-  transform: scale(1.08);
-  border-color: #e5a93c;
-  box-shadow: 0 0 65px rgba(229, 169, 60, 0.65), inset 0 0 25px rgba(229, 169, 60, 0.25);
-}
-
-.empty-stage-btn:hover .empty-stage-icon-circle {
-  background: #181a24;
-  border-color: #e5a93c;
-  transform: scale(1.02);
-}
-
-.empty-stage-btn:active .empty-stage-halo-outer {
-  transform: scale(0.98);
-}
-
-.empty-stage-heading {
+.empty-stage-title {
   font-family: var(--font-sans);
   font-size: 1.35rem;
   font-weight: 700;
   color: #ffffff;
-  margin: 20px 0 6px;
+  margin: 0 0 6px;
   letter-spacing: -0.01em;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
 }
 
-.empty-stage-subtext {
+.empty-stage-subtitle {
   font-family: var(--font-sans);
-  font-size: 0.86rem;
-  color: #b0b4c3;
-  margin: 0;
-  max-width: 440px;
-  line-height: 1.5;
-  text-align: center;
+  font-size: 0.85rem;
+  color: #94a3b8;
+  margin: 0 0 22px;
+  max-width: 480px;
+  line-height: 1.45;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
 }
 
-.empty-stage-desktop-sub { display: block; }
-.empty-stage-mobile-sub { display: none; }
+.empty-stage-choices-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  width: 100%;
+}
+
+.stage-choice-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 18px 14px;
+  background: rgba(18, 20, 29, 0.78);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  gap: 10px;
+  outline: none;
+  font-family: inherit;
+}
+
+.stage-choice-card:hover {
+  background: rgba(26, 30, 44, 0.92);
+  border-color: rgba(229, 169, 60, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(229, 169, 60, 0.15);
+}
+
+.stage-choice-card:active {
+  transform: scale(0.97);
+}
+
+.stage-choice-card:focus-visible {
+  outline: 2px solid #e5a93c;
+  outline-offset: 2px;
+}
+
+.choice-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.choice-icon-wrap.gold-glow {
+  background: rgba(229, 169, 60, 0.12);
+  box-shadow: 0 0 16px rgba(229, 169, 60, 0.2);
+}
+
+.choice-icon-wrap.red-glow {
+  background: rgba(239, 68, 68, 0.12);
+  box-shadow: 0 0 16px rgba(239, 68, 68, 0.2);
+}
+
+.choice-icon-wrap.blue-glow {
+  background: rgba(56, 189, 248, 0.12);
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.2);
+}
+
+.stage-choice-card:hover .choice-icon-wrap {
+  transform: scale(1.08);
+}
+
+.choice-text-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.choice-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.choice-desc {
+  font-size: 0.74rem;
+  color: #94a3b8;
+  line-height: 1.3;
+}
+
+.empty-stage-footer-actions {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 16px 10px;
+  position: relative;
+  z-index: 10;
+}
+
+.stage-wallpaper-ghost-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 0.72rem;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.16s ease;
+  font-family: inherit;
+}
+
+.stage-wallpaper-ghost-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(229, 169, 60, 0.35);
+  color: #ffffff;
+}
+
+/* Fallback for legacy empty-stage-center-box */
+.empty-stage-center-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
 /* Progressive Disclosure Load Media Hub Modal */
 .cinema-hub-overlay {
@@ -6246,7 +6388,13 @@
     font-size: 16px !important;
   }
 
-  /* Mobile Quick Invite Button in Navbar */
+  /* Mobile Quick Actions in Header (Invite + Settings + Leave) */
+  .mobile-nav-actions {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+  }
+
   .btn-mobile-invite {
     display: inline-flex !important;
     align-items: center !important;
@@ -6259,8 +6407,38 @@
     font-size: 0.72rem !important;
     font-weight: 600 !important;
     cursor: pointer !important;
-    margin-left: 6px !important;
+    margin-left: 2px !important;
     height: 28px !important;
+  }
+
+  .btn-mobile-icon-action {
+    width: 28px !important;
+    height: 28px !important;
+    border-radius: 50% !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #cbd5e1 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    transition: all 0.16s ease !important;
+    text-decoration: none !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .btn-mobile-icon-action:hover,
+  .btn-mobile-icon-action:active {
+    background: rgba(255, 255, 255, 0.14) !important;
+    color: #ffffff !important;
+  }
+
+  .btn-mobile-leave:hover,
+  .btn-mobile-leave:active {
+    background: rgba(239, 68, 68, 0.2) !important;
+    border-color: rgba(239, 68, 68, 0.4) !important;
+    color: #ef4444 !important;
   }
 
   .stage-telemetry-pill {
@@ -6339,7 +6517,7 @@
     max-width: 100% !important;
     aspect-ratio: 16 / 9 !important;
     height: auto !important;
-    max-height: 195px !important;
+    max-height: 220px !important;
     min-height: 155px !important;
     flex: 0 0 auto !important;
     display: flex !important;
@@ -6397,44 +6575,87 @@
     color: #ffffff !important;
   }
 
-  /* Centered Empty Stage Box */
-  .empty-stage-center-box {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
-    text-align: center !important;
+  /* Empty Stage on Mobile (compact, perfectly fitting 16:9 stage) */
+  .player-placeholder.empty-stage-minimal,
+  .player-placeholder.empty-stage-hub {
+    padding: 6px 10px !important;
+    justify-content: space-between !important;
+  }
+
+  .empty-stage-top-bar {
+    padding: 2px 4px !important;
+  }
+
+  .room-code-tag {
+    font-size: 0.7rem !important;
+    padding: 2px 6px !important;
+  }
+
+  .empty-stage-invite-btn {
+    padding: 3px 8px !important;
+    font-size: 0.7rem !important;
+    gap: 4px !important;
+  }
+
+  .empty-stage-content {
     padding: 0 !important;
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
+    margin: 0 !important;
     max-width: 100% !important;
   }
 
-  .empty-stage-desktop-sub { display: none !important; }
-  .empty-stage-mobile-sub { display: block !important; }
-
-  .empty-stage-halo-outer {
-    width: 66px !important;
-    height: 66px !important;
+  .empty-stage-title {
+    font-size: 0.86rem !important;
+    margin: 0 0 2px !important;
   }
 
-  .empty-stage-icon-circle {
-    width: 44px !important;
-    height: 44px !important;
+  .empty-stage-subtitle {
+    display: none !important;
   }
 
-  .empty-stage-heading {
-    font-size: 1.05rem !important;
-    margin: 8px 0 2px !important;
+  .empty-stage-choices-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 6px !important;
+    max-width: 360px !important;
+    margin: 4px auto 0 !important;
   }
 
-  .empty-stage-mobile-sub {
-    font-size: 0.75rem !important;
-    color: #94a3b8 !important;
-    margin: 0 !important;
+  .stage-choice-card {
+    padding: 7px 4px !important;
+    gap: 4px !important;
+    border-radius: 10px !important;
+    min-height: 52px !important;
+    background: rgba(14, 16, 22, 0.88) !important;
+  }
+
+  .choice-icon-wrap {
+    width: 26px !important;
+    height: 26px !important;
+    border-radius: 7px !important;
+  }
+
+  .choice-icon-wrap svg {
+    width: 15px !important;
+    height: 15px !important;
+  }
+
+  .choice-title {
+    font-size: 0.72rem !important;
+    font-weight: 600 !important;
+    white-space: nowrap !important;
+  }
+
+  .choice-desc {
+    display: none !important;
+  }
+
+  .empty-stage-footer-actions {
+    padding: 2px 0 0 !important;
+  }
+
+  .stage-wallpaper-ghost-btn {
+    padding: 2px 8px !important;
+    font-size: 0.68rem !important;
+    gap: 4px !important;
   }
 
   .player-wrapper:has(#player-placeholder:not(.hidden)) .floating-reactions,

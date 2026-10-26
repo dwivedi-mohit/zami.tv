@@ -18,60 +18,131 @@ document.addEventListener("DOMContentLoaded", () => {
                       localStorage.getItem("cinesync_color") ||
                       "#FFB84D";
 
+  const a11yAnnouncer = document.getElementById("a11y-announcer");
+  function announceToScreenReader(msg) {
+    if (a11yAnnouncer) {
+      a11yAnnouncer.textContent = "";
+      setTimeout(() => {
+        a11yAnnouncer.textContent = msg;
+      }, 40);
+    }
+  }
+
   function saveProfile(name) {
     if (name) {
       currentUsername = name.trim();
       localStorage.setItem("zami_username", currentUsername);
       localStorage.setItem("cinesync_username", currentUsername);
+      const navProfileNameText = document.getElementById("nav-profile-name-text");
+      if (navProfileNameText) navProfileNameText.textContent = currentUsername;
     }
   }
 
   // --------------------------------------------------------------------------
-  // Modal Dialog Helpers (Modern HTML5 <dialog> with Fallbacks)
+  // Accessible Modal Dialog Helpers with Focus Trapping & Return-to-Opener
   // --------------------------------------------------------------------------
+  let activeFocusTrapCleanup = null;
+  let lastActiveElementBeforeModal = null;
+
   function openModal(dialog) {
     if (!dialog) return;
+    lastActiveElementBeforeModal = document.activeElement;
+
     if (typeof dialog.showModal === "function") {
       try {
-        dialog.showModal();
+        if (!dialog.open) dialog.showModal();
       } catch (err) {
         dialog.setAttribute("open", "");
       }
     } else {
       dialog.setAttribute("open", "");
+      dialog.style.display = "flex";
     }
+
+    // Accessible Focus Trap & Escape Handler
+    if (activeFocusTrapCleanup) {
+      activeFocusTrapCleanup();
+      activeFocusTrapCleanup = null;
+    }
+
+    function handleDialogKey(e) {
+      if (e.key === "Tab") {
+        const focusable = dialog.querySelectorAll(
+          'button:not([disabled]):not([aria-hidden="true"]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        );
+        if (!focusable.length) {
+          e.preventDefault();
+          return;
+        }
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey) {
+          if (document.activeElement === first || !dialog.contains(document.activeElement)) {
+            e.preventDefault();
+            last.focus();
+          }
+        } else {
+          if (document.activeElement === last || !dialog.contains(document.activeElement)) {
+            e.preventDefault();
+            first.focus();
+          }
+        }
+      } else if (e.key === "Escape") {
+        e.preventDefault();
+        closeModal(dialog);
+      }
+    }
+
+    dialog.addEventListener("keydown", handleDialogKey);
+    activeFocusTrapCleanup = () => dialog.removeEventListener("keydown", handleDialogKey);
+
+    // Auto-focus first input or button
+    requestAnimationFrame(() => {
+      const firstFocusable = dialog.querySelector("input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button.btn-dialog-primary, button:not([disabled])");
+      if (firstFocusable) firstFocusable.focus();
+    });
   }
 
   function closeModal(dialog) {
     if (!dialog) return;
+    if (activeFocusTrapCleanup) {
+      activeFocusTrapCleanup();
+      activeFocusTrapCleanup = null;
+    }
+
     if (typeof dialog.close === "function") {
       try {
-        dialog.close();
+        if (dialog.open) dialog.close();
       } catch (err) {
         dialog.removeAttribute("open");
       }
     } else {
       dialog.removeAttribute("open");
+      dialog.style.display = "none";
+    }
+
+    if (lastActiveElementBeforeModal && typeof lastActiveElementBeforeModal.focus === "function") {
+      try {
+        lastActiveElementBeforeModal.focus();
+      } catch (e) {}
     }
   }
 
   function setupDialogBackdropDismiss(dialog) {
     if (!dialog) return;
-    if (!("closedBy" in HTMLDialogElement.prototype)) {
-      dialog.addEventListener("click", (event) => {
-        if (event.target !== dialog) return;
-        const rect = dialog.getBoundingClientRect();
-        const isDialogContent = (
-          rect.top <= event.clientY &&
-          event.clientY <= rect.top + rect.height &&
-          rect.left <= event.clientX &&
-          event.clientX <= rect.left + rect.width
-        );
-        if (!isDialogContent) {
-          closeModal(dialog);
-        }
-      });
-    }
+    dialog.addEventListener("click", (event) => {
+      if (event.target !== dialog) return;
+      const rect = dialog.getBoundingClientRect();
+      const isDialogContent = (
+        rect.top <= event.clientY &&
+        event.clientY <= rect.top + rect.height &&
+        rect.left <= event.clientX &&
+        event.clientX <= rect.left + rect.width
+      );
+      if (!isDialogContent) {
+        closeModal(dialog);
+      }
+    });
   }
 
   // --------------------------------------------------------------------------
@@ -142,12 +213,23 @@ document.addEventListener("DOMContentLoaded", () => {
   if (btnCloseJoin) btnCloseJoin.addEventListener("click", () => closeModal(joinModal));
   if (btnCancelJoin) btnCancelJoin.addEventListener("click", () => closeModal(joinModal));
 
+  const inputModalUsername = document.getElementById("input-modal-username");
+
   function handleJoinSubmit() {
     if (!inputModalCode) return;
     let code = inputModalCode.value.trim();
     if (!code) {
       inputModalCode.focus();
+      showToast("Please enter a room code or invite link");
+      announceToScreenReader("Error: Room code or link is required.");
       return;
+    }
+
+    const nickname = inputModalUsername ? inputModalUsername.value.trim() : "";
+    if (nickname) {
+      saveProfile(nickname);
+    } else {
+      saveProfile();
     }
 
     if (code.includes("/room/")) {
@@ -166,7 +248,6 @@ document.addEventListener("DOMContentLoaded", () => {
     code = code.replace(/^\/+|\/+$/g, "");
     if (!code) return;
 
-    saveProfile();
     window.location.href = `/room/${code}`;
   }
 
@@ -174,6 +255,12 @@ document.addEventListener("DOMContentLoaded", () => {
     formJoinModal.addEventListener("submit", (e) => {
       e.preventDefault();
       handleJoinSubmit();
+    });
+  }
+
+  if (inputModalCode) {
+    inputModalCode.addEventListener("invalid", () => {
+      announceToScreenReader("Error: Room code or link is required.");
     });
   }
 
@@ -205,80 +292,45 @@ document.addEventListener("DOMContentLoaded", () => {
     btnCloseMobileNav.addEventListener("click", () => closeModal(mobileNavDialog));
   }
 
-  if (mobLinkFeatures) {
-    mobLinkFeatures.addEventListener("click", (e) => {
-      e.preventDefault();
-      closeModal(mobileNavDialog);
-      showToast("Sync in Real-Time • Watch Anything");
+  function setupSmoothScrollNav(id, targetId) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener("click", (e) => {
+      const target = document.getElementById(targetId);
+      if (target) {
+        e.preventDefault();
+        closeModal(mobileNavDialog);
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+        if (history.pushState) {
+          history.pushState(null, null, `#${targetId}`);
+        }
+      }
     });
   }
 
-  if (mobLinkApps) {
-    mobLinkApps.addEventListener("click", (e) => {
-      e.preventDefault();
-      closeModal(mobileNavDialog);
-      openHelpModal();
-    });
-  }
+  setupSmoothScrollNav("nav-link-features", "features");
+  setupSmoothScrollNav("nav-link-how", "how-it-works");
+  setupSmoothScrollNav("nav-link-apps", "apps");
+  setupSmoothScrollNav("nav-link-pricing", "pricing");
+  setupSmoothScrollNav("nav-link-about", "about");
 
-  if (mobLinkHow) {
-    mobLinkHow.addEventListener("click", (e) => {
-      e.preventDefault();
-      closeModal(mobileNavDialog);
-      openHelpModal();
-    });
-  }
+  setupSmoothScrollNav("mob-link-features", "features");
+  setupSmoothScrollNav("mob-link-how", "how-it-works");
+  setupSmoothScrollNav("mob-link-apps", "apps");
+  setupSmoothScrollNav("mob-link-pricing", "pricing");
+  setupSmoothScrollNav("mob-link-about", "about");
 
-  if (mobLinkPricing) {
-    mobLinkPricing.addEventListener("click", (e) => {
-      e.preventDefault();
-      closeModal(mobileNavDialog);
-      showToast("100% Free Forever");
-    });
-  }
-
-  // --------------------------------------------------------------------------
-  // Desktop Nav Links
-  // --------------------------------------------------------------------------
-  const navLinkFeatures = document.getElementById("nav-link-features");
-  const navLinkApps = document.getElementById("nav-link-apps");
-  const navLinkHow = document.getElementById("nav-link-how");
-  const navLinkPricing = document.getElementById("nav-link-pricing");
-
-  if (navLinkFeatures) {
-    navLinkFeatures.addEventListener("click", (e) => {
-      e.preventDefault();
-      showToast("Sync in Real-Time • Watch Anything");
-    });
-  }
-
-  if (navLinkApps) {
-    navLinkApps.addEventListener("click", (e) => {
-      e.preventDefault();
-      openHelpModal();
-    });
-  }
-
-  if (navLinkHow) {
-    navLinkHow.addEventListener("click", (e) => {
-      e.preventDefault();
-      openHelpModal();
-    });
-  }
-
-  if (navLinkPricing) {
-    navLinkPricing.addEventListener("click", (e) => {
-      e.preventDefault();
-      showToast("100% Free Forever");
-    });
+  const btnPricingCreate = document.getElementById("btn-pricing-create");
+  if (btnPricingCreate) {
+    btnPricingCreate.addEventListener("click", createRoomAndNavigate);
   }
 
   // --------------------------------------------------------------------------
-  // Help Modal
+  // Help Modal (About Zami)
   // --------------------------------------------------------------------------
   const helpModal = document.getElementById("help-modal");
   const btnCloseHelp = document.getElementById("btn-close-help");
-  const dockBtnMore = document.getElementById("dock-btn-more");
+  const btnCloseHelpConfirm = document.getElementById("btn-close-help-confirm");
   const dockBtnParty = document.getElementById("dock-btn-party");
 
   setupDialogBackdropDismiss(helpModal);
@@ -288,17 +340,42 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (btnCloseHelp) btnCloseHelp.addEventListener("click", () => closeModal(helpModal));
-  if (dockBtnMore) dockBtnMore.addEventListener("click", openHelpModal);
+  if (btnCloseHelpConfirm) btnCloseHelpConfirm.addEventListener("click", () => closeModal(helpModal));
   if (dockBtnParty) dockBtnParty.addEventListener("click", (e) => { e.preventDefault(); openJoinModal(); });
 
   // --------------------------------------------------------------------------
-  // Profile / Settings Modal
+  // Supported Platforms Modal (Wired to dock-btn-more)
+  // --------------------------------------------------------------------------
+  const platformsModal = document.getElementById("platforms-modal");
+  const btnClosePlatforms = document.getElementById("btn-close-platforms");
+  const btnClosePlatformsBtn = document.getElementById("btn-close-platforms-btn");
+  const dockBtnMore = document.getElementById("dock-btn-more");
+
+  setupDialogBackdropDismiss(platformsModal);
+
+  function openPlatformsModal() {
+    if (platformsModal) openModal(platformsModal);
+  }
+
+  if (dockBtnMore) dockBtnMore.addEventListener("click", openPlatformsModal);
+  if (btnClosePlatforms) btnClosePlatforms.addEventListener("click", () => closeModal(platformsModal));
+  if (btnClosePlatformsBtn) {
+    btnClosePlatformsBtn.addEventListener("click", () => {
+      closeModal(platformsModal);
+      openJoinModal();
+    });
+  }
+
+  // --------------------------------------------------------------------------
+  // Profile / Settings Modal (Separately Labeled Profile Control)
   // --------------------------------------------------------------------------
   const profileDialog = document.getElementById("profile-dialog");
   const btnCloseProfile = document.getElementById("btn-close-profile");
+  const btnCloseProfileBtn = document.getElementById("btn-close-profile-btn");
   const btnSaveProfile = document.getElementById("btn-save-profile");
   const inputDisplayName = document.getElementById("input-display-name");
-  const ctrlBtnGear = document.getElementById("ctrl-btn-gear");
+  const btnNavProfile = document.getElementById("btn-nav-profile");
+  const mobLinkProfile = document.getElementById("mob-link-profile");
 
   setupDialogBackdropDismiss(profileDialog);
 
@@ -312,14 +389,64 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  if (ctrlBtnGear) ctrlBtnGear.addEventListener("click", openProfileModal);
+  if (btnNavProfile) btnNavProfile.addEventListener("click", openProfileModal);
+  if (mobLinkProfile) {
+    mobLinkProfile.addEventListener("click", (e) => {
+      e.preventDefault();
+      closeModal(mobileNavDialog);
+      openProfileModal();
+    });
+  }
   if (btnCloseProfile) btnCloseProfile.addEventListener("click", () => closeModal(profileDialog));
+  if (btnCloseProfileBtn) btnCloseProfileBtn.addEventListener("click", () => closeModal(profileDialog));
   if (btnSaveProfile) {
     btnSaveProfile.addEventListener("click", () => {
       const name = inputDisplayName ? inputDisplayName.value.trim() : currentUsername;
       saveProfile(name);
       closeModal(profileDialog);
       showToast(`Saved as ${currentUsername}`);
+      announceToScreenReader(`Profile saved as ${currentUsername}`);
+    });
+  }
+
+  // --------------------------------------------------------------------------
+  // Video Playback Settings Modal (Wired to ctrl-btn-gear)
+  // --------------------------------------------------------------------------
+  const videoSettingsModal = document.getElementById("video-settings-modal");
+  const btnCloseVideoSettings = document.getElementById("btn-close-video-settings");
+  const btnSaveVideoSettings = document.getElementById("btn-save-video-settings");
+  const selectPlaybackSpeed = document.getElementById("select-playback-speed");
+  const selectPlaybackQuality = document.getElementById("select-playback-quality");
+  const toggleVideoLoop = document.getElementById("toggle-video-loop");
+  const ctrlBtnGear = document.getElementById("ctrl-btn-gear");
+
+  setupDialogBackdropDismiss(videoSettingsModal);
+
+  function openVideoSettingsModal() {
+    if (videoSettingsModal) {
+      if (heroCinemaVideo && selectPlaybackSpeed) {
+        selectPlaybackSpeed.value = String(heroCinemaVideo.playbackRate || 1);
+      }
+      openModal(videoSettingsModal);
+    }
+  }
+
+  if (ctrlBtnGear) ctrlBtnGear.addEventListener("click", openVideoSettingsModal);
+  if (btnCloseVideoSettings) btnCloseVideoSettings.addEventListener("click", () => closeModal(videoSettingsModal));
+  if (btnSaveVideoSettings) {
+    btnSaveVideoSettings.addEventListener("click", () => {
+      if (heroCinemaVideo && selectPlaybackSpeed) {
+        const speed = parseFloat(selectPlaybackSpeed.value) || 1;
+        heroCinemaVideo.playbackRate = speed;
+      }
+      if (heroCinemaVideo && toggleVideoLoop) {
+        heroCinemaVideo.loop = toggleVideoLoop.checked;
+      }
+      const quality = selectPlaybackQuality ? selectPlaybackQuality.options[selectPlaybackQuality.selectedIndex].text : "Auto";
+      closeModal(videoSettingsModal);
+      const msg = `Playback: ${selectPlaybackSpeed.value}× • ${quality}`;
+      showToast(msg);
+      announceToScreenReader(msg);
     });
   }
 
@@ -333,6 +460,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!tvFeedbackToast) return;
     tvFeedbackToast.textContent = msg;
     tvFeedbackToast.classList.add("show");
+    announceToScreenReader(msg);
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => {
       tvFeedbackToast.classList.remove("show");

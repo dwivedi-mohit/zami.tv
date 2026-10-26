@@ -13,19 +13,25 @@ const STAR_ICON_SVG = '<svg class="icon-star-inline" width="11" height="11" view
 // Toast notification helper
 window.showToast = function(message, type = 'info', duration = 3500) {
   const container = document.getElementById('toast-container');
-  if (!container) return;
+  if (container) {
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+    container.appendChild(toast);
 
-  const toast = document.createElement('div');
-  toast.className = `toast toast-${type}`;
-  toast.textContent = message;
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateX(100%)';
+      setTimeout(() => toast.remove(), 300);
+    }, duration);
+  }
 
-  container.appendChild(toast);
-
-  setTimeout(() => {
-    toast.style.opacity = '0';
-    toast.style.transform = 'translateX(100%)';
-    setTimeout(() => toast.remove(), 300);
-  }, duration);
+  // Screen reader announcement
+  const announcer = document.getElementById('a11y-announcer');
+  if (announcer) {
+    announcer.textContent = '';
+    setTimeout(() => { announcer.textContent = message; }, 50);
+  }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -41,6 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Display room ID
   const roomIdDisplay = document.getElementById('room-id-display');
   if (roomIdDisplay) roomIdDisplay.textContent = roomId;
+  const emptyStageRoomName = document.getElementById('empty-stage-room-name');
+  if (emptyStageRoomName) emptyStageRoomName.textContent = roomId;
 
   // Retrieve or create User profile
   const storedName = localStorage.getItem('zami_username') || localStorage.getItem('cinesync_username');
@@ -162,10 +170,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function updateWallpaperModalActiveState(activeUrl) {
     document.querySelectorAll('#wallpaper-presets-grid .wallpaper-card').forEach(card => {
-      if (card.getAttribute('data-url') === activeUrl) {
+      const isAct = card.getAttribute('data-url') === activeUrl;
+      if (isAct) {
         card.classList.add('active');
+        card.setAttribute('aria-pressed', 'true');
       } else {
         card.classList.remove('active');
+        card.setAttribute('aria-pressed', 'false');
       }
     });
   }
@@ -178,17 +189,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnApplyCustom = document.getElementById('btn-apply-custom-wallpaper');
     const inputCustom = document.getElementById('wallpaper-custom-url');
     const presetsGrid = document.getElementById('wallpaper-presets-grid');
+    let lastActiveElementBeforeWallpaper = null;
 
     function openWallpaperModal() {
       if (wallpaperModal) {
+        lastActiveElementBeforeWallpaper = document.activeElement;
         wallpaperModal.style.display = 'flex';
+        wallpaperModal.setAttribute('aria-hidden', 'false');
         updateWallpaperModalActiveState(currentStageBackdrop);
+        const focusable = wallpaperModal.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])');
+        if (focusable.length > 0) {
+          setTimeout(() => focusable[0].focus(), 50);
+        }
       }
     }
     window.openWallpaperModal = openWallpaperModal;
 
     function closeWallpaperModal() {
-      if (wallpaperModal) wallpaperModal.style.display = 'none';
+      if (wallpaperModal) {
+        wallpaperModal.style.display = 'none';
+        wallpaperModal.setAttribute('aria-hidden', 'true');
+        if (lastActiveElementBeforeWallpaper && typeof lastActiveElementBeforeWallpaper.focus === 'function') {
+          lastActiveElementBeforeWallpaper.focus();
+        }
+      }
     }
     window.closeWallpaperModal = closeWallpaperModal;
 
@@ -200,14 +224,36 @@ document.addEventListener('DOMContentLoaded', () => {
       wallpaperModal.addEventListener('click', (e) => {
         if (e.target === wallpaperModal) closeWallpaperModal();
       });
+      wallpaperModal.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeWallpaperModal();
+          return;
+        }
+        if (e.key === 'Tab') {
+          const focusable = Array.from(wallpaperModal.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')).filter(el => el.offsetParent !== null);
+          if (focusable.length === 0) return;
+          const first = focusable[0];
+          const last = focusable[focusable.length - 1];
+          if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+          } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+          }
+        }
+      });
     }
 
     if (presetsGrid) {
       presetsGrid.innerHTML = '';
       STAGE_WALLPAPER_PRESETS.forEach(preset => {
-        const card = document.createElement('div');
+        const card = document.createElement('button');
+        card.type = 'button';
         card.className = 'wallpaper-card' + (preset.url === currentStageBackdrop ? ' active' : '');
         card.setAttribute('data-url', preset.url);
+        card.setAttribute('aria-label', `${preset.name} wallpaper`);
+        card.setAttribute('aria-pressed', preset.url === currentStageBackdrop ? 'true' : 'false');
         const thumb = preset.poster || preset.url;
         card.style.backgroundImage = `url('${thumb}')`;
         card.innerHTML = `
@@ -967,48 +1013,162 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Copy Room Link Button
-  const btnCopyLink = document.getElementById('btn-copy-link');
-  if (btnCopyLink) {
-    btnCopyLink.addEventListener('click', () => {
-      const fullUrl = window.location.href;
+  // Invite Share Helper (Native Mobile Share or Clipboard)
+  const triggerInviteShare = () => {
+    const fullUrl = window.location.href;
+    if (navigator.share) {
+      navigator.share({
+        title: 'Join my ZAMI Watch Party',
+        text: 'Join my synchronized watch party room on ZAMI!',
+        url: fullUrl
+      }).catch(() => {
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(fullUrl).then(() => {
+            window.showToast('Room link copied to clipboard! Share it with friends.', 'success');
+          });
+        }
+      });
+    } else if (navigator.clipboard) {
       navigator.clipboard.writeText(fullUrl).then(() => {
-        window.showToast('Room link copied to clipboard! Share with your 2-3 friends.', 'success');
+        window.showToast('Room link copied to clipboard! Share it with friends.', 'success');
       }).catch(() => {
         prompt('Copy room link:', fullUrl);
       });
+    } else {
+      prompt('Copy room link:', fullUrl);
+    }
+  };
+
+  // Wire Invite Buttons (Header, Empty Stage, Mobile Header)
+  const btnCopyLink = document.getElementById('btn-copy-link');
+  if (btnCopyLink) btnCopyLink.addEventListener('click', triggerInviteShare);
+
+  const btnEmptyStageInvite = document.getElementById('btn-empty-stage-invite');
+  if (btnEmptyStageInvite) btnEmptyStageInvite.addEventListener('click', triggerInviteShare);
+
+  if (btnMobileInvite) btnMobileInvite.addEventListener('click', triggerInviteShare);
+
+  // Wire First Watch Hub Direct Choices
+  const btnStageMovies = document.getElementById('btn-stage-choice-movies');
+  if (btnStageMovies) {
+    btnStageMovies.addEventListener('click', () => {
+      if (typeof window.openModal === 'function') window.openModal(btnStageMovies);
+      if (typeof window.showVaultView === 'function') window.showVaultView('movies');
+    });
+  }
+
+  const btnStageLink = document.getElementById('btn-stage-choice-link');
+  if (btnStageLink) {
+    btnStageLink.addEventListener('click', () => {
+      if (typeof window.openModal === 'function') window.openModal(btnStageLink);
+      if (typeof window.showVaultView === 'function') window.showVaultView('url');
+      const inputUrl = document.getElementById('input-direct-url');
+      if (inputUrl) setTimeout(() => inputUrl.focus(), 100);
+    });
+  }
+
+  const btnStageMore = document.getElementById('btn-stage-choice-more');
+  if (btnStageMore) {
+    btnStageMore.addEventListener('click', () => {
+      if (typeof window.openModal === 'function') window.openModal(btnStageMore);
+      if (typeof window.showVaultView === 'function') window.showVaultView('menu');
     });
   }
 
   // Room Settings Modal Controller
   const btnNavSettings = document.getElementById('btn-nav-settings');
+  const btnMobileSettings = document.getElementById('btn-mobile-settings');
   const settingsModal = document.getElementById('settings-modal');
   const btnCloseSettings = document.getElementById('btn-close-settings-modal');
   const settingsRoomUrl = document.getElementById('settings-room-url');
   const btnCopySettingsLink = document.getElementById('btn-copy-settings-link');
   const btnToggleHostControls = document.getElementById('btn-toggle-host-controls');
   const hostControlsStatusText = document.getElementById('host-controls-status-text');
+  const roomSettingsNickname = document.getElementById('room-settings-nickname');
+  const currentDisplayNamePill = document.getElementById('current-display-name-pill');
+  const btnSaveRoomNickname = document.getElementById('btn-save-room-nickname');
+  let lastActiveElementBeforeSettings = null;
 
   function openSettingsModal() {
     if (settingsModal) {
+      lastActiveElementBeforeSettings = document.activeElement;
       if (settingsRoomUrl) settingsRoomUrl.value = window.location.href;
       if (hostControlsStatusText) {
         const isHostLock = syncEngine && syncEngine.hostOnlyControls;
         hostControlsStatusText.textContent = isHostLock ? 'Enabled (Host Only)' : 'Disabled (Everyone)';
       }
+      const curName = (currentUser && currentUser.name) || localStorage.getItem('zami_username') || 'Viewer';
+      if (roomSettingsNickname) roomSettingsNickname.value = curName;
+      if (currentDisplayNamePill) currentDisplayNamePill.textContent = curName;
+
       settingsModal.style.display = 'flex';
+      settingsModal.setAttribute('aria-hidden', 'false');
+      const focusable = settingsModal.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])');
+      if (focusable.length > 0) {
+        setTimeout(() => focusable[0].focus(), 50);
+      }
     }
   }
 
   function closeSettingsModal() {
-    if (settingsModal) settingsModal.style.display = 'none';
+    if (settingsModal) {
+      settingsModal.style.display = 'none';
+      settingsModal.setAttribute('aria-hidden', 'true');
+      if (lastActiveElementBeforeSettings && typeof lastActiveElementBeforeSettings.focus === 'function') {
+        lastActiveElementBeforeSettings.focus();
+      }
+    }
+  }
+
+  function saveRoomNickname() {
+    if (!roomSettingsNickname) return;
+    const newName = roomSettingsNickname.value.trim();
+    if (!newName) {
+      window.showToast('Please enter a valid display name', 'warning');
+      return;
+    }
+    localStorage.setItem('zami_username', newName);
+    localStorage.setItem('cinesync_username', newName);
+    if (currentUser) currentUser.name = newName;
+    if (currentDisplayNamePill) currentDisplayNamePill.textContent = newName;
+    if (socket && socket.connected) {
+      socket.emit('update-profile', { name: newName });
+    }
+    window.showToast(`Display name updated to "${newName}"`, 'success');
+  }
+
+  if (btnSaveRoomNickname) btnSaveRoomNickname.addEventListener('click', saveRoomNickname);
+  if (roomSettingsNickname) {
+    roomSettingsNickname.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') saveRoomNickname();
+    });
   }
 
   if (btnNavSettings) btnNavSettings.addEventListener('click', openSettingsModal);
+  if (btnMobileSettings) btnMobileSettings.addEventListener('click', openSettingsModal);
   if (btnCloseSettings) btnCloseSettings.addEventListener('click', closeSettingsModal);
   if (settingsModal) {
     settingsModal.addEventListener('click', (e) => {
       if (e.target === settingsModal) closeSettingsModal();
+    });
+    settingsModal.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeSettingsModal();
+        return;
+      }
+      if (e.key === 'Tab') {
+        const focusable = Array.from(settingsModal.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')).filter(el => el.offsetParent !== null);
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
     });
   }
 
@@ -1511,16 +1671,48 @@ function setupCinemaDiscoveryHub(socket) {
   let currentSelectedSeason = 1;
   let currentSelectedEpisode = 1;
 
-  const openModal = () => {
+  let lastActiveElementBeforeModal = null;
+
+  const openModal = (opener) => {
+    lastActiveElementBeforeModal = opener || document.activeElement;
     modal.classList.add('active');
     modal.style.display = 'flex';
+    modal.setAttribute('aria-hidden', 'false');
+    const focusable = modal.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])');
+    if (focusable.length > 0) {
+      setTimeout(() => focusable[0].focus(), 50);
+    }
   };
 
   const closeModal = () => {
     modal.classList.remove('active');
     modal.style.display = 'none';
+    modal.setAttribute('aria-hidden', 'true');
     closeDrawer();
+    if (lastActiveElementBeforeModal && typeof lastActiveElementBeforeModal.focus === 'function') {
+      lastActiveElementBeforeModal.focus();
+    }
   };
+
+  modal.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeModal();
+      return;
+    }
+    if (e.key === 'Tab') {
+      const focusable = Array.from(modal.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')).filter(el => el.offsetParent !== null);
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+  });
 
   window.openModal = openModal;
   window.closeModal = closeModal;
@@ -1687,10 +1879,12 @@ function setupCinemaDiscoveryHub(socket) {
   window.showVaultView = showVaultView;
 
   // Bind Open Buttons
-  btnOpenModal.addEventListener('click', () => {
-    openModal();
-    showVaultView('menu');
-  });
+  if (btnOpenModal) {
+    btnOpenModal.addEventListener('click', () => {
+      openModal();
+      showVaultView('menu');
+    });
+  }
 
   const btnEmptyStage = document.getElementById('btn-empty-stage-load');
   if (btnEmptyStage) {

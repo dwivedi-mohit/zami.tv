@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700;1,800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/clay.css">
-  <link rel="stylesheet" href="/css/room.css?v=26">
+  <link rel="stylesheet" href="/css/room.css?v=27">
   <script src="/js/theme.js"></script>
   <script>
     // Allow intentional embedding from parent application or localhost
@@ -62,14 +62,29 @@
           <span class="nav-viewer-counter" id="nav-presence-count">4 watching</span>
         </div>
 
-        <!-- Mobile Quick Invite Button -->
-        <button type="button" id="btn-mobile-invite" class="btn-mobile-invite" title="Invite Friends via Native Share" aria-label="Invite Friends">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-          </svg>
-          <span>Invite</span>
-        </button>
+        <!-- Mobile Quick Actions in Header (Invite + Settings + Leave) -->
+        <div class="mobile-nav-actions">
+          <button type="button" id="btn-mobile-invite" class="btn-mobile-invite" title="Invite Friends via Native Share" aria-label="Invite Friends">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span>Invite</span>
+          </button>
+          <button type="button" id="btn-mobile-settings" class="btn-mobile-icon-action" title="Room Options &amp; Settings" aria-label="Room Settings">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+          </button>
+          <a href="/" class="btn-mobile-icon-action btn-mobile-leave" title="Leave Watch Room" aria-label="Leave Watch Room">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+          </a>
+        </div>
 
         <!-- Restrained Teal Sync Status Indicator -->
         <div id="sync-indicator" class="sync-status-pill" title="Playback synchronization state with room">
@@ -476,33 +491,87 @@
             </div>
           </div>
 
-          <!-- Empty Placeholder: Ultra-Minimal Cinema Stage -->
-          <div id="player-placeholder" class="player-placeholder empty-stage-minimal">
-            <!-- Stage Corner Secondary Controls -->
-            <div class="stage-corner-controls">
-              <button type="button" id="btn-stage-wallpaper" class="stage-wallpaper-pill" title="Change Stage Wallpaper" aria-label="Change Stage Wallpaper">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- Empty Placeholder: Purpose-Built First Watch Hub -->
+          <div id="player-placeholder" class="player-placeholder empty-stage-hub">
+            <!-- Top Room Identity & Invite Banner -->
+            <div class="empty-stage-top-bar">
+              <div class="empty-stage-room-info">
+                <span class="room-pulse-dot" aria-hidden="true"></span>
+                <span class="room-code-tag" id="empty-stage-room-name">Party Room</span>
+              </div>
+              <button type="button" id="btn-empty-stage-invite" class="empty-stage-invite-btn" aria-label="Invite Friends to Watch Party">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                </svg>
+                <span>Invite Friends</span>
+              </button>
+            </div>
+
+            <!-- Central Call to Action -->
+            <div class="empty-stage-content">
+              <h2 class="empty-stage-title">What would you like to watch?</h2>
+              <p class="empty-stage-subtitle">Select a source below to start synchronized playback for everyone in this room.</p>
+
+              <!-- 3 Direct Primary Choices -->
+              <div class="empty-stage-choices-grid">
+                <button type="button" class="stage-choice-card" id="btn-stage-choice-movies" aria-label="Browse Movies &amp; Shows">
+                  <div class="choice-icon-wrap gold-glow">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e5a93c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
+                      <line x1="7" y1="2" x2="7" y2="22"></line>
+                      <line x1="17" y1="2" x2="17" y2="22"></line>
+                      <line x1="2" y1="12" x2="22" y2="12"></line>
+                      <line x1="2" y1="7" x2="7" y2="7"></line>
+                      <line x1="2" y1="17" x2="7" y2="17"></line>
+                      <line x1="17" y1="17" x2="22" y2="17"></line>
+                      <line x1="17" y1="7" x2="22" y2="7"></line>
+                    </svg>
+                  </div>
+                  <div class="choice-text-wrap">
+                    <span class="choice-title">Browse Movies</span>
+                    <span class="choice-desc">Popular 1080p films &amp; series</span>
+                  </div>
+                </button>
+
+                <button type="button" class="stage-choice-card" id="btn-stage-choice-link" aria-label="Paste Video Link or YouTube URL">
+                  <div class="choice-icon-wrap red-glow">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                    </svg>
+                  </div>
+                  <div class="choice-text-wrap">
+                    <span class="choice-title">Paste Video Link</span>
+                    <span class="choice-desc">YouTube, MP4, or HLS link</span>
+                  </div>
+                </button>
+
+                <button type="button" class="stage-choice-card" id="btn-stage-choice-more" aria-label="More Media Sources">
+                  <div class="choice-icon-wrap blue-glow">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="2" y="3" width="20" height="14" rx="2"></rect>
+                      <line x1="8" y1="21" x2="16" y2="21"></line>
+                      <line x1="12" y1="17" x2="12" y2="21"></line>
+                    </svg>
+                  </div>
+                  <div class="choice-text-wrap">
+                    <span class="choice-title">More Sources</span>
+                    <span class="choice-desc">Screen share, Web &amp; Apps, Files</span>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            <!-- Stage Wallpaper Trigger as Subtle Secondary Action -->
+            <div class="empty-stage-footer-actions">
+              <button type="button" id="btn-stage-wallpaper" class="stage-wallpaper-ghost-btn" aria-label="Change Stage Wallpaper">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
                   <circle cx="8.5" cy="8.5" r="1.5"/>
                   <polyline points="21 15 16 10 5 21"/>
                 </svg>
-                <span>Wallpaper</span>
-              </button>
-            </div>
-
-            <div class="empty-stage-center-box">
-              <button type="button" id="btn-empty-stage-load" class="empty-stage-btn" aria-label="Load Media" title="Load Media">
-                <div class="empty-stage-halo-outer">
-                  <div class="empty-stage-icon-circle">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#e5a93c" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
-                      <line x1="12" y1="5" x2="12" y2="19"></line>
-                      <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg>
-                  </div>
-                </div>
-                <h2 class="empty-stage-heading">Load Media</h2>
-                <p class="empty-stage-subtext empty-stage-desktop-sub">Share a screen, watch a movie, open an app and more — together.</p>
-                <p class="empty-stage-subtext empty-stage-mobile-sub">Tap to start watching together</p>
+                <span>Stage Wallpaper</span>
               </button>
             </div>
           </div>
@@ -1757,6 +1826,17 @@
         </div>
 
         <div class="wallpaper-modal-body" style="display: flex; flex-direction: column; gap: 20px;">
+          <!-- Your Identity / Display Name Section -->
+          <div style="padding: 14px 16px; background: rgba(255, 255, 255, 0.04); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08); display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <label for="room-settings-nickname" style="font-size: 0.9rem; font-weight: 600; color: #f4f4f5;">Your Display Name</label>
+              <span id="current-display-name-pill" style="font-size: 0.75rem; color: #e5a93c; font-weight: 700;">Viewer</span>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <input type="text" id="room-settings-nickname" class="wallpaper-custom-input" placeholder="Enter nickname..." maxlength="32" style="flex: 1;" aria-label="Your Display Name">
+              <button type="button" id="btn-save-room-nickname" class="wallpaper-apply-btn" style="white-space: nowrap;">Update</button>
+            </div>
+          </div>
           <!-- Host Control Toggle -->
           <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; background: rgba(255, 255, 255, 0.04); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08);">
             <div>
@@ -2112,6 +2192,9 @@
       </div>
     </div>
 
+    <!-- Screen Reader Live Announcer -->
+    <div id="a11y-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
     <!-- Toast Notifications Container -->
     <div id="toast-container"></div>
   </div>
@@ -2123,10 +2206,10 @@
   <script src="/js/reactions.js?v=3"></script>
   <script src="/js/volumeBooster.js?v=1"></script>
   <script src="/js/player.js?v=11"></script>
-  <script src="/js/queue.js?v=3"></script>
+  <script src="/js/queue.js?v=4"></script>
   <script src="/js/sync.js?v=5"></script>
   <script src="/js/webrtc.js?v=6"></script>
   <script src="/js/providers.js?v=5"></script>
-  <script src="/js/room.js?v=28"></script>
+  <script src="/js/room.js?v=30"></script>
 </body>
 </html>
