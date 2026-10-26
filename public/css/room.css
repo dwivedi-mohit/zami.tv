@@ -46,7 +46,7 @@
 .room-bg-scrim {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at center, rgba(6, 7, 10, 0.22) 0%, rgba(5, 6, 9, 0.58) 100%);
+  background: radial-gradient(circle at center, rgba(6, 7, 10, 0.38) 0%, rgba(5, 6, 9, 0.72) 100%);
   pointer-events: none;
 }
 
@@ -72,7 +72,7 @@
 }
 
 /* --------------------------------------------------------------------------
-   Top Masthead / Room Navbar (Pure Transparent UI)
+   Top Masthead / Room Navbar (Frosted Glassmorphism UI)
    -------------------------------------------------------------------------- */
 
 .room-navbar {
@@ -80,14 +80,15 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 16px 0 20px;
-  background: transparent !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
+  background: rgba(8, 10, 15, 0.75) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
   height: 54px;
   flex-shrink: 0;
   z-index: 100;
   user-select: none;
+  position: relative;
 }
 
 .nav-left {
@@ -395,13 +396,13 @@
   overflow: hidden;
 }
 
-/* Slim Left Navigation Rail (Pure Transparent) */
+/* Slim Left Navigation Rail (Frosted Glassmorphism) */
 .room-nav-rail {
   width: 56px;
-  background: transparent !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  border-right: 1px solid rgba(255, 255, 255, 0.07) !important;
+  background: rgba(8, 10, 15, 0.72) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -410,6 +411,7 @@
   flex-shrink: 0;
   z-index: 60;
   user-select: none;
+  position: relative;
 }
 
 .rail-top,
@@ -1013,7 +1015,7 @@
   }
 }
 
-/* Floating Quick Reactions Bar (Pure Transparent) */
+/* Floating Quick Reactions Bar (Frosted Glassmorphism) */
 .floating-reactions {
   position: absolute;
   bottom: 74px;
@@ -1022,15 +1024,15 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 5px 10px;
-  background: transparent !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
-  border-radius: var(--radius-sm);
+  padding: 6px 14px;
+  background: rgba(10, 12, 18, 0.78) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 9999px;
   z-index: 30;
-  box-shadow: none !important;
-  opacity: 0.9;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
+  opacity: 0.95;
   transition: opacity 0.2s, transform 0.2s;
 }
 .floating-reactions:hover {
@@ -1415,16 +1417,16 @@
 }
 
 /* --------------------------------------------------------------------------
-   Right Sidebar (Social Lounge: Chat, People, Queue, Guide) — Pure Transparent
+   Right Sidebar (Social Lounge: Chat, People, Queue, Guide) — Frosted Glassmorphism
    -------------------------------------------------------------------------- */
 
 .room-sidebar {
   width: 350px;
   min-width: 320px;
   max-width: 420px;
-  background: transparent !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
+  background: rgba(8, 10, 15, 0.75) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
   border-left: 1px solid rgba(255, 255, 255, 0.08) !important;
   display: flex !important;
   flex-direction: column;
@@ -1641,9 +1643,9 @@
 
 .chat-input-bar {
   padding: 10px 12px;
-  background: transparent !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
+  background: rgba(10, 12, 18, 0.82) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
   border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
   display: flex;
   gap: 6px;
@@ -2883,14 +2885,16 @@
 }
 
 /* ==========================================================================
-   PARTY SOUNDBOARD (Pure Transparent)
+   PARTY SOUNDBOARD (Frosted Glassmorphism)
    ========================================================================== */
 .soundboard-bar {
   display: flex;
   align-items: center;
   gap: 6px;
   padding: 4px 12px;
-  background: transparent !important;
+  background: rgba(8, 10, 15, 0.75) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
@@ -5235,6 +5239,15 @@
   text-align: center;
   position: relative;
   z-index: 2;
+  background: rgba(8, 10, 15, 0.72);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 38px 46px;
+  border-radius: 24px;
+  border: 1px solid rgba(229, 169, 60, 0.24);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  max-width: 520px;
+  width: 100%;
 }
 
 .empty-stage-btn {
@@ -5299,16 +5312,18 @@
   color: #ffffff;
   margin: 20px 0 6px;
   letter-spacing: -0.01em;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
 }
 
 .empty-stage-subtext {
   font-family: var(--font-sans);
   font-size: 0.86rem;
-  color: #8b8f9e;
+  color: #b0b4c3;
   margin: 0;
   max-width: 440px;
   line-height: 1.5;
   text-align: center;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
 }
 
 .empty-stage-desktop-sub { display: block; }
@@ -5807,7 +5822,7 @@
     padding: 0 !important;
   }
 
-  /* Fixed bottom bar on mobile (Pure Transparent) */
+  /* Fixed bottom bar on mobile (Frosted Glassmorphism) */
   .mobile-bottom-nav {
     display: flex;
     position: fixed;
@@ -5815,9 +5830,9 @@
     left: 0;
     right: 0;
     height: 58px;
-    background: transparent !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
+    background: rgba(8, 10, 15, 0.88) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
     border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
     align-items: center;
     justify-content: space-around;
@@ -6943,9 +6958,11 @@ kbd {
   background: #ffffff;
   pointer-events: none;
   z-index: 99;
-  opacity: 0;
+  opacity: 0 !important;
+  display: none !important;
 }
 .stage-camera-flash.flash-active {
+  display: block !important;
   animation: cameraFlash 0.45s ease-out forwards;
 }
 @keyframes cameraFlash {
