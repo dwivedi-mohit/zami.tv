@@ -3,37 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>ZAMI &mdash; Watch together, feel closer.</title>
-  <meta name="description" content="Watch movies, shows, and videos together in warm, cozy real-time sync with your favorite people.">
+  <title>Zami &mdash; Watch together, feel closer.</title>
+  <meta name="description" content="Watch movies, shows, and videos together in real-time with your friends, wherever you are.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Pinyon+Script&family=Playfair+Display:ital,wght@1,600;1,700;1,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Satisfy&family=Yellowtail&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/clay.css">
   <script src="/js/theme.js"></script>
 
   <style>
     /* --------------------------------------------------------------------------
-       ZAMI — Warm, Cozy & Aesthetic Cinematic Landing System
-       Color Palette: Warm Charcoal (#131110), Espresso (#1a1614), Soft Amber (#f59e0b),
-       Muted Peach (#fb923c / #fed7aa), and Archival Cream (#fafaf9).
+       ZAMI DESIGN SYSTEM TOKENS (Source of Truth Reference Specification)
        -------------------------------------------------------------------------- */
     :root {
-      --zami-bg: #131110;
-      --zami-bg-espresso: #1a1614;
-      --zami-card-bg: rgba(26, 22, 20, 0.85);
-      --zami-card-border: rgba(255, 255, 255, 0.08);
-      --zami-amber: #f59e0b;
-      --zami-amber-light: #fbbf24;
-      --zami-amber-dark: #d97706;
-      --zami-amber-glow: rgba(245, 158, 11, 0.28);
-      --zami-peach: #fb923c;
-      --zami-peach-muted: #fed7aa;
-      --zami-text-bright: #fafaf9;
-      --zami-text-muted: #a8a29e;
-      --zami-text-dim: #78716c;
-      --zami-glass-btn: rgba(36, 30, 27, 0.72);
-      --zami-glass-border: rgba(255, 255, 255, 0.12);
+      --bg-main: #100F0E;
+      --bg-secondary: #191513;
+      --bg-card: rgba(35, 28, 24, 0.76);
+      --color-gold-primary: #FFB84D;
+      --color-gold-secondary: #E99516;
+      --text-main: #FAF7F2;
+      --text-secondary: #B8ADA4;
+      --border-subtle: rgba(255, 224, 190, 0.12);
+      --glow-primary: rgba(255, 167, 55, 0.16);
+      --radius-card: 24px;
+      --radius-button: 999px;
+      --radius-pill: 999px;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-script: 'Satisfy', 'Yellowtail', cursive;
     }
 
     * {
@@ -47,728 +44,668 @@
       width: 100%;
       min-height: 100dvh;
       overflow-x: hidden;
-      background-color: var(--zami-bg);
-      color: var(--zami-text-bright);
-      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: var(--font-sans);
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
 
-    /* --------------------------------------------------------------------------
-       Cozy Ambient Warm Charcoal & Amber Lighting Backdrop
-       Replaces harsh static video with soft, drifting, blurred light orbs.
-       100% compositor-driven (transform: translate3d + opacity) for 60fps smooth playback.
-       -------------------------------------------------------------------------- */
-    .cozy-ambient-backdrop {
+    /* Ambient Depth Layer behind Desktop Hero */
+    .ambient-depth-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 820px;
+      pointer-events: none;
+      z-index: 1;
+      background-image: 
+        radial-gradient(ellipse 70% 60% at 75% 35%, rgba(255, 184, 77, 0.16) 0%, rgba(233, 149, 22, 0.05) 50%, transparent 75%),
+        radial-gradient(circle at 18% 25%, rgba(255, 184, 77, 0.12) 0%, transparent 45%),
+        linear-gradient(180deg, #141110 0%, #100F0E 80%);
+    }
+
+    /* Ambient Warm Orbs */
+    .ambient-glow-layer {
       position: fixed;
       inset: 0;
-      width: 100%;
-      height: 100%;
       pointer-events: none;
       z-index: 0;
       overflow: hidden;
-      background-color: var(--zami-bg);
-      background-image: 
-        radial-gradient(ellipse 90% 70% at 50% 15%, #1d1815 0%, #131110 75%),
-        linear-gradient(180deg, #161311 0%, #110f0e 100%);
     }
-
-    .ambient-orb {
+    .ambient-light-orb {
       position: absolute;
       border-radius: 50%;
-      filter: blur(85px);
+      filter: blur(80px);
       pointer-events: none;
       will-change: transform;
     }
-
-    /* Warm amber light orb floating on top-left / center */
-    .ambient-orb-1 {
-      top: 10%;
-      left: 8%;
-      width: min(520px, 48vw);
-      height: min(520px, 48vw);
-      background: radial-gradient(circle, rgba(245, 158, 11, 0.18) 0%, rgba(217, 119, 6, 0.06) 50%, transparent 70%);
-      opacity: 0.65;
-      animation: orbDrift1 22s ease-in-out infinite alternate;
+    .orb-amber-right {
+      top: 15%;
+      right: 8%;
+      width: min(520px, 46vw);
+      height: min(520px, 46vw);
+      background: radial-gradient(circle, rgba(255, 184, 77, 0.14) 0%, rgba(233, 149, 22, 0.04) 50%, transparent 70%);
     }
-
-    /* Muted peach orb floating near the media player */
-    .ambient-orb-2 {
-      top: 25%;
-      right: 6%;
-      width: min(580px, 52vw);
-      height: min(580px, 52vw);
-      background: radial-gradient(circle, rgba(251, 146, 60, 0.15) 0%, rgba(245, 158, 11, 0.04) 55%, transparent 75%);
-      opacity: 0.6;
-      animation: orbDrift2 26s ease-in-out infinite alternate;
-    }
-
-    /* Subtle espresso/caramel depth anchor */
-    .ambient-orb-3 {
-      bottom: 2%;
-      left: 32%;
-      width: min(460px, 42vw);
-      height: min(460px, 42vw);
-      background: radial-gradient(circle, rgba(217, 119, 6, 0.09) 0%, transparent 65%);
-      opacity: 0.5;
-      animation: orbDrift1 28s ease-in-out infinite alternate-reverse;
-    }
-
-    .ambient-vignette {
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(ellipse 90% 80% at 50% 50%, transparent 40%, rgba(13, 11, 10, 0.72) 100%);
-      pointer-events: none;
-    }
-
-    @keyframes orbDrift1 {
-      0% {
-        transform: translate3d(0, 0, 0) scale(1);
-      }
-      50% {
-        transform: translate3d(40px, -25px, 0) scale(1.05);
-      }
-      100% {
-        transform: translate3d(-30px, 20px, 0) scale(0.96);
-      }
-    }
-
-    @keyframes orbDrift2 {
-      0% {
-        transform: translate3d(0, 0, 0) scale(1);
-      }
-      50% {
-        transform: translate3d(-35px, 30px, 0) scale(1.04);
-      }
-      100% {
-        transform: translate3d(25px, -20px, 0) scale(0.97);
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .ambient-orb-1,
-      .ambient-orb-2,
-      .ambient-orb-3 {
-        animation: none !important;
-      }
+    .orb-warm-center {
+      bottom: 10%;
+      left: 20%;
+      width: min(440px, 40vw);
+      height: min(440px, 40vw);
+      background: radial-gradient(circle, rgba(233, 149, 22, 0.08) 0%, transparent 65%);
     }
 
     /* --------------------------------------------------------------------------
-       Root Page Wrapper (Spacious 1320px content container)
+       TOP NAVIGATION BAR
        -------------------------------------------------------------------------- */
-    .landing-wrapper {
-      position: relative;
-      width: 100%;
-      min-height: 100dvh;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      max-width: 1320px;
-      margin: 0 auto;
-      padding: max(20px, env(safe-area-inset-top)) clamp(20px, 3.5vw, 56px) max(24px, env(safe-area-inset-bottom));
-      z-index: 1;
-    }
-
-    /* --------------------------------------------------------------------------
-       Top Navigation Bar
-       -------------------------------------------------------------------------- */
-    .zami-nav {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 6px 0 28px;
+    .zami-header {
       position: relative;
       z-index: 20;
-    }
-
-    /* Brand Logo: Cursive 'Z' + Italic Serif 'ami' with warm golden glow */
-    .brand-group {
-      display: inline-flex;
-      align-items: baseline;
-      text-decoration: none;
-      line-height: 1;
-      user-select: none;
-      transition: transform 0.2s ease, opacity 0.2s ease;
-    }
-    .brand-group:hover {
-      transform: translateY(-1px);
-      opacity: 0.95;
-    }
-    .zami-text-logo {
-      display: inline-flex;
-      align-items: baseline;
-      line-height: 1;
-      background: linear-gradient(135deg, #ffffff 0%, #fed7aa 30%, #f59e0b 70%, #d97706 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      filter: drop-shadow(0 2px 10px rgba(245, 158, 11, 0.3));
-    }
-    .zami-text-logo .z-cursive {
-      font-family: 'Pinyon Script', 'Brush Script MT', cursive;
-      font-size: clamp(2.3rem, 1.9rem + 1.2vw, 3.1rem);
-      font-style: italic;
-      font-weight: 400;
-      margin-right: -2px;
-      transform: translateY(3px);
-      display: inline-block;
-    }
-    .zami-text-logo .ami-serif {
-      font-family: 'Playfair Display', 'Didot', serif;
-      font-size: clamp(1.55rem, 1.3rem + 0.8vw, 2.1rem);
-      font-style: italic;
-      font-weight: 700;
-      letter-spacing: -0.01em;
-      display: inline-block;
-    }
-
-    /* Header Nav Action Button */
-    .nav-actions {
+      width: 100%;
+      max-width: 1260px;
+      margin: 0 auto;
+      padding: 26px 36px 14px;
       display: flex;
       align-items: center;
-      gap: 12px;
+      justify-content: space-between;
     }
+
+    .brand-link {
+      font-family: var(--font-script);
+      font-size: 34px;
+      line-height: 1;
+      color: var(--color-gold-primary);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      text-shadow: 0 0 20px rgba(255, 184, 77, 0.4);
+      transition: transform 0.2s ease;
+      user-select: none;
+    }
+    .brand-link:hover {
+      transform: scale(1.03);
+    }
+
+    .nav-links-center {
+      display: flex;
+      align-items: center;
+      gap: 34px;
+      list-style: none;
+    }
+    .nav-link-item a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14.5px;
+      font-weight: 500;
+      transition: color 0.18s ease;
+      position: relative;
+      padding-bottom: 4px;
+    }
+    .nav-link-item a:hover {
+      color: var(--text-main);
+    }
+    .nav-link-item.active a {
+      color: var(--text-main);
+      border-bottom: 2px solid var(--color-gold-primary);
+    }
+
     .btn-nav-create {
-      background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);
-      color: #12100e;
-      border: none;
-      border-radius: 999px;
-      padding: clamp(8px, 1vw, 10px) clamp(16px, 1.8vw, 22px);
+      background: var(--color-gold-primary);
+      color: #100F0E;
       font-family: inherit;
-      font-size: clamp(0.82rem, 0.78rem + 0.2vw, 0.9rem);
+      font-size: 14px;
       font-weight: 700;
+      padding: 10px 22px;
+      border-radius: var(--radius-button);
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 18px rgba(255, 184, 77, 0.35);
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+    .btn-nav-create:hover {
+      background: #ffc46b;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 22px rgba(255, 184, 77, 0.45);
+    }
+
+    .btn-mobile-menu {
+      display: none;
+      background: rgba(35, 28, 24, 0.8);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      width: 42px;
+      height: 42px;
+      color: var(--text-main);
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.18s;
+    }
+    .btn-mobile-menu:hover {
+      background: rgba(50, 40, 34, 0.9);
+    }
+
+    /* --------------------------------------------------------------------------
+       HERO COMPOSITION (Desktop: Balanced 2-Column)
+       -------------------------------------------------------------------------- */
+    .hero-wrapper {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 1260px;
+      margin: 0 auto;
+      padding: 18px 36px 32px;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 42fr 58fr;
+      align-items: center;
+      gap: clamp(32px, 3.8vw, 56px);
+    }
+
+    /* Hero Left Column */
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      position: relative;
+      z-index: 5;
+    }
+
+    .hero-intro-pill {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      cursor: pointer;
-      box-shadow: 0 4px 16px rgba(245, 158, 11, 0.28);
-      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, background 0.2s ease;
-      user-select: none;
+      background: rgba(35, 28, 24, 0.72);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-pill);
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-main);
+      margin-bottom: 22px;
     }
-    .btn-nav-create:hover {
-      transform: translateY(-1px);
-      background: linear-gradient(180deg, #fbbf24 0%, #ea580c 100%);
-      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.42);
-    }
-    .btn-nav-create:active {
-      transform: translateY(0);
-    }
-
-    /* --------------------------------------------------------------------------
-       Main Hero Container: Spacious 2-Column Desktop Grid
-       44% Left Column (Text & CTAs) / 56% Right Column (Media Player Preview)
-       -------------------------------------------------------------------------- */
-    .hero-container {
-      width: 100%;
+    .pill-icon {
+      color: var(--color-gold-primary);
       display: flex;
-      flex-direction: column;
-      gap: 36px;
-      margin: auto 0;
-      padding: 12px 0 28px;
-      position: relative;
-      z-index: 10;
-      flex: 1;
+      align-items: center;
+    }
+    .pill-dot {
+      width: 4.5px;
+      height: 4.5px;
+      border-radius: 50%;
+      background: var(--color-gold-primary);
+      display: inline-block;
     }
 
-    .hero-content-col {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      min-width: 0;
-    }
-
-    /* Clear, Warm Headline: "Watch together, feel closer." */
     .hero-headline {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: clamp(2.4rem, 1.9rem + 3vw, 4.2rem);
-      line-height: 1.08;
+      font-size: clamp(3.1rem, 2.2rem + 2.3vw, 4.4rem);
       font-weight: 800;
-      letter-spacing: -0.035em;
-      color: var(--zami-text-bright);
-      margin-bottom: 18px;
-      text-wrap: balance;
+      line-height: 1.06;
+      letter-spacing: -0.025em;
+      color: var(--text-main);
+      margin-bottom: 20px;
     }
     .headline-part {
       display: block;
     }
-    .headline-glow {
-      color: var(--zami-amber);
-      background: linear-gradient(135deg, #ffffff 0%, #fed7aa 25%, #f59e0b 65%, #d97706 100%);
+    .gold-gradient {
+      background: linear-gradient(135deg, #FFB84D 0%, #E99516 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      filter: drop-shadow(0 2px 18px rgba(245, 158, 11, 0.28));
+      display: inline-block;
     }
 
-    /* Supporting Subtitle */
     .hero-subtitle {
-      font-size: clamp(1rem, 0.95rem + 0.3vw, 1.15rem);
+      font-size: 1.05rem;
       line-height: 1.6;
-      color: var(--zami-text-muted);
-      max-width: 480px;
-      margin-bottom: clamp(26px, 2.4vw, 36px);
-      font-weight: 400;
-      text-wrap: pretty;
+      color: var(--text-secondary);
+      max-width: 440px;
+      margin-bottom: 30px;
     }
 
-    /* CTA Buttons Group */
     .hero-cta-group {
       display: flex;
-      flex-direction: column;
+      align-items: center;
       gap: 14px;
+      margin-bottom: 28px;
       width: 100%;
-      margin-bottom: 0;
     }
 
-    /* Primary Warm Amber Button */
     .btn-cta-create {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      width: 100%;
-      min-height: 52px;
-      padding: 14px 28px;
-      border-radius: 999px;
-      border: none;
-      background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);
-      color: #12100e;
+      background: linear-gradient(180deg, #FFB84D 0%, #E99516 100%);
+      color: #100F0E;
       font-family: inherit;
-      font-size: 1rem;
+      font-size: 15px;
       font-weight: 700;
-      letter-spacing: 0.01em;
-      cursor: pointer;
-      box-shadow: 0 8px 24px rgba(245, 158, 11, 0.32), 0 2px 4px rgba(0, 0, 0, 0.3);
-      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, background 0.2s ease;
-      user-select: none;
-    }
-    .btn-cta-create:hover {
-      transform: translateY(-2px);
-      background: linear-gradient(180deg, #fbbf24 0%, #ea580c 100%);
-      box-shadow: 0 12px 30px rgba(245, 158, 11, 0.45), 0 4px 8px rgba(0, 0, 0, 0.35);
-    }
-    .btn-cta-create:active {
-      transform: translateY(0);
-    }
-    .cta-play-icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .cta-arrow-icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.18s ease;
-    }
-    .btn-cta-create:hover .cta-arrow-icon {
-      transform: translateX(3px);
-    }
-
-    /* Secondary Warm Frosted Glass Button */
-    .btn-cta-join {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      width: 100%;
-      min-height: 52px;
-      padding: 14px 26px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      background: rgba(32, 27, 24, 0.72);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      color: #e7e5e4;
-      font-family: inherit;
-      font-size: 1rem;
-      font-weight: 600;
-      letter-spacing: 0.01em;
-      cursor: pointer;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
-      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-      user-select: none;
-    }
-    .btn-cta-join:hover {
-      background: rgba(44, 37, 33, 0.88);
-      border-color: rgba(245, 158, 11, 0.35);
-      color: #ffffff;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.32);
-    }
-    .btn-cta-join:active {
-      transform: translateY(0);
-    }
-
-    /* ==========================================================================
-       Interactive Blended Living Cinema Stage (Seamless Edge Fade & Micro-Interactions)
-       Modern Web Guidance: soft-edge-content-fade via radial-gradient mask-image
-       ========================================================================== */
-    .stage-interactive-wrapper {
-      position: relative;
-      width: 100%;
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-    }
-
-    /* Ambient Backlight Glow projecting movie atmosphere onto the warm charcoal room */
-    .stage-ambient-glow {
-      position: absolute;
-      top: 40%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 115%;
-      height: 110%;
-      background: radial-gradient(ellipse 65% 55% at 50% 50%, rgba(245, 158, 11, 0.22) 0%, rgba(251, 146, 60, 0.08) 50%, transparent 75%);
-      filter: blur(60px);
-      pointer-events: none;
-      z-index: 0;
-      transition: background 0.8s ease;
-    }
-
-    /* Seamless Cinema Viewport with Organic Feathered Mask (soft-edge-content-fade) */
-    .stage-cinema-viewport {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 16 / 10;
-      border-radius: 28px;
-      overflow: hidden;
-      cursor: pointer;
-      user-select: none;
-      -webkit-mask-image: radial-gradient(ellipse 95% 90% at 50% 50%, black 72%, transparent 100%);
-      mask-image: radial-gradient(ellipse 95% 90% at 50% 50%, black 72%, transparent 100%);
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      z-index: 1;
-    }
-
-    .stage-cinema-viewport:hover {
-      transform: scale(1.015);
-    }
-
-    .stage-scenes-layer {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      background: #0d0b0a;
-    }
-
-    .stage-scene-img {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center;
-      opacity: 0;
-      transition: opacity 0.8s ease, transform 12s ease-out;
-      transform: scale(1);
-    }
-
-    .stage-scene-img.active {
-      opacity: 1;
-      transform: scale(1.04);
-    }
-
-    .stage-scene-vignette {
-      position: absolute;
-      inset: 0;
-      background: 
-        linear-gradient(180deg, rgba(19, 17, 16, 0.45) 0%, transparent 35%, transparent 60%, rgba(19, 17, 16, 0.75) 100%),
-        radial-gradient(ellipse 85% 75% at 50% 50%, transparent 45%, rgba(19, 17, 16, 0.6) 100%);
-      pointer-events: none;
-    }
-
-    /* Top HUD: Sync Pill & Mood Tabs */
-    .stage-top-hud {
-      position: absolute;
-      top: clamp(12px, 2vw, 18px);
-      left: clamp(12px, 2vw, 18px);
-      right: clamp(12px, 2vw, 18px);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      z-index: 10;
-    }
-
-    .hud-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 6px 14px;
-      border-radius: 999px;
-      background: rgba(22, 19, 17, 0.82);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      color: #f5f5f4;
-      font-size: clamp(0.72rem, 0.68rem + 0.2vw, 0.82rem);
-      font-weight: 500;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
-      cursor: pointer;
-      transition: background 0.18s, transform 0.18s;
-    }
-
-    .hud-pill:hover {
-      background: rgba(36, 30, 26, 0.95);
-      transform: translateY(-1px);
-    }
-
-    .hud-pulse-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #10b981;
-      box-shadow: 0 0 8px rgba(16, 185, 129, 0.8);
-      animation: pulseSync 2.5s ease-in-out infinite;
-    }
-
-    .hud-mood-tabs {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      background: rgba(22, 19, 17, 0.82);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 3px;
-      border-radius: 999px;
-    }
-
-    .mood-tab {
-      background: transparent;
+      height: 50px;
+      padding: 0 28px;
+      border-radius: var(--radius-button);
       border: none;
-      color: var(--zami-text-muted);
-      font-family: inherit;
-      font-size: 0.76rem;
-      font-weight: 600;
-      padding: 4px 11px;
-      border-radius: 999px;
       cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .mood-tab:hover {
-      color: #ffffff;
-    }
-
-    .mood-tab.active {
-      background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);
-      color: #12100e;
-      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.35);
-    }
-
-    /* Dynamic Live Chat Whispers */
-    .stage-whispers-container {
-      position: absolute;
-      top: 38%;
-      left: clamp(12px, 2.5vw, 22px);
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      z-index: 8;
-      pointer-events: none;
-      max-width: 75%;
-    }
-
-    .stage-whisper-bubble {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 5px 12px 5px 6px;
-      border-radius: 999px;
-      background: rgba(20, 17, 16, 0.78);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: #fafaf9;
-      font-size: 0.78rem;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
-      animation: whisperFloat 6s ease-in-out infinite alternate;
+      box-shadow: 0 8px 24px rgba(255, 184, 77, 0.38);
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+    .btn-cta-create:hover {
+      background: #ffc46b;
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(255, 184, 77, 0.5);
     }
 
-    .whisper-avatar {
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 1.5px solid #f59e0b;
+    .btn-cta-join {
+      background: rgba(35, 28, 24, 0.5);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      height: 50px;
+      padding: 0 24px;
+      border-radius: var(--radius-button);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+    .btn-cta-join:hover {
+      background: rgba(45, 36, 31, 0.75);
+      border-color: rgba(255, 224, 190, 0.25);
+      transform: translateY(-2px);
     }
 
-    @keyframes whisperFloat {
-      0% {
-        transform: translateY(0px);
-        opacity: 0.9;
-      }
-      100% {
-        transform: translateY(-6px);
-        opacity: 1;
-      }
-    }
-
-    /* Particle Canvas Overlay */
-    .stage-particle-canvas {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 12;
-    }
-
-    /* Floating Party Avatars Dock */
-    .stage-party-dock {
-      position: absolute;
-      bottom: clamp(12px, 2vw, 18px);
-      right: clamp(12px, 2vw, 18px);
+    /* Social Proof Friend Status */
+    .hero-social-proof {
       display: flex;
       align-items: center;
-      gap: 6px;
-      z-index: 10;
-      background: rgba(20, 17, 16, 0.78);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      padding: 4px 8px 4px 6px;
-      border-radius: 999px;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+      gap: 12px;
     }
-
-    .party-avatar-item {
-      position: relative;
-      width: 26px;
-      height: 26px;
+    .avatars-stack {
+      display: flex;
+      align-items: center;
+    }
+    .avatar-stack-item {
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
-      cursor: pointer;
-      transition: transform 0.2s ease;
-    }
-
-    .party-avatar-item:hover {
-      transform: scale(1.15);
-    }
-
-    .party-avatar-img {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
+      border: 2px solid var(--bg-main);
+      margin-left: -8px;
       object-fit: cover;
-      border: 1.5px solid rgba(245, 158, 11, 0.4);
+      background: #231c18;
     }
-
-    .party-crown-badge {
-      position: absolute;
-      top: -4px;
-      right: -3px;
-      background: #181513;
-      border: 1px solid rgba(245, 158, 11, 0.6);
+    .avatar-stack-item:first-child {
+      margin-left: 0;
+    }
+    .avatar-count-badge {
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
-      width: 13px;
-      height: 13px;
+      background: #231C18;
+      border: 1.5px solid var(--border-subtle);
       display: flex;
       align-items: center;
       justify-content: center;
-    }
-
-    .party-count-badge {
-      font-size: 0.72rem;
+      font-size: 11px;
       font-weight: 700;
-      color: #fed7aa;
-      padding: 0 4px;
-      cursor: pointer;
+      color: var(--text-main);
+      margin-left: -8px;
+    }
+    .green-pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 10px #22c55e;
+      animation: pulseGreen 2.5s infinite;
+    }
+    .social-proof-text {
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--text-secondary);
     }
 
-    /* Interactive Tap-to-React Floating Dock */
-    .stage-reaction-dock {
-      position: relative;
-      width: 100%;
-      max-width: 540px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 8px 14px;
-      border-radius: 999px;
-      background: rgba(26, 22, 20, 0.75);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
-      z-index: 10;
-    }
-
-    .reaction-dock-label {
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: var(--zami-text-muted);
-      white-space: nowrap;
-    }
-
-    .reaction-buttons-group {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: nowrap;
-    }
-
-    .btn-react-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(40, 34, 30, 0.75);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: #fafaf9;
-      font-family: inherit;
-      font-size: 0.78rem;
-      font-weight: 600;
-      padding: 6px 12px;
-      border-radius: 999px;
-      cursor: pointer;
-      transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
-      user-select: none;
-    }
-
-    .btn-react-pill:hover {
-      background: rgba(56, 47, 42, 0.95);
-      border-color: rgba(245, 158, 11, 0.4);
-      transform: translateY(-2px) scale(1.05);
-      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
-    }
-
-    .btn-react-pill:active {
-      transform: scale(0.95);
-    }
-
-    .btn-react-pill svg {
-      color: #f59e0b;
-      flex-shrink: 0;
-    }
-
-    .reaction-stats-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: rgba(245, 158, 11, 0.12);
-      border: 1px solid rgba(245, 158, 11, 0.28);
-      font-size: 0.74rem;
-      font-weight: 700;
-      color: #fbbf24;
-      white-space: nowrap;
-      user-select: none;
-      transition: transform 0.2s ease;
-    }
-
-    .reaction-stats-pill.pulse {
-      transform: scale(1.15);
+    @keyframes pulseGreen {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.25); opacity: 0.8; }
     }
 
     /* --------------------------------------------------------------------------
-       Modal Dialogs: Warm Charcoal & Amber Styling
+       HERO RIGHT COLUMN: MEDIA PREVIEW MONITOR & STREAMING DOCK
+       -------------------------------------------------------------------------- */
+    .player-preview-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 5;
+    }
+
+    .player-ambient-glow {
+      position: absolute;
+      inset: -15px;
+      border-radius: 30px;
+      background: radial-gradient(circle at 50% 45%, rgba(255, 184, 77, 0.22) 0%, rgba(233, 149, 22, 0.08) 55%, transparent 75%);
+      filter: blur(40px);
+      pointer-events: none;
+    }
+
+    .player-monitor {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9.6;
+      background: #14110F;
+      border: 2px solid rgba(255, 224, 190, 0.16);
+      border-radius: 22px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 35px rgba(255, 184, 77, 0.18);
+      overflow: hidden;
+    }
+
+    .player-screen-art {
+      position: absolute;
+      inset: 0;
+      background-image: url('/img/clean_anime_sunset_16_9.jpg');
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
+
+    .screen-top-hud {
+      position: absolute;
+      top: 14px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      pointer-events: auto;
+      z-index: 4;
+    }
+
+    .screen-sync-pill {
+      background: rgba(16, 15, 14, 0.82);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: var(--radius-pill);
+      padding: 5px 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: transform 0.18s ease;
+      user-select: none;
+    }
+    .screen-sync-pill:hover {
+      transform: scale(1.04);
+    }
+    .screen-sync-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 8px #22c55e;
+    }
+
+    .screen-avatars-dock {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .screen-avatar-img {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1.5px solid var(--color-gold-primary);
+      object-fit: cover;
+      background: #231c18;
+    }
+    .screen-avatar-count {
+      background: rgba(16, 15, 14, 0.85);
+      border: 1px solid rgba(255, 224, 190, 0.25);
+      border-radius: var(--radius-pill);
+      padding: 3px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .screen-bottom-controls {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 12px 16px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(180deg, transparent 0%, rgba(10, 8, 7, 0.88) 100%);
+      pointer-events: auto;
+      z-index: 4;
+    }
+
+    .ctrl-btn {
+      background: none;
+      border: none;
+      color: var(--text-main);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+      transition: transform 0.15s ease, color 0.15s ease;
+    }
+    .ctrl-btn:hover {
+      transform: scale(1.12);
+      color: var(--color-gold-primary);
+    }
+    .ctrl-time {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-main);
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+    .ctrl-scrubber-wrap {
+      flex: 1;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      position: relative;
+    }
+    .ctrl-scrubber-track {
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.25);
+      border-radius: 2px;
+      position: relative;
+    }
+    .ctrl-scrubber-fill {
+      height: 100%;
+      background: var(--color-gold-primary);
+      border-radius: 2px;
+      width: 34%;
+    }
+    .ctrl-scrubber-thumb {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--color-gold-primary);
+      box-shadow: 0 0 8px rgba(255, 184, 77, 0.8);
+      position: absolute;
+      left: 34%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .ctrl-badge-cc {
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 3px;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 1px 4px;
+      line-height: 1.1;
+      color: var(--text-main);
+    }
+
+    /* Popcorn Bowl Sitting at Base of Monitor */
+    .monitor-popcorn-anchor {
+      margin-top: -16px;
+      z-index: 6;
+      pointer-events: none;
+      display: flex;
+      justify-content: center;
+    }
+    .popcorn-bowl-img {
+      height: 38px;
+      object-fit: contain;
+    }
+
+    /* Streaming Services Floating Dock */
+    .streaming-dock-wrap {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+      z-index: 8;
+    }
+    .streaming-dock {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(25, 20, 18, 0.82);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 24px;
+      padding: 8px 16px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+    }
+    .dock-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform 0.18s ease, filter 0.18s ease;
+    }
+    .dock-item:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.15);
+    }
+    .dock-logo {
+      height: 34px;
+      width: auto;
+      border-radius: 8px;
+      display: block;
+    }
+    .dock-item-more {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 13.5px;
+      font-weight: 600;
+      padding: 0 8px;
+      cursor: pointer;
+      transition: color 0.18s ease;
+    }
+    .dock-more-desktop {
+      display: inline;
+    }
+    .dock-more-mobile {
+      display: none;
+    }
+    .sync-text-mobile {
+      display: none;
+    }
+    .sync-text-full {
+      display: inline;
+    }
+    .dock-item-more:hover {
+      color: var(--text-main);
+    }
+
+    /* --------------------------------------------------------------------------
+       FEATURE CARDS SECTION (4 Matching Cards)
+       -------------------------------------------------------------------------- */
+    .feature-cards-section {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 1260px;
+      margin: 32px auto 48px;
+      padding: 0 36px;
+    }
+    .feature-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+    .feature-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-card);
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
+      transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+    }
+    .feature-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255, 184, 77, 0.35);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 20px var(--glow-primary);
+    }
+    .feature-icon-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255, 184, 77, 0.15);
+      color: var(--color-gold-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+    .feature-icon-badge.coral {
+      background: rgba(248, 113, 113, 0.15);
+      color: #f87171;
+    }
+    .feature-card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+    .feature-card-desc {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      line-height: 1.45;
+    }
+
+    /* --------------------------------------------------------------------------
+       MODAL DIALOGS: JOIN WITH CODE, PROFILE, HOW IT WORKS, MOBILE DRAWER
        -------------------------------------------------------------------------- */
     .zami-dialog {
       border: none;
@@ -780,21 +717,21 @@
       border-radius: 22px;
     }
     .zami-dialog::backdrop {
-      background: rgba(0, 0, 0, 0.8);
+      background: rgba(0, 0, 0, 0.82);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
     }
 
     .dialog-card {
       background: #191614;
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      border: 1px solid var(--border-subtle);
       border-radius: 22px;
       padding: 26px 22px 22px;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.9), 0 0 35px rgba(245, 158, 11, 0.08);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.9), 0 0 35px var(--glow-primary);
       display: flex;
       flex-direction: column;
       gap: 16px;
-      color: #fafaf9;
+      color: var(--text-main);
     }
     .dialog-header {
       display: flex;
@@ -804,12 +741,12 @@
     .dialog-title-group h3 {
       font-size: 1.2rem;
       font-weight: 700;
-      color: #fafaf9;
+      color: var(--text-main);
       margin-bottom: 4px;
     }
     .dialog-title-group p {
       font-size: 0.86rem;
-      color: var(--zami-text-muted);
+      color: var(--text-secondary);
       line-height: 1.45;
     }
     .btn-dialog-close {
@@ -818,7 +755,7 @@
       border-radius: 10px;
       background: rgba(255, 255, 255, 0.06);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      color: var(--zami-text-muted);
+      color: var(--text-secondary);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -840,7 +777,7 @@
       left: 14px;
       top: 50%;
       transform: translateY(-50%);
-      color: var(--zami-text-dim);
+      color: var(--text-secondary);
       pointer-events: none;
     }
     .dialog-input {
@@ -850,15 +787,15 @@
       background: #110f0e;
       border: 1px solid rgba(255, 255, 255, 0.11);
       border-radius: 12px;
-      color: #fafaf9;
+      color: var(--text-main);
       font-family: inherit;
       font-size: 0.94rem;
       outline: none;
       transition: border-color 0.2s, box-shadow 0.2s;
     }
     .dialog-input:focus {
-      border-color: #f59e0b;
-      box-shadow: 0 0 0 1px #f59e0b;
+      border-color: var(--color-gold-primary);
+      box-shadow: 0 0 0 1px var(--color-gold-primary);
     }
     .dialog-input::placeholder {
       color: #6a6460;
@@ -877,7 +814,7 @@
       background: transparent;
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 12px;
-      color: var(--zami-text-muted);
+      color: var(--text-secondary);
       font-family: inherit;
       font-size: 0.9rem;
       font-weight: 600;
@@ -891,10 +828,10 @@
     .btn-dialog-primary {
       min-height: 44px;
       padding: 0 20px;
-      background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);
+      background: linear-gradient(180deg, #FFB84D 0%, #E99516 100%);
       border: none;
       border-radius: 12px;
-      color: #12100e;
+      color: #100F0E;
       font-family: inherit;
       font-size: 0.9rem;
       font-weight: 700;
@@ -902,12 +839,58 @@
       align-items: center;
       gap: 8px;
       cursor: pointer;
-      box-shadow: 0 4px 16px rgba(245, 158, 11, 0.35);
+      box-shadow: 0 4px 16px rgba(255, 184, 77, 0.35);
       transition: all 0.18s;
     }
     .btn-dialog-primary:hover {
-      background: #fbbf24;
+      background: #ffc46b;
       transform: translateY(-1px);
+    }
+
+    /* Mobile Drawer Dialog */
+    .mobile-drawer-dialog {
+      border: none;
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      width: 100%;
+      height: 100%;
+      max-width: 100%;
+      max-height: 100%;
+    }
+    .mobile-drawer-dialog::backdrop {
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(10px);
+    }
+    .mobile-drawer-sheet {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: min(340px, 85vw);
+      background: #161311;
+      border-left: 1px solid var(--border-subtle);
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      box-shadow: -10px 0 40px rgba(0, 0, 0, 0.8);
+    }
+    .mobile-drawer-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      list-style: none;
+      margin-top: 10px;
+    }
+    .mobile-drawer-nav a {
+      color: var(--text-main);
+      text-decoration: none;
+      font-size: 1.1rem;
+      font-weight: 600;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      display: block;
     }
 
     /* Help & Guide Dialog */
@@ -924,272 +907,316 @@
       gap: 14px;
       padding: 14px;
       background: #201c19;
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-subtle);
       border-radius: 14px;
     }
     .help-item-icon {
-      color: #f59e0b;
+      color: var(--color-gold-primary);
       flex-shrink: 0;
       margin-top: 2px;
     }
     .help-item-info h4 {
       font-size: 0.92rem;
       font-weight: 600;
-      color: #fafaf9;
+      color: var(--text-main);
       margin-bottom: 4px;
     }
     .help-item-info p {
       font-size: 0.82rem;
-      color: var(--zami-text-muted);
+      color: var(--text-secondary);
       line-height: 1.45;
     }
 
-    /* Profile / Settings Dialog */
-    .color-picker-row {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-    .color-dot {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      border: 2px solid transparent;
-      cursor: pointer;
-      transition: transform 0.18s, border-color 0.18s;
-    }
-    .color-dot:hover {
-      transform: scale(1.15);
-    }
-    .color-dot.selected {
-      border-color: #ffffff;
-      transform: scale(1.15);
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
-    }
-
     /* --------------------------------------------------------------------------
-       RESPONSIVE BREAKPOINTS: Mobile -> Tablet -> Desktop
+       RESPONSIVE BREAKPOINTS (Tablet & Mobile Reference Match)
        -------------------------------------------------------------------------- */
-
-    /* Small Mobile (320px - 360px) */
-    @media (max-width: 360px) {
-      .landing-wrapper {
-        padding-left: 14px;
-        padding-right: 14px;
+    /* Tablet (768px - 1023px) */
+    @media (max-width: 1023px) and (min-width: 768px) {
+      .zami-header {
+        padding: 20px 28px;
       }
-      .hero-headline {
-        font-size: 2.1rem;
+      .nav-links-center {
+        gap: 20px;
       }
-      .btn-cta-create, .btn-cta-join {
-        font-size: 0.94rem;
-        min-height: 48px;
-        padding: 12px 18px;
+      .hero-wrapper {
+        padding: 12px 28px 30px;
       }
-      .hud-pill {
-        padding: 4px 8px;
-        font-size: 0.68rem;
-      }
-      .btn-react-pill {
-        padding: 5px 8px;
-        font-size: 0.7rem;
-      }
-    }
-
-    /* Mobile (<= 767px): Stacked Vertically, Native Touch Comfort */
-    @media (max-width: 767px) {
-      .hero-container {
-        gap: 32px;
-        padding: 8px 0 24px;
-      }
-      .stage-interactive-wrapper {
-        gap: 12px;
-        width: 100%;
-      }
-      .stage-cinema-viewport {
-        aspect-ratio: 16 / 10.5;
-        border-radius: 20px;
-        -webkit-mask-image: radial-gradient(ellipse 96% 92% at 50% 50%, black 74%, transparent 100%);
-        mask-image: radial-gradient(ellipse 96% 92% at 50% 50%, black 74%, transparent 100%);
-      }
-      .stage-reaction-dock {
-        width: 100%;
-        padding: 8px 10px;
-        justify-content: space-between;
-      }
-      .reaction-dock-label {
-        display: none;
-      }
-      .reaction-buttons-group {
-        flex: 1;
-        justify-content: space-between;
-      }
-      .btn-react-pill {
-        padding: 7px 10px;
-        font-size: 0.74rem;
-        gap: 4px;
-        min-height: 38px;
-      }
-      .stage-whispers-container {
-        max-width: 85%;
-      }
-      .stage-whisper-bubble.whisper-2 {
-        display: none;
-      }
-    }
-
-    /* Tablet (768px - 1023px): Stacked Layout with Generous Spacing */
-    @media (min-width: 768px) {
-      .landing-wrapper {
-        padding: 24px 36px 30px;
-      }
-      .zami-nav {
-        padding: 8px 0 24px;
-      }
-      .hero-container {
-        display: flex;
-        flex-direction: column;
+      .hero-grid {
+        grid-template-columns: 1fr;
         gap: 36px;
-        align-items: center;
         text-align: center;
-        padding: 16px 0 32px;
       }
-      .hero-content-col {
+      .hero-left {
         align-items: center;
-        max-width: 640px;
       }
       .hero-subtitle {
         margin-left: auto;
         margin-right: auto;
       }
       .hero-cta-group {
-        flex-direction: row;
         justify-content: center;
-        width: auto;
-        margin-bottom: 0;
       }
-      .btn-cta-create, .btn-cta-join {
-        width: auto;
-        padding: 14px 30px;
+      .hero-social-proof {
+        justify-content: center;
       }
-      .stage-interactive-wrapper {
-        max-width: 740px;
+      .player-preview-col {
+        max-width: 680px;
         width: 100%;
+        margin: 0 auto;
+      }
+      .feature-cards-section {
+        padding: 0 28px;
+      }
+      .feature-cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
       }
     }
 
-    /* Desktop (1024px+) Spacious Two-Column Layout (44% Text / 56% Media Player) */
-    @media (min-width: 1024px) {
-      .landing-wrapper {
-        padding: 28px clamp(32px, 4vw, 64px) 36px;
+    /* Mobile (<= 767px): Exact Match to Mobile View in Reference Image */
+    @media (max-width: 767px) {
+      .zami-header {
+        padding: 16px 20px;
       }
-      .zami-nav {
-        padding: 10px 0 32px;
+      .nav-links-center, .btn-nav-create {
+        display: none;
       }
-      .hero-container {
-        display: grid;
-        grid-template-columns: 44fr 56fr;
-        align-items: center;
-        text-align: left;
-        gap: clamp(36px, 4.2vw, 56px);
-        padding: 20px 0 40px;
+      .btn-mobile-menu {
+        display: flex;
       }
-      .hero-content-col {
+      .ambient-depth-layer {
+        display: none;
+      }
+      .hero-wrapper {
+        padding: 8px 18px 24px;
+      }
+      .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 22px;
+      }
+      .hero-left {
         align-items: flex-start;
-        max-width: 100%;
       }
       .hero-headline {
-        font-size: clamp(3.2rem, 2.2rem + 2.2vw, 4.3rem);
-        line-height: 1.06;
-        margin-bottom: 22px;
+        font-size: 2.6rem;
+        margin-bottom: 14px;
       }
       .hero-subtitle {
-        margin-left: 0;
-        margin-right: 0;
-        max-width: 480px;
-        margin-bottom: clamp(28px, 2.6vw, 38px);
+        font-size: 0.94rem;
+        margin-bottom: 22px;
       }
       .hero-cta-group {
-        flex-direction: row;
-        justify-content: flex-start;
-        gap: 16px;
-        margin-bottom: 0;
+        flex-direction: column;
+        gap: 10px;
         width: 100%;
+        margin-bottom: 24px;
       }
       .btn-cta-create, .btn-cta-join {
-        width: auto;
+        width: 100%;
+        justify-content: center;
+        height: 48px;
+        font-size: 0.95rem;
       }
-      .stage-interactive-wrapper {
-        max-width: 100%;
+      .hero-social-proof {
+        display: none;
+      }
+      .player-monitor {
+        border-radius: 18px;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8), 0 0 24px rgba(255, 184, 77, 0.15);
+      }
+      .screen-top-hud {
+        top: 10px;
+        left: 12px;
+        right: 12px;
+      }
+      .screen-sync-pill {
+        padding: 4px 8px;
+        font-size: 10px;
+      }
+      .sync-text-full {
+        display: none;
+      }
+      .sync-text-mobile {
+        display: inline;
+      }
+      .screen-avatar-img {
+        width: 24px;
+        height: 24px;
+      }
+      .screen-avatar-count {
+        padding: 2px 6px;
+        font-size: 10px;
+      }
+      .screen-bottom-controls {
+        padding: 8px 12px 10px;
+        gap: 8px;
+      }
+      .ctrl-time {
+        font-size: 10px;
+      }
+      .monitor-popcorn-anchor {
+        display: none;
+      }
+      .streaming-dock {
+        width: 100%;
+        justify-content: space-between;
+        padding: 6px 12px;
+        border-radius: 18px;
+        gap: 6px;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+      .dock-logo {
+        height: 28px;
+      }
+      .dock-item:nth-child(4), .dock-item:nth-child(7) {
+        display: none;
+      }
+      .dock-more-desktop {
+        display: none;
+      }
+      .dock-more-mobile {
+        display: inline-block;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text-main);
+      }
+      .feature-cards-section {
+        padding: 0 18px;
+        margin: 16px auto 36px;
+      }
+      .feature-cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+      .feature-card {
+        padding: 14px 12px;
+        border-radius: 18px;
+      }
+      .feature-icon-badge {
+        width: 36px;
+        height: 36px;
+        margin-bottom: 10px;
+      }
+      .feature-icon-badge svg {
+        width: 18px;
+        height: 18px;
+      }
+      .feature-card-title {
+        font-size: 0.92rem;
+        margin-bottom: 4px;
+      }
+      .feature-card-desc {
+        font-size: 0.78rem;
+        line-height: 1.4;
       }
     }
 
-    /* Large Displays (1440px+) */
-    @media (min-width: 1440px) {
-      .hero-container {
-        gap: 60px;
-      }
+    /* Very Small Screens (< 360px) */
+    @media (max-width: 359px) {
       .hero-headline {
-        font-size: 4.4rem;
+        font-size: 2.15rem;
+      }
+      .feature-cards-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
       }
     }
   </style>
 </head>
 <body>
-  <!-- Cozy Ambient Warm Charcoal & Amber Backdrop -->
-  <div class="cozy-ambient-backdrop" id="landing-bg-layer" aria-hidden="true">
-    <div class="ambient-orb ambient-orb-1"></div>
-    <div class="ambient-orb ambient-orb-2"></div>
-    <div class="ambient-orb ambient-orb-3"></div>
-    <div class="ambient-vignette"></div>
+  <!-- Ambient Backdrop Glow Orbs -->
+  <div class="ambient-glow-layer" aria-hidden="true">
+    <div class="ambient-light-orb orb-amber-right"></div>
+    <div class="ambient-light-orb orb-warm-center"></div>
   </div>
 
-  <div class="landing-wrapper">
-    <!-- Top Navigation Bar -->
-    <header class="zami-nav" id="top-nav">
-      <a href="/" class="brand-group" aria-label="ZAMI Home">
-        <span class="zami-text-logo">
-          <span class="z-cursive">Z</span><span class="ami-serif">ami</span>
-        </span>
-      </a>
+  <!-- Ambient Depth Layer (Desktop) -->
+  <div class="ambient-depth-layer" aria-hidden="true"></div>
 
-      <!-- Header Nav Actions -->
-      <div class="nav-actions">
-        <button type="button" class="btn-nav-create" id="btn-nav-create">
-          <span>Create a room</span>
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="5" y1="12" x2="19" y2="12"/>
-            <polyline points="12 5 19 12 12 19"/>
-          </svg>
-        </button>
-      </div>
-    </header>
+  <!-- Top Navigation Bar -->
+  <header class="zami-header" id="top-nav">
+    <a href="/" class="brand-link" id="brand-logo" aria-label="Zami Home">Zami</a>
 
-    <!-- Main Hero Container (44% Text / 56% Media Player on Desktop) -->
-    <main class="hero-container">
-      <!-- Left Column / Hero Text and CTAs -->
-      <section class="hero-content-col">
+    <nav aria-label="Main Navigation">
+      <ul class="nav-links-center">
+        <li class="nav-link-item active"><a href="/" id="nav-link-home">Home</a></li>
+        <li class="nav-link-item"><a href="#features" id="nav-link-features">Features</a></li>
+        <li class="nav-link-item"><a href="#" id="nav-link-apps">Apps</a></li>
+        <li class="nav-link-item"><a href="#" id="nav-link-how">How it works</a></li>
+        <li class="nav-link-item"><a href="#" id="nav-link-pricing">Pricing</a></li>
+      </ul>
+    </nav>
+
+    <button type="button" class="btn-nav-create" id="btn-nav-create">
+      <span>Create a room</span>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="5" y1="12" x2="19" y2="12"/>
+        <polyline points="12 5 19 12 12 19"/>
+      </svg>
+    </button>
+
+    <button type="button" class="btn-mobile-menu" id="btn-hamburger" aria-label="Open navigation menu">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="3" y1="12" x2="21" y2="12"/>
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
+  </header>
+
+  <!-- Hero Section (Desktop & Mobile) -->
+  <main class="hero-wrapper">
+    <div class="hero-grid">
+      <!-- Left Column / Hero Text & Actions -->
+      <section class="hero-left">
+        <!-- Introductory Pill -->
+        <div class="hero-intro-pill">
+          <span class="pill-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/>
+              <line x1="7" y1="2" x2="7" y2="22"/>
+              <line x1="17" y1="2" x2="17" y2="22"/>
+              <line x1="2" y1="12" x2="22" y2="12"/>
+              <line x1="2" y1="7" x2="7" y2="7"/>
+              <line x1="2" y1="17" x2="7" y2="17"/>
+              <line x1="17" y1="17" x2="22" y2="17"/>
+              <line x1="17" y1="7" x2="22" y2="7"/>
+            </svg>
+          </span>
+          <span>Watch Together, Anywhere</span>
+          <span class="pill-dot"></span>
+        </div>
+
+        <!-- Headline -->
         <h1 class="hero-headline">
-          <span class="headline-part">Watch together,</span>
-          <span class="headline-part headline-glow">feel closer.</span>
+          <span class="headline-part">Watch</span>
+          <span class="headline-part">together,</span>
+          <span class="headline-part gold-gradient">feel closer.</span>
         </h1>
 
-        <p class="hero-subtitle">Watch movies, shows, and videos together, wherever you are.</p>
+        <!-- Supporting Subtitle -->
+        <p class="hero-subtitle">
+          Watch movies, shows, and videos together in real-time with your friends, wherever you are.
+        </p>
 
         <!-- CTA Buttons -->
         <div class="hero-cta-group">
           <button type="button" class="btn-cta-create" id="btn-hero-create">
-            <span class="cta-play-icon">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                <polygon points="6 4 20 12 6 20 6 4"/>
-              </svg>
-            </span>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+            </svg>
             <span>Create a room</span>
-            <span class="cta-arrow-icon">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="5" y1="12" x2="19" y2="12"/>
-                <polyline points="12 5 19 12 12 19"/>
-              </svg>
-            </span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"/>
+              <polyline points="12 5 19 12 12 19"/>
+            </svg>
           </button>
 
           <button type="button" class="btn-cta-join" id="btn-hero-join">
@@ -1200,117 +1227,175 @@
             <span>Join with code</span>
           </button>
         </div>
+
+        <!-- Social Proof Friends Watching -->
+        <div class="hero-social-proof">
+          <div class="avatars-stack">
+            <img src="/img/avatar_p1.png" alt="Friend 1" class="avatar-stack-item">
+            <img src="/img/avatar_p2.png" alt="Friend 2" class="avatar-stack-item">
+            <img src="/img/avatar_p3.png" alt="Friend 3" class="avatar-stack-item">
+            <img src="/img/avatar_p4.png" alt="Friend 4" class="avatar-stack-item">
+            <div class="avatar-count-badge">+2</div>
+          </div>
+          <span class="green-pulse-dot"></span>
+          <span class="social-proof-text">3 friends watching now</span>
+        </div>
       </section>
 
-      <!-- Right Column: Interactive Blended Living Cinema Stage -->
-      <section class="stage-interactive-wrapper" aria-label="Interactive shared watch lounge">
-        <!-- Ambient Backlight Diffuser -->
-        <div class="stage-ambient-glow" id="stage-ambient-glow"></div>
+      <!-- Right Column / Media Preview Monitor & Streaming Dock -->
+      <section class="player-preview-col" aria-label="Shared watch party preview">
+        <!-- Ambient Backlight Glow -->
+        <div class="player-ambient-glow" aria-hidden="true"></div>
 
-        <!-- Blended Cinema Frame with Organic Feathered Mask -->
-        <div class="stage-cinema-viewport" id="stage-cinema-viewport" role="region" aria-label="Interactive cinema screen, tap to react">
-          <!-- Active Scene Images with Crossfade -->
-          <div class="stage-scenes-layer">
-            <img src="/img/sunset_planet_preview.jpg" alt="Sunset Vista" class="stage-scene-img active" id="scene-img-1" loading="eager" fetchpriority="high">
-            <img src="/img/backdrop_astronaut.jpg" alt="Deep Space" class="stage-scene-img" id="scene-img-2" loading="lazy">
-            <img src="/img/backdrop_neon.jpg" alt="Neon Midnight" class="stage-scene-img" id="scene-img-3" loading="lazy">
-            <div class="stage-scene-vignette"></div>
-          </div>
+        <!-- Monitor Frame -->
+        <div class="player-monitor" id="player-monitor">
+          <div class="player-screen-art"></div>
 
-          <!-- Top Status Bar: Live Sync Pill & Scene Mood Switcher -->
-          <div class="stage-top-hud">
-            <div class="hud-pill hud-sync" id="hud-sync-pill" title="Click to ping room sync">
-              <span class="hud-pulse-dot"></span>
-              <span class="hud-sync-text">In sync &bull; 0.0s delay</span>
+          <!-- Top HUD: Live Sync Pill & Avatars -->
+          <div class="screen-top-hud">
+            <div class="screen-sync-pill" id="screen-sync-pill" title="Click to ping sync">
+              <span class="screen-sync-dot"></span>
+              <span class="sync-text-full">In sync &bull; 0.0s delay</span>
+              <span class="sync-text-mobile">In sync &bull; 0.0s</span>
             </div>
 
-            <div class="hud-mood-tabs" role="tablist" aria-label="Cinema moods">
-              <button type="button" class="mood-tab active" data-scene="1" aria-label="Sunset Vista">Sunset</button>
-              <button type="button" class="mood-tab" data-scene="2" aria-label="Deep Space">Cosmic</button>
-              <button type="button" class="mood-tab" data-scene="3" aria-label="Neon Midnight">Neon</button>
+            <div class="screen-avatars-dock">
+              <img src="/img/avatar_p1.png" alt="Host" class="screen-avatar-img" title="Host">
+              <img src="/img/avatar_p2.png" alt="Sarah" class="screen-avatar-img" title="Sarah">
+              <img src="/img/avatar_p3.png" alt="Alex" class="screen-avatar-img" title="Alex">
+              <span class="screen-avatar-count">+2</span>
             </div>
           </div>
 
-          <!-- Live Floating Chat Whispers -->
-          <div class="stage-whispers-container" id="stage-whispers">
-            <div class="stage-whisper-bubble whisper-1">
-              <img src="/img/avatar_p2.png" alt="Sarah" class="whisper-avatar">
-              <span class="whisper-text">Sarah: This scene looks unreal!</span>
-            </div>
-            <div class="stage-whisper-bubble whisper-2">
-              <img src="/img/avatar_p3.png" alt="Alex" class="whisper-avatar">
-              <span class="whisper-text">Alex: Popcorn ready, don't pause</span>
-            </div>
-          </div>
+          <!-- Bottom Player Controls -->
+          <div class="screen-bottom-controls">
+            <button type="button" class="ctrl-btn" id="ctrl-btn-play" aria-label="Pause or play">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="6" y="4" width="4" height="16"/>
+                <rect x="14" y="4" width="4" height="16"/>
+              </svg>
+            </button>
 
-          <!-- Particle Canvas for Interactive Bursts -->
-          <canvas class="stage-particle-canvas" id="stage-particle-canvas"></canvas>
+            <span class="ctrl-time" id="ctrl-time-display">12:36 / 2:28:10</span>
 
-          <!-- Floating Participant Avatars Dock -->
-          <div class="stage-party-dock" aria-label="Party participants">
-            <div class="party-avatar-item" title="Room Host">
-              <img src="/img/avatar_p1.png" alt="Host" class="party-avatar-img">
-              <span class="party-crown-badge">
-                <svg width="9" height="9" viewBox="0 0 24 24" fill="#f59e0b">
-                  <path d="M2 4l3 12h14l3-12-6 7-4-11-4 11-6-7z"/>
-                </svg>
-              </span>
+            <div class="ctrl-scrubber-wrap" id="ctrl-scrubber-wrap" role="slider" aria-label="Scrubber" aria-valuenow="34" aria-valuemin="0" aria-valuemax="100">
+              <div class="ctrl-scrubber-track">
+                <div class="ctrl-scrubber-fill" id="ctrl-scrubber-fill"></div>
+                <div class="ctrl-scrubber-thumb" id="ctrl-scrubber-thumb"></div>
+              </div>
             </div>
-            <div class="party-avatar-item" title="Sarah">
-              <img src="/img/avatar_p2.png" alt="Sarah" class="party-avatar-img">
-            </div>
-            <div class="party-avatar-item" title="Alex">
-              <img src="/img/avatar_p3.png" alt="Alex" class="party-avatar-img">
-            </div>
-            <div class="party-avatar-item" title="Maya">
-              <img src="/img/avatar_p4.png" alt="Maya" class="party-avatar-img">
-            </div>
-            <div class="party-count-badge" id="party-count-badge" title="4 friends watching">+2</div>
-          </div>
-        </div>
 
-        <!-- Interactive Tap-to-React Floating Dock -->
-        <div class="stage-reaction-dock">
-          <span class="reaction-dock-label">Tap to react:</span>
-          <div class="reaction-buttons-group">
-            <button type="button" class="btn-react-pill" data-type="popcorn" aria-label="Popcorn reaction">
+            <button type="button" class="ctrl-btn" id="ctrl-btn-volume" aria-label="Volume">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+              </svg>
+            </button>
+
+            <span class="ctrl-badge-cc">CC</span>
+
+            <button type="button" class="ctrl-btn" id="ctrl-btn-gear" aria-label="Settings">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M18 8a3 3 0 0 0-3-3 3 3 0 0 0-4.5 1.5A3 3 0 0 0 6 8a3 3 0 0 0 .5 5.5L7 21h10l.5-7.5A3 3 0 0 0 18 8z"/>
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
               </svg>
-              <span>Popcorn</span>
             </button>
 
-            <button type="button" class="btn-react-pill" data-type="heart" aria-label="Heart reaction">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            <button type="button" class="ctrl-btn" id="ctrl-btn-fullscreen" aria-label="Fullscreen">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
               </svg>
-              <span>Love</span>
-            </button>
-
-            <button type="button" class="btn-react-pill" data-type="fire" aria-label="Fire reaction">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2c-.3 2.1-1.8 3.9-3 5.4C7.7 9 6.5 11 6.5 13.5c0 3 2.5 5.5 5.5 5.5s5.5-2.5 5.5-5.5c0-2.4-1.2-4.5-2.5-6.1-1.2-1.5-2.7-3.3-3-5.4zm0 8.5c1.4 0 2.5 1.1 2.5 2.5s-1.1 2.5-2.5 2.5-2.5-1.1-2.5-2.5 1.1-2.5 2.5-2.5z"/>
-              </svg>
-              <span>Hype</span>
-            </button>
-
-            <button type="button" class="btn-react-pill" data-type="spark" aria-label="Magic reaction">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-              </svg>
-              <span>Magic</span>
             </button>
           </div>
+        </div>
 
-          <div class="reaction-stats-pill" id="reaction-stats-pill" title="Total reactions sent">
-            <span class="stats-count" id="reaction-counter">42</span>
-            <span class="stats-label">bursts</span>
+        <!-- Popcorn Bowl at Base of Monitor -->
+        <div class="monitor-popcorn-anchor" aria-hidden="true">
+          <img src="/img/popcorn_transparent_2x.png" alt="Popcorn" class="popcorn-bowl-img">
+        </div>
+
+        <!-- Horizontal Streaming Services Dock -->
+        <div class="streaming-dock-wrap">
+          <div class="streaming-dock" id="streaming-dock" role="navigation" aria-label="Supported streaming services">
+            <a href="/netflix-app.html" class="dock-item" title="Netflix" aria-label="Netflix">
+              <img src="/img/service_netflix.png" alt="Netflix" class="dock-logo">
+            </a>
+            <a href="/hotstar-app.html" class="dock-item" title="Disney+" aria-label="Disney+">
+              <img src="/img/service_disney.png" alt="Disney+" class="dock-logo">
+            </a>
+            <a href="/prime-app.html" class="dock-item" title="Prime Video" aria-label="Prime Video">
+              <img src="/img/service_prime.png" alt="Prime Video" class="dock-logo">
+            </a>
+            <a href="#" class="dock-item" id="dock-btn-party" title="Watch Party" aria-label="Watch Party">
+              <img src="/img/service_party.png" alt="Party" class="dock-logo">
+            </a>
+            <a href="/youtube-app.html" class="dock-item" title="YouTube" aria-label="YouTube">
+              <img src="/img/service_youtube.png" alt="YouTube" class="dock-logo">
+            </a>
+            <a href="/hotstar-app.html" class="dock-item" title="JioHotstar" aria-label="JioHotstar">
+              <img src="/img/service_hotstar.png" alt="JioHotstar" class="dock-logo">
+            </a>
+            <a href="/mx-app.html" class="dock-item" title="MX Player" aria-label="MX Player">
+              <img src="/img/service_mx.png" alt="MX Player" class="dock-logo">
+            </a>
+            <button type="button" class="dock-item dock-item-more" id="dock-btn-more" aria-label="More streaming options">
+              <span class="dock-more-desktop">+ More</span>
+              <span class="dock-more-mobile">+</span>
+            </button>
           </div>
         </div>
       </section>
+    </div>
+  </main>
 
-    </main>
-  </div>
+  <!-- 4 Feature Cards (Sync in Real-Time, Watch Anything, Be Together, On Any Device) -->
+  <section class="feature-cards-section" id="features" aria-label="Platform Features">
+    <div class="feature-cards-grid">
+      <!-- Card 1 -->
+      <div class="feature-card">
+        <div class="feature-icon-badge amber">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+          </svg>
+        </div>
+        <h3 class="feature-card-title">Sync in Real-Time</h3>
+        <p class="feature-card-desc">Everyone stays perfectly in sync, always.</p>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="feature-card">
+        <div class="feature-icon-badge amber">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
+          </svg>
+        </div>
+        <h3 class="feature-card-title">Watch Anything</h3>
+        <p class="feature-card-desc">Movies, shows, videos and more.</p>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="feature-card">
+        <div class="feature-icon-badge coral">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="#f87171">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          </svg>
+        </div>
+        <h3 class="feature-card-title">Be Together</h3>
+        <p class="feature-card-desc">Chat, react and make it more fun.</p>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="feature-card">
+        <div class="feature-icon-badge amber">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7l-2 3v1h8v-1l-2-3h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 12H3V4h18v10z"/>
+          </svg>
+        </div>
+        <h3 class="feature-card-title">On Any Device</h3>
+        <p class="feature-card-desc">Works smoothly on mobile, tablet and desktop.</p>
+      </div>
+    </div>
+  </section>
 
   <!-- Modal Dialog: Join with Code -->
   <dialog id="join-modal" class="zami-dialog" closedby="any" aria-labelledby="join-dialog-title">
@@ -1345,44 +1430,33 @@
     </div>
   </dialog>
 
-  <!-- Modal Dialog: Sign in / Profile Customizer -->
-  <dialog id="profile-dialog" class="zami-dialog" closedby="any" aria-labelledby="profile-dialog-title">
-    <div class="dialog-card">
-      <div class="dialog-header">
-        <div class="dialog-title-group">
-          <h3 id="profile-dialog-title">Profile &amp; Appearance</h3>
-          <p>Personalize how your friends see you in the watch room.</p>
-        </div>
-        <button type="button" class="btn-dialog-close" id="btn-close-profile" aria-label="Close dialog">
+  <!-- Modal Dialog: Mobile Navigation Drawer -->
+  <dialog id="mobile-nav-dialog" class="mobile-drawer-dialog" closedby="any" aria-label="Mobile Navigation">
+    <div class="mobile-drawer-sheet">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span class="brand-link" style="font-size: 28px;">Zami</span>
+        <button type="button" class="btn-dialog-close" id="btn-close-mobile-nav" aria-label="Close menu">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
 
-      <form id="form-profile" onsubmit="return false;">
-        <div style="display: flex; flex-direction: column; gap: 14px;">
-          <div>
-            <label for="input-display-name" style="display: block; font-size: 0.8rem; font-weight: 600; color: #a8a29e; margin-bottom: 6px;">DISPLAY NAME</label>
-            <input type="text" id="input-display-name" class="dialog-input" style="padding-left: 14px;" placeholder="Your nickname" spellcheck="false">
-          </div>
+      <ul class="mobile-drawer-nav">
+        <li><a href="/" id="mob-link-home">Home</a></li>
+        <li><a href="#features" id="mob-link-features">Features</a></li>
+        <li><a href="#" id="mob-link-apps">Apps</a></li>
+        <li><a href="#" id="mob-link-how">How it works</a></li>
+        <li><a href="#" id="mob-link-pricing">Pricing</a></li>
+      </ul>
 
-          <div>
-            <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #a8a29e; margin-bottom: 8px;">AVATAR COLOR ACCENT</label>
-            <div class="color-picker-row">
-              <button type="button" class="color-dot selected" data-color="#f59e0b" style="background: #f59e0b;" aria-label="Amber Accent"></button>
-              <button type="button" class="color-dot" data-color="#38bdf8" style="background: #38bdf8;" aria-label="Sky Blue Accent"></button>
-              <button type="button" class="color-dot" data-color="#ec4899" style="background: #ec4899;" aria-label="Pink Accent"></button>
-              <button type="button" class="color-dot" data-color="#22c55e" style="background: #22c55e;" aria-label="Emerald Accent"></button>
-              <button type="button" class="color-dot" data-color="#a855f7" style="background: #a855f7;" aria-label="Purple Accent"></button>
-            </div>
-          </div>
-        </div>
-
-        <div class="dialog-actions">
-          <button type="button" class="btn-dialog-primary" id="btn-save-profile" style="width: 100%; justify-content: center;">
-            <span>Save &amp; Continue</span>
-          </button>
-        </div>
-      </form>
+      <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+        <button type="button" class="btn-cta-create" id="btn-mob-create" style="width: 100%; justify-content: center;">
+          <span>Create a room</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+        <button type="button" class="btn-cta-join" id="btn-mob-join" style="width: 100%; justify-content: center;">
+          <span>Join with code</span>
+        </button>
+      </div>
     </div>
   </dialog>
 
@@ -1402,7 +1476,7 @@
       <div class="help-cards-list">
         <div class="help-item-card">
           <div class="help-item-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFB84D" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
           </div>
           <div class="help-item-info">
             <h4>Universal Synchronized Cinema</h4>
@@ -1412,17 +1486,17 @@
 
         <div class="help-item-card">
           <div class="help-item-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFB84D" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
           </div>
           <div class="help-item-info">
             <h4>Screen &amp; Browser Audio Cast</h4>
-            <p>Stream Netflix, Hotstar, or any browser tab using peer-to-peer WebRTC with crisp stereo audio and zero guest software install.</p>
+            <p>Stream Netflix, Hotstar, Prime Video, or any browser tab using peer-to-peer WebRTC with crisp stereo audio and zero guest software install.</p>
           </div>
         </div>
 
         <div class="help-item-card">
           <div class="help-item-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFB84D" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           </div>
           <div class="help-item-info">
             <h4>ZAMI Companion Extension</h4>
@@ -1436,6 +1510,36 @@
     </div>
   </dialog>
 
-  <script src="/js/landing.js?v=3"></script>
+  <!-- Modal Dialog: Profile / Settings -->
+  <dialog id="profile-dialog" class="zami-dialog" closedby="any" aria-labelledby="profile-dialog-title">
+    <div class="dialog-card">
+      <div class="dialog-header">
+        <div class="dialog-title-group">
+          <h3 id="profile-dialog-title">Profile &amp; Appearance</h3>
+          <p>Personalize how your friends see you in the watch room.</p>
+        </div>
+        <button type="button" class="btn-dialog-close" id="btn-close-profile" aria-label="Close dialog">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <form id="form-profile" onsubmit="return false;">
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+          <div>
+            <label for="input-display-name" style="display: block; font-size: 0.8rem; font-weight: 600; color: #a8a29e; margin-bottom: 6px;">DISPLAY NAME</label>
+            <input type="text" id="input-display-name" class="dialog-input" style="padding-left: 14px;" placeholder="Your nickname" spellcheck="false">
+          </div>
+        </div>
+
+        <div class="dialog-actions">
+          <button type="button" class="btn-dialog-primary" id="btn-save-profile" style="width: 100%; justify-content: center;">
+            <span>Save &amp; Continue</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <script src="/js/landing.js?v=4"></script>
 </body>
 </html>
