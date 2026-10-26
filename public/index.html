@@ -674,119 +674,184 @@
     }
 
     /* --------------------------------------------------------------------------
-       INTERACTIVE STAGE HUB (STREAMING DOCK + LIVE REACTIONS)
+       STREAMING SERVICE DOCK (FULL LOGOS & AUTHENTIC BRAND CARDS)
        -------------------------------------------------------------------------- */
-    .interactive-stage-hub {
+    .streaming-dock-bar {
       margin-top: 18px;
       width: 100%;
       max-width: 680px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 14px;
-      padding: 8px 14px;
+      gap: 10px;
+      padding: 10px 14px;
       border-radius: var(--radius-pill);
-      background: rgba(28, 22, 18, 0.78);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      background: rgba(28, 22, 18, 0.72);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
       border: 1px solid rgba(255, 224, 190, 0.14);
       box-shadow: 
-        0 14px 36px rgba(0, 0, 0, 0.55),
-        0 0 28px rgba(255, 184, 77, 0.08);
-    }
-
-    .streaming-services-shelf {
-      display: flex;
-      align-items: center;
-      gap: 10px;
+        0 16px 40px rgba(0, 0, 0, 0.6),
+        0 0 35px rgba(255, 184, 77, 0.09);
       overflow-x: auto;
       scrollbar-width: none;
       -webkit-overflow-scrolling: touch;
-      padding: 2px 0;
     }
-    .streaming-services-shelf::-webkit-scrollbar {
+    .streaming-dock-bar::-webkit-scrollbar {
       display: none;
     }
 
-    .dock-service-item {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
-      background: rgba(36, 28, 24, 0.75);
-      border: 1px solid rgba(255, 224, 190, 0.12);
+    .stream-card-btn {
+      background: transparent;
+      border: none;
+      padding: 0;
       cursor: pointer;
       flex-shrink: 0;
-      transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
-      padding: 0;
+      border-radius: 12px;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      outline: none;
     }
-    .dock-service-item:hover {
-      background: rgba(52, 41, 34, 0.95);
-      border-color: rgba(255, 184, 77, 0.45);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5), 0 0 16px rgba(255, 184, 77, 0.2);
+    .stream-card-btn:hover {
+      transform: translateY(-3px);
     }
-    .dock-service-item.active {
-      background: rgba(48, 38, 32, 0.98);
-      border-color: var(--color-gold-primary);
-      box-shadow: 0 0 16px rgba(255, 184, 77, 0.45);
+    .stream-card-btn:active {
       transform: translateY(-1px);
     }
-    .dock-service-icon {
-      width: 30px;
-      height: 30px;
-      object-fit: contain;
-      pointer-events: none;
+
+    .card-inner {
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
-    .dock-more-pill {
-      width: auto;
+    .stream-card-btn.active .card-inner {
+      border-color: var(--color-gold-primary);
+      box-shadow: 0 0 16px rgba(255, 184, 77, 0.5), 0 4px 14px rgba(0, 0, 0, 0.6);
+    }
+
+    .netflix-card {
+      width: 52px;
+      background: #000000;
+    }
+    .netflix-card:hover {
+      box-shadow: 0 6px 20px rgba(229, 9, 20, 0.35);
+      border-color: rgba(229, 9, 20, 0.4);
+    }
+
+    .disney-card {
+      width: 66px;
+      background: linear-gradient(135deg, #0e1e4a 0%, #050b1d 100%);
+      border-color: rgba(84, 160, 255, 0.18);
+    }
+    .disney-card:hover {
+      box-shadow: 0 6px 20px rgba(0, 114, 210, 0.4);
+      border-color: rgba(0, 210, 255, 0.5);
+    }
+
+    .prime-card {
+      width: 68px;
+      background: #001e38;
+      border-color: rgba(0, 168, 225, 0.2);
+    }
+    .prime-card:hover {
+      box-shadow: 0 6px 20px rgba(0, 168, 225, 0.4);
+      border-color: rgba(0, 168, 225, 0.5);
+    }
+
+    .party-card {
+      width: 52px;
+      background: linear-gradient(135deg, #FF4B72 0%, #D81B60 100%);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    .party-card:hover {
+      box-shadow: 0 6px 20px rgba(216, 27, 96, 0.45);
+    }
+
+    .youtube-card {
+      width: 54px;
+      background: #1C1513;
+      border-color: rgba(255, 0, 0, 0.2);
+    }
+    .youtube-card:hover {
+      box-shadow: 0 6px 20px rgba(255, 0, 0, 0.4);
+      border-color: rgba(255, 0, 0, 0.5);
+    }
+
+    .hotstar-card {
+      width: 74px;
+      background: linear-gradient(135deg, #1C0A35 0%, #100520 100%);
+      border-color: rgba(224, 64, 251, 0.2);
+    }
+    .hotstar-card:hover {
+      box-shadow: 0 6px 20px rgba(171, 71, 188, 0.45);
+      border-color: rgba(224, 64, 251, 0.5);
+    }
+
+    .mx-card {
+      width: 72px;
+      background: linear-gradient(135deg, #0D1B2A 0%, #060D15 100%);
+      border-color: rgba(30, 136, 229, 0.2);
+    }
+    .mx-card:hover {
+      box-shadow: 0 6px 20px rgba(30, 136, 229, 0.45);
+      border-color: rgba(30, 136, 229, 0.5);
+    }
+
+    .more-card-btn {
       height: 48px;
       padding: 0 18px;
       border-radius: var(--radius-pill);
+      background: rgba(36, 28, 24, 0.6);
+      border: 1px dashed rgba(255, 224, 190, 0.25);
       color: #FAF7F2;
-      font-size: 0.86rem;
+      font-size: 0.88rem;
       font-weight: 600;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px dashed rgba(255, 224, 190, 0.3);
       white-space: nowrap;
-    }
-    .dock-more-pill:hover {
-      background: rgba(255, 184, 77, 0.14);
-      border-color: var(--color-gold-primary);
-    }
-
-    /* Live Reaction Shelf */
-    .live-reactions-shelf {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-shrink: 0;
-      padding-left: 14px;
-      border-left: 1px solid rgba(255, 224, 190, 0.14);
-    }
-    .reaction-shelf-label {
-      font-size: 0.74rem;
-      font-weight: 700;
-      color: var(--color-gold-primary);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-right: 2px;
-    }
-    .btn-reaction-trigger {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      background: rgba(38, 30, 25, 0.7);
-      border: 1px solid rgba(255, 224, 190, 0.12);
       display: inline-flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+      flex-shrink: 0;
+      transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+    }
+    .more-card-btn:hover {
+      background: rgba(255, 184, 77, 0.12);
+      border-color: var(--color-gold-primary);
+      transform: translateY(-2px);
+    }
+
+    /* Player Reactions Floating Pill inside player HUD */
+    .player-reactions-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      background: rgba(18, 14, 12, 0.78);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 224, 190, 0.14);
+    }
+    .btn-hud-reaction {
+      background: transparent;
+      border: none;
       padding: 0;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.15s ease;
+    }
+    .btn-hud-reaction:hover {
+      transform: scale(1.3);
+    }
+    .btn-hud-reaction:active {
+      transform: scale(0.9);
     }
     .btn-reaction-trigger:hover {
       transform: scale(1.2);
@@ -1122,30 +1187,42 @@
         right: 10px;
       }
       .tv-bottom-controls {
-        padding: 20px 12px 10px;
+        padding: 16px 10px 8px;
+        gap: 6px;
+      }
+      .tv-time-text {
+        font-size: 0.72rem;
+      }
+      .player-reactions-pill {
+        padding: 2px 6px;
+        gap: 5px;
+      }
+      .btn-hud-reaction svg {
+        width: 13px;
+        height: 13px;
+      }
+      .streaming-dock-bar {
+        padding: 8px 10px;
         gap: 8px;
-      }
-      .interactive-stage-hub {
-        flex-direction: column;
-        align-items: stretch;
-        border-radius: 20px;
-        padding: 10px 12px;
-        gap: 10px;
-      }
-      .streaming-services-shelf {
-        width: 100%;
         justify-content: flex-start;
+        border-radius: var(--radius-pill);
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
       }
-      .dock-service-item {
-        width: 42px;
+      .card-inner {
         height: 42px;
       }
-      .live-reactions-shelf {
-        border-left: none;
-        border-top: 1px solid rgba(255, 224, 190, 0.1);
-        padding-left: 0;
-        padding-top: 8px;
-        justify-content: center;
+      .netflix-card { width: 44px; }
+      .disney-card { width: 60px; }
+      .prime-card { width: 64px; }
+      .party-card { width: 42px; }
+      .youtube-card { width: 48px; }
+      .hotstar-card { width: 68px; }
+      .mx-card { width: 66px; }
+      .more-card-btn {
+        height: 42px;
+        padding: 0 14px;
+        font-size: 0.82rem;
       }
       .feature-cards-row {
         grid-template-columns: 1fr;
@@ -1295,6 +1372,23 @@
                 <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
               </svg>
             </button>
+            <div class="player-reactions-pill" aria-label="Live Reactions">
+              <button type="button" class="btn-hud-reaction" data-reaction="heart" aria-label="Send Love Reaction" title="Send love">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="#FF5376">
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+              </button>
+              <button type="button" class="btn-hud-reaction" data-reaction="fire" aria-label="Send Fire Reaction" title="Send fire">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="#FF9500">
+                  <path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.61 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/>
+                </svg>
+              </button>
+              <button type="button" class="btn-hud-reaction" data-reaction="star" aria-label="Send Star Reaction" title="Send star">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="#FFB84D">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+              </button>
+            </div>
             <button type="button" class="btn-ctrl-action" id="ctrl-btn-fullscreen" aria-label="Toggle fullscreen">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="15 3 21 3 21 9"/>
@@ -1306,60 +1400,46 @@
           </div>
         </div>
 
-        <!-- Interactive Hub: Streaming Services & Live Reactions -->
-        <div class="interactive-stage-hub">
-          <!-- Streaming Source Switcher Strip -->
-          <div class="streaming-services-shelf" role="tablist" aria-label="Connected Streaming Services">
-            <button type="button" class="dock-service-item active" data-service="youtube" role="tab" aria-selected="true" aria-label="YouTube">
-              <img src="/img/service_youtube.png" alt="YouTube" class="dock-service-icon">
-            </button>
-            <button type="button" class="dock-service-item" data-service="netflix" role="tab" aria-selected="false" aria-label="Netflix">
-              <img src="/img/service_netflix.png" alt="Netflix" class="dock-service-icon">
-            </button>
-            <button type="button" class="dock-service-item" data-service="disney" role="tab" aria-selected="false" aria-label="Disney+">
-              <img src="/img/service_disney.png" alt="Disney+" class="dock-service-icon">
-            </button>
-            <button type="button" class="dock-service-item" data-service="prime" role="tab" aria-selected="false" aria-label="Prime Video">
-              <img src="/img/service_prime.png" alt="Prime Video" class="dock-service-icon">
-            </button>
-            <button type="button" class="dock-service-item" data-service="hotstar" role="tab" aria-selected="false" aria-label="JioHotstar">
-              <img src="/img/service_hotstar.png" alt="JioHotstar" class="dock-service-icon">
-            </button>
-            <button type="button" class="dock-service-item" data-service="mx" role="tab" aria-selected="false" aria-label="MX Player">
-              <img src="/img/service_mx.png" alt="MX Player" class="dock-service-icon">
-            </button>
-            <button type="button" class="dock-service-item" data-service="party" id="dock-btn-party" role="tab" aria-selected="false" aria-label="Watch Party">
-              <img src="/img/service_party.png" alt="Watch Party" class="dock-service-icon">
-            </button>
-            <button type="button" class="dock-service-item dock-more-pill" data-service="more" id="dock-btn-more" aria-label="More platforms">
-              <span>+ More</span>
-            </button>
-          </div>
-
-          <!-- Interactive Live Reaction Trigger Strip -->
-          <div class="live-reactions-shelf" aria-label="Live Reactions">
-            <span class="reaction-shelf-label">React:</span>
-            <button type="button" class="btn-reaction-trigger" data-reaction="heart" aria-label="Send Love Reaction">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="#FF5376">
-                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-              </svg>
-            </button>
-            <button type="button" class="btn-reaction-trigger" data-reaction="fire" aria-label="Send Fire Reaction">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="#FF9500">
-                <path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.61 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/>
-              </svg>
-            </button>
-            <button type="button" class="btn-reaction-trigger" data-reaction="star" aria-label="Send Star Reaction">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="#FFB84D">
-                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-              </svg>
-            </button>
-            <button type="button" class="btn-reaction-trigger" data-reaction="popcorn" aria-label="Send Cheers Reaction">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="#F4D06F">
-                <path d="M7 3a2.5 2.5 0 0 0-2.3 3.5A2.5 2.5 0 0 0 3 9a2.5 2.5 0 0 0 2.3 2.5 2.5 2.5 0 0 0 2.7 1.5h8a2.5 2.5 0 0 0 2.7-1.5A2.5 2.5 0 0 0 21 9a2.5 2.5 0 0 0-1.7-2.5A2.5 2.5 0 0 0 17 3a2.5 2.5 0 0 0-2.3 1.5 2.5 2.5 0 0 0-2.4-1A2.5 2.5 0 0 0 7 3zm-2 11l1.5 7.5a1.5 1.5 0 0 0 1.5 1.2h8a1.5 1.5 0 0 0 1.5-1.2L19 14H5zm5 6H8.5l-1-4H10v4zm4 0h-2.5v-4H14v4zm2.5 0H15v-4h2.5l-1 4z"/>
-              </svg>
-            </button>
-          </div>
+        <!-- Connected Streaming Services Dock (Full Brand Cards, Translucent Frosted Glass Blending) -->
+        <div class="streaming-dock-bar" role="tablist" aria-label="Connected Streaming Services">
+          <button type="button" class="stream-card-btn active" data-service="netflix" role="tab" aria-selected="true" aria-label="Netflix">
+            <div class="card-inner netflix-card">
+              <img src="/img/logo_netflix.svg" alt="Netflix" class="dock-brand-img" style="height: 28px; width: auto;">
+            </div>
+          </button>
+          <button type="button" class="stream-card-btn" data-service="disney" role="tab" aria-selected="false" aria-label="Disney+">
+            <div class="card-inner disney-card">
+              <img src="/img/logo_disney_white.svg" alt="Disney+" class="dock-brand-img" style="height: 25px; width: auto;">
+            </div>
+          </button>
+          <button type="button" class="stream-card-btn" data-service="prime" role="tab" aria-selected="false" aria-label="Prime Video">
+            <div class="card-inner prime-card">
+              <img src="/img/logo_prime_white.svg" alt="Prime Video" class="dock-brand-img" style="height: 24px; width: auto;">
+            </div>
+          </button>
+          <button type="button" class="stream-card-btn" data-service="party" id="dock-btn-party" role="tab" aria-selected="false" aria-label="Watch Party">
+            <div class="card-inner party-card">
+              <img src="/img/logo_party.svg" alt="Watch Party" class="dock-brand-img" style="height: 24px; width: auto;">
+            </div>
+          </button>
+          <button type="button" class="stream-card-btn" data-service="youtube" role="tab" aria-selected="false" aria-label="YouTube">
+            <div class="card-inner youtube-card">
+              <img src="/img/logo_youtube.svg" alt="YouTube" class="dock-brand-img" style="height: 20px; width: auto;">
+            </div>
+          </button>
+          <button type="button" class="stream-card-btn" data-service="hotstar" role="tab" aria-selected="false" aria-label="JioHotstar">
+            <div class="card-inner hotstar-card">
+              <img src="/img/logo_jiohotstar.svg" alt="JioHotstar" class="dock-brand-img" style="height: 36px; width: auto;">
+            </div>
+          </button>
+          <button type="button" class="stream-card-btn" data-service="mx" role="tab" aria-selected="false" aria-label="MX Player">
+            <div class="card-inner mx-card">
+              <img src="/img/logo_mxplayer.svg" alt="MX Player" class="dock-brand-img" style="height: 36px; width: auto;">
+            </div>
+          </button>
+          <button type="button" class="stream-card-btn more-card-btn" data-service="more" id="dock-btn-more" aria-label="More platforms">
+            <span>+ More</span>
+          </button>
         </div>
       </section>
     </main>

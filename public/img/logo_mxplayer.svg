@@ -1,0 +1,11 @@
+<svg width="72" height="44" viewBox="0 0 72 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Blue Play Circle -->
+  <g transform="translate(36, 14)">
+    <circle cx="0" cy="0" r="9.5" fill="#1E88E5"/>
+    <polygon points="-3,-5.5 5.5,0 -3,5.5" fill="#FFFFFF"/>
+  </g>
+  <!-- MX PLAYER Wordmark -->
+  <text x="36" y="36" text-anchor="middle" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-weight="800" font-size="8.5" letter-spacing="0.6px">
+    <tspan fill="#FFFFFF">MX </tspan><tspan fill="#42A5F5">PLAYER</tspan>
+  </text>
+</svg>

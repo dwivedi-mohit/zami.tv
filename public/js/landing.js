@@ -540,7 +540,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Reaction button triggers
-  document.querySelectorAll(".btn-reaction-trigger").forEach((btn) => {
+  document.querySelectorAll(".btn-reaction-trigger, .btn-hud-reaction").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
       const reactionType = btn.getAttribute("data-reaction") || "heart";
@@ -602,7 +602,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  document.querySelectorAll(".dock-service-item").forEach((item) => {
+  document.querySelectorAll(".stream-card-btn, .dock-service-item").forEach((item) => {
     item.addEventListener("click", (e) => {
       e.stopPropagation();
       const svc = item.getAttribute("data-service");
@@ -615,7 +615,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      document.querySelectorAll(".dock-service-item").forEach((el) => {
+      document.querySelectorAll(".stream-card-btn, .dock-service-item").forEach((el) => {
         el.classList.remove("active");
         el.setAttribute("aria-selected", "false");
       });

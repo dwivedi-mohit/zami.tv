@@ -1,0 +1,20 @@
+<svg width="76" height="44" viewBox="0 0 76 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Central Glowing Starburst -->
+  <g transform="translate(38, 14)">
+    <ellipse cx="0" cy="0" rx="10" ry="10" fill="url(#starGlow)" opacity="0.6"/>
+    <!-- 8 pointed star rays -->
+    <path d="M0 -11 L1.5 -3 L9 0 L1.5 3 L0 11 L-1.5 3 L-9 0 L-1.5 -3 Z" fill="#FFFFFF"/>
+    <path d="M-5 -5 L-1.5 -1.5 L0 -6 L1.5 -1.5 L5 -5 L2 0 L6 2 L1.5 1.5 L5 5 L0 2 L-5 5 L-2 0 Z" fill="#E040FB" opacity="0.8"/>
+    <circle cx="0" cy="0" r="1.8" fill="#FFFFFF"/>
+  </g>
+  <!-- JioHotstar Wordmark -->
+  <text x="38" y="36" text-anchor="middle" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-weight="800" font-size="9.5" letter-spacing="-0.2px">
+    <tspan fill="#E040FB">Jio</tspan><tspan fill="#FFFFFF">Hotstar</tspan>
+  </text>
+  <defs>
+    <radialGradient id="starGlow" cx="0" cy="0" r="10" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#E040FB" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#7B1FA2" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>
