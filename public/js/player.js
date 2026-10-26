@@ -476,6 +476,21 @@ class UniversalPlayer {
       });
     }
 
+    // Volume Booster Quick Toggle Button
+    this.btnVolumeBoost = document.getElementById('btn-volume-boost');
+    if (this.btnVolumeBoost) {
+      this.btnVolumeBoost.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const cur = this.getVolume();
+        const next = window.volumeBooster ? window.volumeBooster.cycleBoost(cur) : (cur >= 2.9 ? 1.0 : cur + 0.5);
+        this.setVolume(next);
+        const pct = Math.round(next * 100);
+        if (window.showToast) {
+          window.showToast(pct > 100 ? `Volume Boosted: ${pct}%` : `Volume: ${pct}% (Normal)`, 'info', 1500);
+        }
+      });
+    }
+
     // Speed
     if (this.speedSelect) {
       this.speedSelect.addEventListener('change', (e) => {
@@ -2045,30 +2060,91 @@ class UniversalPlayer {
   }
 
   setVolume(vol) {
-    const safeVol = Math.max(0, Math.min(1, vol));
+    const safeVol = Math.max(0, Math.min(3, vol));
+    this.currentVolume = safeVol;
+
+    if (window.volumeBooster) {
+      window.volumeBooster.setStageVolume(safeVol);
+    }
+
     if (this.activeType === 'youtube' && this.ytPlayer && typeof this.ytPlayer.setVolume === 'function') {
-      this.ytPlayer.setVolume(safeVol * 100);
+      const ytVol = Math.min(100, Math.round(Math.min(1, safeVol) * 100));
+      this.ytPlayer.setVolume(ytVol);
       if (safeVol > 0 && typeof this.ytPlayer.unMute === 'function') {
         this.ytPlayer.unMute();
       }
     } else if (this.videoEl) {
-      this.videoEl.volume = safeVol;
+      if (window.volumeBooster) {
+        window.volumeBooster.applyToElement(this.videoEl, safeVol);
+      } else {
+        this.videoEl.volume = Math.min(1, safeVol);
+      }
       if (safeVol > 0) {
         this.videoEl.muted = false;
         this.hideUnmuteBanner();
       }
     }
+
+    // Also apply to remote-browser-audio if active
+    const remoteAudio = document.getElementById('remote-browser-audio');
+    if (remoteAudio) {
+      if (window.volumeBooster) {
+        window.volumeBooster.applyToElement(remoteAudio, safeVol);
+      } else {
+        remoteAudio.volume = Math.min(1, safeVol);
+      }
+      if (safeVol > 0) remoteAudio.muted = false;
+    }
+
     if (this.volumeSlider) {
       this.volumeSlider.value = safeVol;
     }
+
+    this.updateVolumeBoosterUI(safeVol);
     this.updateVolumeIcon();
   }
 
+  updateVolumeBoosterUI(vol) {
+    const btnBoost = document.getElementById('btn-volume-boost');
+    const labelBoost = document.getElementById('volume-boost-label');
+    const pct = Math.round(vol * 100);
+
+    if (labelBoost) {
+      if (pct > 200) {
+        labelBoost.textContent = `${pct}% Max`;
+      } else if (pct > 100) {
+        labelBoost.textContent = `${pct}% Boost`;
+      } else {
+        labelBoost.textContent = `${pct}%`;
+      }
+    }
+
+    if (btnBoost) {
+      btnBoost.classList.toggle('is-boosted', pct > 100 && pct <= 200);
+      btnBoost.classList.toggle('is-max-boost', pct > 200);
+      btnBoost.title = `Volume Booster (Current: ${pct}% - Click to cycle: 100%, 150%, 200%, 300%)`;
+    }
+
+    // Sync settings modal stage volume if open
+    const settingsStageVolume = document.getElementById('settings-stage-volume');
+    const settingsStageVolumeVal = document.getElementById('settings-stage-volume-val');
+    if (settingsStageVolume && Math.abs(parseFloat(settingsStageVolume.value) - vol) > 0.04) {
+      settingsStageVolume.value = vol;
+    }
+    if (settingsStageVolumeVal) {
+      settingsStageVolumeVal.textContent = pct > 100 ? `${pct}% (Boost)` : `${pct}%`;
+      settingsStageVolumeVal.classList.toggle('boosted', pct > 100);
+    }
+  }
+
   getVolume() {
+    if (this.currentVolume !== undefined) {
+      return this.currentVolume;
+    }
     if (this.activeType === 'youtube' && this.ytPlayer && typeof this.ytPlayer.getVolume === 'function') {
       return (this.ytPlayer.getVolume() || 0) / 100;
     }
-    return this.videoEl ? this.videoEl.volume : 0;
+    return this.videoEl ? this.videoEl.volume : 1.0;
   }
 
   toggleMute() {
@@ -2093,10 +2169,12 @@ class UniversalPlayer {
 
   adjustVolume(delta) {
     const cur = this.getVolume();
-    const next = Math.max(0, Math.min(1, cur + delta));
+    const next = Math.max(0, Math.min(3, Math.round((cur + delta) * 20) / 20));
     this.setVolume(next);
     if (this.volumeSlider) this.volumeSlider.value = next;
-    if (window.showToast) window.showToast(`Volume: ${Math.round(next * 100)}%`, 'info', 1000);
+    const pct = Math.round(next * 100);
+    const label = pct > 100 ? `${pct}% (Boosted)` : `${pct}%`;
+    if (window.showToast) window.showToast(`Volume: ${label}`, 'info', 1000);
   }
 
   seekRelative(seconds) {

@@ -40,13 +40,14 @@
   object-fit: cover;
   pointer-events: none;
   opacity: 1;
+  filter: contrast(3.5) brightness(1.25) saturate(0);
   transition: opacity 0.35s ease;
 }
 
 .room-bg-scrim {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at center, rgba(6, 7, 10, 0.38) 0%, rgba(5, 6, 9, 0.72) 100%);
+  background: radial-gradient(circle at center, rgba(6, 7, 10, 0.22) 0%, rgba(5, 6, 9, 0.65) 100%);
   pointer-events: none;
 }
 
@@ -1387,16 +1388,101 @@
   margin-left: 8px;
 }
 
-/* Volume control slider */
+/* Volume control slider & booster */
 .volume-control {
   display: flex;
   align-items: center;
   gap: 6px;
 }
 .volume-slider {
-  width: 65px;
-  accent-color: var(--accent-primary);
+  width: 72px;
+  accent-color: var(--zami-gold, #f3a93b);
   cursor: pointer;
+  transition: width 0.2s ease;
+}
+.volume-control:hover .volume-slider {
+  width: 85px;
+}
+.btn-volume-boost {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  color: var(--text-main, #ffffff);
+  padding: 2px 7px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+  white-space: nowrap;
+}
+.btn-volume-boost:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(243, 169, 59, 0.55);
+  color: #ffffff;
+}
+.btn-volume-boost.is-boosted {
+  background: linear-gradient(135deg, rgba(243, 169, 59, 0.25) 0%, rgba(220, 130, 40, 0.35) 100%);
+  border-color: var(--zami-gold, #f3a93b);
+  color: var(--zami-gold, #f3a93b);
+  box-shadow: 0 0 10px rgba(243, 169, 59, 0.3);
+}
+.btn-volume-boost.is-max-boost {
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.3) 0%, rgba(239, 68, 68, 0.4) 100%);
+  border-color: #f97316;
+  color: #ffedd5;
+  box-shadow: 0 0 12px rgba(249, 115, 22, 0.4);
+}
+.boost-svg {
+  flex-shrink: 0;
+}
+.settings-quick-boost-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+.btn-quick-boost {
+  flex: 1;
+  min-width: 68px;
+  padding: 5px 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #a1a1aa;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  text-align: center;
+}
+.btn-quick-boost:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+.btn-quick-boost.active {
+  background: rgba(243, 169, 59, 0.22);
+  border-color: var(--zami-gold, #f3a93b);
+  color: var(--zami-gold, #f3a93b);
+  font-weight: 700;
+}
+.settings-vol-badge {
+  font-weight: 600;
+  color: #e5a93c;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: rgba(229, 169, 60, 0.12);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+}
+.settings-vol-badge.boosted {
+  color: #f97316;
+  background: rgba(249, 115, 22, 0.18);
+  font-weight: 700;
 }
 
 /* Speed selector */

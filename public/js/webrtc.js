@@ -166,17 +166,25 @@ class WebRTCManager {
   setPeerVolume(peerId, volume) {
     const peerObj = this.peers.get(peerId);
     if (peerObj && peerObj.audioEl) {
-      const vol = Math.max(0, Math.min(1.5, volume));
-      peerObj.audioEl.volume = Math.min(1, vol);
+      const vol = Math.max(0, Math.min(3, volume));
+      if (window.volumeBooster) {
+        window.volumeBooster.applyToElement(peerObj.audioEl, vol);
+      } else {
+        peerObj.audioEl.volume = Math.min(1, vol);
+      }
       peerObj.audioEl.muted = vol <= 0;
     }
   }
 
   setAllPeersVolume(volume) {
-    this.voiceVolume = Math.max(0, Math.min(1, volume));
+    this.voiceVolume = Math.max(0, Math.min(3, volume));
     this.peers.forEach((peerObj) => {
       if (peerObj && peerObj.audioEl) {
-        peerObj.audioEl.volume = this.voiceVolume;
+        if (window.volumeBooster) {
+          window.volumeBooster.applyToElement(peerObj.audioEl, this.voiceVolume);
+        } else {
+          peerObj.audioEl.volume = Math.min(1, this.voiceVolume);
+        }
       }
     });
   }

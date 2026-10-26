@@ -4164,7 +4164,7 @@ function initRaveSuite(socket, roomId) {
   // Dual-Fader Audio Controls & Smart Auto-Ducking
   let masterStageVolume = 1.0;
   let masterVoiceVolume = 1.0;
-  let isVoiceDuckingEnabled = true;
+  let isVoiceDuckingEnabled = false; // Disabled by default so stream volume never dips or sounds quiet
   let isStageCurrentlyDucked = false;
   let duckingReleaseTimer = null;
 
@@ -4180,7 +4180,11 @@ function initRaveSuite(socket, roomId) {
 
   function applyStageVolume(effectiveVol) {
     if (remoteAudio) {
-      remoteAudio.volume = effectiveVol;
+      if (window.volumeBooster) {
+        window.volumeBooster.applyToElement(remoteAudio, effectiveVol);
+      } else {
+        remoteAudio.volume = Math.min(1, effectiveVol);
+      }
       if (effectiveVol > 0) {
         remoteAudio.muted = false;
       }
@@ -4194,19 +4198,43 @@ function initRaveSuite(socket, roomId) {
   }
 
   function setStageVolume(vol) {
-    masterStageVolume = Math.max(0, Math.min(1, vol));
+    masterStageVolume = Math.max(0, Math.min(3, vol));
     if (settingsStageVolume) settingsStageVolume.value = masterStageVolume;
     if (volumeSlider) volumeSlider.value = masterStageVolume;
-    if (settingsStageVolumeVal) settingsStageVolumeVal.textContent = `${Math.round(masterStageVolume * 100)}%`;
 
-    const effective = isStageCurrentlyDucked ? (masterStageVolume * 0.35) : masterStageVolume;
+    const pct = Math.round(masterStageVolume * 100);
+    if (settingsStageVolumeVal) {
+      settingsStageVolumeVal.textContent = pct > 100 ? `${pct}% (⚡ Boost)` : `${pct}%`;
+      settingsStageVolumeVal.classList.toggle('boosted', pct > 100);
+    }
+
+    document.querySelectorAll('.btn-quick-boost[data-target="stage"]').forEach(btn => {
+      const bVal = parseFloat(btn.dataset.boost);
+      btn.classList.toggle('active', Math.abs(bVal - masterStageVolume) < 0.05);
+    });
+
+    const effective = isStageCurrentlyDucked ? (masterStageVolume * 0.75) : masterStageVolume;
     applyStageVolume(effective);
   }
 
   function setVoiceVolume(vol) {
-    masterVoiceVolume = Math.max(0, Math.min(1, vol));
+    masterVoiceVolume = Math.max(0, Math.min(3, vol));
     if (settingsVoiceVolume) settingsVoiceVolume.value = masterVoiceVolume;
-    if (settingsVoiceVolumeVal) settingsVoiceVolumeVal.textContent = `${Math.round(masterVoiceVolume * 100)}%`;
+
+    const pct = Math.round(masterVoiceVolume * 100);
+    if (settingsVoiceVolumeVal) {
+      settingsVoiceVolumeVal.textContent = pct > 100 ? `${pct}% (⚡ Boost)` : `${pct}%`;
+      settingsVoiceVolumeVal.classList.toggle('boosted', pct > 100);
+    }
+
+    document.querySelectorAll('.btn-quick-boost[data-target="voice"]').forEach(btn => {
+      const bVal = parseFloat(btn.dataset.boost);
+      btn.classList.toggle('active', Math.abs(bVal - masterVoiceVolume) < 0.05);
+    });
+
+    if (window.volumeBooster) {
+      window.volumeBooster.setVoiceVolume(masterVoiceVolume);
+    }
 
     if (window.webrtcManager && typeof window.webrtcManager.setAllPeersVolume === 'function') {
       window.webrtcManager.setAllPeersVolume(masterVoiceVolume);
@@ -4224,6 +4252,27 @@ function initRaveSuite(socket, roomId) {
       setVoiceVolume(parseFloat(e.target.value));
     });
   }
+
+  // Quick Boost Buttons in Settings Modal
+  document.querySelectorAll('.btn-quick-boost').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.target;
+      const boostVal = parseFloat(btn.dataset.boost);
+      if (target === 'stage') {
+        setStageVolume(boostVal);
+        if (window.showToast) {
+          const pct = Math.round(boostVal * 100);
+          window.showToast(pct > 100 ? `⚡ Stage Volume Boosted to ${pct}%` : `Stage Volume: ${pct}%`, 'info', 1500);
+        }
+      } else if (target === 'voice') {
+        setVoiceVolume(boostVal);
+        if (window.showToast) {
+          const pct = Math.round(boostVal * 100);
+          window.showToast(pct > 100 ? `⚡ Friends Voice Boosted to ${pct}%` : `Friends Voice Volume: ${pct}%`, 'info', 1500);
+        }
+      }
+    });
+  });
 
   if (btnToggleVoiceDucking) {
     btnToggleVoiceDucking.addEventListener('click', () => {
@@ -4270,9 +4319,9 @@ function initRaveSuite(socket, roomId) {
       }
       if (!isStageCurrentlyDucked) {
         isStageCurrentlyDucked = true;
-        applyStageVolume(masterStageVolume * 0.35);
+        applyStageVolume(masterStageVolume * 0.75);
         if (audioDuckingBadge) {
-          audioDuckingBadge.textContent = 'Ducking Active (-65%)';
+          audioDuckingBadge.textContent = 'Ducking Active (-25%)';
           audioDuckingBadge.className = 'badge-mini-gold pulse-gold';
         }
       }

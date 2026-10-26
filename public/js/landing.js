@@ -372,4 +372,26 @@ document.addEventListener('DOMContentLoaded', () => {
       btnPreviewVol.style.opacity = isMuted ? '0.5' : '1';
     });
   }
+
+  // --------------------------------------------------------------------------
+  // Animated Video Background Auto-playback Handler
+  // --------------------------------------------------------------------------
+  const bgVideo = document.getElementById('landing-bg-video');
+  if (bgVideo) {
+    const playPromise = bgVideo.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {
+        const startVideo = () => {
+          bgVideo.play();
+          window.removeEventListener('click', startVideo);
+          window.removeEventListener('touchstart', startVideo);
+          window.removeEventListener('keydown', startVideo);
+        };
+        window.addEventListener('click', startVideo, { once: true });
+        window.addEventListener('touchstart', startVideo, { once: true });
+        window.addEventListener('keydown', startVideo, { once: true });
+      });
+    }
+  }
 });
+
