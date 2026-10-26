@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>ZAMI — Your people. Your screen. In sync.</title>
-  <meta name="description" content="Watch movies, shows, and videos together, wherever you are. Seamless sub-second synchronization across any browser and device.">
+  <title>ZAMI &mdash; Watch together, feel closer.</title>
+  <meta name="description" content="Watch movies, shows, and videos together in warm, cozy real-time sync with your favorite people.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Pinyon+Script&family=Playfair+Display:ital,wght@1,600;1,700;1,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -14,23 +14,26 @@
 
   <style>
     /* --------------------------------------------------------------------------
-       ZAMI — Premium Cinematic Responsive System
-       Spacious desktop layout (1360px max width, 42% / 58% hero ratio,
-       60px–76px fluid headline, enlarged media player, subtle living room bg).
+       ZAMI — Warm, Cozy & Aesthetic Cinematic Landing System
+       Color Palette: Warm Charcoal (#131110), Espresso (#1a1614), Soft Amber (#f59e0b),
+       Muted Peach (#fb923c / #fed7aa), and Archival Cream (#fafaf9).
        -------------------------------------------------------------------------- */
     :root {
-      --zami-bg: #08090d;
-      --zami-card-bg: #12141c;
-      --zami-card-border: rgba(255, 255, 255, 0.09);
-      --zami-gold: #f3a93b;
-      --zami-gold-light: #f7b447;
-      --zami-gold-dark: #eb9c2d;
-      --zami-gold-glow: rgba(243, 169, 59, 0.42);
-      --zami-text: #ffffff;
-      --zami-text-muted: #a4a7b7;
-      --zami-text-dim: #646777;
-      --zami-glass-btn: rgba(24, 27, 38, 0.72);
-      --zami-glass-border: rgba(255, 255, 255, 0.13);
+      --zami-bg: #131110;
+      --zami-bg-espresso: #1a1614;
+      --zami-card-bg: rgba(26, 22, 20, 0.85);
+      --zami-card-border: rgba(255, 255, 255, 0.08);
+      --zami-amber: #f59e0b;
+      --zami-amber-light: #fbbf24;
+      --zami-amber-dark: #d97706;
+      --zami-amber-glow: rgba(245, 158, 11, 0.28);
+      --zami-peach: #fb923c;
+      --zami-peach-muted: #fed7aa;
+      --zami-text-bright: #fafaf9;
+      --zami-text-muted: #a8a29e;
+      --zami-text-dim: #78716c;
+      --zami-glass-btn: rgba(36, 30, 27, 0.72);
+      --zami-glass-border: rgba(255, 255, 255, 0.12);
     }
 
     * {
@@ -45,14 +48,18 @@
       min-height: 100dvh;
       overflow-x: hidden;
       background-color: var(--zami-bg);
-      color: var(--zami-text);
+      color: var(--zami-text-bright);
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
 
-    /* Animated Television Static Cinema Video Backdrop */
-    .cinematic-backdrop-layer {
+    /* --------------------------------------------------------------------------
+       Cozy Ambient Warm Charcoal & Amber Lighting Backdrop
+       Replaces harsh static video with soft, drifting, blurred light orbs.
+       100% compositor-driven (transform: translate3d + opacity) for 60fps smooth playback.
+       -------------------------------------------------------------------------- */
+    .cozy-ambient-backdrop {
       position: fixed;
       inset: 0;
       width: 100%;
@@ -60,57 +67,95 @@
       pointer-events: none;
       z-index: 0;
       overflow: hidden;
-      background: #08090d;
+      background-color: var(--zami-bg);
+      background-image: 
+        radial-gradient(ellipse 90% 70% at 50% 15%, #1d1815 0%, #131110 75%),
+        linear-gradient(180deg, #161311 0%, #110f0e 100%);
     }
-    .backdrop-video {
+
+    .ambient-orb {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      min-width: 100%;
-      min-height: 100%;
-      width: 100%;
-      height: 100%;
-      transform: translate(-50%, -50%);
-      object-fit: cover;
+      border-radius: 50%;
+      filter: blur(85px);
       pointer-events: none;
-      opacity: 0.88;
-      filter: contrast(3.5) brightness(1.25) saturate(0);
-      transition: opacity 0.5s ease;
+      will-change: transform;
     }
-    .backdrop-dark-scrim {
+
+    /* Warm amber light orb floating on top-left / center */
+    .ambient-orb-1 {
+      top: 10%;
+      left: 8%;
+      width: min(520px, 48vw);
+      height: min(520px, 48vw);
+      background: radial-gradient(circle, rgba(245, 158, 11, 0.18) 0%, rgba(217, 119, 6, 0.06) 50%, transparent 70%);
+      opacity: 0.65;
+      animation: orbDrift1 22s ease-in-out infinite alternate;
+    }
+
+    /* Muted peach orb floating near the media player */
+    .ambient-orb-2 {
+      top: 25%;
+      right: 6%;
+      width: min(580px, 52vw);
+      height: min(580px, 52vw);
+      background: radial-gradient(circle, rgba(251, 146, 60, 0.15) 0%, rgba(245, 158, 11, 0.04) 55%, transparent 75%);
+      opacity: 0.6;
+      animation: orbDrift2 26s ease-in-out infinite alternate;
+    }
+
+    /* Subtle espresso/caramel depth anchor */
+    .ambient-orb-3 {
+      bottom: 2%;
+      left: 32%;
+      width: min(460px, 42vw);
+      height: min(460px, 42vw);
+      background: radial-gradient(circle, rgba(217, 119, 6, 0.09) 0%, transparent 65%);
+      opacity: 0.5;
+      animation: orbDrift1 28s ease-in-out infinite alternate-reverse;
+    }
+
+    .ambient-vignette {
       position: absolute;
       inset: 0;
-      background: 
-        radial-gradient(ellipse 90% 75% at 50% 50%, rgba(6, 7, 10, 0.22) 0%, rgba(6, 7, 10, 0.58) 60%, rgba(4, 5, 8, 0.92) 100%),
-        linear-gradient(180deg, rgba(6, 7, 10, 0.55) 0%, rgba(6, 7, 10, 0.12) 40%, rgba(6, 7, 10, 0.78) 100%);
+      background: radial-gradient(ellipse 90% 80% at 50% 50%, transparent 40%, rgba(13, 11, 10, 0.72) 100%);
       pointer-events: none;
     }
-    .backdrop-ambient-glow {
-      position: absolute;
-      top: 25%;
-      left: 20%;
-      width: 45vw;
-      height: 45vw;
-      max-width: 600px;
-      max-height: 600px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(243, 169, 59, 0.1) 0%, rgba(220, 130, 40, 0.03) 50%, transparent 70%);
-      filter: blur(60px);
-      pointer-events: none;
+
+    @keyframes orbDrift1 {
+      0% {
+        transform: translate3d(0, 0, 0) scale(1);
+      }
+      50% {
+        transform: translate3d(40px, -25px, 0) scale(1.05);
+      }
+      100% {
+        transform: translate3d(-30px, 20px, 0) scale(0.96);
+      }
+    }
+
+    @keyframes orbDrift2 {
+      0% {
+        transform: translate3d(0, 0, 0) scale(1);
+      }
+      50% {
+        transform: translate3d(-35px, 30px, 0) scale(1.04);
+      }
+      100% {
+        transform: translate3d(25px, -20px, 0) scale(0.97);
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .backdrop-video {
-        display: none !important;
-      }
-      .cinematic-backdrop-layer {
-        background-image: url('/img/tv_static_poster.jpg') !important;
-        background-size: cover;
-        background-position: center;
+      .ambient-orb-1,
+      .ambient-orb-2,
+      .ambient-orb-3 {
+        animation: none !important;
       }
     }
 
-    /* Root Page Wrapper - Spacious & Generous Content Width (1360px) */
+    /* --------------------------------------------------------------------------
+       Root Page Wrapper (Spacious 1320px content container)
+       -------------------------------------------------------------------------- */
     .landing-wrapper {
       position: relative;
       width: 100%;
@@ -118,7 +163,7 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      max-width: 1360px;
+      max-width: 1320px;
       margin: 0 auto;
       padding: max(20px, env(safe-area-inset-top)) clamp(20px, 3.5vw, 56px) max(24px, env(safe-area-inset-bottom));
       z-index: 1;
@@ -132,12 +177,12 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 6px 0 24px;
+      padding: 6px 0 28px;
       position: relative;
       z-index: 20;
     }
 
-    /* Brand Logo: Cursive 'Z' + Italic Serif 'ami' */
+    /* Brand Logo: Cursive 'Z' + Italic Serif 'ami' with warm golden glow */
     .brand-group {
       display: inline-flex;
       align-items: baseline;
@@ -154,14 +199,14 @@
       display: inline-flex;
       align-items: baseline;
       line-height: 1;
-      background: linear-gradient(135deg, #ffffff 0%, #fae29c 32%, #e5a93c 70%, #d49228 100%);
+      background: linear-gradient(135deg, #ffffff 0%, #fed7aa 30%, #f59e0b 70%, #d97706 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      filter: drop-shadow(0 2px 10px rgba(229, 169, 60, 0.35));
+      filter: drop-shadow(0 2px 10px rgba(245, 158, 11, 0.3));
     }
     .zami-text-logo .z-cursive {
       font-family: 'Pinyon Script', 'Brush Script MT', cursive;
-      font-size: clamp(2.4rem, 2rem + 1.2vw, 3.2rem);
+      font-size: clamp(2.3rem, 1.9rem + 1.2vw, 3.1rem);
       font-style: italic;
       font-weight: 400;
       margin-right: -2px;
@@ -170,57 +215,61 @@
     }
     .zami-text-logo .ami-serif {
       font-family: 'Playfair Display', 'Didot', serif;
-      font-size: clamp(1.6rem, 1.3rem + 0.8vw, 2.15rem);
+      font-size: clamp(1.55rem, 1.3rem + 0.8vw, 2.1rem);
       font-style: italic;
       font-weight: 700;
       letter-spacing: -0.01em;
       display: inline-block;
     }
 
-    /* Header Nav Actions */
+    /* Header Nav Action Button */
     .nav-actions {
       display: flex;
       align-items: center;
       gap: 12px;
     }
     .btn-nav-create {
-      background: linear-gradient(180deg, var(--zami-gold-light) 0%, var(--zami-gold-dark) 100%);
-      color: #0c0e14;
+      background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);
+      color: #12100e;
       border: none;
       border-radius: 999px;
-      padding: clamp(8px, 1.2vw, 10px) clamp(16px, 2vw, 24px);
+      padding: clamp(8px, 1vw, 10px) clamp(16px, 1.8vw, 22px);
       font-family: inherit;
-      font-size: clamp(0.82rem, 0.78rem + 0.2vw, 0.92rem);
+      font-size: clamp(0.82rem, 0.78rem + 0.2vw, 0.9rem);
       font-weight: 700;
       display: inline-flex;
       align-items: center;
       gap: 8px;
       cursor: pointer;
-      box-shadow: 0 4px 18px rgba(243, 169, 59, 0.35);
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 16px rgba(245, 158, 11, 0.28);
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, background 0.2s ease;
       user-select: none;
     }
     .btn-nav-create:hover {
       transform: translateY(-1px);
-      box-shadow: 0 6px 22px rgba(243, 169, 59, 0.5);
+      background: linear-gradient(180deg, #fbbf24 0%, #ea580c 100%);
+      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.42);
+    }
+    .btn-nav-create:active {
+      transform: translateY(0);
     }
 
     /* --------------------------------------------------------------------------
-       Main Hero Grid Layout - 42% Text / 58% Enlarged Media Player
+       Main Hero Container: Spacious 2-Column Desktop Grid
+       44% Left Column (Text & CTAs) / 56% Right Column (Media Player Preview)
        -------------------------------------------------------------------------- */
     .hero-container {
       width: 100%;
       display: flex;
       flex-direction: column;
-      gap: 32px;
+      gap: 36px;
       margin: auto 0;
-      padding: 16px 0 32px;
+      padding: 12px 0 28px;
       position: relative;
       z-index: 10;
       flex: 1;
     }
 
-    /* Left Column: Hero Text, Subtitle, Buttons, and Features */
     .hero-content-col {
       display: flex;
       flex-direction: column;
@@ -228,75 +277,102 @@
       min-width: 0;
     }
 
-    /* 60px–76px Fluid Headline on Desktop */
+    /* Subtle Cozy Pill Badge */
+    .hero-pill-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 13px;
+      border-radius: 999px;
+      background: rgba(245, 158, 11, 0.08);
+      border: 1px solid rgba(245, 158, 11, 0.22);
+      margin-bottom: 20px;
+      width: fit-content;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    .badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background-color: #f59e0b;
+      box-shadow: 0 0 8px #f59e0b;
+    }
+    .badge-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      color: #fbbf24;
+    }
+
+    /* Clear, Warm Headline: "Watch together, feel closer." */
     .hero-headline {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: clamp(2.35rem, 1.8rem + 3.2vw, 3.2rem);
-      line-height: 1.06;
+      font-size: clamp(2.4rem, 1.9rem + 3vw, 4.2rem);
+      line-height: 1.08;
       font-weight: 800;
       letter-spacing: -0.035em;
-      color: #ffffff;
-      margin-bottom: 22px;
+      color: var(--zami-text-bright);
+      margin-bottom: 18px;
       text-wrap: balance;
-      text-shadow: 0 4px 28px rgba(0, 0, 0, 0.95);
     }
-    .headline-line {
+    .headline-part {
       display: block;
     }
-    .headline-gold {
-      color: var(--zami-gold);
-      background: linear-gradient(135deg, #ffffff 0%, #fad074 35%, #f3a93b 70%, #e09628 100%);
+    .headline-glow {
+      color: var(--zami-amber);
+      background: linear-gradient(135deg, #ffffff 0%, #fed7aa 25%, #f59e0b 65%, #d97706 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      filter: drop-shadow(0 2px 14px rgba(243, 169, 59, 0.3));
+      filter: drop-shadow(0 2px 18px rgba(245, 158, 11, 0.28));
     }
 
+    /* Supporting Subtitle */
     .hero-subtitle {
-      font-size: clamp(1rem, 0.94rem + 0.3vw, 1.2rem);
+      font-size: clamp(1rem, 0.95rem + 0.3vw, 1.15rem);
       line-height: 1.6;
       color: var(--zami-text-muted);
-      max-width: 490px;
-      margin-bottom: clamp(26px, 2.6vw, 38px);
+      max-width: 480px;
+      margin-bottom: clamp(26px, 2.4vw, 36px);
       font-weight: 400;
       text-wrap: pretty;
-      text-shadow: 0 2px 14px rgba(0, 0, 0, 0.95);
     }
 
-    /* Hero CTA Buttons Group */
+    /* CTA Buttons Group */
     .hero-cta-group {
       display: flex;
       flex-direction: column;
       gap: 14px;
       width: 100%;
-      margin-bottom: 0;
+      margin-bottom: 26px;
     }
 
-    /* Primary Gold Pill: Create a room */
+    /* Primary Warm Amber Button */
     .btn-cta-create {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 12px;
+      gap: 10px;
       width: 100%;
       min-height: 52px;
-      padding: 15px 30px;
+      padding: 14px 28px;
       border-radius: 999px;
       border: none;
-      background: linear-gradient(180deg, var(--zami-gold-light) 0%, var(--zami-gold-dark) 100%);
-      color: #0c0e14;
+      background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);
+      color: #12100e;
       font-family: inherit;
-      font-size: 1.04rem;
+      font-size: 1rem;
       font-weight: 700;
       letter-spacing: 0.01em;
       cursor: pointer;
-      box-shadow: 0 8px 28px rgba(243, 169, 59, 0.42);
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 8px 24px rgba(245, 158, 11, 0.32), 0 2px 4px rgba(0, 0, 0, 0.3);
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, background 0.2s ease;
       user-select: none;
     }
     .btn-cta-create:hover {
-      background: linear-gradient(180deg, #f9bd5a 0%, #ef9f30 100%);
-      transform: translateY(-1px);
-      box-shadow: 0 10px 32px rgba(243, 169, 59, 0.58);
+      transform: translateY(-2px);
+      background: linear-gradient(180deg, #fbbf24 0%, #ea580c 100%);
+      box-shadow: 0 12px 30px rgba(245, 158, 11, 0.45), 0 4px 8px rgba(0, 0, 0, 0.35);
     }
     .btn-cta-create:active {
       transform: translateY(0);
@@ -313,10 +389,10 @@
       transition: transform 0.18s ease;
     }
     .btn-cta-create:hover .cta-arrow-icon {
-      transform: translateX(2px);
+      transform: translateX(3px);
     }
 
-    /* Secondary Glass Pill: Join with code */
+    /* Secondary Warm Frosted Glass Button */
     .btn-cta-join {
       display: inline-flex;
       align-items: center;
@@ -324,33 +400,59 @@
       gap: 10px;
       width: 100%;
       min-height: 52px;
-      padding: 15px 28px;
+      padding: 14px 26px;
       border-radius: 999px;
-      border: 1px solid var(--zami-glass-border);
-      background: var(--zami-glass-btn);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(32, 27, 24, 0.72);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      color: #e7e5e4;
       font-family: inherit;
-      font-size: 1.04rem;
+      font-size: 1rem;
       font-weight: 600;
       letter-spacing: 0.01em;
       cursor: pointer;
-      transition: all 0.2s ease;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
       user-select: none;
     }
     .btn-cta-join:hover {
-      background: rgba(32, 35, 48, 0.88);
-      border-color: rgba(255, 255, 255, 0.26);
-      transform: translateY(-1px);
+      background: rgba(44, 37, 33, 0.88);
+      border-color: rgba(245, 158, 11, 0.35);
+      color: #ffffff;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.32);
     }
     .btn-cta-join:active {
       transform: translateY(0);
     }
 
+    /* Micro Perks / Feature Highlights */
+    .hero-perks-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .hero-perk {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--zami-text-muted);
+    }
+    .hero-perk svg {
+      flex-shrink: 0;
+    }
+    .hero-perk-divider {
+      color: var(--zami-text-dim);
+      font-size: 0.8rem;
+      user-select: none;
+    }
 
     /* --------------------------------------------------------------------------
-       Right Column: Enlarged Main-Focus Cinematic Media-Player Preview
+       Right Column: Refined Shared Watch Party Media Player Preview
        -------------------------------------------------------------------------- */
     .player-preview-wrapper {
       position: relative;
@@ -361,15 +463,16 @@
       align-items: center;
     }
 
+    /* Soft warm ambient backlight behind preview card */
     .player-glow-ambient {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 110%;
-      height: 110%;
-      background: radial-gradient(ellipse 65% 55% at 50% 50%, rgba(243, 169, 59, 0.14) 0%, rgba(200, 110, 30, 0.04) 55%, transparent 75%);
-      filter: blur(52px);
+      width: 106%;
+      height: 106%;
+      background: radial-gradient(ellipse 65% 55% at 50% 50%, rgba(245, 158, 11, 0.16) 0%, rgba(251, 146, 60, 0.05) 50%, transparent 75%);
+      filter: blur(50px);
       pointer-events: none;
       z-index: 0;
     }
@@ -379,26 +482,34 @@
       z-index: 1;
       width: 100%;
       max-width: 100%;
-      background: rgba(14, 16, 23, 0.85);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: clamp(16px, 1.8vw, 24px);
+      background: rgba(22, 19, 18, 0.85);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      border-radius: clamp(18px, 2vw, 24px);
       box-shadow: 
-        0 28px 70px rgba(0, 0, 0, 0.88),
-        0 0 45px rgba(243, 169, 59, 0.08),
-        0 1px 0 rgba(255, 255, 255, 0.1) inset;
+        0 32px 80px rgba(0, 0, 0, 0.8),
+        0 0 50px rgba(245, 158, 11, 0.06),
+        0 1px 0 rgba(255, 255, 255, 0.12) inset;
       overflow: hidden;
       display: flex;
       flex-direction: column;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+    }
+    .player-preview-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 
+        0 38px 90px rgba(0, 0, 0, 0.85),
+        0 0 60px rgba(245, 158, 11, 0.1),
+        0 1px 0 rgba(255, 255, 255, 0.16) inset;
     }
 
-    /* Video Screen Container - Fluid Cinematic 16:9.4 */
+    /* Video Screen Container */
     .preview-screen-container {
       position: relative;
       width: 100%;
       aspect-ratio: 16 / 9.4;
-      background: #08090d;
+      background: #0d0b0a;
       overflow: hidden;
     }
 
@@ -415,17 +526,17 @@
       position: absolute;
       inset: 0;
       background: 
-        linear-gradient(180deg, rgba(7, 8, 12, 0.6) 0%, rgba(7, 8, 12, 0.08) 28%, rgba(7, 8, 12, 0.08) 65%, rgba(7, 8, 12, 0.82) 100%),
-        radial-gradient(ellipse 80% 60% at 50% 50%, transparent 42%, rgba(0, 0, 0, 0.4) 100%);
+        linear-gradient(180deg, rgba(13, 11, 10, 0.6) 0%, rgba(13, 11, 10, 0.05) 30%, rgba(13, 11, 10, 0.05) 65%, rgba(13, 11, 10, 0.85) 100%),
+        radial-gradient(ellipse 80% 60% at 50% 50%, transparent 45%, rgba(0, 0, 0, 0.45) 100%);
       pointer-events: none;
     }
 
     /* Top Floating Status Badges */
     .preview-top-bar {
       position: absolute;
-      top: clamp(10px, 1.8vw, 18px);
-      left: clamp(10px, 1.8vw, 18px);
-      right: clamp(10px, 1.8vw, 18px);
+      top: clamp(10px, 1.6vw, 16px);
+      left: clamp(10px, 1.6vw, 16px);
+      right: clamp(10px, 1.6vw, 16px);
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -437,264 +548,227 @@
       display: inline-flex;
       align-items: center;
       gap: 7px;
-      padding: clamp(5px, 0.8vw, 8px) clamp(10px, 1.2vw, 15px);
+      padding: clamp(5px, 0.8vw, 7px) clamp(10px, 1.2vw, 14px);
       border-radius: 999px;
-      background: rgba(14, 16, 24, 0.82);
+      background: rgba(20, 17, 16, 0.82);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
-      border: 1px solid rgba(255, 255, 255, 0.13);
-      color: #ffffff;
-      font-size: clamp(0.72rem, 0.68rem + 0.2vw, 0.84rem);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #f5f5f4;
+      font-size: clamp(0.72rem, 0.68rem + 0.2vw, 0.82rem);
       font-weight: 500;
       white-space: nowrap;
       user-select: none;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
     }
 
     .pill-status {
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+      border-color: rgba(16, 185, 129, 0.25);
     }
     .status-pulse-dot {
       width: 7px;
       height: 7px;
       border-radius: 50%;
-      background: #22c55e;
-      box-shadow: 0 0 8px #22c55e;
-      flex-shrink: 0;
+      background: #10b981;
+      box-shadow: 0 0 8px rgba(16, 185, 129, 0.8);
+      animation: pulseSync 2.5s ease-in-out infinite;
     }
-    .status-pill-text {
-      color: #f1f2f6;
+    @keyframes pulseSync {
+      0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 0.55;
+        transform: scale(0.9);
+      }
     }
 
     .pill-room {
       cursor: pointer;
-      color: #d1d3dc;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
-      transition: all 0.18s ease;
-      text-decoration: none;
+      border-color: rgba(245, 158, 11, 0.25);
+      background: rgba(24, 20, 18, 0.85);
+      transition: background 0.18s, border-color 0.18s, transform 0.18s;
+      font-family: inherit;
     }
-    .pill-room:hover,
-    .pill-room:focus-visible {
-      background: rgba(22, 25, 38, 0.94);
-      border-color: rgba(243, 169, 59, 0.45);
-      color: #ffffff;
-      outline: none;
-    }
-    .pill-room-icon {
-      color: var(--zami-gold);
-      flex-shrink: 0;
+    .pill-room:hover {
+      background: rgba(36, 30, 26, 0.95);
+      border-color: rgba(245, 158, 11, 0.45);
+      transform: translateY(-1px);
     }
     .room-code-tag {
       font-family: 'JetBrains Mono', monospace;
+      color: #fbbf24;
       font-weight: 600;
-      color: #ffffff;
-      letter-spacing: -0.01em;
     }
-    .pill-copy-icon {
-      color: #8c8e9b;
-      margin-left: 2px;
-      flex-shrink: 0;
-      transition: color 0.18s;
-    }
-    .pill-room:hover .pill-copy-icon {
-      color: #ffffff;
+    .pill-room-icon, .pill-copy-icon {
+      color: var(--zami-text-muted);
     }
 
-    /* Toast Notification for Copying */
+    /* Copy Link Toast */
     .preview-toast {
       position: absolute;
       top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%) scale(0.9);
-      background: rgba(18, 20, 28, 0.95);
-      border: 1px solid var(--zami-gold);
-      color: #ffffff;
-      padding: 10px 20px;
+      transform: translate(-50%, -50%) scale(0.92);
+      background: rgba(18, 15, 14, 0.95);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: #fafaf9;
+      padding: 9px 18px;
       border-radius: 999px;
-      font-size: 0.88rem;
+      font-size: 0.84rem;
       font-weight: 600;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.8), 0 0 16px rgba(243, 169, 59, 0.35);
-      backdrop-filter: blur(12px);
-      z-index: 20;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(245, 158, 11, 0.25);
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 20;
     }
-    .preview-toast.active {
+    .preview-toast.show {
       opacity: 1;
       transform: translate(-50%, -50%) scale(1);
     }
 
-    /* Participant Avatars: Desktop Vertical Stack */
+    /* Avatars Stack: Desktop Right Edge Column */
     .preview-avatars-desktop {
       position: absolute;
-      right: clamp(14px, 1.8vw, 22px);
       top: 50%;
+      right: clamp(10px, 1.6vw, 16px);
       transform: translateY(-50%);
-      display: none;
+      display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
       z-index: 5;
     }
+
     .avatar-item {
       position: relative;
-      width: 38px;
-      height: 38px;
+      width: clamp(28px, 2.4vw, 34px);
+      height: clamp(28px, 2.4vw, 34px);
       border-radius: 50%;
-      border: 2px solid rgba(255, 255, 255, 0.16);
-      background: #181a24;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
-      transition: transform 0.2s ease, border-color 0.2s ease;
-      cursor: default;
-    }
-    .avatar-item:hover {
-      transform: scale(1.1);
-      border-color: #ffffff;
-      z-index: 2;
-    }
-    .avatar-host {
-      border-color: var(--zami-gold);
-      box-shadow: 0 0 12px rgba(243, 169, 59, 0.45);
+      cursor: pointer;
     }
     .avatar-thumb {
       width: 100%;
       height: 100%;
-      border-radius: 50%;
       object-fit: cover;
-      display: block;
-    }
-    .crown-badge {
-      position: absolute;
-      top: -6px;
-      right: -6px;
-      width: 18px;
-      height: 18px;
       border-radius: 50%;
-      background: #10121a;
-      border: 1px solid var(--zami-gold);
+      border: 2px solid rgba(245, 158, 11, 0.35);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      display: block;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
+    }
+    .avatar-item:hover .avatar-thumb,
+    .mob-avatar:hover .avatar-thumb {
+      transform: scale(1.1);
+      border-color: #f59e0b;
+    }
+    .crown-badge, .crown-badge-mob {
+      position: absolute;
+      top: -4px;
+      right: -3px;
+      background: #181513;
+      border: 1px solid rgba(245, 158, 11, 0.5);
+      border-radius: 50%;
+      width: 14px;
+      height: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
     }
     .avatar-count {
-      background: #1e212d;
-      border-color: rgba(255, 255, 255, 0.18);
-      font-size: 0.74rem;
+      background: rgba(28, 24, 22, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      color: #fed7aa;
+      font-size: 0.72rem;
       font-weight: 700;
-      color: #d8dae3;
-    }
-
-    /* Participant Avatars: Mobile Horizontal Stack Overlay */
-    .preview-avatars-mobile {
-      position: absolute;
-      right: 12px;
-      bottom: 12px;
       display: flex;
       align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
+    }
+    .avatar-count:hover {
+      transform: scale(1.1);
+      border-color: #f59e0b;
+    }
+
+    /* Mobile Avatars Stack (horizontal row at bottom-right) */
+    .preview-avatars-mobile {
+      display: none;
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      align-items: center;
+      gap: 6px;
       z-index: 5;
     }
     .mob-avatar {
       position: relative;
-      width: 28px;
-      height: 28px;
+      width: 26px;
+      height: 26px;
       border-radius: 50%;
-      border: 1.5px solid #08090d;
-      background: #181a24;
-      margin-left: -7px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
-    }
-    .mob-avatar:first-child {
-      margin-left: 0;
-    }
-    .mob-avatar.avatar-host {
-      border-color: var(--zami-gold);
-      z-index: 4;
-    }
-    .crown-badge-mob {
-      position: absolute;
-      top: -5px;
-      right: -5px;
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: #10121a;
-      border: 1px solid var(--zami-gold);
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
     .avatar-count-mob {
-      background: #1e212d;
-      color: #e2e4ee;
-      font-size: 0.64rem;
+      background: rgba(28, 24, 22, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      color: #fed7aa;
+      font-size: 0.68rem;
       font-weight: 700;
-      border-color: rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
     }
 
     /* Bottom Playback Controls Bar */
     .preview-controls-bar {
-      width: 100%;
-      background: rgba(14, 16, 24, 0.96);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      padding: clamp(9px, 1.2vw, 15px) clamp(14px, 1.8vw, 22px);
       display: flex;
       align-items: center;
-      gap: clamp(8px, 1.2vw, 16px);
-      z-index: 6;
+      gap: clamp(8px, 1.4vw, 14px);
+      padding: clamp(10px, 1.2vw, 14px) clamp(12px, 1.6vw, 18px);
+      background: rgba(18, 15, 14, 0.95);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
     }
 
     .ctrl-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
       background: transparent;
       border: none;
-      color: #d1d3df;
-      width: 34px;
-      height: 34px;
-      min-width: 34px;
-      min-height: 34px;
-      padding: 0;
-      border-radius: 8px;
-      display: inline-flex;
+      color: #e7e5e4;
+      display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: color 0.18s, background 0.18s;
+      transition: background 0.18s, color 0.18s, transform 0.18s;
       flex-shrink: 0;
     }
-    .ctrl-btn:hover,
-    .ctrl-btn:focus-visible {
+    .ctrl-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
       color: #ffffff;
-      background: rgba(255, 255, 255, 0.08);
-      outline: none;
+      transform: scale(1.05);
+    }
+    .ctrl-btn:active {
+      transform: scale(0.96);
     }
     .ctrl-play {
-      color: #ffffff;
-    }
-    .ctrl-play:hover {
-      color: var(--zami-gold);
+      color: #fbbf24;
     }
 
     .ctrl-time {
       font-family: 'JetBrains Mono', monospace;
-      font-size: clamp(0.74rem, 0.7rem + 0.15vw, 0.84rem);
-      font-weight: 500;
-      color: #a4a7b7;
+      font-size: clamp(0.72rem, 0.68rem + 0.15vw, 0.8rem);
+      color: var(--zami-text-muted);
       white-space: nowrap;
       user-select: none;
       flex-shrink: 0;
     }
 
-    /* Scrubber Progress Bar */
     .ctrl-scrubber {
       flex: 1;
-      height: 24px;
+      height: 20px;
       display: flex;
       align-items: center;
       cursor: pointer;
@@ -705,7 +779,7 @@
       position: relative;
       width: 100%;
       height: 4px;
-      background: rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.16);
       border-radius: 999px;
       overflow: visible;
       transition: height 0.18s ease;
@@ -718,19 +792,19 @@
       top: 0;
       left: 0;
       height: 100%;
-      background: linear-gradient(90deg, #e5a93c 0%, #f7b447 100%);
+      background: linear-gradient(90deg, #d97706 0%, #f59e0b 50%, #fbbf24 100%);
       border-radius: 999px;
     }
     .scrubber-knob {
       position: absolute;
       top: 50%;
       transform: translate(-50%, -50%);
-      width: 13px;
-      height: 13px;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
       background: #ffffff;
-      border: 2px solid var(--zami-gold);
-      box-shadow: 0 0 10px rgba(243, 169, 59, 0.6);
+      border: 2px solid #f59e0b;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
       transition: transform 0.15s ease;
     }
     .ctrl-scrubber:hover .scrubber-knob {
@@ -744,9 +818,8 @@
       flex-shrink: 0;
     }
 
-
     /* --------------------------------------------------------------------------
-       Modal Dialogs: Join Room, Mobile Nav, Profile & Help
+       Modal Dialogs: Warm Charcoal & Amber Styling
        -------------------------------------------------------------------------- */
     .zami-dialog {
       border: none;
@@ -755,24 +828,24 @@
       max-width: 460px;
       width: calc(100% - 32px);
       margin: auto;
-      border-radius: 24px;
+      border-radius: 22px;
     }
     .zami-dialog::backdrop {
-      background: rgba(0, 0, 0, 0.82);
+      background: rgba(0, 0, 0, 0.8);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
     }
 
     .dialog-card {
-      background: #13151e;
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      border-radius: 24px;
-      padding: 28px 24px 24px;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.9), 0 0 35px rgba(243, 169, 59, 0.08);
+      background: #191614;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 22px;
+      padding: 26px 22px 22px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.9), 0 0 35px rgba(245, 158, 11, 0.08);
       display: flex;
       flex-direction: column;
-      gap: 18px;
-      color: #ffffff;
+      gap: 16px;
+      color: #fafaf9;
     }
     .dialog-header {
       display: flex;
@@ -780,19 +853,19 @@
       align-items: flex-start;
     }
     .dialog-title-group h3 {
-      font-size: 1.25rem;
+      font-size: 1.2rem;
       font-weight: 700;
-      color: #ffffff;
+      color: #fafaf9;
       margin-bottom: 4px;
     }
     .dialog-title-group p {
-      font-size: 0.88rem;
+      font-size: 0.86rem;
       color: var(--zami-text-muted);
       line-height: 1.45;
     }
     .btn-dialog-close {
-      width: 36px;
-      height: 36px;
+      width: 34px;
+      height: 34px;
       border-radius: 10px;
       background: rgba(255, 255, 255, 0.06);
       border: 1px solid rgba(255, 255, 255, 0.1);
@@ -823,23 +896,23 @@
     }
     .dialog-input {
       width: 100%;
-      min-height: 50px;
-      padding: 12px 14px 12px 44px;
-      background: #0a0b10;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 14px;
-      color: #ffffff;
+      min-height: 48px;
+      padding: 12px 14px 12px 42px;
+      background: #110f0e;
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      border-radius: 12px;
+      color: #fafaf9;
       font-family: inherit;
-      font-size: 0.95rem;
+      font-size: 0.94rem;
       outline: none;
       transition: border-color 0.2s, box-shadow 0.2s;
     }
     .dialog-input:focus {
-      border-color: var(--zami-gold);
-      box-shadow: 0 0 0 1px var(--zami-gold);
+      border-color: #f59e0b;
+      box-shadow: 0 0 0 1px #f59e0b;
     }
     .dialog-input::placeholder {
-      color: #5c5e6f;
+      color: #6a6460;
     }
 
     .dialog-actions {
@@ -850,14 +923,14 @@
       margin-top: 6px;
     }
     .btn-dialog-cancel {
-      min-height: 46px;
+      min-height: 44px;
       padding: 0 18px;
       background: transparent;
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 12px;
       color: var(--zami-text-muted);
       font-family: inherit;
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.18s;
@@ -867,31 +940,30 @@
       color: #ffffff;
     }
     .btn-dialog-primary {
-      min-height: 46px;
-      padding: 0 22px;
-      background: linear-gradient(180deg, var(--zami-gold-light) 0%, var(--zami-gold-dark) 100%);
+      min-height: 44px;
+      padding: 0 20px;
+      background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);
       border: none;
       border-radius: 12px;
-      color: #101218;
+      color: #12100e;
       font-family: inherit;
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       font-weight: 700;
       display: inline-flex;
       align-items: center;
       gap: 8px;
       cursor: pointer;
-      box-shadow: 0 4px 16px rgba(243, 169, 59, 0.4);
+      box-shadow: 0 4px 16px rgba(245, 158, 11, 0.35);
       transition: all 0.18s;
     }
     .btn-dialog-primary:hover {
-      background: #f7b447;
+      background: #fbbf24;
       transform: translateY(-1px);
     }
 
-
     /* Help & Guide Dialog */
     .help-dialog {
-      max-width: 580px;
+      max-width: 560px;
     }
     .help-cards-list {
       display: flex;
@@ -902,23 +974,23 @@
       display: flex;
       gap: 14px;
       padding: 14px;
-      background: #171922;
+      background: #201c19;
       border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 14px;
     }
     .help-item-icon {
-      color: var(--zami-gold);
+      color: #f59e0b;
       flex-shrink: 0;
       margin-top: 2px;
     }
     .help-item-info h4 {
-      font-size: 0.94rem;
+      font-size: 0.92rem;
       font-weight: 600;
-      color: #ffffff;
+      color: #fafaf9;
       margin-bottom: 4px;
     }
     .help-item-info p {
-      font-size: 0.84rem;
+      font-size: 0.82rem;
       color: var(--zami-text-muted);
       line-height: 1.45;
     }
@@ -950,14 +1022,14 @@
        RESPONSIVE BREAKPOINTS: Mobile -> Tablet -> Desktop
        -------------------------------------------------------------------------- */
 
-    /* Small Mobile (320px - 360px) Adjustments */
+    /* Small Mobile (320px - 360px) */
     @media (max-width: 360px) {
       .landing-wrapper {
         padding-left: 14px;
         padding-right: 14px;
       }
       .hero-headline {
-        font-size: 2.15rem;
+        font-size: 2.1rem;
       }
       .btn-cta-create, .btn-cta-join {
         font-size: 0.94rem;
@@ -974,10 +1046,26 @@
       .ctrl-btn-gear {
         display: none;
       }
-
     }
 
-    /* Tablet (768px - 1023px) - Stacked with Generous Spacing */
+    /* Mobile (<= 767px): Stacked Vertically, Optimized Padding */
+    @media (max-width: 767px) {
+      .preview-avatars-desktop {
+        display: none;
+      }
+      .preview-avatars-mobile {
+        display: flex;
+      }
+      .hero-container {
+        gap: 32px;
+        padding: 8px 0 20px;
+      }
+      .hero-perks-row {
+        justify-content: flex-start;
+      }
+    }
+
+    /* Tablet (768px - 1023px): Stacked Layout with Generous Spacing */
     @media (min-width: 768px) {
       .landing-wrapper {
         padding: 24px 36px 30px;
@@ -985,129 +1073,115 @@
       .zami-nav {
         padding: 8px 0 24px;
       }
-
       .hero-container {
         display: flex;
         flex-direction: column;
         gap: 36px;
         align-items: center;
         text-align: center;
-        padding: 20px 0 32px;
+        padding: 16px 0 32px;
       }
-
       .hero-content-col {
         align-items: center;
         max-width: 640px;
       }
-
-      .hero-headline {
-        font-size: clamp(2.8rem, 2.2rem + 1.8vw, 3.8rem);
+      .hero-pill-badge {
+        margin-left: auto;
+        margin-right: auto;
       }
-
       .hero-subtitle {
-        max-width: 540px;
+        margin-left: auto;
+        margin-right: auto;
       }
-
       .hero-cta-group {
         flex-direction: row;
         justify-content: center;
         width: auto;
-        gap: 16px;
-        margin-bottom: 0;
       }
       .btn-cta-create, .btn-cta-join {
         width: auto;
-        padding: 15px 30px;
+        padding: 14px 30px;
       }
-
+      .hero-perks-row {
+        justify-content: center;
+      }
       .player-preview-wrapper {
-        max-width: 700px;
-      }
-
-      .preview-avatars-desktop {
-        display: flex;
-      }
-      .preview-avatars-mobile {
-        display: none;
+        max-width: 740px;
+        width: 100%;
       }
     }
 
-    /* Desktop (1024px and wider) - Balanced 42% / 58% Two-Column Hero */
+    /* Desktop (1024px+) Spacious Two-Column Layout (44% Text / 56% Media Player) */
     @media (min-width: 1024px) {
       .landing-wrapper {
-        padding: 28px clamp(24px, 3.5vw, 56px) 36px;
+        padding: 28px clamp(32px, 4vw, 64px) 36px;
       }
-
+      .zami-nav {
+        padding: 10px 0 32px;
+      }
       .hero-container {
         display: grid;
-        grid-template-columns: minmax(0, 42fr) minmax(0, 58fr);
-        gap: clamp(36px, 3.8vw, 64px);
+        grid-template-columns: 44fr 56fr;
         align-items: center;
         text-align: left;
-        padding: 28px 0 44px;
-        min-height: calc(100dvh - 140px);
+        gap: clamp(36px, 4.2vw, 56px);
+        padding: 20px 0 40px;
       }
-
       .hero-content-col {
         align-items: flex-start;
         max-width: 100%;
       }
-
-      /* 60px–76px Fluid Headline on Desktop */
+      .hero-pill-badge {
+        margin-left: 0;
+        margin-right: 0;
+      }
       .hero-headline {
-        font-size: clamp(3.75rem, 2.5rem + 2.5vw, 4.75rem); /* 60px to 76px */
-        line-height: 1.05;
-        margin-bottom: 24px;
+        font-size: clamp(3.2rem, 2.2rem + 2.2vw, 4.3rem);
+        line-height: 1.06;
+        margin-bottom: 22px;
       }
-
       .hero-subtitle {
-        max-width: 490px;
-        margin-bottom: clamp(30px, 2.8vw, 42px);
+        margin-left: 0;
+        margin-right: 0;
+        max-width: 480px;
+        margin-bottom: clamp(28px, 2.6vw, 38px);
       }
-
       .hero-cta-group {
         flex-direction: row;
         justify-content: flex-start;
         gap: 16px;
-        margin-bottom: 0;
-      }
-
-      .player-preview-wrapper {
-        max-width: 100%;
-      }
-    }
-
-    /* Intermediate Laptop Adjustments (1024px - 1240px) */
-    @media (min-width: 1024px) and (max-width: 1240px) {
-      .hero-cta-group {
-        gap: 12px;
+        margin-bottom: 28px;
+        width: 100%;
       }
       .btn-cta-create, .btn-cta-join {
-        padding: 13px 18px;
-        font-size: 0.94rem;
-        min-height: 48px;
+        width: auto;
+      }
+      .hero-perks-row {
+        justify-content: flex-start;
+      }
+      .player-preview-wrapper {
+        max-width: 100%;
       }
     }
 
     /* Large Displays (1440px+) */
     @media (min-width: 1440px) {
       .hero-container {
-        gap: 64px;
+        gap: 60px;
       }
       .hero-headline {
-        font-size: 4.75rem; /* Exactly 76px on large desktop! */
+        font-size: 4.4rem;
       }
     }
   </style>
 </head>
 <body>
-  <!-- Animated Television Static Video Cinema Backdrop Layer -->
-  <div class="cinematic-backdrop-layer" id="landing-bg-layer" aria-hidden="true">
-    <video id="landing-bg-video" class="backdrop-video" autoplay loop muted playsinline preload="auto" poster="/img/tv_static_poster.jpg">
-      <source src="/video/tv-static.mp4" type="video/mp4">
-    </video>
-    <div class="backdrop-dark-scrim"></div>
-    <div class="backdrop-ambient-glow"></div>
+  <!-- Cozy Ambient Warm Charcoal & Amber Backdrop -->
+  <div class="cozy-ambient-backdrop" id="landing-bg-layer" aria-hidden="true">
+    <div class="ambient-orb ambient-orb-1"></div>
+    <div class="ambient-orb ambient-orb-2"></div>
+    <div class="ambient-orb ambient-orb-3"></div>
+    <div class="ambient-vignette"></div>
   </div>
 
   <div class="landing-wrapper">
@@ -1131,17 +1205,21 @@
       </div>
     </header>
 
-    <!-- Main Hero Container (42% Text / 58% Media Player on Desktop) -->
+    <!-- Main Hero Container (44% Text / 56% Media Player on Desktop) -->
     <main class="hero-container">
       <!-- Left Column / Hero Text and CTAs -->
       <section class="hero-content-col">
+        <div class="hero-pill-badge">
+          <span class="badge-dot"></span>
+          <span class="badge-label">Synchronized Cinema &amp; Streaming</span>
+        </div>
+
         <h1 class="hero-headline">
-          <span class="headline-line">Your people.</span>
-          <span class="headline-line">Your screen.</span>
-          <span class="headline-line headline-gold">In sync.</span>
+          <span class="headline-part">Watch together,</span>
+          <span class="headline-part headline-glow">feel closer.</span>
         </h1>
 
-        <p class="hero-subtitle">Watch movies, shows, and videos together, wherever you are.</p>
+        <p class="hero-subtitle">Stream movies, shows, and shared moments with your favorite people in real time, from anywhere in the world.</p>
 
         <!-- CTA Buttons -->
         <div class="hero-cta-group">
@@ -1169,6 +1247,32 @@
           </button>
         </div>
 
+        <!-- Micro Feature Highlights -->
+        <div class="hero-perks-row">
+          <div class="hero-perk">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <span>Zero Sync Drift</span>
+          </div>
+          <div class="hero-perk-divider" aria-hidden="true">&bull;</div>
+          <div class="hero-perk">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            <span>Private &amp; Free</span>
+          </div>
+          <div class="hero-perk-divider" aria-hidden="true">&bull;</div>
+          <div class="hero-perk">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+              <line x1="8" y1="21" x2="16" y2="21"/>
+              <line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+            <span>No Install Needed</span>
+          </div>
+        </div>
       </section>
 
       <!-- Right Column: Enlarged Main-Focus Cinematic Media Player Preview -->
@@ -1193,7 +1297,7 @@
                   <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
                   <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
                 </svg>
-                <span class="room-pill-label">Room • <span class="room-code-tag">zami-7f3k</span></span>
+                <span class="room-pill-label">Room &bull; <span class="room-code-tag">zami-7f3k</span></span>
                 <svg class="pill-copy-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                   <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
                   <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
@@ -1209,7 +1313,7 @@
               <div class="avatar-item avatar-host" title="Host">
                 <img src="/img/avatar_p1.png" alt="Host avatar" class="avatar-thumb">
                 <span class="crown-badge" title="Room Host">
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="#f3a93b">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="#f59e0b">
                     <path d="M2 4l3 12h14l3-12-6 7-4-11-4 11-6-7z"/>
                   </svg>
                 </span>
@@ -1233,7 +1337,7 @@
               <div class="mob-avatar avatar-host">
                 <img src="/img/avatar_p1.png" alt="Host avatar" class="avatar-thumb">
                 <span class="crown-badge-mob">
-                  <svg width="9" height="9" viewBox="0 0 24 24" fill="#f3a93b">
+                  <svg width="9" height="9" viewBox="0 0 24 24" fill="#f59e0b">
                     <path d="M2 4l3 12h14l3-12-6 7-4-11-4 11-6-7z"/>
                   </svg>
                 </span>
@@ -1338,8 +1442,6 @@
     </div>
   </dialog>
 
-
-
   <!-- Modal Dialog: Sign in / Profile Customizer -->
   <dialog id="profile-dialog" class="zami-dialog" closedby="any" aria-labelledby="profile-dialog-title">
     <div class="dialog-card">
@@ -1356,14 +1458,14 @@
       <form id="form-profile" onsubmit="return false;">
         <div style="display: flex; flex-direction: column; gap: 14px;">
           <div>
-            <label for="input-display-name" style="display: block; font-size: 0.8rem; font-weight: 600; color: #a4a7b7; margin-bottom: 6px;">DISPLAY NAME</label>
+            <label for="input-display-name" style="display: block; font-size: 0.8rem; font-weight: 600; color: #a8a29e; margin-bottom: 6px;">DISPLAY NAME</label>
             <input type="text" id="input-display-name" class="dialog-input" style="padding-left: 14px;" placeholder="Your nickname" spellcheck="false">
           </div>
 
           <div>
-            <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #a4a7b7; margin-bottom: 8px;">AVATAR COLOR ACCENT</label>
+            <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #a8a29e; margin-bottom: 8px;">AVATAR COLOR ACCENT</label>
             <div class="color-picker-row">
-              <button type="button" class="color-dot selected" data-color="#f3a93b" style="background: #f3a93b;" aria-label="Gold Accent"></button>
+              <button type="button" class="color-dot selected" data-color="#f59e0b" style="background: #f59e0b;" aria-label="Amber Accent"></button>
               <button type="button" class="color-dot" data-color="#38bdf8" style="background: #38bdf8;" aria-label="Sky Blue Accent"></button>
               <button type="button" class="color-dot" data-color="#ec4899" style="background: #ec4899;" aria-label="Pink Accent"></button>
               <button type="button" class="color-dot" data-color="#22c55e" style="background: #22c55e;" aria-label="Emerald Accent"></button>
@@ -1397,7 +1499,7 @@
       <div class="help-cards-list">
         <div class="help-item-card">
           <div class="help-item-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f3a93b" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
           </div>
           <div class="help-item-info">
             <h4>Universal Synchronized Cinema</h4>
@@ -1407,7 +1509,7 @@
 
         <div class="help-item-card">
           <div class="help-item-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f3a93b" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
           </div>
           <div class="help-item-info">
             <h4>Screen &amp; Browser Audio Cast</h4>
@@ -1417,7 +1519,7 @@
 
         <div class="help-item-card">
           <div class="help-item-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f3a93b" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           </div>
           <div class="help-item-info">
             <h4>ZAMI Companion Extension</h4>
@@ -1431,6 +1533,6 @@
     </div>
   </dialog>
 
-  <script src="/js/landing.js?v=2"></script>
+  <script src="/js/landing.js?v=3"></script>
 </body>
 </html>
