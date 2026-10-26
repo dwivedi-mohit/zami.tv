@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Zami &mdash; Watch together, feel closer.</title>
   <meta name="description" content="Watch movies, shows, and videos together in real-time with your friends, wherever you are.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -48,8 +48,10 @@
 
     html, body {
       width: 100%;
+      max-width: 100%;
       min-height: 100dvh;
       overflow-x: hidden;
+      touch-action: pan-y;
       background-color: var(--bg-main);
       color: var(--text-main);
       -webkit-font-smoothing: antialiased;
@@ -1154,10 +1156,14 @@
       }
     }
 
-    @media (max-width: 767px) {
+    @media (max-width: 860px) {
       .landing-page-wrapper {
-        padding: 14px 16px 24px;
-        gap: 20px;
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+        padding: 14px 16px 24px !important;
+        gap: 20px !important;
+        box-sizing: border-box !important;
       }
       .nav-links-center, .btn-nav-create {
         display: none !important;
@@ -1166,34 +1172,52 @@
         display: inline-flex !important;
       }
       .hero-section-grid {
-        grid-template-columns: 1fr;
-        gap: 22px;
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        gap: 22px !important;
+        box-sizing: border-box !important;
+      }
+      .hero-left-col, .hero-right-col {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
       }
       .hero-headline {
-        font-size: 2.45rem;
-        margin-bottom: 14px;
+        font-size: clamp(1.85rem, 1.4rem + 2.5vw, 2.45rem) !important;
+        line-height: 1.12 !important;
+        word-break: break-word !important;
+        margin-bottom: 14px !important;
       }
       .hero-subtitle {
-        font-size: 0.95rem;
-        margin-bottom: 20px;
+        font-size: 0.95rem !important;
+        max-width: 100% !important;
+        margin-bottom: 20px !important;
       }
       .hero-cta-group {
-        flex-direction: column;
-        gap: 10px;
-        margin-bottom: 20px;
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        gap: 10px !important;
+        margin-bottom: 20px !important;
+        box-sizing: border-box !important;
       }
       .btn-hero-primary, .btn-hero-secondary {
-        width: 100%;
-        justify-content: center;
-        height: 48px;
-      }
-      .hero-right-col {
-        width: 100%;
-        margin-top: 10px;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        justify-content: center !important;
+        height: 48px !important;
       }
       .cinema-player-frame {
-        border-radius: 18px;
-        box-shadow: 0 16px 45px rgba(0, 0, 0, 0.75), 0 0 40px rgba(255, 184, 77, 0.12);
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        border-radius: 18px !important;
+        box-shadow: 0 16px 45px rgba(0, 0, 0, 0.75), 0 0 40px rgba(255, 184, 77, 0.12) !important;
       }
       .tv-channel-tag {
         display: none;
@@ -1204,8 +1228,9 @@
         right: 10px;
       }
       .tv-bottom-controls {
-        padding: 16px 10px 8px;
-        gap: 6px;
+        padding: 12px 8px 6px;
+        gap: 4px;
+        overflow: hidden;
       }
       .tv-time-text {
         font-size: 0.72rem;
@@ -1219,6 +1244,9 @@
         height: 13px;
       }
       .streaming-dock-bar {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
         padding: 8px 10px;
         gap: 8px;
         justify-content: flex-start;
