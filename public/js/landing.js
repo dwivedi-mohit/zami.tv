@@ -352,22 +352,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const ctrlBtnFullscreen = document.getElementById("ctrl-btn-fullscreen");
   const btnMobPlay = document.getElementById("btn-mob-play");
   const btnMobFs = document.getElementById("btn-mob-fs");
+  const heroCinemaVideo = document.getElementById("hero-cinema-video");
   const hudSyncPill = document.getElementById("hud-sync-pill");
-  const screenArtwork = document.getElementById("screen-artwork");
   const hudChannelTitle = document.getElementById("hud-channel-title");
   const playerMonitor = document.getElementById("player-monitor");
   const floatingReactionsStage = document.getElementById("floating-reactions-stage");
 
   let isPlaying = true;
-  let isMuted = false;
+  let isMuted = true;
   let hasCc = true;
-  let currentSec = 756; // 12m 36s
-  const totalSec = 8890; // 2h 28m 10s
 
   function formatTime(s) {
+    if (isNaN(s) || s < 0) s = 0;
     const hrs = Math.floor(s / 3600);
     const mins = Math.floor((s % 3600) / 60);
-    const secs = s % 60;
+    const secs = Math.floor(s % 60);
     const pad = (n) => String(n).padStart(2, "0");
     if (hrs > 0) {
       return `${hrs}:${pad(mins)}:${pad(secs)}`;
@@ -375,25 +374,41 @@ document.addEventListener("DOMContentLoaded", () => {
     return `${mins}:${pad(secs)}`;
   }
 
-  function updateScrubberUI() {
-    const pct = (currentSec / totalSec) * 100;
+  function updateScrubberUI(cur, total) {
+    const curTime = cur !== undefined ? cur : (heroCinemaVideo ? heroCinemaVideo.currentTime : 0);
+    const duration = total !== undefined ? total : (heroCinemaVideo && heroCinemaVideo.duration ? heroCinemaVideo.duration : 48);
+    const pct = Math.max(0, Math.min(100, (curTime / (duration || 1)) * 100));
     if (ctrlScrubberFill) ctrlScrubberFill.style.width = `${pct}%`;
     if (ctrlScrubberThumb) ctrlScrubberThumb.style.left = `${pct}%`;
     if (ctrlTimeDisplay) {
-      ctrlTimeDisplay.textContent = `${formatTime(currentSec)} / ${formatTime(totalSec)}`;
+      ctrlTimeDisplay.textContent = `${formatTime(curTime)} / ${formatTime(duration)}`;
     }
   }
 
-  // Ticking playback timer (increments every second while playing)
-  setInterval(() => {
-    if (isPlaying) {
-      currentSec = (currentSec + 1) % totalSec;
-      updateScrubberUI();
-    }
-  }, 1000);
+  if (heroCinemaVideo) {
+    heroCinemaVideo.muted = true;
+    heroCinemaVideo.play().catch(() => {});
 
-  function togglePlayState() {
-    isPlaying = !isPlaying;
+    heroCinemaVideo.addEventListener("loadedmetadata", () => {
+      updateScrubberUI();
+    });
+
+    heroCinemaVideo.addEventListener("timeupdate", () => {
+      updateScrubberUI();
+    });
+
+    heroCinemaVideo.addEventListener("play", () => {
+      isPlaying = true;
+      updatePlayIcon();
+    });
+
+    heroCinemaVideo.addEventListener("pause", () => {
+      isPlaying = false;
+      updatePlayIcon();
+    });
+  }
+
+  function updatePlayIcon() {
     const playIcon = document.getElementById("icon-play-state");
     if (playIcon) {
       if (isPlaying) {
@@ -409,6 +424,21 @@ document.addEventListener("DOMContentLoaded", () => {
         if (ctrlBtnPlay) ctrlBtnPlay.setAttribute("aria-label", "Start playback");
       }
     }
+  }
+
+  function togglePlayState() {
+    if (heroCinemaVideo) {
+      if (heroCinemaVideo.paused) {
+        heroCinemaVideo.play().catch(() => {});
+        isPlaying = true;
+      } else {
+        heroCinemaVideo.pause();
+        isPlaying = false;
+      }
+    } else {
+      isPlaying = !isPlaying;
+    }
+    updatePlayIcon();
     showToast(isPlaying ? "Playing • In sync" : "Playback paused");
   }
 
@@ -423,8 +453,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const rect = ctrlScrubberWrap.getBoundingClientRect();
       const clientX = e.touches ? e.touches[0].clientX : e.clientX;
       const pct = Math.max(0, Math.min(100, ((clientX - rect.left) / rect.width) * 100));
-      currentSec = Math.floor((pct / 100) * totalSec);
-      updateScrubberUI();
+      if (heroCinemaVideo && heroCinemaVideo.duration) {
+        heroCinemaVideo.currentTime = (pct / 100) * heroCinemaVideo.duration;
+        updateScrubberUI(heroCinemaVideo.currentTime, heroCinemaVideo.duration);
+      }
     }
 
     ctrlScrubberWrap.addEventListener("click", handleScrub);
@@ -453,7 +485,12 @@ document.addEventListener("DOMContentLoaded", () => {
   // Volume toggle
   if (ctrlBtnVolume) {
     ctrlBtnVolume.addEventListener("click", () => {
-      isMuted = !isMuted;
+      if (heroCinemaVideo) {
+        heroCinemaVideo.muted = !heroCinemaVideo.muted;
+        isMuted = heroCinemaVideo.muted;
+      } else {
+        isMuted = !isMuted;
+      }
       if (isMuted) {
         ctrlBtnVolume.innerHTML = `
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

@@ -1349,7 +1349,20 @@
         <!-- Floating Cinema Player -->
         <div class="cinema-player-frame" id="player-monitor" role="region" aria-label="Interactive Watch Party Preview">
           <div class="player-media-viewport">
-            <img src="/img/concept_watch_party.jpg" alt="Zami Synchronized Watch Session" class="tv-screen-art" id="screen-artwork">
+            <video 
+              id="hero-cinema-video" 
+              class="tv-screen-art" 
+              autoplay 
+              loop 
+              muted 
+              playsinline 
+              webkit-playsinline 
+              preload="auto"
+              poster="/img/concept_watch_party.jpg"
+              aria-label="Pixar Up Movie Session"
+            >
+              <source src="/video/hero_player_up.mp4" type="video/mp4">
+            </video>
             <div class="screen-vignette-overlay"></div>
             <!-- Floating Reactions Particle Stage -->
             <div class="floating-reactions-stage" id="floating-reactions-stage" aria-hidden="true"></div>
@@ -1363,7 +1376,7 @@
             </button>
             <div class="tv-channel-tag" id="hud-channel-tag">
               <span class="channel-pulse-dot"></span>
-              <span id="hud-channel-title">Tokyo Sunset &bull; Live Stream</span>
+              <span id="hud-channel-title">Pixar's Up &bull; Watch Party</span>
             </div>
             <div class="tv-avatars-dock" title="4 friends watching together in real-time">
               <img src="/img/avatar_p1.png" alt="Friend 1" class="tv-avatar-mini">
