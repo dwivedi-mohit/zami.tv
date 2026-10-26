@@ -6682,47 +6682,9 @@
   }
 }
 
-/* Native Quality Badge */
+/* Native Quality Badge (Hidden per user request) */
 .media-quality-badge {
-  position: absolute;
-  top: 16px;
-  left: 18px;
-  z-index: 40;
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 5px 12px;
-  background: rgba(10, 12, 18, 0.82);
-  border: 1px solid rgba(229, 169, 60, 0.35);
-  border-radius: 9999px;
-  font-family: var(--font-sans);
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  color: #e5a93c;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  pointer-events: none;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
-  animation: fadeIn 0.3s ease;
-}
-
-.media-quality-badge .quality-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #10b981;
-  box-shadow: 0 0 8px #10b981;
-}
-
-.media-quality-badge .quality-dot.red {
-  background: #ef4444;
-  box-shadow: 0 0 8px #ef4444;
-}
-
-.media-quality-badge .quality-dot.yellow {
-  background: #eab308;
-  box-shadow: 0 0 8px #eab308;
+  display: none !important;
 }
 
 /* Live Telemetry & Latency HUD Pill */

@@ -221,33 +221,9 @@
     }
 
     updateQualityBadge(type) {
-      let badge = document.getElementById('media-quality-badge');
-      if (!badge) {
-        const stage = document.querySelector('.player-wrapper') || document.getElementById('player-container');
-        if (stage) {
-          badge = document.createElement('div');
-          badge.id = 'media-quality-badge';
-          badge.className = 'media-quality-badge';
-          stage.appendChild(badge);
-        }
-      }
-
-      if (!badge) return;
-
-      if (type === SourceTypes.HTML5_DIRECT || type === SourceTypes.HLS || type === SourceTypes.YOUTUBE) {
-        badge.innerHTML = '<span class="quality-dot"></span>NATIVE 1080P 60FPS (GPU ACCELERATED)';
-        badge.style.display = 'inline-flex';
-        badge.setAttribute('data-quality', 'native-hd');
-      } else if (type === SourceTypes.SCREEN_SHARE) {
-        badge.innerHTML = '<span class="quality-dot red"></span>WEBRTC 1080P (LOW LATENCY)';
-        badge.style.display = 'inline-flex';
-        badge.setAttribute('data-quality', 'webrtc');
-      } else if (type === SourceTypes.CLOUD_EMBED) {
-        badge.innerHTML = '<span class="quality-dot yellow"></span>CLOUD STREAM (DIRECT EMBED)';
-        badge.style.display = 'inline-flex';
-        badge.setAttribute('data-quality', 'embed');
-      } else {
-        badge.style.display = 'none';
+      const badge = document.getElementById('media-quality-badge');
+      if (badge) {
+        badge.remove();
       }
     }
   }
