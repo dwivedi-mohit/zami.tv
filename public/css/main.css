@@ -99,8 +99,8 @@ body {
    -------------------------------------------------------------------------- */
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-serif);
-  font-weight: 600;
+  font-family: var(--font-sans);
+  font-weight: 700;
   letter-spacing: -0.025em;
   color: var(--text-main);
   text-wrap: balance;

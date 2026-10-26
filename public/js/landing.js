@@ -96,10 +96,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnHeroCreate = document.getElementById("btn-hero-create");
   const btnNavCreate = document.getElementById("btn-nav-create");
   const btnMobCreate = document.getElementById("btn-mob-create");
+  const btnMobDrawerCreate = document.getElementById("btn-mob-drawer-create");
 
   if (btnHeroCreate) btnHeroCreate.addEventListener("click", createRoomAndNavigate);
   if (btnNavCreate) btnNavCreate.addEventListener("click", createRoomAndNavigate);
   if (btnMobCreate) btnMobCreate.addEventListener("click", createRoomAndNavigate);
+  if (btnMobDrawerCreate) btnMobDrawerCreate.addEventListener("click", createRoomAndNavigate);
 
   // --------------------------------------------------------------------------
   // Join Room with Code Modal
@@ -107,6 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const joinModal = document.getElementById("join-modal");
   const btnHeroJoin = document.getElementById("btn-hero-join");
   const btnMobJoin = document.getElementById("btn-mob-join");
+  const btnMobDrawerJoin = document.getElementById("btn-mob-drawer-join");
   const btnCloseJoin = document.getElementById("btn-close-join");
   const btnCancelJoin = document.getElementById("btn-cancel-join");
   const formJoinModal = document.getElementById("form-join-modal");
@@ -126,6 +129,12 @@ document.addEventListener("DOMContentLoaded", () => {
   if (btnHeroJoin) btnHeroJoin.addEventListener("click", openJoinModal);
   if (btnMobJoin) {
     btnMobJoin.addEventListener("click", () => {
+      closeModal(mobileNavDialog);
+      openJoinModal();
+    });
+  }
+  if (btnMobDrawerJoin) {
+    btnMobDrawerJoin.addEventListener("click", () => {
       closeModal(mobileNavDialog);
       openJoinModal();
     });
@@ -200,8 +209,7 @@ document.addEventListener("DOMContentLoaded", () => {
     mobLinkFeatures.addEventListener("click", (e) => {
       e.preventDefault();
       closeModal(mobileNavDialog);
-      const feat = document.getElementById("features");
-      if (feat) feat.scrollIntoView({ behavior: "smooth" });
+      showToast("Sync in Real-Time • Watch Anything");
     });
   }
 
@@ -225,7 +233,7 @@ document.addEventListener("DOMContentLoaded", () => {
     mobLinkPricing.addEventListener("click", (e) => {
       e.preventDefault();
       closeModal(mobileNavDialog);
-      openHelpModal();
+      showToast("100% Free Forever");
     });
   }
 
@@ -240,8 +248,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (navLinkFeatures) {
     navLinkFeatures.addEventListener("click", (e) => {
       e.preventDefault();
-      const feat = document.getElementById("features");
-      if (feat) feat.scrollIntoView({ behavior: "smooth" });
+      showToast("Sync in Real-Time • Watch Anything");
     });
   }
 
@@ -262,7 +269,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (navLinkPricing) {
     navLinkPricing.addEventListener("click", (e) => {
       e.preventDefault();
-      openHelpModal();
+      showToast("100% Free Forever");
     });
   }
 
@@ -312,67 +319,53 @@ document.addEventListener("DOMContentLoaded", () => {
       const name = inputDisplayName ? inputDisplayName.value.trim() : currentUsername;
       saveProfile(name);
       closeModal(profileDialog);
+      showToast(`Saved as ${currentUsername}`);
     });
+  }
+
+  // --------------------------------------------------------------------------
+  // TV Status Toast Notification
+  // --------------------------------------------------------------------------
+  const tvFeedbackToast = document.getElementById("tv-feedback-toast");
+  let toastTimer = null;
+
+  function showToast(msg) {
+    if (!tvFeedbackToast) return;
+    tvFeedbackToast.textContent = msg;
+    tvFeedbackToast.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+      tvFeedbackToast.classList.remove("show");
+    }, 1800);
   }
 
   // --------------------------------------------------------------------------
   // Media Preview Player Interactive Controls
   // --------------------------------------------------------------------------
   const ctrlBtnPlay = document.getElementById("ctrl-btn-play");
-  const ctrlTimeDisplay = document.getElementById("ctrl-time-display");
   const ctrlScrubberWrap = document.getElementById("ctrl-scrubber-wrap");
   const ctrlScrubberFill = document.getElementById("ctrl-scrubber-fill");
-  const ctrlScrubberThumb = document.getElementById("ctrl-scrubber-thumb");
   const ctrlBtnVolume = document.getElementById("ctrl-btn-volume");
+  const ctrlBtnCc = document.getElementById("ctrl-btn-cc");
   const ctrlBtnFullscreen = document.getElementById("ctrl-btn-fullscreen");
-  const screenSyncPill = document.getElementById("screen-sync-pill");
-  const playerMonitor = document.getElementById("player-monitor");
+  const btnMobPlay = document.getElementById("btn-mob-play");
+  const btnMobFs = document.getElementById("btn-mob-fs");
 
   let isPlaying = true;
   let isMuted = false;
-  let currentSec = 756; // 12:36
-  const totalSec = 8890; // 2:28:10
-
-  function formatTime(s) {
-    const hrs = Math.floor(s / 3600);
-    const mins = Math.floor((s % 3600) / 60);
-    const secs = Math.floor(s % 60);
-    const pad = (n) => String(n).padStart(2, "0");
-    if (hrs > 0) {
-      return `${hrs}:${pad(mins)}:${pad(secs)}`;
-    }
-    return `${pad(mins)}:${pad(secs)}`;
-  }
-
-  function updateScrubber(pct) {
-    const clamped = Math.max(0, Math.min(100, pct));
-    if (ctrlScrubberFill) ctrlScrubberFill.style.width = `${clamped}%`;
-    if (ctrlScrubberThumb) ctrlScrubberThumb.style.left = `${clamped}%`;
-    currentSec = Math.floor((clamped / 100) * totalSec);
-    if (ctrlTimeDisplay) {
-      ctrlTimeDisplay.textContent = `${formatTime(currentSec)} / ${formatTime(totalSec)}`;
-    }
-  }
+  let hasCc = true;
 
   if (ctrlBtnPlay) {
     ctrlBtnPlay.addEventListener("click", () => {
       isPlaying = !isPlaying;
-      if (isPlaying) {
-        ctrlBtnPlay.innerHTML = `
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-            <rect x="6" y="4" width="4" height="16"/>
-            <rect x="14" y="4" width="4" height="16"/>
-          </svg>
-        `;
-        ctrlBtnPlay.setAttribute("aria-label", "Pause");
-      } else {
-        ctrlBtnPlay.innerHTML = `
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-            <polygon points="5 3 19 12 5 21 5 3"/>
-          </svg>
-        `;
-        ctrlBtnPlay.setAttribute("aria-label", "Play");
-      }
+      showToast(isPlaying ? "Playing • In sync" : "Paused");
+    });
+  }
+
+  if (btnMobPlay) {
+    btnMobPlay.addEventListener("click", () => {
+      isPlaying = !isPlaying;
+      showToast(isPlaying ? "Playing • In sync" : "Paused");
     });
   }
 
@@ -382,32 +375,33 @@ document.addEventListener("DOMContentLoaded", () => {
     function handleScrub(e) {
       const rect = ctrlScrubberWrap.getBoundingClientRect();
       const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const pct = ((clientX - rect.left) / rect.width) * 100;
-      updateScrubber(pct);
+      const pct = Math.max(0, Math.min(100, ((clientX - rect.left) / rect.width) * 100));
+      if (ctrlScrubberFill) ctrlScrubberFill.style.width = `${pct}%`;
+      if (ctrlScrubberThumb) ctrlScrubberThumb.style.left = `${pct}%`;
+      currentSec = Math.floor((pct / 100) * totalSec);
+      if (ctrlTimeDisplay) {
+        ctrlTimeDisplay.textContent = `${formatTime(currentSec)} / ${formatTime(totalSec)}`;
+      }
     }
 
+    ctrlScrubberWrap.addEventListener("click", handleScrub);
     ctrlScrubberWrap.addEventListener("mousedown", (e) => {
       isDragging = true;
       handleScrub(e);
     });
-
     window.addEventListener("mousemove", (e) => {
       if (isDragging) handleScrub(e);
     });
-
     window.addEventListener("mouseup", () => {
       isDragging = false;
     });
-
     ctrlScrubberWrap.addEventListener("touchstart", (e) => {
       isDragging = true;
       handleScrub(e);
     }, { passive: true });
-
     window.addEventListener("touchmove", (e) => {
       if (isDragging) handleScrub(e);
     }, { passive: true });
-
     window.addEventListener("touchend", () => {
       isDragging = false;
     });
@@ -419,12 +413,14 @@ document.addEventListener("DOMContentLoaded", () => {
       if (isMuted) {
         ctrlBtnVolume.innerHTML = `
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-            <line x1="23" y1="9" x2="17" y2="15"/>
-            <line x1="17" y1="9" x2="23" y2="15"/>
+            <line x1="1" y1="1" x2="23" y2="23"/>
+            <path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"/>
+            <path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"/>
+            <line x1="12" y1="19" x2="12" y2="23"/>
+            <line x1="8" y1="23" x2="16" y2="23"/>
           </svg>
         `;
-        ctrlBtnVolume.setAttribute("aria-label", "Unmute");
+        showToast("Audio Muted");
       } else {
         ctrlBtnVolume.innerHTML = `
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -432,37 +428,72 @@ document.addEventListener("DOMContentLoaded", () => {
             <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
           </svg>
         `;
-        ctrlBtnVolume.setAttribute("aria-label", "Mute");
+        showToast("Audio Active (100%)");
       }
     });
   }
 
-  if (ctrlBtnFullscreen && playerMonitor) {
-    ctrlBtnFullscreen.addEventListener("click", () => {
-      if (!document.fullscreenElement) {
-        if (playerMonitor.requestFullscreen) {
-          playerMonitor.requestFullscreen();
-        } else if (playerMonitor.webkitRequestFullscreen) {
-          playerMonitor.webkitRequestFullscreen();
-        }
+  if (ctrlBtnCc) {
+    ctrlBtnCc.addEventListener("click", () => {
+      hasCc = !hasCc;
+      showToast(hasCc ? "English Subtitles ON" : "Subtitles OFF");
+    });
+  }
+
+  function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      }
+      showToast("Fullscreen Mode");
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      }
+      showToast("Exited Fullscreen");
+    }
+  }
+
+  if (ctrlBtnFullscreen) ctrlBtnFullscreen.addEventListener("click", toggleFullscreen);
+  if (btnMobFs) btnMobFs.addEventListener("click", toggleFullscreen);
+
+  // --------------------------------------------------------------------------
+  // Streaming Dock Interactions
+  // --------------------------------------------------------------------------
+  document.querySelectorAll(".dock-hotspot-btn, .dock-service-item, .dock-tile").forEach((tile) => {
+    tile.addEventListener("click", () => {
+      const svc = tile.getAttribute("data-service");
+      if (svc === "more") {
+        openHelpModal();
+      } else if (svc === "party") {
+        openJoinModal();
       } else {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        }
+        const names = {
+          netflix: "Netflix",
+          disney: "Disney+",
+          prime: "Prime Video",
+          youtube: "YouTube",
+          hotstar: "JioHotstar",
+          mx: "MX Player"
+        };
+        showToast(`Connect to ${names[svc] || svc}`);
       }
     });
-  }
+  });
 
-  if (screenSyncPill) {
-    screenSyncPill.addEventListener("click", () => {
-      const syncText = screenSyncPill.querySelector(".sync-text-full") || screenSyncPill;
-      const original = syncText.innerHTML;
-      syncText.innerHTML = "Synced &bull; 0.00s";
-      screenSyncPill.style.transform = "scale(1.08)";
-      setTimeout(() => {
-        screenSyncPill.style.transform = "scale(1)";
-        syncText.innerHTML = original;
-      }, 1200);
+  // --------------------------------------------------------------------------
+  // Feature Cards Interactions
+  // --------------------------------------------------------------------------
+  document.querySelectorAll(".card-hotspot").forEach((card) => {
+    card.addEventListener("click", () => {
+      const feat = card.getAttribute("data-feature");
+      const titles = {
+        sync: "Sync in Real-Time — Sub-second lag",
+        anything: "Watch Anything — MP4, MKV, YouTube, Streams",
+        together: "Be Together — Spatial audio & chat",
+        device: "On Any Device — Mobile, Tablet & Desktop"
+      };
+      showToast(titles[feat] || "Feature Selected");
     });
-  }
+  });
 });
