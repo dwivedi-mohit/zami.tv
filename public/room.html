@@ -260,6 +260,24 @@
           <div id="stage-ambilight" class="stage-ambilight"></div>
           <div id="stage-ambilight-glow" class="stage-ambilight-glow"></div>
 
+          <!-- Glowing Snake Walking Border Animation -->
+          <div id="stage-snake-border" class="stage-snake-border" aria-hidden="true">
+            <svg class="stage-snake-svg">
+              <defs>
+                <linearGradient id="snake-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#ffffff" stop-opacity="1" />
+                  <stop offset="12%" stop-color="#f59e0b" stop-opacity="1" />
+                  <stop offset="60%" stop-color="#ef4444" stop-opacity="0.8" />
+                  <stop offset="100%" stop-color="#ec4899" stop-opacity="0" />
+                </linearGradient>
+              </defs>
+              <rect class="snake-track" x="2" y="2" width="calc(100% - 4px)" height="calc(100% - 4px)" rx="16" ry="16"></rect>
+              <rect class="snake-glow-wide" x="2" y="2" width="calc(100% - 4px)" height="calc(100% - 4px)" rx="16" ry="16" pathLength="100"></rect>
+              <rect class="snake-glow-core" x="2" y="2" width="calc(100% - 4px)" height="calc(100% - 4px)" rx="16" ry="16" pathLength="100"></rect>
+              <rect class="snake-head-spark" x="2" y="2" width="calc(100% - 4px)" height="calc(100% - 4px)" rx="16" ry="16" pathLength="100"></rect>
+            </svg>
+          </div>
+
           <!-- Direct Playing Stage Poster/Still Backdrop -->
           <div id="playing-stage-backdrop" class="playing-stage-backdrop" style="display: none;"></div>
 
@@ -1884,6 +1902,18 @@
               </div>
               <label class="switch" style="position: relative; display: inline-block; width: 38px; height: 20px; margin: 0;">
                 <input type="checkbox" id="settings-ambilight-wall" checked style="opacity: 0; width: 0; height: 0;">
+                <span class="slider round" style="position: absolute; cursor: pointer; inset: 0; background-color: rgba(255,255,255,0.18); transition: .3s; border-radius: 20px;"></span>
+              </label>
+            </div>
+
+            <!-- Glowing Snake Border Toggle -->
+            <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 4px; border-top: 1px solid rgba(255, 255, 255, 0.06);">
+              <div style="display: flex; flex-direction: column;">
+                <span style="font-size: 0.8rem; color: #e4e4e7; font-weight: 500;">Glowing Snake Border</span>
+                <span style="font-size: 0.72rem; color: #71717a;">Animated neon beam walking along video edges and corners</span>
+              </div>
+              <label class="switch" style="position: relative; display: inline-block; width: 38px; height: 20px; margin: 0;">
+                <input type="checkbox" id="settings-snake-border" checked style="opacity: 0; width: 0; height: 0;">
                 <span class="slider round" style="position: absolute; cursor: pointer; inset: 0; background-color: rgba(255,255,255,0.18); transition: .3s; border-radius: 20px;"></span>
               </label>
             </div>

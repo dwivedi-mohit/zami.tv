@@ -7229,6 +7229,75 @@ kbd {
 }
 
 /* ==========================================================================
+   Glowing Snake Border Animation (Perimeter & Corner Neon Beam)
+   ========================================================================== */
+.stage-snake-border {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 25;
+  border-radius: 16px;
+  overflow: visible;
+  transition: opacity 0.4s ease;
+}
+
+.stage-snake-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  display: block;
+}
+
+.snake-track {
+  fill: none;
+  stroke: rgba(229, 169, 60, 0.12);
+  stroke-width: 1.5;
+}
+
+.snake-glow-wide {
+  fill: none;
+  stroke: url(#snake-gradient);
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-dasharray: 20 80;
+  filter: blur(8px);
+  opacity: 0.85;
+  animation: snakeWalk 4.5s linear infinite;
+  will-change: stroke-dashoffset;
+}
+
+.snake-glow-core {
+  fill: none;
+  stroke: url(#snake-gradient);
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  stroke-dasharray: 18 82;
+  filter: drop-shadow(0 0 6px #f59e0b);
+  animation: snakeWalk 4.5s linear infinite;
+  will-change: stroke-dashoffset;
+}
+
+.snake-head-spark {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 2 98;
+  filter: drop-shadow(0 0 8px #ffffff) drop-shadow(0 0 14px #f59e0b);
+  animation: snakeWalk 4.5s linear infinite;
+  will-change: stroke-dashoffset;
+}
+
+@keyframes snakeWalk {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -100;
+  }
+}
+
+/* ==========================================================================
    FEATURE 2: Synchronized Stage Laser Pointer & Telestrator
    ========================================================================== */
 .stage-laser-canvas {

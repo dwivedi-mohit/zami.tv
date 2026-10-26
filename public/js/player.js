@@ -1062,6 +1062,24 @@ class UniversalPlayer {
       });
     }
 
+    // Glowing Snake Border checkbox
+    const snakeCheck = document.getElementById('settings-snake-border');
+    const snakeEl = document.getElementById('stage-snake-border');
+    const snakeEnabled = localStorage.getItem('zami_snake_border') !== 'false';
+    if (snakeCheck) {
+      snakeCheck.checked = snakeEnabled;
+      snakeCheck.addEventListener('change', (e) => {
+        const val = e.target.checked;
+        localStorage.setItem('zami_snake_border', val.toString());
+        if (snakeEl) {
+          snakeEl.style.display = val ? 'block' : 'none';
+        }
+      });
+    }
+    if (snakeEl) {
+      snakeEl.style.display = snakeEnabled ? 'block' : 'none';
+    }
+
     // Context menu / right click on player bar button opens Settings modal
     if (this.btnAmbilight) {
       this.btnAmbilight.addEventListener('contextmenu', (e) => {
