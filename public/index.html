@@ -413,19 +413,46 @@
       position: relative;
     }
 
-    /* TV Monitor Container */
-    .tv-monitor-chassis {
+    /* --------------------------------------------------------------------------
+       REDESIGNED CINEMATIC MEDIA STAGE & INTERACTIVE WATCH HUB
+       -------------------------------------------------------------------------- */
+    .hero-right-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      position: relative;
+    }
+
+    /* Ambient Glow Behind Frame */
+    .cinema-player-frame {
       position: relative;
       width: 100%;
       max-width: 680px;
       aspect-ratio: 16 / 9;
-      border-radius: 20px;
+      border-radius: 22px;
       overflow: hidden;
       background: #0E0C0B;
-      border: 1px solid rgba(255, 224, 190, 0.18);
+      border: 1px solid rgba(255, 224, 190, 0.16);
       box-shadow: 
         0 24px 70px rgba(0, 0, 0, 0.8),
-        0 0 50px rgba(255, 184, 77, 0.12);
+        0 0 55px rgba(255, 184, 77, 0.15);
+      isolation: isolate;
+      cursor: pointer;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+    }
+    .cinema-player-frame:hover {
+      box-shadow: 
+        0 30px 85px rgba(0, 0, 0, 0.88),
+        0 0 75px rgba(255, 184, 77, 0.22);
+    }
+
+    .player-media-viewport {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
     }
 
     .tv-screen-art {
@@ -433,9 +460,55 @@
       height: 100%;
       object-fit: cover;
       display: block;
+      transition: opacity 0.4s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    /* Top HUD Overlays */
+    .screen-vignette-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at center, transparent 45%, rgba(10, 8, 7, 0.45) 100%);
+    }
+
+    /* Floating Reactions Particle Stage */
+    .floating-reactions-stage {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 4;
+    }
+
+    .reaction-particle {
+      position: absolute;
+      bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: floatUpParticle 2.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      pointer-events: none;
+      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.6));
+    }
+
+    @keyframes floatUpParticle {
+      0% {
+        opacity: 0;
+        transform: translateY(0) scale(0.5) rotate(0deg);
+      }
+      15% {
+        opacity: 1;
+        transform: translateY(-20px) scale(1.15) rotate(-6deg);
+      }
+      80% {
+        opacity: 0.9;
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-160px) scale(0.9) rotate(8deg);
+      }
+    }
+
+    /* Top HUD */
     .tv-top-hud {
       position: absolute;
       top: 14px;
@@ -444,29 +517,66 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 10px;
       z-index: 5;
-      pointer-events: none;
     }
+
     .tv-sync-pill {
       display: inline-flex;
       align-items: center;
       gap: 7px;
-      padding: 5px 12px;
+      padding: 6px 14px;
       border-radius: var(--radius-pill);
-      background: rgba(18, 14, 12, 0.78);
+      background: rgba(18, 14, 12, 0.82);
       backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       color: #FAF7F2;
       font-size: 0.78rem;
       font-weight: 600;
+      cursor: pointer;
+      transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+    }
+    .tv-sync-pill:hover {
+      background: rgba(28, 22, 18, 0.92);
+      border-color: rgba(52, 211, 153, 0.5);
+      transform: translateY(-1px);
     }
     .tv-sync-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #34D399;
+      box-shadow: 0 0 10px #34D399;
+      animation: pulseGreen 2s infinite ease-in-out;
+    }
+    @keyframes pulseGreen {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.75; }
+    }
+
+    .tv-channel-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: var(--radius-pill);
+      background: rgba(18, 14, 12, 0.75);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 224, 190, 0.12);
+      color: var(--color-gold-primary);
+      font-size: 0.76rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    .channel-pulse-dot {
       width: 6px;
       height: 6px;
       border-radius: 50%;
-      background: #34D399;
-      box-shadow: 0 0 8px #34D399;
+      background: var(--color-gold-primary);
+      box-shadow: 0 0 8px var(--color-gold-primary);
     }
+
     .tv-avatars-dock {
       display: flex;
       align-items: center;
@@ -503,8 +613,8 @@
       bottom: 0;
       left: 0;
       right: 0;
-      padding: 24px 16px 12px;
-      background: linear-gradient(180deg, transparent 0%, rgba(10, 8, 7, 0.85) 100%);
+      padding: 28px 16px 14px;
+      background: linear-gradient(180deg, transparent 0%, rgba(10, 8, 7, 0.88) 100%);
       display: flex;
       align-items: center;
       gap: 12px;
@@ -518,8 +628,8 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      width: 28px;
-      height: 28px;
+      width: 30px;
+      height: 30px;
       border-radius: 50%;
       transition: background 0.15s ease, transform 0.15s ease;
       flex-shrink: 0;
@@ -563,69 +673,129 @@
       box-shadow: 0 0 8px rgba(255, 184, 77, 0.8);
     }
 
-    /* TV Stand Neck & Popcorn Bowl */
-    .tv-stand-neck {
-      width: 110px;
-      height: 14px;
-      background: #181412;
-      border-radius: 0 0 6px 6px;
-      margin: 0 auto;
-      border: 1px solid rgba(255, 224, 190, 0.08);
-      border-top: none;
-    }
-    .tv-stand-base {
-      width: 200px;
-      height: 6px;
-      background: #201A16;
-      border-radius: 4px;
-      margin: 0 auto;
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
-    }
-
-    .popcorn-bowl-anchor {
-      position: absolute;
-      bottom: 48px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 200px;
-      pointer-events: none;
-      z-index: 6;
-      filter: drop-shadow(0 12px 20px rgba(0, 0, 0, 0.75));
-    }
-    .popcorn-bowl-img {
-      width: 100%;
-      display: block;
-    }
-
-    /* Streaming Dock */
-    .streaming-dock-wrap {
-      position: relative;
+    /* --------------------------------------------------------------------------
+       INTERACTIVE STAGE HUB (STREAMING DOCK + LIVE REACTIONS)
+       -------------------------------------------------------------------------- */
+    .interactive-stage-hub {
       margin-top: 18px;
-      max-width: 620px;
       width: 100%;
+      max-width: 680px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 8px 14px;
       border-radius: var(--radius-pill);
-      overflow: hidden;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(255, 184, 77, 0.08);
+      background: rgba(28, 22, 18, 0.78);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       border: 1px solid rgba(255, 224, 190, 0.14);
+      box-shadow: 
+        0 14px 36px rgba(0, 0, 0, 0.55),
+        0 0 28px rgba(255, 184, 77, 0.08);
     }
-    .streaming-dock-strip-img {
-      width: 100%;
-      height: auto;
-      display: block;
+
+    .streaming-services-shelf {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      padding: 2px 0;
+    }
+    .streaming-services-shelf::-webkit-scrollbar {
+      display: none;
+    }
+
+    .dock-service-item {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: rgba(36, 28, 24, 0.75);
+      border: 1px solid rgba(255, 224, 190, 0.12);
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+      padding: 0;
+    }
+    .dock-service-item:hover {
+      background: rgba(52, 41, 34, 0.95);
+      border-color: rgba(255, 184, 77, 0.45);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5), 0 0 16px rgba(255, 184, 77, 0.2);
+    }
+    .dock-service-item.active {
+      background: rgba(48, 38, 32, 0.98);
+      border-color: var(--color-gold-primary);
+      box-shadow: 0 0 16px rgba(255, 184, 77, 0.45);
+      transform: translateY(-1px);
+    }
+    .dock-service-icon {
+      width: 30px;
+      height: 30px;
+      object-fit: contain;
       pointer-events: none;
     }
-    .dock-hotspot-btn {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      border-radius: 12px;
-      transition: background 0.15s ease, transform 0.15s ease;
+
+    .dock-more-pill {
+      width: auto;
+      height: 48px;
+      padding: 0 18px;
+      border-radius: var(--radius-pill);
+      color: #FAF7F2;
+      font-size: 0.86rem;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px dashed rgba(255, 224, 190, 0.3);
+      white-space: nowrap;
     }
-    .dock-hotspot-btn:hover {
-      background: rgba(255, 255, 255, 0.12);
+    .dock-more-pill:hover {
+      background: rgba(255, 184, 77, 0.14);
+      border-color: var(--color-gold-primary);
+    }
+
+    /* Live Reaction Shelf */
+    .live-reactions-shelf {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+      padding-left: 14px;
+      border-left: 1px solid rgba(255, 224, 190, 0.14);
+    }
+    .reaction-shelf-label {
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: var(--color-gold-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-right: 2px;
+    }
+    .btn-reaction-trigger {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(38, 30, 25, 0.7);
+      border: 1px solid rgba(255, 224, 190, 0.12);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+      padding: 0;
+    }
+    .btn-reaction-trigger:hover {
+      transform: scale(1.2);
+      background: rgba(58, 46, 38, 0.98);
+      border-color: rgba(255, 184, 77, 0.5);
+      box-shadow: 0 0 14px rgba(255, 184, 77, 0.35);
+    }
+    .btn-reaction-trigger:active {
+      transform: scale(0.92);
     }
 
     /* --------------------------------------------------------------------------
@@ -884,7 +1054,18 @@
         gap: 28px;
       }
       .hero-section-grid {
-        gap: 32px;
+        grid-template-columns: 1fr;
+        gap: 36px;
+        max-width: 740px;
+        margin: 0 auto;
+        width: 100%;
+      }
+      .hero-left-col {
+        align-items: flex-start;
+        width: 100%;
+      }
+      .hero-subtitle {
+        max-width: 600px;
       }
       .feature-cards-row {
         grid-template-columns: repeat(2, 1fr);
@@ -893,8 +1074,8 @@
 
     @media (max-width: 767px) {
       .landing-page-wrapper {
-        padding: 16px 18px 24px;
-        gap: 24px;
+        padding: 14px 16px 24px;
+        gap: 20px;
       }
       .nav-links-center, .btn-nav-create {
         display: none !important;
@@ -904,24 +1085,67 @@
       }
       .hero-section-grid {
         grid-template-columns: 1fr;
-        gap: 28px;
+        gap: 22px;
       }
       .hero-headline {
-        font-size: 2.7rem;
+        font-size: 2.45rem;
+        margin-bottom: 14px;
+      }
+      .hero-subtitle {
+        font-size: 0.95rem;
+        margin-bottom: 20px;
       }
       .hero-cta-group {
         flex-direction: column;
-        gap: 12px;
+        gap: 10px;
+        margin-bottom: 20px;
       }
       .btn-hero-primary, .btn-hero-secondary {
         width: 100%;
         justify-content: center;
+        height: 48px;
       }
-      .streaming-dock-bar {
-        max-width: 100%;
-        overflow-x: auto;
+      .hero-right-col {
+        width: 100%;
+        margin-top: 10px;
+      }
+      .cinema-player-frame {
+        border-radius: 18px;
+        box-shadow: 0 16px 45px rgba(0, 0, 0, 0.75), 0 0 40px rgba(255, 184, 77, 0.12);
+      }
+      .tv-channel-tag {
+        display: none;
+      }
+      .tv-top-hud {
+        top: 10px;
+        left: 10px;
+        right: 10px;
+      }
+      .tv-bottom-controls {
+        padding: 20px 12px 10px;
+        gap: 8px;
+      }
+      .interactive-stage-hub {
+        flex-direction: column;
+        align-items: stretch;
+        border-radius: 20px;
+        padding: 10px 12px;
+        gap: 10px;
+      }
+      .streaming-services-shelf {
+        width: 100%;
         justify-content: flex-start;
-        padding: 8px 12px;
+      }
+      .dock-service-item {
+        width: 42px;
+        height: 42px;
+      }
+      .live-reactions-shelf {
+        border-left: none;
+        border-top: 1px solid rgba(255, 224, 190, 0.1);
+        padding-left: 0;
+        padding-top: 8px;
+        justify-content: center;
       }
       .feature-cards-row {
         grid-template-columns: 1fr;
@@ -1011,58 +1235,67 @@
         </div>
       </section>
 
-      <!-- Right Column: Media Preview + Popcorn + Streaming Dock -->
+      <!-- Right Column: Media Preview & Interactive Watch Hub -->
       <section class="hero-right-col">
-        <!-- TV Monitor -->
-        <div class="tv-monitor-chassis" id="player-monitor">
-          <img src="/img/clean_anime_sunset_16_9.jpg" alt="Synchronized Media Preview" class="tv-screen-art">
+        <!-- Floating Cinema Player -->
+        <div class="cinema-player-frame" id="player-monitor" role="region" aria-label="Interactive Watch Party Preview">
+          <div class="player-media-viewport">
+            <img src="/img/concept_watch_party.jpg" alt="Zami Synchronized Watch Session" class="tv-screen-art" id="screen-artwork">
+            <div class="screen-vignette-overlay"></div>
+            <!-- Floating Reactions Particle Stage -->
+            <div class="floating-reactions-stage" id="floating-reactions-stage" aria-hidden="true"></div>
+          </div>
 
           <!-- Top HUD -->
           <div class="tv-top-hud">
-            <div class="tv-sync-pill">
+            <button type="button" class="tv-sync-pill" id="hud-sync-pill" aria-label="Real-time sync status: 0.0s delay">
               <span class="tv-sync-dot"></span>
-              <span>In sync &bull; 0.0s delay</span>
+              <span id="sync-status-text">In sync &bull; 0.0s delay</span>
+            </button>
+            <div class="tv-channel-tag" id="hud-channel-tag">
+              <span class="channel-pulse-dot"></span>
+              <span id="hud-channel-title">Tokyo Sunset &bull; Live Stream</span>
             </div>
-            <div class="tv-avatars-dock">
-              <img src="/img/avatar_p1.png" alt="Viewer 1" class="tv-avatar-mini">
-              <img src="/img/avatar_p2.png" alt="Viewer 2" class="tv-avatar-mini">
-              <img src="/img/avatar_p3.png" alt="Viewer 3" class="tv-avatar-mini">
+            <div class="tv-avatars-dock" title="4 friends watching together in real-time">
+              <img src="/img/avatar_p1.png" alt="Friend 1" class="tv-avatar-mini">
+              <img src="/img/avatar_p2.png" alt="Friend 2" class="tv-avatar-mini">
+              <img src="/img/avatar_p3.png" alt="Friend 3" class="tv-avatar-mini">
               <span class="tv-avatar-more">+2</span>
             </div>
           </div>
 
           <!-- Bottom Controls HUD -->
           <div class="tv-bottom-controls">
-            <button type="button" class="btn-ctrl-action" id="ctrl-btn-play" aria-label="Pause">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-                <rect x="6" y="4" width="4" height="16"/>
-                <rect x="14" y="4" width="4" height="16"/>
+            <button type="button" class="btn-ctrl-action" id="ctrl-btn-play" aria-label="Pause playback">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" id="icon-play-state">
+                <rect x="6" y="4" width="4" height="16" rx="1"/>
+                <rect x="14" y="4" width="4" height="16" rx="1"/>
               </svg>
             </button>
             <span class="tv-time-text" id="ctrl-time-display">12:36 / 2:28:10</span>
-            <div class="tv-scrubber-track" id="ctrl-scrubber-wrap">
+            <div class="tv-scrubber-track" id="ctrl-scrubber-wrap" role="slider" aria-label="Video scrubber" aria-valuenow="52" aria-valuemin="0" aria-valuemax="100">
               <div class="tv-scrubber-fill" id="ctrl-scrubber-fill"></div>
               <div class="tv-scrubber-thumb" id="ctrl-scrubber-thumb"></div>
             </div>
-            <button type="button" class="btn-ctrl-action" id="ctrl-btn-volume" aria-label="Mute">
+            <button type="button" class="btn-ctrl-action" id="ctrl-btn-volume" aria-label="Mute audio">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
                 <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
               </svg>
             </button>
-            <button type="button" class="btn-ctrl-action" id="ctrl-btn-cc" aria-label="Subtitles">
+            <button type="button" class="btn-ctrl-action" id="ctrl-btn-cc" aria-label="Toggle subtitles">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="3" y="5" width="18" height="14" rx="2"/>
                 <path d="M7 15h3M7 9h3M14 15h3M14 9h3"/>
               </svg>
             </button>
-            <button type="button" class="btn-ctrl-action" id="ctrl-btn-gear" aria-label="Settings">
+            <button type="button" class="btn-ctrl-action" id="ctrl-btn-gear" aria-label="Video settings">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="3"/>
                 <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
               </svg>
             </button>
-            <button type="button" class="btn-ctrl-action" id="ctrl-btn-fullscreen" aria-label="Fullscreen">
+            <button type="button" class="btn-ctrl-action" id="ctrl-btn-fullscreen" aria-label="Toggle fullscreen">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="15 3 21 3 21 9"/>
                 <polyline points="9 21 3 21 3 15"/>
@@ -1073,26 +1306,60 @@
           </div>
         </div>
 
-        <!-- TV Stand Neck & Base -->
-        <div class="tv-stand-neck"></div>
-        <div class="tv-stand-base"></div>
+        <!-- Interactive Hub: Streaming Services & Live Reactions -->
+        <div class="interactive-stage-hub">
+          <!-- Streaming Source Switcher Strip -->
+          <div class="streaming-services-shelf" role="tablist" aria-label="Connected Streaming Services">
+            <button type="button" class="dock-service-item active" data-service="youtube" role="tab" aria-selected="true" aria-label="YouTube">
+              <img src="/img/service_youtube.png" alt="YouTube" class="dock-service-icon">
+            </button>
+            <button type="button" class="dock-service-item" data-service="netflix" role="tab" aria-selected="false" aria-label="Netflix">
+              <img src="/img/service_netflix.png" alt="Netflix" class="dock-service-icon">
+            </button>
+            <button type="button" class="dock-service-item" data-service="disney" role="tab" aria-selected="false" aria-label="Disney+">
+              <img src="/img/service_disney.png" alt="Disney+" class="dock-service-icon">
+            </button>
+            <button type="button" class="dock-service-item" data-service="prime" role="tab" aria-selected="false" aria-label="Prime Video">
+              <img src="/img/service_prime.png" alt="Prime Video" class="dock-service-icon">
+            </button>
+            <button type="button" class="dock-service-item" data-service="hotstar" role="tab" aria-selected="false" aria-label="JioHotstar">
+              <img src="/img/service_hotstar.png" alt="JioHotstar" class="dock-service-icon">
+            </button>
+            <button type="button" class="dock-service-item" data-service="mx" role="tab" aria-selected="false" aria-label="MX Player">
+              <img src="/img/service_mx.png" alt="MX Player" class="dock-service-icon">
+            </button>
+            <button type="button" class="dock-service-item" data-service="party" id="dock-btn-party" role="tab" aria-selected="false" aria-label="Watch Party">
+              <img src="/img/service_party.png" alt="Watch Party" class="dock-service-icon">
+            </button>
+            <button type="button" class="dock-service-item dock-more-pill" data-service="more" id="dock-btn-more" aria-label="More platforms">
+              <span>+ More</span>
+            </button>
+          </div>
 
-        <!-- Popcorn Bowl Resting at Monitor Base -->
-        <div class="popcorn-bowl-anchor">
-          <img src="/img/popcorn_exact_clean_2x.png" alt="Popcorn bowl" class="popcorn-bowl-img">
-        </div>
-
-        <!-- Streaming Service Dock -->
-        <div class="streaming-dock-wrap" aria-label="Streaming Services Dock">
-          <img src="/img/dock_strip_exact_2x.png" alt="Streaming Services" class="streaming-dock-strip-img">
-          <button type="button" class="dock-hotspot-btn" style="left: 2%; width: 10%;" data-service="netflix" aria-label="Netflix"></button>
-          <button type="button" class="dock-hotspot-btn" style="left: 14%; width: 10%;" data-service="disney" aria-label="Disney+"></button>
-          <button type="button" class="dock-hotspot-btn" style="left: 26%; width: 10%;" data-service="prime" aria-label="Prime Video"></button>
-          <button type="button" class="dock-hotspot-btn" style="left: 38%; width: 10%;" data-service="party" id="dock-btn-party" aria-label="Watch Party"></button>
-          <button type="button" class="dock-hotspot-btn" style="left: 50%; width: 10%;" data-service="youtube" aria-label="YouTube"></button>
-          <button type="button" class="dock-hotspot-btn" style="left: 62%; width: 11%;" data-service="hotstar" aria-label="JioHotstar"></button>
-          <button type="button" class="dock-hotspot-btn" style="left: 74%; width: 10%;" data-service="mx" aria-label="MX Player"></button>
-          <button type="button" class="dock-hotspot-btn" style="left: 86%; width: 12%;" data-service="more" id="dock-btn-more" aria-label="More Services"></button>
+          <!-- Interactive Live Reaction Trigger Strip -->
+          <div class="live-reactions-shelf" aria-label="Live Reactions">
+            <span class="reaction-shelf-label">React:</span>
+            <button type="button" class="btn-reaction-trigger" data-reaction="heart" aria-label="Send Love Reaction">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="#FF5376">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+              </svg>
+            </button>
+            <button type="button" class="btn-reaction-trigger" data-reaction="fire" aria-label="Send Fire Reaction">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="#FF9500">
+                <path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.61 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/>
+              </svg>
+            </button>
+            <button type="button" class="btn-reaction-trigger" data-reaction="star" aria-label="Send Star Reaction">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="#FFB84D">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+            </button>
+            <button type="button" class="btn-reaction-trigger" data-reaction="popcorn" aria-label="Send Cheers Reaction">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="#F4D06F">
+                <path d="M7 3a2.5 2.5 0 0 0-2.3 3.5A2.5 2.5 0 0 0 3 9a2.5 2.5 0 0 0 2.3 2.5 2.5 2.5 0 0 0 2.7 1.5h8a2.5 2.5 0 0 0 2.7-1.5A2.5 2.5 0 0 0 21 9a2.5 2.5 0 0 0-1.7-2.5A2.5 2.5 0 0 0 17 3a2.5 2.5 0 0 0-2.3 1.5 2.5 2.5 0 0 0-2.4-1A2.5 2.5 0 0 0 7 3zm-2 11l1.5 7.5a1.5 1.5 0 0 0 1.5 1.2h8a1.5 1.5 0 0 0 1.5-1.2L19 14H5zm5 6H8.5l-1-4H10v4zm4 0h-2.5v-4H14v4zm2.5 0H15v-4h2.5l-1 4z"/>
+              </svg>
+            </button>
+          </div>
         </div>
       </section>
     </main>

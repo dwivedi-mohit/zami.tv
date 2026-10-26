@@ -340,35 +340,82 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // --------------------------------------------------------------------------
-  // Media Preview Player Interactive Controls
+  // Media Preview Player Interactive Controls & Live Playback
   // --------------------------------------------------------------------------
   const ctrlBtnPlay = document.getElementById("ctrl-btn-play");
   const ctrlScrubberWrap = document.getElementById("ctrl-scrubber-wrap");
   const ctrlScrubberFill = document.getElementById("ctrl-scrubber-fill");
+  const ctrlScrubberThumb = document.getElementById("ctrl-scrubber-thumb");
+  const ctrlTimeDisplay = document.getElementById("ctrl-time-display");
   const ctrlBtnVolume = document.getElementById("ctrl-btn-volume");
   const ctrlBtnCc = document.getElementById("ctrl-btn-cc");
   const ctrlBtnFullscreen = document.getElementById("ctrl-btn-fullscreen");
   const btnMobPlay = document.getElementById("btn-mob-play");
   const btnMobFs = document.getElementById("btn-mob-fs");
+  const hudSyncPill = document.getElementById("hud-sync-pill");
+  const screenArtwork = document.getElementById("screen-artwork");
+  const hudChannelTitle = document.getElementById("hud-channel-title");
+  const playerMonitor = document.getElementById("player-monitor");
+  const floatingReactionsStage = document.getElementById("floating-reactions-stage");
 
   let isPlaying = true;
   let isMuted = false;
   let hasCc = true;
+  let currentSec = 756; // 12m 36s
+  const totalSec = 8890; // 2h 28m 10s
 
-  if (ctrlBtnPlay) {
-    ctrlBtnPlay.addEventListener("click", () => {
-      isPlaying = !isPlaying;
-      showToast(isPlaying ? "Playing • In sync" : "Paused");
-    });
+  function formatTime(s) {
+    const hrs = Math.floor(s / 3600);
+    const mins = Math.floor((s % 3600) / 60);
+    const secs = s % 60;
+    const pad = (n) => String(n).padStart(2, "0");
+    if (hrs > 0) {
+      return `${hrs}:${pad(mins)}:${pad(secs)}`;
+    }
+    return `${mins}:${pad(secs)}`;
   }
 
-  if (btnMobPlay) {
-    btnMobPlay.addEventListener("click", () => {
-      isPlaying = !isPlaying;
-      showToast(isPlaying ? "Playing • In sync" : "Paused");
-    });
+  function updateScrubberUI() {
+    const pct = (currentSec / totalSec) * 100;
+    if (ctrlScrubberFill) ctrlScrubberFill.style.width = `${pct}%`;
+    if (ctrlScrubberThumb) ctrlScrubberThumb.style.left = `${pct}%`;
+    if (ctrlTimeDisplay) {
+      ctrlTimeDisplay.textContent = `${formatTime(currentSec)} / ${formatTime(totalSec)}`;
+    }
   }
 
+  // Ticking playback timer (increments every second while playing)
+  setInterval(() => {
+    if (isPlaying) {
+      currentSec = (currentSec + 1) % totalSec;
+      updateScrubberUI();
+    }
+  }, 1000);
+
+  function togglePlayState() {
+    isPlaying = !isPlaying;
+    const playIcon = document.getElementById("icon-play-state");
+    if (playIcon) {
+      if (isPlaying) {
+        playIcon.innerHTML = `
+          <rect x="6" y="4" width="4" height="16" rx="1"/>
+          <rect x="14" y="4" width="4" height="16" rx="1"/>
+        `;
+        if (ctrlBtnPlay) ctrlBtnPlay.setAttribute("aria-label", "Pause playback");
+      } else {
+        playIcon.innerHTML = `
+          <polygon points="6 4 19 12 6 20 6 4"/>
+        `;
+        if (ctrlBtnPlay) ctrlBtnPlay.setAttribute("aria-label", "Start playback");
+      }
+    }
+    showToast(isPlaying ? "Playing • In sync" : "Playback paused");
+  }
+
+  if (ctrlBtnPlay) ctrlBtnPlay.addEventListener("click", togglePlayState);
+  if (btnMobPlay) btnMobPlay.addEventListener("click", togglePlayState);
+
+  // Scrubber drag / click seek
   if (ctrlScrubberWrap) {
     let isDragging = false;
 
@@ -376,12 +423,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const rect = ctrlScrubberWrap.getBoundingClientRect();
       const clientX = e.touches ? e.touches[0].clientX : e.clientX;
       const pct = Math.max(0, Math.min(100, ((clientX - rect.left) / rect.width) * 100));
-      if (ctrlScrubberFill) ctrlScrubberFill.style.width = `${pct}%`;
-      if (ctrlScrubberThumb) ctrlScrubberThumb.style.left = `${pct}%`;
       currentSec = Math.floor((pct / 100) * totalSec);
-      if (ctrlTimeDisplay) {
-        ctrlTimeDisplay.textContent = `${formatTime(currentSec)} / ${formatTime(totalSec)}`;
-      }
+      updateScrubberUI();
     }
 
     ctrlScrubberWrap.addEventListener("click", handleScrub);
@@ -407,6 +450,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Volume toggle
   if (ctrlBtnVolume) {
     ctrlBtnVolume.addEventListener("click", () => {
       isMuted = !isMuted;
@@ -433,6 +477,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Subtitles toggle
   if (ctrlBtnCc) {
     ctrlBtnCc.addEventListener("click", () => {
       hasCc = !hasCc;
@@ -440,6 +485,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Fullscreen toggle
   function toggleFullscreen() {
     if (!document.fullscreenElement) {
       if (document.documentElement.requestFullscreen) {
@@ -458,25 +504,135 @@ document.addEventListener("DOMContentLoaded", () => {
   if (btnMobFs) btnMobFs.addEventListener("click", toggleFullscreen);
 
   // --------------------------------------------------------------------------
-  // Streaming Dock Interactions
+  // Floating Reaction Particle Engine (Zero Unicode Emojis)
   // --------------------------------------------------------------------------
-  document.querySelectorAll(".dock-hotspot-btn, .dock-service-item, .dock-tile").forEach((tile) => {
-    tile.addEventListener("click", () => {
-      const svc = tile.getAttribute("data-service");
+  function spawnReaction(type, clientX = null) {
+    if (!floatingReactionsStage) return;
+
+    const particle = document.createElement("div");
+    particle.className = "reaction-particle";
+
+    const stageRect = floatingReactionsStage.getBoundingClientRect();
+    let leftPercent = 50;
+    if (clientX && stageRect.width > 0) {
+      leftPercent = Math.max(10, Math.min(90, ((clientX - stageRect.left) / stageRect.width) * 100));
+    }
+    const jitter = (Math.random() * 24 - 12);
+    particle.style.left = `calc(${leftPercent}% + ${jitter}px)`;
+
+    let svgIcon = "";
+    if (type === "heart") {
+      svgIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="#FF5376"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
+    } else if (type === "fire") {
+      svgIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="#FF9500"><path d="M12 23c-4.97 0-9-4.03-9-9 0-3.92 2.5-7.24 6-8.48.5-.18 1 .2 1 .73v.15c0 .32-.2.6-.5.72-2.14.86-3.5 2.92-3.5 5.38 0 3.31 2.69 6 6 6s6-2.69 6-6c0-1.66-.67-3.16-1.76-4.24-.26-.26-.26-.68 0-.94.26-.26.68-.26.94 0C19.34 9.18 20 11.25 20 14c0 4.97-4.03 9-9 9z"/></svg>`;
+    } else if (type === "star") {
+      svgIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="#FFB84D"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+    } else {
+      svgIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="#F4D06F"><path d="M19 4h-2.18C16.4 2.84 15.3 2 14 2c-.93 0-1.75.42-2.3 1.08C11.15 2.42 10.33 2 9.4 2 8.1 2 7 2.84 6.58 4H5c-1.1 0-2 .9-2 2v1h18V6c0-1.1-.9-2-2-2zM4 9l1.6 11.2c.13.92.92 1.6 1.85 1.6h9.1c.93 0 1.72-.68 1.85-1.6L20 9H4zm7 10H9v-8h2v8zm4 0h-2v-8h2v8z"/></svg>`;
+    }
+
+    particle.innerHTML = svgIcon;
+    floatingReactionsStage.appendChild(particle);
+
+    setTimeout(() => {
+      if (particle.parentNode) particle.parentNode.removeChild(particle);
+    }, 2300);
+  }
+
+  // Reaction button triggers
+  document.querySelectorAll(".btn-reaction-trigger").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const reactionType = btn.getAttribute("data-reaction") || "heart";
+      spawnReaction(reactionType);
+      setTimeout(() => spawnReaction(reactionType), 140);
+      showToast(`Reaction sent: ${reactionType}`);
+    });
+  });
+
+  // Clicking player screen triggers heart reaction
+  if (playerMonitor) {
+    playerMonitor.addEventListener("click", (e) => {
+      if (e.target.closest("button") || e.target.closest(".tv-scrubber-track")) return;
+      spawnReaction("heart", e.clientX);
+    });
+  }
+
+  // Sync Pill click shows sync stats
+  if (hudSyncPill) {
+    hudSyncPill.addEventListener("click", (e) => {
+      e.stopPropagation();
+      showToast("Sync Health: 100% • Ping: 12ms • 0.0s delay with 4 peers");
+    });
+  }
+
+  // --------------------------------------------------------------------------
+  // Streaming Source Shelf Interactions
+  // --------------------------------------------------------------------------
+  const serviceChannels = {
+    youtube: {
+      name: "YouTube",
+      title: "Tokyo Sunset • Live Stream",
+      art: "/img/concept_watch_party.jpg"
+    },
+    netflix: {
+      name: "Netflix",
+      title: "Stranger Things S4:E1 • In Sync",
+      art: "/img/clean_anime_sunset_16_9.jpg"
+    },
+    disney: {
+      name: "Disney+",
+      title: "Makoto & Ghibli • Movie Night",
+      art: "/img/concept_watch_party.jpg"
+    },
+    prime: {
+      name: "Prime Video",
+      title: "Interstellar • Synchronized",
+      art: "/img/clean_anime_sunset_16_9.jpg"
+    },
+    hotstar: {
+      name: "JioHotstar",
+      title: "Cricket World Cup • Watch Party",
+      art: "/img/concept_watch_party.jpg"
+    },
+    mx: {
+      name: "MX Player",
+      title: "Cinema Vault • Shared Session",
+      art: "/img/clean_anime_sunset_16_9.jpg"
+    }
+  };
+
+  document.querySelectorAll(".dock-service-item").forEach((item) => {
+    item.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const svc = item.getAttribute("data-service");
       if (svc === "more") {
         openHelpModal();
-      } else if (svc === "party") {
+        return;
+      }
+      if (svc === "party") {
         openJoinModal();
-      } else {
-        const names = {
-          netflix: "Netflix",
-          disney: "Disney+",
-          prime: "Prime Video",
-          youtube: "YouTube",
-          hotstar: "JioHotstar",
-          mx: "MX Player"
-        };
-        showToast(`Connect to ${names[svc] || svc}`);
+        return;
+      }
+
+      document.querySelectorAll(".dock-service-item").forEach((el) => {
+        el.classList.remove("active");
+        el.setAttribute("aria-selected", "false");
+      });
+      item.classList.add("active");
+      item.setAttribute("aria-selected", "true");
+
+      const channel = serviceChannels[svc];
+      if (channel) {
+        if (hudChannelTitle) hudChannelTitle.textContent = channel.title;
+        if (screenArtwork && screenArtwork.getAttribute("src") !== channel.art) {
+          screenArtwork.style.opacity = "0.4";
+          setTimeout(() => {
+            screenArtwork.src = channel.art;
+            screenArtwork.style.opacity = "1";
+          }, 180);
+        }
+        showToast(`Connected to ${channel.name} • ${channel.title}`);
       }
     });
   });
