@@ -554,18 +554,84 @@ document.addEventListener('DOMContentLoaded', () => {
     window.showToast(msg, 'error');
   });
 
-  // Chat message submission
+  // Chat message submission with IME-Safe Enter and Duplicate Prevention
   const chatForm = document.getElementById('chat-form');
   const chatInput = document.getElementById('chat-input');
+  let isChatSubmitting = false;
+
   if (chatForm && chatInput) {
+    // IME-Safe Enter-to-Submit (modern-web-guidance)
+    chatInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        if (e.isComposing || e.keyCode === 229) return;
+        e.preventDefault();
+        chatForm.requestSubmit();
+      }
+    });
+
     chatForm.addEventListener('submit', (e) => {
       e.preventDefault();
+      if (isChatSubmitting) return;
+
       const text = chatInput.value.trim();
       if (!text) return;
 
+      isChatSubmitting = true;
       socket.emit('send-chat', { text });
       chatInput.value = '';
+      setTimeout(() => { isChatSubmitting = false; }, 200);
     });
+  }
+
+  // Party Soundboard Collapsible Tray Toggle
+  const btnToggleSoundboard = document.getElementById('btn-toggle-soundboard');
+  const soundboardTray = document.getElementById('soundboard-tray');
+  if (btnToggleSoundboard && soundboardTray) {
+    btnToggleSoundboard.addEventListener('click', (e) => {
+      e.preventDefault();
+      soundboardTray.classList.toggle('open');
+      btnToggleSoundboard.classList.toggle('active', soundboardTray.classList.contains('open'));
+    });
+  }
+
+  // Mobile Native Share Sheet Invite Button
+  const btnMobileInvite = document.getElementById('btn-mobile-invite');
+  if (btnMobileInvite) {
+    btnMobileInvite.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const shareData = {
+        title: 'ZAMI Watch Party',
+        text: 'Join my watch party on ZAMI!',
+        url: window.location.href
+      };
+      if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+        try {
+          await navigator.share(shareData);
+          return;
+        } catch (err) {
+          if (err.name !== 'AbortError') console.warn('Share error:', err);
+        }
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(window.location.href);
+        if (window.showToast) window.showToast('Room link copied to clipboard!', 'success');
+      }
+    });
+  }
+
+  // Mobile Bottom Sheet Swipe-Down to Dismiss
+  const sheetHandle = document.querySelector('.bottom-sheet-handle-bar');
+  if (sheetHandle) {
+    let startY = 0;
+    sheetHandle.addEventListener('touchstart', (e) => {
+      startY = e.touches[0].clientY;
+    }, { passive: true });
+    sheetHandle.addEventListener('touchend', (e) => {
+      const endY = e.changedTouches[0].clientY;
+      if (endY - startY > 50) {
+        if (window.closeModal) window.closeModal();
+      }
+    }, { passive: true });
   }
 
   // Quick Vector Reaction Cannon (Hotkey E / Quick Launcher)
@@ -3186,6 +3252,7 @@ function updateHostControlsUI(isHost, hostOnlyControls) {
 
 let lastChatSender = null;
 let lastChatTimestamp = 0;
+const recentSystemEvents = new Map();
 
 /**
  * Render Chat Messages with Conversation Grouping & Subtle System Events
@@ -3195,15 +3262,34 @@ function appendChatMessage(msg) {
   if (!container) return;
 
   const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 75;
-  const isOwn = msg.userId === window.universalPlayer?.socketId || msg.sender === (localStorage.getItem('zami_username') || localStorage.getItem('cinesync_username'));
+  const currentUsername = localStorage.getItem('zami_username') || localStorage.getItem('cinesync_username') || window.currentUsername;
+  const isOwn = Boolean(msg.userId && window.universalPlayer?.socketId && msg.userId === window.universalPlayer.socketId) ||
+                Boolean(msg.sender && currentUsername && msg.sender === currentUsername);
 
   if (msg.type === 'system') {
+    const text = (msg.text || '').trim();
+    const now = Date.now();
+    // Deduplicate identical system events (join/leave/sync notices within 25s)
+    if (recentSystemEvents.has(text) && (now - recentSystemEvents.get(text) < 25000)) {
+      return;
+    }
+    recentSystemEvents.set(text, now);
+    if (recentSystemEvents.size > 40) {
+      for (const [k, t] of recentSystemEvents.entries()) {
+        if (now - t > 30000) recentSystemEvents.delete(k);
+      }
+    }
+
     lastChatSender = null;
     const sysEl = document.createElement('div');
     sysEl.className = 'system-chat-msg';
     sysEl.innerHTML = `<span class="system-bullet">•</span> <span class="system-text">${escapeHtml(msg.text)}</span>`;
     container.appendChild(sysEl);
   } else {
+    // Remove empty state if present
+    const emptyState = document.getElementById('chat-empty-state');
+    if (emptyState) emptyState.remove();
+
     const now = typeof msg.timestamp === 'number' ? msg.timestamp : Date.now();
     const isGrouped = lastChatSender === msg.sender && (now - lastChatTimestamp < 90000);
     lastChatSender = msg.sender;
@@ -3214,7 +3300,13 @@ function appendChatMessage(msg) {
     const bubble = document.createElement('div');
     bubble.className = `chat-bubble ${isOwn ? 'own' : 'other'} ${isGrouped ? 'grouped' : ''}`;
 
-    if (!isGrouped) {
+    if (isOwn) {
+      // Current user's message: sleek gold bubble, no redundant self-name
+      bubble.innerHTML = `
+        <div class="chat-bubble-text">${escapeHtml(msg.text)}</div>
+      `;
+    } else if (!isGrouped) {
+      // Peer message: show sender name & subtle time
       bubble.innerHTML = `
         <div class="chat-bubble-author" style="color: ${msg.color || 'var(--accent-gold)'}">
           <span class="chat-author-name">${escapeHtml(msg.sender)}</span>
@@ -3231,8 +3323,11 @@ function appendChatMessage(msg) {
     container.appendChild(bubble);
   }
 
-  // Rave-Style In-Stage Floating Live Chat Bubble (Hotkey C / HUD)
-  if (msg.type === 'user' && !window.isStageChatDisabled) {
+  // Rave-Style In-Stage Floating Live Chat Bubble: ONLY show when media is active/playing and placeholder is not visible!
+  const placeholderEl = document.getElementById('player-placeholder');
+  const isStagePlaceholderVisible = placeholderEl && placeholderEl.style.display !== 'none' && !placeholderEl.classList.contains('hidden');
+  const hasActiveMedia = !isStagePlaceholderVisible && window.universalPlayer && (window.universalPlayer.currentSource || window.universalPlayer.isPlaying);
+  if (msg.type === 'user' && !window.isStageChatDisabled && hasActiveMedia) {
     const stageChatContainer = document.getElementById('stage-floating-chat');
     if (stageChatContainer && !stageChatContainer.classList.contains('hud-disabled')) {
       const stageBubble = document.createElement('div');
