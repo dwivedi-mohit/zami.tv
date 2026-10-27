@@ -1967,6 +1967,8 @@ function setupCinemaDiscoveryHub(socket) {
     modal.classList.remove('active');
     modal.style.display = 'none';
     modal.setAttribute('aria-hidden', 'true');
+    const hubContainer = document.getElementById('cinema-hub-container');
+    if (hubContainer) hubContainer.classList.remove('youtube-sheet-mode');
     closeDrawer();
     if (lastActiveElementBeforeModal && typeof lastActiveElementBeforeModal.focus === 'function') {
       lastActiveElementBeforeModal.focus();
@@ -2138,6 +2140,12 @@ function setupCinemaDiscoveryHub(socket) {
           renderMovieGrid(REFERENCE_POPULAR_MOVIES);
         }
       }
+    }
+
+    if (viewName === 'youtube') {
+      if (container) container.classList.add('youtube-sheet-mode');
+    } else {
+      if (container) container.classList.remove('youtube-sheet-mode');
     }
     closeDrawer();
   }
@@ -5174,6 +5182,12 @@ function initRaveSuite(socket, roomId) {
       document.querySelectorAll('.rave-btn-app').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
 
+      if (app === 'youtube') {
+        showVaultView('youtube');
+        openModal();
+        return;
+      }
+
       if (appTargetUrls[app]) {
         openInbuiltBrowser(appTargetUrls[app]);
       } else if (app === 'vault') {
@@ -5474,6 +5488,8 @@ function initRaveSuite(socket, roomId) {
         });
         if (window.showToast) window.showToast(`Added to queue: ${e.data.title || 'YouTube Video'}`, 'success');
       }
+    } else if (e.data && e.data.type === 'CINESYNC_CLOSE_YOUTUBE') {
+      closeModal();
     }
   });
 

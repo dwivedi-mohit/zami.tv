@@ -6576,6 +6576,50 @@
   max-height: 92vh !important;
 }
 
+.cinema-hub-container.youtube-sheet-mode {
+  max-width: 460px !important;
+  height: 840px !important;
+  max-height: 90vh !important;
+  background: #ffffff !important;
+  border-radius: 24px !important;
+  border: none !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7) !important;
+}
+
+.cinema-hub-container.youtube-sheet-mode .hub-header,
+.cinema-hub-container.youtube-sheet-mode .bottom-sheet-handle-bar {
+  display: none !important;
+}
+
+.cinema-hub-container.youtube-sheet-mode .hub-views-container {
+  height: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: #ffffff !important;
+}
+
+.cinema-hub-container.youtube-sheet-mode #hub-view-youtube,
+.cinema-hub-container.youtube-sheet-mode .youtube-viewport,
+.cinema-hub-container.youtube-sheet-mode #hub-pane-youtube,
+.cinema-hub-container.youtube-sheet-mode #yt-official-player-wrapper {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  border-radius: inherit !important;
+  background: #ffffff !important;
+  overflow: hidden !important;
+  box-shadow: none !important;
+}
+
+.cinema-hub-container.youtube-sheet-mode .pane-heading-bar {
+  display: none !important;
+}
+
 
 .bottom-sheet-handle-bar {
   display: none;
@@ -7949,6 +7993,16 @@
 
   .cinema-hub-overlay.active .cinema-hub-container {
     transform: translateY(0);
+  }
+
+  .cinema-hub-container.youtube-sheet-mode {
+    height: 82vh !important;
+    max-height: 85vh !important;
+    background: #ffffff !important;
+    border-radius: 20px 20px 0 0 !important;
+    border-top: none !important;
+    padding-bottom: 0 !important;
+    box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.6) !important;
   }
 
   /* Mobile Bottom Sheet Dialogs & Modals */
