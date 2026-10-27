@@ -730,16 +730,21 @@ class UniversalPlayer {
   initKeyboardShortcuts() {
     document.addEventListener('keydown', (e) => {
       // Don't intercept when user is typing in interactive element, button, dialog, or remote browser
+      const active = document.activeElement;
+      if (active) {
+        if (active.matches?.('input, textarea, select, button, [contenteditable="true"], [role="button"], [role="tab"], [role="searchbox"]')) return;
+        if (active.closest?.('input, textarea, select, button, [contenteditable="true"], dialog[open], [role="dialog"], .modal-overlay:not([style*="display: none"]), .vault-modal.active, .w2g-search-drawer:not([style*="display: none"]), iframe')) return;
+      }
       const target = e.target;
       if (target) {
         const el = target instanceof Element ? target : target.parentElement;
         if (el) {
-          if (el.closest('input, textarea, select, button, [role="button"], [contenteditable="true"]')) return;
-          if (el.closest('dialog[open], [role="dialog"], .modal-overlay:not([style*="display: none"]), .wallpaper-modal-overlay:not([style*="display: none"]), .w2g-search-drawer:not([style*="display: none"])')) return;
+          if (el.closest('input, textarea, select, button, [role="button"], [role="tab"], [role="searchbox"], [contenteditable="true"]')) return;
+          if (el.closest('dialog[open], [role="dialog"], .modal-overlay:not([style*="display: none"]), .wallpaper-modal-overlay:not([style*="display: none"]), .vault-modal.active, .w2g-search-drawer:not([style*="display: none"]), iframe')) return;
           if (el.id === 'remote-browser-canvas' || (el.closest && el.closest('#remote-browser-canvas'))) return;
         }
       }
-      if (document.querySelector('dialog[open], .modal-overlay:not([style*="display: none"]), .wallpaper-modal-overlay:not([style*="display: none"]), .w2g-search-drawer:not([style*="display: none"])')) return;
+      if (document.querySelector('dialog[open], .modal-overlay:not([style*="display: none"]), .wallpaper-modal-overlay:not([style*="display: none"]), .vault-modal.active, .w2g-search-drawer:not([style*="display: none"])')) return;
 
       if (this.activeType === 'screenshare') {
         if (e.code === 'KeyF') {
@@ -2183,6 +2188,9 @@ class UniversalPlayer {
     const videoId = this.extractYouTubeId(url);
     if (!videoId) return;
 
+    this.showSpinner('LOADING YOUTUBE STREAM...');
+    this.clearPlaybackError();
+
     if (this.placeholderEl) {
       this.placeholderEl.style.setProperty('display', 'none', 'important');
       this.placeholderEl.classList.add('hidden');
@@ -2193,9 +2201,14 @@ class UniversalPlayer {
     if (embedContainer) embedContainer.style.display = 'none';
 
     this.videoEl.style.display = 'none';
-    if (this.controlsEl) this.controlsEl.style.display = 'none'; // Official YouTube controls are used
+    // Room controls are layered above the YouTube iframe for touch Play/Pause, Mute, Fullscreen
+    if (this.controlsEl) {
+      this.controlsEl.style.display = 'flex';
+      this.controlsEl.classList.add('active');
+    }
     if (this.ytContainer) {
       this.ytContainer.style.display = 'block';
+      this.ytContainer.classList.add('active');
     }
 
     // If player instance already exists, reuse it directly via official loadVideoById
@@ -2206,6 +2219,8 @@ class UniversalPlayer {
           startSeconds: 0
         });
         this.updateProgress();
+        this.hideSpinner();
+        this.clearPlaybackError();
         return;
       } catch (e) {
         console.warn('[YT] Error reusing existing player, re-creating:', e);
@@ -2234,6 +2249,8 @@ class UniversalPlayer {
         },
         events: {
           onReady: () => {
+            this.hideSpinner();
+            this.clearPlaybackError();
             this.updateProgress();
             // Start real-time scrubber seek tracker
             if (this.ytProgressTimer) clearInterval(this.ytProgressTimer);
@@ -2247,6 +2264,19 @@ class UniversalPlayer {
                 this.lastKnownYtTime = cur;
               }
             }, 600);
+          },
+          onError: (err) => {
+            console.warn('[YT] Playback error event:', err.data);
+            this.hideSpinner();
+            let msg = 'YouTube error: Video unavailable or playback restricted.';
+            if (err.data === 101 || err.data === 150) {
+              msg = 'Embedding restricted by content owner. Try another video.';
+            } else if (err.data === 100) {
+              msg = 'YouTube video not found or removed.';
+            } else if (err.data === 2) {
+              msg = 'Invalid YouTube video ID or parameter.';
+            }
+            this.showPlaybackError(msg);
           },
           onStateChange: (event) => {
             // Anti-loop: suppress local emission if this state change was caused by a remote command

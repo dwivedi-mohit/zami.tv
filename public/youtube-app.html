@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>YouTube</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>YouTube - ZAMI Watch Party</title>
   <style>
     *, *::before, *::after {
       box-sizing: border-box;
@@ -26,36 +26,44 @@
       --yt-topbar-height: 56px;
     }
 
-    body {
+    html, body {
       background: var(--yt-bg);
       color: var(--yt-text-primary);
       font-family: "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      width: 100%;
+      max-width: 100%;
       overflow-x: hidden;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       user-select: none;
+      -webkit-font-smoothing: antialiased;
     }
 
-    /* TOPBAR */
+    /* ==========================================================================
+       TOPBAR & RESPONSIVE SEARCH
+       ========================================================================== */
     .yt-topbar {
       position: sticky;
       top: 0;
       z-index: 1000;
-      height: var(--yt-topbar-height);
       background: var(--yt-bg);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      width: 100%;
+      max-width: 100%;
+      padding: 0 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 16px;
       gap: 16px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      height: var(--yt-topbar-height);
+      box-sizing: border-box;
     }
 
     .yt-topbar-left {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 12px;
       flex-shrink: 0;
     }
 
@@ -71,29 +79,43 @@
       justify-content: center;
       cursor: pointer;
       transition: background 0.15s;
+      flex-shrink: 0;
+      touch-action: manipulation;
     }
 
     .yt-icon-btn:hover {
       background: rgba(255, 255, 255, 0.1);
     }
 
+    .yt-icon-btn:focus-visible {
+      outline: 2px solid var(--yt-blue);
+      outline-offset: 2px;
+    }
+
     .yt-logo-wrap {
       display: flex;
       align-items: center;
-      gap: 3px;
+      gap: 4px;
       cursor: pointer;
       text-decoration: none;
+      background: transparent;
+      border: none;
+      padding: 0;
+      color: inherit;
     }
 
     .yt-logo-svg {
       height: 20px;
+      width: 90px;
+      aspect-ratio: 90 / 20;
+      display: block;
+      flex-shrink: 0;
     }
 
     .yt-country-code {
       font-size: 10px;
       color: var(--yt-text-secondary);
       margin-top: -8px;
-      margin-left: 2px;
       font-weight: 400;
     }
 
@@ -105,11 +127,12 @@
       background: rgba(16, 185, 129, 0.12);
       border: 1px solid rgba(16, 185, 129, 0.3);
       border-radius: 12px;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
       color: #10b981;
       letter-spacing: 0.02em;
-      margin-left: 6px;
+      margin-left: 4px;
+      white-space: nowrap;
     }
 
     .yt-sync-dot {
@@ -117,7 +140,7 @@
       height: 6px;
       border-radius: 50%;
       background: #10b981;
-      box-shadow: 0 0 8px #10b981;
+      box-shadow: 0 0 6px #10b981;
       animation: pulseSync 2s infinite;
     }
 
@@ -126,32 +149,36 @@
       50% { opacity: 0.4; transform: scale(0.8); }
     }
 
-    /* SEARCH BAR */
+    /* CENTER SEARCH */
     .yt-topbar-center {
       display: flex;
       align-items: center;
       justify-content: center;
       flex: 1;
-      max-width: 720px;
-      gap: 12px;
+      max-width: 680px;
+      min-width: 0;
+      gap: 8px;
     }
 
     .yt-search-form {
       display: flex;
       width: 100%;
-      max-width: 600px;
-      height: 40px;
+      max-width: 580px;
+      min-width: 0;
+      height: 38px;
     }
 
     .yt-search-input-wrap {
       flex: 1;
+      min-width: 0;
       position: relative;
       display: flex;
       align-items: center;
       border: 1px solid #303030;
       border-radius: 40px 0 0 40px;
       background: #121212;
-      padding-left: 16px;
+      padding-left: 14px;
+      padding-right: 8px;
       transition: border-color 0.2s, box-shadow 0.2s;
     }
 
@@ -162,10 +189,11 @@
 
     .yt-search-input {
       width: 100%;
+      min-width: 0;
       background: transparent;
       border: none;
       color: var(--yt-text-primary);
-      font-size: 16px;
+      font-size: 15px;
       outline: none;
     }
 
@@ -174,8 +202,8 @@
     }
 
     .yt-search-submit {
-      width: 64px;
-      height: 40px;
+      width: 58px;
+      height: 38px;
       background: #222;
       border: 1px solid #303030;
       border-left: none;
@@ -185,16 +213,22 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
+      flex-shrink: 0;
       transition: background 0.15s;
+      touch-action: manipulation;
     }
 
     .yt-search-submit:hover {
-      background: #2a2a2a;
+      background: #2c2c2c;
+    }
+
+    .yt-search-submit:focus-visible {
+      outline: 2px solid var(--yt-blue);
     }
 
     .yt-mic-btn {
-      width: 40px;
-      height: 40px;
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
       background: #222;
       border: none;
@@ -205,73 +239,164 @@
       cursor: pointer;
       transition: background 0.15s;
       flex-shrink: 0;
+      touch-action: manipulation;
     }
 
     .yt-mic-btn:hover {
-      background: #2a2a2a;
+      background: #2c2c2c;
     }
 
-    /* TOPBAR RIGHT */
+    .yt-mic-btn:focus-visible {
+      outline: 2px solid var(--yt-blue);
+    }
+
+    /* RIGHT ACTIONS */
     .yt-topbar-right {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 8px;
       flex-shrink: 0;
     }
 
     .yt-signin-btn {
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 18px;
-      padding: 6px 14px;
+      padding: 6px 12px;
       background: transparent;
       color: var(--yt-blue);
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 500;
       cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
       transition: background 0.15s, border-color 0.15s;
+      touch-action: manipulation;
     }
 
     .yt-signin-btn:hover {
       background: rgba(62, 166, 255, 0.1);
-      border-color: transparent;
+      border-color: rgba(62, 166, 255, 0.4);
     }
 
-    /* MAIN APP BODY */
+    .yt-signin-btn:focus-visible {
+      outline: 2px solid var(--yt-blue);
+    }
+
+    /* RESPONSIVE MOBILE TOPBAR (DOWN TO 335px) */
+    @media (max-width: 580px) {
+      .yt-topbar {
+        height: auto;
+        padding: 8px 10px;
+        flex-direction: column;
+        gap: 8px;
+        align-items: stretch;
+      }
+
+      .yt-topbar-row-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+      }
+
+      .yt-topbar-row-bottom {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        width: 100%;
+      }
+
+      .yt-sync-badge, .yt-country-code {
+        display: none;
+      }
+
+      .yt-logo-svg {
+        width: 80px;
+        height: 18px;
+        aspect-ratio: 90 / 20;
+      }
+
+      .yt-icon-btn {
+        width: 34px;
+        height: 34px;
+      }
+
+      .yt-topbar-center {
+        width: 100%;
+        max-width: 100%;
+      }
+
+      .yt-search-form {
+        flex: 1;
+        min-width: 0;
+        height: 34px;
+      }
+
+      .yt-search-input-wrap {
+        padding-left: 10px;
+      }
+
+      .yt-search-input {
+        font-size: 14px;
+      }
+
+      .yt-search-submit {
+        width: 38px;
+        height: 34px;
+      }
+
+      .yt-mic-btn {
+        width: 34px;
+        height: 34px;
+      }
+
+      .yt-signin-btn {
+        padding: 4px 10px;
+        font-size: 12px;
+        height: 30px;
+      }
+    }
+
+    /* ==========================================================================
+       APP BODY & SIDEBAR
+       ========================================================================== */
     .yt-app-container {
       display: flex;
       flex: 1;
       height: calc(100vh - var(--yt-topbar-height));
       overflow: hidden;
+      width: 100%;
+      max-width: 100%;
     }
 
-    /* SIDEBAR */
     .yt-sidebar {
       width: var(--yt-sidebar-width);
       flex-shrink: 0;
       height: 100%;
       overflow-y: auto;
-      padding: 12px 12px 32px 12px;
+      padding: 12px 10px 32px 10px;
       background: var(--yt-bg);
       border-right: 1px solid rgba(255, 255, 255, 0.05);
       transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .yt-sidebar::-webkit-scrollbar {
-      width: 8px;
+      width: 6px;
     }
 
     .yt-sidebar::-webkit-scrollbar-thumb {
       background: rgba(255, 255, 255, 0.2);
-      border-radius: 4px;
+      border-radius: 3px;
     }
 
     .yt-nav-item {
       display: flex;
       align-items: center;
-      gap: 24px;
+      gap: 20px;
+      width: 100%;
       height: 40px;
       padding: 0 12px;
       border-radius: 10px;
@@ -280,7 +405,11 @@
       font-size: 14px;
       font-weight: 400;
       cursor: pointer;
+      background: transparent;
+      border: none;
+      text-align: left;
       transition: background 0.12s;
+      touch-action: manipulation;
     }
 
     .yt-nav-item:hover {
@@ -288,8 +417,13 @@
     }
 
     .yt-nav-item.active {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.12);
       font-weight: 600;
+    }
+
+    .yt-nav-item:focus-visible {
+      outline: 2px solid var(--yt-blue);
+      outline-offset: -2px;
     }
 
     .yt-nav-icon {
@@ -304,32 +438,34 @@
     .yt-nav-divider {
       height: 1px;
       background: var(--yt-border);
-      margin: 12px 0;
+      margin: 10px 0;
     }
 
     .yt-nav-section-title {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
       color: var(--yt-text-primary);
       padding: 6px 12px 4px 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
     }
 
     .yt-sidebar-signin-box {
-      padding: 4px 12px 8px 12px;
+      padding: 6px 12px 10px 12px;
     }
 
     .yt-sidebar-signin-text {
-      font-size: 14px;
+      font-size: 13px;
       color: var(--yt-text-primary);
-      line-height: 20px;
-      margin-bottom: 12px;
+      line-height: 18px;
+      margin-bottom: 10px;
     }
 
     .yt-sidebar-footer {
-      padding: 16px 12px 8px 12px;
-      font-size: 12px;
+      padding: 14px 12px 8px 12px;
+      font-size: 11px;
       color: #717171;
-      line-height: 18px;
+      line-height: 16px;
     }
 
     .yt-sidebar-footer a {
@@ -338,7 +474,7 @@
       margin-right: 6px;
     }
 
-    /* COLLAPSED MINI SIDEBAR MODE */
+    /* COLLAPSED MINI SIDEBAR */
     .yt-sidebar.mini {
       width: 72px;
       padding: 8px 4px;
@@ -350,7 +486,6 @@
       height: 74px;
       padding: 14px 0 10px 0;
       justify-content: center;
-      border-radius: 10px;
     }
 
     .yt-sidebar.mini .yt-nav-item span {
@@ -367,16 +502,110 @@
       display: none !important;
     }
 
-    /* MAIN VIEW */
+    /* MOBILE DRAWER & BOTTOM NAV (< 600px) */
+    .yt-bottom-nav {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 52px;
+      background: #0f0f0f;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      z-index: 1000;
+      align-items: center;
+      justify-content: space-around;
+      padding: 0 4px;
+      box-sizing: border-box;
+    }
+
+    .yt-bottom-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      background: transparent;
+      border: none;
+      color: var(--yt-text-secondary);
+      font-size: 10px;
+      padding: 4px 6px;
+      cursor: pointer;
+      flex: 1;
+      max-width: 68px;
+      touch-action: manipulation;
+    }
+
+    .yt-bottom-nav-item.active {
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .yt-bottom-nav-item:focus-visible {
+      outline: 2px solid var(--yt-blue);
+    }
+
+    .yt-bottom-nav-item svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    @media (max-width: 600px) {
+      .yt-sidebar {
+        position: fixed;
+        left: -260px;
+        top: 0;
+        bottom: 0;
+        z-index: 2000;
+        width: 250px;
+        background: #0f0f0f;
+        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.85);
+        transition: transform 0.25s ease;
+      }
+
+      .yt-sidebar.open {
+        transform: translateX(260px);
+      }
+
+      .yt-sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 1999;
+      }
+
+      .yt-sidebar-overlay.active {
+        display: block;
+      }
+
+      .yt-bottom-nav {
+        display: flex;
+      }
+
+      .yt-app-container {
+        height: auto;
+        min-height: calc(100vh - 140px);
+        margin-bottom: 52px;
+      }
+    }
+
+    /* ==========================================================================
+       MAIN VIEWPORT & CHIPS
+       ========================================================================== */
     .yt-main-viewport {
       flex: 1;
       height: 100%;
+      min-width: 0;
       overflow-y: auto;
+      overflow-x: hidden;
       display: flex;
       flex-direction: column;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
     }
 
-    /* CHIPS CAROUSEL */
     .yt-chips-container {
       position: sticky;
       top: 0;
@@ -384,11 +613,17 @@
       background: var(--yt-bg);
       display: flex;
       align-items: center;
-      padding: 12px 24px;
-      gap: 12px;
+      padding: 10px 16px;
+      gap: 8px;
       overflow-x: auto;
+      overflow-y: hidden;
       scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      touch-action: pan-x;
     }
 
     .yt-chips-container::-webkit-scrollbar {
@@ -398,14 +633,16 @@
     .yt-chip {
       background: var(--yt-chip-bg);
       color: var(--yt-text-primary);
-      border: none;
+      border: 1px solid transparent;
       border-radius: 8px;
       padding: 6px 12px;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 500;
       cursor: pointer;
       white-space: nowrap;
+      flex-shrink: 0;
       transition: background 0.15s, color 0.15s;
+      touch-action: manipulation;
     }
 
     .yt-chip:hover {
@@ -413,46 +650,45 @@
     }
 
     .yt-chip.active {
-      background: var(--yt-text-primary);
-      color: #0f0f0f;
-      font-weight: 600;
+      background: #ffffff !important;
+      color: #0f0f0f !important;
+      font-weight: 600 !important;
     }
 
-    .yt-chip-scroll-btn {
-      position: absolute;
-      right: 12px;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: rgba(15, 15, 15, 0.95);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      box-shadow: -10px 0 16px rgba(15, 15, 15, 1);
+    .yt-chip:focus-visible {
+      outline: 2px solid var(--yt-blue);
     }
 
-    /* CONTENT BODY */
-    .yt-feed-content {
-      padding: 24px 24px 48px 24px;
+    /* VIEW CONTAINERS */
+    .yt-feed-content,
+    .yt-view-container {
+      padding: 20px 20px 48px 20px;
       max-width: 1800px;
       width: 100%;
+      box-sizing: border-box;
       margin: 0 auto;
+    }
+
+    @media (max-width: 480px) {
+      .yt-feed-content,
+      .yt-view-container {
+        padding: 12px 10px 60px 10px;
+      }
     }
 
     /* VIDEO GRID */
     .yt-video-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-      gap: 36px 16px;
-      margin-bottom: 40px;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 28px 16px;
+      margin-bottom: 32px;
+      width: 100%;
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: 480px) {
       .yt-video-grid {
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        grid-template-columns: 1fr;
+        gap: 20px;
       }
     }
 
@@ -461,6 +697,8 @@
       flex-direction: column;
       cursor: pointer;
       position: relative;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .yt-thumb-container {
@@ -490,14 +728,14 @@
       right: 8px;
       background: rgba(0, 0, 0, 0.85);
       color: #fff;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 600;
-      padding: 2px 6px;
+      padding: 2px 5px;
       border-radius: 4px;
       letter-spacing: 0.02em;
     }
 
-    /* Quick hover actions on card */
+    /* QUICK HOVER/TOUCH ACTIONS ON CARD */
     .yt-card-hover-actions {
       position: absolute;
       top: 8px;
@@ -507,17 +745,26 @@
       opacity: 0;
       transform: translateY(-4px);
       transition: all 0.2s ease;
+      z-index: 4;
     }
 
-    .yt-video-card:hover .yt-card-hover-actions {
+    .yt-video-card:hover .yt-card-hover-actions,
+    .yt-video-card:focus-within .yt-card-hover-actions {
       opacity: 1;
       transform: translateY(0);
+    }
+
+    @media (max-width: 600px) {
+      .yt-card-hover-actions {
+        opacity: 1;
+        transform: none;
+      }
     }
 
     .yt-card-action-pill {
       background: rgba(0, 0, 0, 0.85);
       backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.25);
       color: #fff;
       font-size: 11px;
       font-weight: 700;
@@ -528,6 +775,7 @@
       align-items: center;
       gap: 4px;
       transition: background 0.15s, border-color 0.15s;
+      touch-action: manipulation;
     }
 
     .yt-card-action-pill:hover {
@@ -535,10 +783,14 @@
       border-color: #ff0000;
     }
 
+    .yt-card-action-pill:focus-visible {
+      outline: 2px solid #fff;
+    }
+
     .yt-card-details {
       display: flex;
       gap: 12px;
-      margin-top: 12px;
+      margin-top: 10px;
     }
 
     .yt-avatar-circle {
@@ -568,9 +820,9 @@
     }
 
     .yt-card-title {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 500;
-      line-height: 22px;
+      line-height: 20px;
       color: var(--yt-text-primary);
       display: -webkit-box;
       -webkit-line-clamp: 2;
@@ -584,78 +836,57 @@
       align-items: center;
       gap: 4px;
       margin-top: 4px;
-      font-size: 14px;
+      font-size: 13px;
       color: var(--yt-text-secondary);
     }
 
     .yt-verified-icon {
-      width: 14px;
-      height: 14px;
+      width: 13px;
+      height: 13px;
       fill: var(--yt-text-secondary);
       flex-shrink: 0;
     }
 
     .yt-card-stats-row {
-      font-size: 14px;
+      font-size: 12px;
       color: var(--yt-text-secondary);
       margin-top: 2px;
     }
 
-    .yt-card-menu-btn {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: transparent;
-      border: none;
-      color: var(--yt-text-primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      opacity: 0;
-      transition: opacity 0.15s, background 0.15s;
-    }
-
-    .yt-video-card:hover .yt-card-menu-btn {
-      opacity: 1;
-    }
-
-    .yt-card-menu-btn:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
-
     /* SHORTS SHELF */
     .yt-shorts-shelf {
-      margin: 24px 0 44px 0;
+      margin: 20px 0 36px 0;
     }
 
     .yt-shorts-header {
       display: flex;
       align-items: center;
-      gap: 12px;
-      margin-bottom: 20px;
+      gap: 10px;
+      margin-bottom: 16px;
     }
 
     .yt-shorts-icon {
-      width: 24px;
-      height: 24px;
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
     }
 
     .yt-shorts-title {
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 700;
       color: var(--yt-text-primary);
     }
 
     .yt-shorts-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 14px;
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 480px) {
       .yt-shorts-grid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
       }
     }
 
@@ -669,12 +900,13 @@
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
-      padding: 12px;
+      padding: 10px;
       transition: transform 0.2s ease;
+      touch-action: manipulation;
     }
 
     .yt-short-card:hover {
-      transform: translateY(-4px);
+      transform: translateY(-3px);
     }
 
     .yt-short-thumb {
@@ -693,7 +925,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 35%, transparent 70%);
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 40%, transparent 70%);
       z-index: 2;
     }
 
@@ -703,10 +935,10 @@
     }
 
     .yt-short-title {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
       color: #fff;
-      line-height: 18px;
+      line-height: 17px;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
@@ -715,20 +947,170 @@
     }
 
     .yt-short-views {
-      font-size: 12px;
+      font-size: 11px;
       color: #e0e0e0;
       margin-top: 4px;
       font-weight: 500;
     }
 
-    /* WATCH VIEW */
+    /* ==========================================================================
+       DEDICATED VIEWS (Shorts, Subscriptions, You, History)
+       ========================================================================== */
+    .yt-view-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .yt-view-heading {
+      font-size: 22px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Subscriptions Channels Carousel */
+    .yt-sub-channels-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      overflow-x: auto;
+      padding: 10px 0 16px 0;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      margin-bottom: 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .yt-sub-channels-row::-webkit-scrollbar {
+      display: none;
+    }
+
+    .yt-sub-channel-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      background: transparent;
+      border: none;
+      color: var(--yt-text-primary);
+      cursor: pointer;
+      flex-shrink: 0;
+      width: 72px;
+      text-align: center;
+      touch-action: manipulation;
+    }
+
+    .yt-sub-channel-avatar {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: #252525;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 16px;
+      border: 2px solid transparent;
+      transition: border-color 0.15s;
+    }
+
+    .yt-sub-channel-item:hover .yt-sub-channel-avatar,
+    .yt-sub-channel-item.active .yt-sub-channel-avatar {
+      border-color: var(--yt-blue);
+    }
+
+    .yt-sub-channel-name {
+      font-size: 11px;
+      color: var(--yt-text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+    }
+
+    .yt-guidance-banner {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .yt-guidance-text {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      color: #ddd;
+    }
+
+    /* YOU & HISTORY VIEW COMPONENTS */
+    .yt-you-profile-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 0 24px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      margin-bottom: 24px;
+    }
+
+    .yt-you-avatar {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .yt-section-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 20px 0 12px 0;
+    }
+
+    .yt-section-title {
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .yt-section-link {
+      font-size: 13px;
+      color: var(--yt-blue);
+      text-decoration: none;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    /* ==========================================================================
+       WATCH VIEW (CINEMA MODE)
+       ========================================================================== */
     .yt-watch-container {
       display: none;
-      padding: 24px;
+      padding: 20px;
       max-width: 1800px;
       width: 100%;
       margin: 0 auto;
       gap: 24px;
+      box-sizing: border-box;
     }
 
     .yt-watch-left {
@@ -753,11 +1135,11 @@
     }
 
     .yt-watch-title {
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 700;
       color: var(--yt-text-primary);
       margin-top: 14px;
-      line-height: 28px;
+      line-height: 24px;
     }
 
     .yt-watch-actions-bar {
@@ -765,7 +1147,7 @@
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
-      gap: 16px;
+      gap: 14px;
       margin-top: 12px;
       padding-bottom: 16px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
@@ -774,7 +1156,7 @@
     .yt-watch-channel-info {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
 
     .yt-watch-channel-meta {
@@ -783,7 +1165,7 @@
     }
 
     .yt-watch-channel-name {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 600;
       color: var(--yt-text-primary);
     }
@@ -798,17 +1180,25 @@
       color: #0f0f0f;
       border: none;
       border-radius: 18px;
-      padding: 8px 16px;
-      font-size: 14px;
+      padding: 7px 16px;
+      font-size: 13px;
       font-weight: 600;
       cursor: pointer;
-      margin-left: 8px;
+      margin-left: 6px;
+      transition: all 0.15s;
+      touch-action: manipulation;
+    }
+
+    .yt-subscribe-btn.subscribed {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
     }
 
     .yt-watch-button-group {
       display: flex;
       align-items: center;
       gap: 8px;
+      flex-wrap: wrap;
     }
 
     .btn-rave-screen {
@@ -816,21 +1206,22 @@
       color: #fff;
       border: none;
       border-radius: 20px;
-      padding: 9px 18px;
-      font-size: 13px;
+      padding: 8px 16px;
+      font-size: 12px;
       font-weight: 700;
-      letter-spacing: 0.03em;
+      letter-spacing: 0.02em;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       box-shadow: 0 4px 14px rgba(225, 29, 72, 0.4);
       transition: all 0.2s ease;
+      touch-action: manipulation;
     }
 
     .btn-rave-screen:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(225, 29, 72, 0.6);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(225, 29, 72, 0.6);
     }
 
     .btn-rave-queue {
@@ -838,14 +1229,15 @@
       color: #fff;
       border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 20px;
-      padding: 9px 16px;
-      font-size: 13px;
+      padding: 8px 14px;
+      font-size: 12px;
       font-weight: 600;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 6px;
       transition: all 0.15s ease;
+      touch-action: manipulation;
     }
 
     .btn-rave-queue:hover {
@@ -857,41 +1249,52 @@
       color: #fff;
       border: none;
       border-radius: 18px;
-      padding: 8px 14px;
-      font-size: 14px;
+      padding: 7px 12px;
+      font-size: 13px;
       font-weight: 500;
       display: inline-flex;
       align-items: center;
       gap: 6px;
       cursor: pointer;
+      transition: all 0.15s;
+      touch-action: manipulation;
+    }
+
+    .yt-watch-btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    .yt-watch-btn-secondary.liked {
+      background: rgba(62, 166, 255, 0.2);
+      color: var(--yt-blue);
     }
 
     .yt-watch-description-box {
       background: #272727;
       border-radius: 12px;
-      padding: 14px 16px;
-      margin-top: 16px;
-      font-size: 14px;
-      line-height: 20px;
+      padding: 12px 14px;
+      margin-top: 14px;
+      font-size: 13px;
+      line-height: 19px;
     }
 
     .yt-desc-stats {
       font-weight: 600;
       color: var(--yt-text-primary);
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .yt-desc-text {
-      color: #e0e0e0;
+      color: #d0d0d0;
       white-space: pre-wrap;
     }
 
     .yt-watch-right {
-      width: 400px;
+      width: 380px;
       flex-shrink: 0;
     }
 
-    @media (max-width: 1100px) {
+    @media (max-width: 1000px) {
       .yt-watch-container {
         flex-direction: column;
       }
@@ -908,7 +1311,7 @@
     }
 
     .yt-related-thumb {
-      width: 168px;
+      width: 140px;
       aspect-ratio: 16 / 9;
       border-radius: 8px;
       overflow: hidden;
@@ -929,10 +1332,10 @@
     }
 
     .yt-related-title {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 500;
       color: var(--yt-text-primary);
-      line-height: 18px;
+      line-height: 17px;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
@@ -942,36 +1345,114 @@
     .yt-related-channel {
       font-size: 12px;
       color: var(--yt-text-secondary);
-      margin-top: 4px;
+      margin-top: 3px;
     }
 
     .yt-related-stats {
-      font-size: 12px;
+      font-size: 11px;
       color: var(--yt-text-secondary);
     }
 
-    /* TOAST */
+    /* ==========================================================================
+       DIALOGS & TOAST
+       ========================================================================== */
+    dialog.yt-dialog {
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 16px;
+      background: #1f1f1f;
+      color: #fff;
+      padding: 24px;
+      max-width: 420px;
+      width: 90%;
+      margin: auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+    }
+
+    dialog.yt-dialog::backdrop {
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+    }
+
+    .yt-dialog-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .yt-dialog-close {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 24px;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .yt-dialog-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .yt-dialog-desc {
+      font-size: 13px;
+      color: #bbb;
+      line-height: 19px;
+      margin-bottom: 20px;
+    }
+
+    .yt-dialog-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .yt-dialog-btn-primary {
+      background: var(--yt-blue);
+      color: #0f0f0f;
+      border: none;
+      border-radius: 18px;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .yt-dialog-btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border: none;
+      border-radius: 18px;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
     .yt-toast {
       position: fixed;
-      bottom: 24px;
+      bottom: 60px;
       left: 50%;
-      transform: translateX(-50%) translateY(100px);
-      background: rgba(15, 15, 15, 0.95);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(16px);
+      transform: translateX(-50%) translateY(80px);
+      background: rgba(18, 18, 18, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(14px);
       color: #fff;
-      padding: 12px 24px;
-      border-radius: 28px;
-      font-size: 14px;
+      padding: 10px 20px;
+      border-radius: 24px;
+      font-size: 13px;
       font-weight: 600;
       display: flex;
       align-items: center;
-      gap: 10px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+      gap: 8px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.85);
       z-index: 9999;
       opacity: 0;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       pointer-events: none;
+      max-width: 90%;
+      text-align: center;
     }
 
     .yt-toast.show {
@@ -982,123 +1463,127 @@
 </head>
 <body>
 
-  <!-- TOP NAVIGATION BAR -->
-  <header class="yt-topbar">
-    <div class="yt-topbar-left">
-      <button class="yt-icon-btn" id="btn-hamburger" title="Guide">
-        <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-          <path d="M21 6H3V5h18v1zm0 5H3v1h18v-1zm0 6H3v1h18v-1z"></path>
-        </svg>
-      </button>
+  <!-- TOPBAR -->
+  <header class="yt-topbar" id="yt-topbar" role="banner">
+    <!-- Top Row on Mobile, Left/Right on Desktop -->
+    <div class="yt-topbar-row-top">
+      <div class="yt-topbar-left">
+        <button type="button" class="yt-icon-btn" id="btn-hamburger" title="Guide" aria-label="Toggle Guide Navigation">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+            <path d="M21 6H3V5h18v1zm0 5H3v1h18v-1zm0 6H3v1h18v-1z"></path>
+          </svg>
+        </button>
 
-      <div class="yt-logo-wrap" id="btn-brand-home" title="YouTube Home">
-        <!-- Authentic YouTube Logo SVG -->
-        <svg class="yt-logo-svg" viewBox="0 0 90 20" fill="none">
-          <path d="M27.97 3.12A3.53 3.53 0 0 0 25.48.63C23.28.05 14.47.05 14.47.05s-8.8 0-11 .58A3.53 3.53 0 0 0 .98 3.12C.4 5.32.4 9.9.4 9.9s0 4.58.58 6.78a3.53 3.53 0 0 0 2.49 2.49c2.2.58 11 .58 11 .58s8.81 0 11.01-.58a3.53 3.53 0 0 0 2.49-2.49c.58-2.2.58-6.78.58-6.78s0-4.58-.58-6.78z" fill="#FF0000"/>
-          <path d="M11.66 14.1l7.46-4.2-7.46-4.2v8.4z" fill="#FFFFFF"/>
-          <path d="M35.63 17.58V5.37h2.24v1.73c.7-.9 1.6-1.5 2.73-1.5 1.5 0 2.4 1 2.4 2.87v9.11h-2.27V8.65c0-1.12-.48-1.63-1.39-1.63-.75 0-1.43.43-1.43 1.4v9.16h-2.28zm14.86 0l-2.9-10.4h2.36l1.7 6.94 1.77-6.94h2.33l-2.93 10.4h-2.33zm11.75.22c-2.3 0-3.66-1.57-3.66-4.27v-3.7c0-2.6 1.4-4.2 3.73-4.2 2.3 0 3.63 1.6 3.63 4.2v3.7c0 2.7-1.36 4.27-3.7 4.27zm0-1.7c.92 0 1.39-.8 1.39-2.2v-4.4c0-1.38-.47-2.18-1.39-2.18-.92 0-1.42.8-1.42 2.18v4.4c0 1.4.5 2.2 1.42 2.2zm11.38 1.48c-1.3 0-2.28-.58-2.63-1.63v1.41h-2.18V1.75h2.24v5.35c.42-.94 1.38-1.5 2.57-1.5 1.7 0 2.7 1.35 2.7 3.52v4.77c0 2.37-1 3.7-2.7 3.7zm-.38-1.73c.96 0 1.48-.7 1.48-1.9v-4.8c0-1.23-.52-1.93-1.48-1.93-.8 0-1.46.6-1.46 1.67v5.29c0 1.1.66 1.67 1.46 1.67zm12.38.25c-2.32 0-3.7-1.55-3.7-4.27v-3.5c0-2.6 1.44-4.2 3.76-4.2 2.28 0 3.6 1.6 3.6 4.14v.94h-5.06v2.66c0 1.4.56 2.2 1.5 2.2.82 0 1.37-.43 1.5-1.25l1.9.27c-.24 1.93-1.63 3.01-3.5 3.01zm1.36-8.52c0-1.3-.5-2.02-1.39-2.02-.89 0-1.4.72-1.4 2.02v1.54h2.8v-1.54z" fill="#FFFFFF"/>
-        </svg>
-        <span class="yt-country-code">IN</span>
-        <div class="yt-sync-badge">
-          <span class="yt-sync-dot"></span>
-          <span>PARTY SYNCED</span>
-        </div>
+        <button type="button" class="yt-logo-wrap" id="btn-brand-home" title="YouTube Home" aria-label="YouTube Home">
+          <svg class="yt-logo-svg" viewBox="0 0 96 24" fill="none">
+            <rect x="0" y="2" width="34" height="20" rx="6" fill="#FF0000"/>
+            <polygon points="14,7 23,12 14,17" fill="#FFFFFF"/>
+            <text x="39" y="18" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="900" fill="#FFFFFF" letter-spacing="-0.5px">YouTube</text>
+          </svg>
+          <span class="yt-country-code">IN</span>
+          <div class="yt-sync-badge">
+            <span class="yt-sync-dot"></span>
+            <span>PARTY SYNC</span>
+          </div>
+        </button>
+      </div>
+
+      <div class="yt-topbar-right">
+        <button type="button" class="yt-icon-btn" id="btn-settings" title="Settings" aria-label="Settings">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+            <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path>
+          </svg>
+        </button>
+
+        <button type="button" class="yt-signin-btn" id="btn-signin-promo" aria-label="Sign in">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"></path>
+          </svg>
+          <span>Sign in</span>
+        </button>
       </div>
     </div>
 
-    <!-- Center Search Bar -->
-    <div class="yt-topbar-center">
-      <form class="yt-search-form" id="yt-search-form">
+    <!-- Center Search Bar (Flexible on desktop, Row 2 on mobile) -->
+    <div class="yt-topbar-row-bottom yt-topbar-center">
+      <form class="yt-search-form" id="yt-search-form" role="search">
         <div class="yt-search-input-wrap">
-          <input type="text" class="yt-search-input" id="yt-search-input" placeholder="Search" autocomplete="off">
+          <input type="text" class="yt-search-input" id="yt-search-input" placeholder="Search YouTube" autocomplete="off" aria-label="Search YouTube">
         </div>
-        <button type="submit" class="yt-search-submit" title="Search">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+        <button type="submit" class="yt-search-submit" id="btn-search-submit" title="Search" aria-label="Submit Search">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
             <path d="M20.87 20.17l-5.59-5.59A7.94 7.94 0 0 0 17 9.5a8 8 0 1 0-8 8 7.94 7.94 0 0 0 5.08-1.72l5.59 5.59.7-.7zM9.5 16.5a7 7 0 1 1 0-14 7 7 0 0 1 0 14z"></path>
           </svg>
         </button>
       </form>
-      <button class="yt-mic-btn" id="btn-voice-search" title="Search with your voice">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+      <button type="button" class="yt-mic-btn" id="btn-voice-search" title="Search with your voice" aria-label="Voice Search">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
           <path d="M12 3a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3zm5 8a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"></path>
         </svg>
       </button>
     </div>
-
-    <!-- Right Actions -->
-    <div class="yt-topbar-right">
-      <button class="yt-icon-btn" title="Settings">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-          <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path>
-        </svg>
-      </button>
-
-      <button class="yt-signin-btn" id="btn-signin-promo">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"></path>
-        </svg>
-        <span>Sign in</span>
-      </button>
-    </div>
   </header>
+
+  <!-- SIDEBAR OVERLAY FOR MOBILE -->
+  <div class="yt-sidebar-overlay" id="yt-sidebar-overlay"></div>
 
   <!-- APP BODY CONTAINER -->
   <div class="yt-app-container">
 
-    <!-- AUTHENTIC YOUTUBE LEFT SIDEBAR -->
-    <aside class="yt-sidebar" id="yt-sidebar">
-      <!-- Primary Nav -->
-      <div class="yt-nav-item active" id="nav-home">
+    <!-- DESKTOP / DRAWER SIDEBAR -->
+    <aside class="yt-sidebar" id="yt-sidebar" role="navigation" aria-label="Main Sidebar Navigation">
+      <!-- Semantic Navigation Items -->
+      <button type="button" class="yt-nav-item active" id="nav-home" data-view="home" role="tab" aria-selected="true" aria-label="Home">
         <div class="yt-nav-icon">
-          <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
             <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path>
           </svg>
         </div>
         <span>Home</span>
-      </div>
+      </button>
 
-      <div class="yt-nav-item" id="nav-shorts">
+      <button type="button" class="yt-nav-item" id="nav-shorts" data-view="shorts" role="tab" aria-selected="false" aria-label="Shorts">
         <div class="yt-nav-icon">
-          <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
             <path d="M17.77 10.32l-1.2-.5L18 9.06a3.74 3.74 0 0 0-3.5-5.46 3.7 3.7 0 0 0-2.6 1.07L6.2 9.68a3.75 3.75 0 0 0 2.2 6.82l1.2.5-1.43.76a3.75 3.75 0 0 0 3.5 5.46c.99 0 1.94-.39 2.6-1.07l5.7-5.01a3.75 3.75 0 0 0-2.2-6.82zM10 14.5v-5l4.5 2.5-4.5 2.5z"></path>
           </svg>
         </div>
         <span>Shorts</span>
-      </div>
+      </button>
 
-      <div class="yt-nav-item" id="nav-subscriptions">
+      <button type="button" class="yt-nav-item" id="nav-subscriptions" data-view="subscriptions" role="tab" aria-selected="false" aria-label="Subscriptions">
         <div class="yt-nav-icon">
-          <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
             <path d="M20 8H4V6h16v2zm-2-6H6v2h12V2zm4 10v8c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2v-8c0-1.1.9-2 2-2h16c1.1 0 2 .9 2 2zm-6 4l-6-3.27v6.53L16 16z"></path>
           </svg>
         </div>
         <span>Subscriptions</span>
-      </div>
+      </button>
 
-      <div class="yt-nav-item" id="nav-you">
+      <button type="button" class="yt-nav-item" id="nav-you" data-view="you" role="tab" aria-selected="false" aria-label="You">
         <div class="yt-nav-icon">
-          <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"></path>
           </svg>
         </div>
         <span>You</span>
-      </div>
+      </button>
 
-      <div class="yt-nav-item" id="nav-history">
+      <button type="button" class="yt-nav-item" id="nav-history" data-view="history" role="tab" aria-selected="false" aria-label="History">
         <div class="yt-nav-icon">
-          <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
             <path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7a6.98 6.98 0 0 1-5.93-3.28L5.59 17.2A8.96 8.96 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"></path>
           </svg>
         </div>
         <span>History</span>
-      </div>
+      </button>
 
       <div class="yt-nav-divider"></div>
 
       <!-- Sign In Box -->
       <div class="yt-sidebar-signin-box">
         <div class="yt-sidebar-signin-text">Sign in to like videos, comment, and subscribe.</div>
-        <button class="yt-signin-btn">
+        <button type="button" class="yt-signin-btn btn-trigger-signin">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"></path>
           </svg>
@@ -1111,144 +1596,167 @@
       <!-- Explore Section -->
       <div class="yt-nav-section-title">Explore</div>
 
-      <div class="yt-nav-item" data-q="trending">
+      <button type="button" class="yt-nav-item" data-q="trending" role="tab" aria-label="Trending">
         <div class="yt-nav-icon">
-          <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
             <path d="M17.5 10.5C16.8 9.2 15.6 8.3 14.2 8c.3.8.3 1.7 0 2.5-.5 1.5-1.9 2.5-3.5 2.5-.4 0-.8-.1-1.2-.2.6 1.4 1.9 2.4 3.5 2.5 2.5.2 4.6-1.8 4.8-4.3.1-.2.1-.3-.3-.5zM12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10c0-3.3-1.6-6.2-4.1-8-1.1-.8-2.3-1.4-3.6-1.7-.8-.2-1.7-.3-2.3-.3z"></path>
           </svg>
         </div>
         <span>Trending</span>
-      </div>
+      </button>
 
-      <div class="yt-nav-item" data-q="music">
+      <button type="button" class="yt-nav-item" data-q="music" role="tab" aria-label="Music">
         <div class="yt-nav-icon">
-          <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
             <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"></path>
           </svg>
         </div>
         <span>Music</span>
-      </div>
+      </button>
 
-      <div class="yt-nav-item" data-q="movies">
+      <button type="button" class="yt-nav-item" data-q="gaming" role="tab" aria-label="Gaming">
         <div class="yt-nav-icon">
-          <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-            <path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"></path>
-          </svg>
-        </div>
-        <span>Movies & TV</span>
-      </div>
-
-      <div class="yt-nav-item" data-q="live">
-        <div class="yt-nav-icon">
-          <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 14h-2v-2h2v2zm0-4h-2V7h2v5z"></path>
-          </svg>
-        </div>
-        <span>Live</span>
-      </div>
-
-      <div class="yt-nav-item" data-q="gaming">
-        <div class="yt-nav-icon">
-          <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
             <path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm4-3c-.83 0-1.5-.67-1.5-1.5S18.67 9 19.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"></path>
           </svg>
         </div>
         <span>Gaming</span>
-      </div>
+      </button>
 
-      <div class="yt-nav-divider"></div>
-
-      <!-- More from YouTube -->
-      <div class="yt-nav-section-title">More from YouTube</div>
-
-      <div class="yt-nav-item">
-        <div class="yt-nav-icon">
-          <svg viewBox="0 0 24 24" width="24" height="24" fill="#FF0000">
-            <path d="M21.58 7.19a2.7 2.7 0 0 0-1.9-1.9C17.99 4.8 12 4.8 12 4.8s-5.99 0-7.68.49a2.7 2.7 0 0 0-1.9 1.9C1.93 8.88 1.93 12 1.93 12s0 3.12.49 4.81a2.7 2.7 0 0 0 1.9 1.9c1.69.49 7.68.49 7.68.49s5.99 0 7.68-.49a2.7 2.7 0 0 0 1.9-1.9c.49-1.69.49-4.81.49-4.81s0-3.12-.49-4.81zM10 15V9l5.2 3L10 15z"></path>
-          </svg>
-        </div>
-        <span>YouTube Premium</span>
-      </div>
-
-      <div class="yt-nav-item">
-        <div class="yt-nav-icon">
-          <svg viewBox="0 0 24 24" width="24" height="24" fill="#FF0000">
-            <circle cx="12" cy="12" r="10" stroke="#FF0000" stroke-width="1.5" fill="none"/>
-            <circle cx="12" cy="12" r="4" fill="#FF0000"/>
-          </svg>
-        </div>
-        <span>YouTube Music</span>
-      </div>
-
-      <div class="yt-nav-divider"></div>
-
-      <!-- Footer Info -->
       <div class="yt-sidebar-footer">
-        <p><a href="#">About</a> <a href="#">Press</a> <a href="#">Copyright</a></p>
-        <p><a href="#">Contact us</a> <a href="#">Creator</a></p>
-        <p><a href="#">Terms</a> <a href="#">Privacy</a> <a href="#">Policy</a></p>
-        <p style="margin-top: 10px;">&copy; 2026 Google LLC</p>
+        <p><a href="#">About</a> <a href="#">Terms</a> <a href="#">Privacy</a></p>
+        <p style="margin-top: 6px;">&copy; 2026 Google LLC • ZAMI</p>
       </div>
     </aside>
 
     <!-- MAIN VIEWPORT -->
-    <main class="yt-main-viewport">
+    <main class="yt-main-viewport" id="yt-main-viewport" role="main">
 
-      <!-- CATEGORY CHIPS CAROUSEL -->
-      <div class="yt-chips-container" id="yt-chips-container">
-        <button class="yt-chip active" data-q="trending">All</button>
-        <button class="yt-chip" data-q="music">Music</button>
-        <button class="yt-chip" data-q="psychology">Psychology</button>
-        <button class="yt-chip" data-q="podcasts">Podcasts</button>
-        <button class="yt-chip" data-q="playlists">Playlists</button>
-        <button class="yt-chip" data-q="intelligence">Intelligence</button>
-        <button class="yt-chip" data-q="computer programming">Computer programming</button>
-        <button class="yt-chip" data-q="mixes">Mixes</button>
-        <button class="yt-chip" data-q="deep house">Deep House</button>
-        <button class="yt-chip" data-q="meditation music">Meditation music</button>
-        <button class="yt-chip" data-q="live">Live</button>
-        <button class="yt-chip" data-q="contemporary r&b">Contemporary R&B</button>
-        <button class="yt-chip" data-q="gaming">Gaming</button>
-        <button class="yt-chip" data-q="indian pop music">Indian pop music</button>
-        <button class="yt-chip" data-q="wealth">Wealth</button>
-        <button class="yt-chip" data-q="movie trailers">Movie trailers</button>
-        <button class="yt-chip" data-q="bollywood">Bollywood</button>
+      <!-- TOPIC CHIPS CAROUSEL (Horizontally scrollable with clear selected state) -->
+      <div class="yt-chips-container" id="yt-chips-container" role="toolbar" aria-label="Topic filters">
+        <button type="button" class="yt-chip active" data-q="trending" aria-pressed="true">All</button>
+        <button type="button" class="yt-chip" data-q="music" aria-pressed="false">Music</button>
+        <button type="button" class="yt-chip" data-q="podcasts" aria-pressed="false">Podcasts</button>
+        <button type="button" class="yt-chip" data-q="gaming" aria-pressed="false">Gaming</button>
+        <button type="button" class="yt-chip" data-q="computer programming" aria-pressed="false">Coding</button>
+        <button type="button" class="yt-chip" data-q="deep house" aria-pressed="false">Deep House</button>
+        <button type="button" class="yt-chip" data-q="movie trailers" aria-pressed="false">Movie Trailers</button>
+        <button type="button" class="yt-chip" data-q="live" aria-pressed="false">Live</button>
+        <button type="button" class="yt-chip" data-q="psychology" aria-pressed="false">Psychology</button>
+        <button type="button" class="yt-chip" data-q="playlists" aria-pressed="false">Playlists</button>
+        <button type="button" class="yt-chip" data-q="meditation music" aria-pressed="false">Meditation</button>
+        <button type="button" class="yt-chip" data-q="bollywood" aria-pressed="false">Bollywood</button>
       </div>
 
-      <!-- FEED VIEW -->
-      <div class="yt-feed-content" id="yt-feed-content">
-        <!-- Top Video Grid (Row 1) -->
-        <div class="yt-video-grid" id="yt-top-video-grid">
-          <!-- Populated dynamically -->
-        </div>
+      <!-- VIEW 1: HOME FEED -->
+      <div class="yt-feed-content yt-view-section" id="yt-feed-content">
+        <div class="yt-video-grid" id="yt-top-video-grid"></div>
 
         <!-- AUTHENTIC SHORTS SHELF -->
         <div class="yt-shorts-shelf" id="yt-shorts-shelf">
           <div class="yt-shorts-header">
-            <!-- Authentic Red YouTube Shorts SVG Icon -->
             <svg class="yt-shorts-icon" viewBox="0 0 24 24" fill="none">
               <path d="M17.77 10.32l-1.2-.5L18 9.06a3.74 3.74 0 0 0-3.5-5.46 3.7 3.7 0 0 0-2.6 1.07L6.2 9.68a3.75 3.75 0 0 0 2.2 6.82l1.2.5-1.43.76a3.75 3.75 0 0 0 3.5 5.46c.99 0 1.94-.39 2.6-1.07l5.7-5.01a3.75 3.75 0 0 0-2.2-6.82z" fill="#FF0000"/>
               <path d="M10 14.5v-5l4.5 2.5-4.5 2.5z" fill="#FFFFFF"/>
             </svg>
             <h2 class="yt-shorts-title">Shorts</h2>
           </div>
-          <div class="yt-shorts-grid" id="yt-shorts-grid">
-            <!-- Populated dynamically -->
+          <div class="yt-shorts-grid" id="yt-shorts-grid"></div>
+        </div>
+
+        <div class="yt-video-grid" id="yt-bottom-video-grid"></div>
+      </div>
+
+      <!-- VIEW 2: SHORTS DEDICATED FEED -->
+      <div class="yt-view-container yt-view-section" id="yt-view-shorts" style="display: none;">
+        <div class="yt-view-header">
+          <h2 class="yt-view-heading">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none">
+              <path d="M17.77 10.32l-1.2-.5L18 9.06a3.74 3.74 0 0 0-3.5-5.46 3.7 3.7 0 0 0-2.6 1.07L6.2 9.68a3.75 3.75 0 0 0 2.2 6.82l1.2.5-1.43.76a3.75 3.75 0 0 0 3.5 5.46c.99 0 1.94-.39 2.6-1.07l5.7-5.01a3.75 3.75 0 0 0-2.2-6.82z" fill="#FF0000"/>
+              <path d="M10 14.5v-5l4.5 2.5-4.5 2.5z" fill="#FFFFFF"/>
+            </svg>
+            <span>Trending Shorts</span>
+          </h2>
+        </div>
+        <div class="yt-shorts-grid" id="yt-view-shorts-grid" style="grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));"></div>
+      </div>
+
+      <!-- VIEW 3: SUBSCRIPTIONS FEED -->
+      <div class="yt-view-container yt-view-section" id="yt-view-subscriptions" style="display: none;">
+        <div class="yt-view-header">
+          <h2 class="yt-view-heading">Subscriptions</h2>
+        </div>
+
+        <!-- Subscribed Channels Bar -->
+        <div class="yt-sub-channels-row" id="yt-sub-channels-row" role="tablist" aria-label="Subscribed channels">
+          <!-- Populated dynamically -->
+        </div>
+
+        <div class="yt-guidance-banner">
+          <div class="yt-guidance-text">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="var(--yt-blue)">
+              <path d="M20 8H4V6h16v2zm-2-6H6v2h12V2zm4 10v8c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2v-8c0-1.1.9-2 2-2h16c1.1 0 2 .9 2 2zm-6 4l-6-3.27v6.53L16 16z"></path>
+            </svg>
+            <span>Sign in to sync your YouTube channel subscriptions with ZAMI Watch Party.</span>
+          </div>
+          <button type="button" class="yt-signin-btn btn-trigger-signin">Sign in</button>
+        </div>
+
+        <div class="yt-section-title-row">
+          <span class="yt-section-title">Latest from Subscriptions</span>
+        </div>
+        <div class="yt-video-grid" id="yt-subs-video-grid"></div>
+      </div>
+
+      <!-- VIEW 4: YOU / LIBRARY -->
+      <div class="yt-view-container yt-view-section" id="yt-view-you" style="display: none;">
+        <div class="yt-you-profile-card">
+          <div class="yt-you-avatar" id="yt-you-avatar">Y</div>
+          <div>
+            <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 4px;" id="yt-you-username">Watch Party Guest</h2>
+            <p style="font-size: 13px; color: var(--yt-text-secondary); margin-bottom: 8px;">Party Sync Enabled • ZAMI Room</p>
+            <button type="button" class="yt-signin-btn btn-trigger-signin">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"></path></svg>
+              <span>Sign in with Google</span>
+            </button>
           </div>
         </div>
 
-        <!-- Bottom Video Grid (Row 2+) -->
-        <div class="yt-video-grid" id="yt-bottom-video-grid">
-          <!-- Populated dynamically -->
+        <div class="yt-section-title-row">
+          <span class="yt-section-title">Liked Videos</span>
+          <button type="button" class="yt-section-link" id="btn-see-all-liked">Explore</button>
         </div>
+        <div class="yt-video-grid" id="yt-liked-video-grid"></div>
+
+        <div class="yt-section-title-row">
+          <span class="yt-section-title">Watch Party Playlists</span>
+        </div>
+        <div class="yt-video-grid" id="yt-playlists-grid"></div>
       </div>
 
-      <!-- WATCH VIEW (CINEMA MODE) -->
-      <div class="yt-watch-container" id="yt-watch-container">
-        <!-- Main Left Column -->
+      <!-- VIEW 5: HISTORY -->
+      <div class="yt-view-container yt-view-section" id="yt-view-history" style="display: none;">
+        <div class="yt-view-header">
+          <h2 class="yt-view-heading">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+              <path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7a6.98 6.98 0 0 1-5.93-3.28L5.59 17.2A8.96 8.96 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"></path>
+            </svg>
+            <span>Watch History</span>
+          </h2>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" class="yt-watch-btn-secondary" id="btn-clear-history">Clear History</button>
+            <button type="button" class="yt-watch-btn-secondary" id="btn-pause-history">Pause History</button>
+          </div>
+        </div>
+
+        <div class="yt-video-grid" id="yt-history-video-grid"></div>
+      </div>
+
+      <!-- VIEW 6: WATCH VIEW (CINEMA MODE) -->
+      <div class="yt-watch-container yt-view-section" id="yt-watch-container">
         <div class="yt-watch-left">
           <div class="yt-watch-player-frame">
-            <iframe id="active-yt-player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            <iframe id="active-yt-player" title="YouTube Video Player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
           </div>
 
           <h1 class="yt-watch-title" id="yt-watch-title">Video Title</h1>
@@ -1261,34 +1769,30 @@
                 <span class="yt-watch-channel-name" id="yt-watch-channel">Channel Name</span>
                 <span class="yt-watch-subs" id="yt-watch-subs">1.48M subscribers</span>
               </div>
-              <button class="yt-subscribe-btn">Subscribe</button>
+              <button type="button" class="yt-subscribe-btn" id="btn-watch-subscribe" aria-label="Subscribe to channel">Subscribe</button>
             </div>
 
-            <!-- Rave Watch Party & YouTube Action Buttons -->
+            <!-- Rave Watch Party & Action Buttons -->
             <div class="yt-watch-button-group">
-              <button class="btn-rave-screen" id="btn-screen-party-action" title="Screen this video to room watch party">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                  <path d="M8 5v14l11-7z"/>
-                </svg>
-                <span>SCREEN TO PARTY (SYNCED)</span>
+              <button type="button" class="btn-rave-screen" id="btn-screen-party-action" title="Screen this video to room watch party" aria-label="Screen to Watch Party">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                <span>SCREEN TO PARTY</span>
               </button>
 
-              <button class="btn-rave-queue" id="btn-queue-party-action" title="Add this video to room playlist">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                  <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-                </svg>
+              <button type="button" class="btn-rave-queue" id="btn-queue-party-action" title="Add this video to room playlist" aria-label="Add to Queue">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
                 <span>ADD TO QUEUE</span>
               </button>
 
-              <button class="yt-watch-btn-secondary" title="Like">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+              <button type="button" class="yt-watch-btn-secondary btn-like" id="btn-watch-like" title="Like this video" aria-label="Like video">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
                   <path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"></path>
                 </svg>
-                <span>124K</span>
+                <span id="watch-like-count">124K</span>
               </button>
 
-              <button class="yt-watch-btn-secondary" title="Share">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+              <button type="button" class="yt-watch-btn-secondary btn-share" id="btn-watch-share" title="Share video link" aria-label="Share video">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
                   <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"></path>
                 </svg>
                 <span>Share</span>
@@ -1303,55 +1807,146 @@
           </div>
         </div>
 
-        <!-- Right Side: Up Next / Related Videos -->
+        <!-- Right Side: Up Next -->
         <div class="yt-watch-right">
-          <div style="font-size: 16px; font-weight: 600; margin-bottom: 14px; color: #fff;">Up next</div>
-          <div id="yt-related-list">
-            <!-- Populated dynamically -->
-          </div>
+          <div style="font-size: 15px; font-weight: 600; margin-bottom: 12px; color: #fff;">Up next</div>
+          <div id="yt-related-list"></div>
         </div>
       </div>
 
     </main>
   </div>
 
+  <!-- MOBILE BOTTOM NAVIGATION (< 600px) -->
+  <nav class="yt-bottom-nav" role="tablist" aria-label="Mobile Navigation">
+    <button type="button" class="yt-bottom-nav-item active" id="bottom-nav-home" data-view="home" role="tab" aria-selected="true" aria-label="Home">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path>
+      </svg>
+      <span>Home</span>
+    </button>
+    <button type="button" class="yt-bottom-nav-item" id="bottom-nav-shorts" data-view="shorts" role="tab" aria-selected="false" aria-label="Shorts">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M17.77 10.32l-1.2-.5L18 9.06a3.74 3.74 0 0 0-3.5-5.46 3.7 3.7 0 0 0-2.6 1.07L6.2 9.68a3.75 3.75 0 0 0 2.2 6.82l1.2.5-1.43.76a3.75 3.75 0 0 0 3.5 5.46c.99 0 1.94-.39 2.6-1.07l5.7-5.01a3.75 3.75 0 0 0-2.2-6.82zM10 14.5v-5l4.5 2.5-4.5 2.5z"></path>
+      </svg>
+      <span>Shorts</span>
+    </button>
+    <button type="button" class="yt-bottom-nav-item" id="bottom-nav-subscriptions" data-view="subscriptions" role="tab" aria-selected="false" aria-label="Subscriptions">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M20 8H4V6h16v2zm-2-6H6v2h12V2zm4 10v8c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2v-8c0-1.1.9-2 2-2h16c1.1 0 2 .9 2 2zm-6 4l-6-3.27v6.53L16 16z"></path>
+      </svg>
+      <span>Subscriptions</span>
+    </button>
+    <button type="button" class="yt-bottom-nav-item" id="bottom-nav-you" data-view="you" role="tab" aria-selected="false" aria-label="You">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"></path>
+      </svg>
+      <span>You</span>
+    </button>
+    <button type="button" class="yt-bottom-nav-item" id="bottom-nav-history" data-view="history" role="tab" aria-selected="false" aria-label="History">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7a6.98 6.98 0 0 1-5.93-3.28L5.59 17.2A8.96 8.96 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"></path>
+      </svg>
+      <span>History</span>
+    </button>
+  </nav>
+
+  <!-- SIGN IN GUIDANCE MODAL DIALOG -->
+  <dialog id="yt-signin-dialog" class="yt-dialog" aria-labelledby="yt-signin-title">
+    <div class="yt-dialog-header">
+      <svg class="yt-logo-svg" viewBox="0 0 96 24" fill="none">
+        <rect x="0" y="2" width="34" height="20" rx="6" fill="#FF0000"/>
+        <polygon points="14,7 23,12 14,17" fill="#FFFFFF"/>
+        <text x="39" y="18" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="900" fill="#FFFFFF" letter-spacing="-0.5px">YouTube</text>
+      </svg>
+      <button type="button" class="yt-dialog-close" id="btn-close-signin-dialog" aria-label="Close dialog">&times;</button>
+    </div>
+    <h3 id="yt-signin-title" class="yt-dialog-title">Sign in to YouTube</h3>
+    <p class="yt-dialog-desc">Sign in with your Google account to like videos, subscribe to channels, access your personal library, and sync playlists with watch party guests.</p>
+    <div class="yt-dialog-actions">
+      <button type="button" class="yt-dialog-btn-secondary" id="btn-cancel-signin">Not Now</button>
+      <button type="button" class="yt-dialog-btn-primary" id="btn-confirm-signin">Sign in with Google</button>
+    </div>
+  </dialog>
+
   <!-- FLOATING TOAST -->
-  <div class="yt-toast" id="yt-toast"></div>
+  <div class="yt-toast" id="yt-toast" role="status" aria-live="polite"></div>
 
   <script>
     (function() {
-      // Elements
+      // Element References
       const sidebar = document.getElementById('yt-sidebar');
+      const sidebarOverlay = document.getElementById('yt-sidebar-overlay');
       const btnHamburger = document.getElementById('btn-hamburger');
       const searchForm = document.getElementById('yt-search-form');
       const searchInput = document.getElementById('yt-search-input');
       const btnBrandHome = document.getElementById('btn-brand-home');
-      const feedContent = document.getElementById('yt-feed-content');
-      const watchContainer = document.getElementById('yt-watch-container');
+      const chipsContainer = document.getElementById('yt-chips-container');
+      const toast = document.getElementById('yt-toast');
+      const signinDialog = document.getElementById('yt-signin-dialog');
+      const btnCloseSignin = document.getElementById('btn-close-signin-dialog');
+      const btnCancelSignin = document.getElementById('btn-cancel-signin');
+      const btnConfirmSignin = document.getElementById('btn-confirm-signin');
+
+      // Views
+      const viewSections = {
+        home: document.getElementById('yt-feed-content'),
+        shorts: document.getElementById('yt-view-shorts'),
+        subscriptions: document.getElementById('yt-view-subscriptions'),
+        you: document.getElementById('yt-view-you'),
+        history: document.getElementById('yt-view-history'),
+        watch: document.getElementById('yt-watch-container')
+      };
+
+      // Watch elements
       const activePlayer = document.getElementById('active-yt-player');
       const watchTitle = document.getElementById('yt-watch-title');
       const watchChannel = document.getElementById('yt-watch-channel');
       const watchAvatar = document.getElementById('yt-watch-avatar');
+      const watchSubs = document.getElementById('yt-watch-subs');
       const descStats = document.getElementById('yt-desc-stats');
+      const btnScreenParty = document.getElementById('btn-screen-party-action');
+      const btnQueueParty = document.getElementById('btn-queue-party-action');
+      const btnWatchLike = document.getElementById('btn-watch-like');
+      const btnWatchSubscribe = document.getElementById('btn-watch-subscribe');
+      const btnWatchShare = document.getElementById('btn-watch-share');
+      const relatedList = document.getElementById('yt-related-list');
+
+      // Grids
       const topVideoGrid = document.getElementById('yt-top-video-grid');
       const bottomVideoGrid = document.getElementById('yt-bottom-video-grid');
       const shortsGrid = document.getElementById('yt-shorts-grid');
-      const relatedList = document.getElementById('yt-related-list');
-      const btnScreenParty = document.getElementById('btn-screen-party-action');
-      const btnQueueParty = document.getElementById('btn-queue-party-action');
-      const chipsContainer = document.getElementById('yt-chips-container');
-      const toast = document.getElementById('yt-toast');
+      const viewShortsGrid = document.getElementById('yt-view-shorts-grid');
+      const subsVideoGrid = document.getElementById('yt-subs-video-grid');
+      const subChannelsRow = document.getElementById('yt-sub-channels-row');
+      const likedVideoGrid = document.getElementById('yt-liked-video-grid');
+      const playlistsGrid = document.getElementById('yt-playlists-grid');
+      const historyVideoGrid = document.getElementById('yt-history-video-grid');
 
       let currentVideo = null;
       let allVideos = [];
       let allShorts = [];
+      let watchHistory = [];
+      let likedVideos = [];
+      let subscribedChannels = new Set(['Taylor Swift', 'Queen Official', 'Ragni Mp3']);
+      let currentActiveView = 'home';
+
+      // Load persistent session storage if present
+      try {
+        const storedHistory = localStorage.getItem('zami_yt_history');
+        if (storedHistory) watchHistory = JSON.parse(storedHistory);
+        const storedLiked = localStorage.getItem('zami_yt_liked');
+        if (storedLiked) likedVideos = JSON.parse(storedLiked);
+      } catch (e) {}
 
       // Toast notification helper
-      function showToast(text, iconSvg = '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>') {
+      let toastTimer = null;
+      function showToast(text, iconSvg = '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>') {
         if (!toast) return;
+        if (toastTimer) clearTimeout(toastTimer);
         toast.innerHTML = `<span style="display: inline-flex; align-items: center;">${iconSvg}</span><span>${escapeHtml(text)}</span>`;
         toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 3500);
+        toastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
       }
 
       function escapeHtml(t) {
@@ -1360,58 +1955,172 @@
         return d.innerHTML;
       }
 
-      // Sidebar collapse toggle
-      btnHamburger.addEventListener('click', () => {
-        sidebar.classList.toggle('mini');
+      // Sign In Guidance Dialog
+      function openSignInGuidance() {
+        if (signinDialog) {
+          if (typeof signinDialog.showModal === 'function') {
+            signinDialog.showModal();
+          } else {
+            signinDialog.setAttribute('open', '');
+          }
+        }
+      }
+
+      function closeSignInGuidance() {
+        if (signinDialog) {
+          if (typeof signinDialog.close === 'function') {
+            signinDialog.close();
+          } else {
+            signinDialog.removeAttribute('open');
+          }
+        }
+      }
+
+      document.querySelectorAll('.btn-trigger-signin, #btn-signin-promo').forEach(btn => {
+        btn.addEventListener('click', openSignInGuidance);
+      });
+      document.getElementById('btn-settings')?.addEventListener('click', openSignInGuidance);
+      btnCloseSignin?.addEventListener('click', closeSignInGuidance);
+      btnCancelSignin?.addEventListener('click', closeSignInGuidance);
+      btnConfirmSignin?.addEventListener('click', () => {
+        closeSignInGuidance();
+        window.open('https://accounts.google.com/ServiceLogin?service=youtube', '_blank', 'noopener,noreferrer');
+        showToast('Redirecting to Google Sign In...', '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h2v-6h-2v6zm0-8h2V7h-2v2z"/></svg>');
       });
 
-      // Navigate home
-      btnBrandHome.addEventListener('click', () => {
-        showFeedView();
+      // Voice search trigger
+      document.getElementById('btn-voice-search')?.addEventListener('click', () => {
+        showToast('Voice search: Listening for speech...', '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3zm5 8a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg>');
+      });
+
+      // Sidebar & Mobile Drawer Toggles
+      btnHamburger?.addEventListener('click', () => {
+        if (window.innerWidth <= 600) {
+          sidebar.classList.toggle('open');
+          sidebarOverlay?.classList.toggle('active', sidebar.classList.contains('open'));
+        } else {
+          sidebar.classList.toggle('mini');
+        }
+      });
+
+      sidebarOverlay?.addEventListener('click', () => {
+        sidebar.classList.remove('open');
+        sidebarOverlay.classList.remove('active');
+      });
+
+      // VIEW SWITCHER (Home, Shorts, Subscriptions, You, History)
+      function switchView(viewName) {
+        currentActiveView = viewName;
+
+        // Close mobile drawer if open
+        sidebar.classList.remove('open');
+        sidebarOverlay?.classList.remove('active');
+
+        // Stop active player if switching away from watch
+        if (viewName !== 'watch' && activePlayer) {
+          activePlayer.src = 'about:blank';
+        }
+
+        // Toggle visibility of sections
+        Object.entries(viewSections).forEach(([name, el]) => {
+          if (el) el.style.display = (name === viewName) ? 'block' : 'none';
+        });
+
+        // Chips visibility: visible on Home, hidden on other dedicated views
+        if (chipsContainer) {
+          chipsContainer.style.display = (viewName === 'home') ? 'flex' : 'none';
+        }
+
+        // Update selected state on sidebar items
+        document.querySelectorAll('.yt-sidebar .yt-nav-item').forEach(item => {
+          const isSelected = item.dataset.view === viewName;
+          item.classList.toggle('active', isSelected);
+          item.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+        });
+
+        // Update selected state on mobile bottom nav items
+        document.querySelectorAll('.yt-bottom-nav .yt-bottom-nav-item').forEach(item => {
+          const isSelected = item.dataset.view === viewName;
+          item.classList.toggle('active', isSelected);
+          item.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+        });
+
+        // Populate dynamic views on switch
+        if (viewName === 'shorts') renderDedicatedShorts();
+        if (viewName === 'subscriptions') renderSubscriptionsView();
+        if (viewName === 'you') renderYouView();
+        if (viewName === 'history') renderHistoryView();
+
+        // Scroll to top smoothly
+        const viewport = document.getElementById('yt-main-viewport');
+        if (viewport) viewport.scrollTop = 0;
+      }
+
+      // Wire Navigation Event Listeners
+      const navItems = [
+        { id: 'nav-home', view: 'home' },
+        { id: 'nav-shorts', view: 'shorts' },
+        { id: 'nav-subscriptions', view: 'subscriptions' },
+        { id: 'nav-you', view: 'you' },
+        { id: 'nav-history', view: 'history' },
+        { id: 'bottom-nav-home', view: 'home' },
+        { id: 'bottom-nav-shorts', view: 'shorts' },
+        { id: 'bottom-nav-subscriptions', view: 'subscriptions' },
+        { id: 'bottom-nav-you', view: 'you' },
+        { id: 'bottom-nav-history', view: 'history' }
+      ];
+
+      navItems.forEach(({ id, view }) => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.addEventListener('click', () => switchView(view));
+          // Keyboard accessibility: Enter & Space trigger
+          el.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              switchView(view);
+            }
+          });
+        }
+      });
+
+      btnBrandHome?.addEventListener('click', () => {
+        switchView('home');
         loadCatalog('trending');
       });
 
-      document.getElementById('nav-home')?.addEventListener('click', () => {
-        showFeedView();
-        loadCatalog('trending');
-      });
-
-      document.getElementById('nav-shorts')?.addEventListener('click', () => {
-        showFeedView();
-        document.getElementById('yt-shorts-shelf')?.scrollIntoView({ behavior: 'smooth' });
-      });
-
-      // Explore items
+      // Explore items on sidebar
       document.querySelectorAll('.yt-sidebar .yt-nav-item[data-q]').forEach(item => {
         item.addEventListener('click', () => {
-          document.querySelectorAll('.yt-sidebar .yt-nav-item').forEach(i => i.classList.remove('active'));
-          item.classList.add('active');
           const q = item.dataset.q;
           if (searchInput) searchInput.value = q;
-          showFeedView();
+          switchView('home');
           loadCatalog(q);
         });
       });
 
-      // Filter chips
-      chipsContainer.querySelectorAll('.yt-chip').forEach(chip => {
+      // Filter chips handling
+      chipsContainer?.querySelectorAll('.yt-chip').forEach(chip => {
         chip.addEventListener('click', () => {
-          chipsContainer.querySelectorAll('.yt-chip').forEach(c => c.classList.remove('active'));
+          chipsContainer.querySelectorAll('.yt-chip').forEach(c => {
+            c.classList.remove('active');
+            c.setAttribute('aria-pressed', 'false');
+          });
           chip.classList.add('active');
+          chip.setAttribute('aria-pressed', 'true');
           const q = chip.dataset.q;
-          if (searchInput) searchInput.value = q === 'trending' ? '' : q;
-          showFeedView();
+          if (searchInput) searchInput.value = (q === 'trending') ? '' : q;
+          switchView('home');
           loadCatalog(q);
         });
       });
 
-      // Search submit
-      searchForm.addEventListener('submit', (e) => {
+      // Search submit handler
+      searchForm?.addEventListener('submit', (e) => {
         e.preventDefault();
         const q = (searchInput?.value || '').trim();
         if (!q) return;
 
-        // Check if direct ID or link was entered
         const directId = extractVideoId(q);
         if (directId) {
           playVideo({
@@ -1422,7 +2131,7 @@
             fullUrl: `https://www.youtube.com/watch?v=${directId}`
           });
         } else {
-          showFeedView();
+          switchView('home');
           loadCatalog(q);
         }
       });
@@ -1434,46 +2143,46 @@
         return match ? match[1] : null;
       }
 
-      // Fetch & Render Video Catalog
+      // Catalog Fetcher
       async function loadCatalog(query = 'trending') {
+        if (!topVideoGrid) return;
         topVideoGrid.innerHTML = `
-          <div style="grid-column: 1/-1; text-align: center; padding: 60px 0; color: #888;">
-            <div style="display: inline-block; width: 32px; height: 32px; border: 3px solid rgba(255,255,255,0.2); border-top-color: #ff0000; border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
-            <div style="margin-top: 14px; font-size: 14px; font-weight: 500;">Loading YouTube Feed...</div>
+          <div style="grid-column: 1/-1; text-align: center; padding: 50px 0; color: #888;">
+            <div style="display: inline-block; width: 30px; height: 30px; border: 3px solid rgba(255,255,255,0.2); border-top-color: #ff0000; border-radius: 50%; animation: ytSpin 0.8s linear infinite;"></div>
+            <div style="margin-top: 12px; font-size: 13px; font-weight: 500;">Loading YouTube Feed...</div>
           </div>
-          <style>@keyframes spin { 100% { transform: rotate(360deg); } }</style>
+          <style>@keyframes ytSpin { 100% { transform: rotate(360deg); } }</style>
         `;
-        bottomVideoGrid.innerHTML = '';
+        if (bottomVideoGrid) bottomVideoGrid.innerHTML = '';
 
         try {
           const res = await fetch(`/api/youtube/search?q=${encodeURIComponent(query)}`);
           const data = await res.json();
           allVideos = data.results || [];
           allShorts = data.shorts || [];
-
           renderFeed(allVideos, allShorts);
         } catch (e) {
           topVideoGrid.innerHTML = `
-            <div style="grid-column: 1/-1; text-align: center; padding: 60px; color: #ef4444;">
+            <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #ef4444;">
               Failed to load videos. Please try again.
             </div>
           `;
         }
       }
 
-      // Render Feed matching reference design
+      // Render Home Feed
       function renderFeed(videos, shorts) {
+        if (!topVideoGrid || !bottomVideoGrid || !shortsGrid) return;
         topVideoGrid.innerHTML = '';
         bottomVideoGrid.innerHTML = '';
         shortsGrid.innerHTML = '';
 
-        // If very few videos, add high quality trending samples so feed is always rich like reference
         if (videos.length < 4) {
           videos = [
             ...videos,
             {
               id: 'Z7JlVX1CJtY',
-              title: 'Chalre Chalre Waal : Shanzy Sial (Official Video) | Instagram Most Trending Punjabi Song 2026',
+              title: 'Chalre Chalre Waal : Shanzy Sial (Official Video) | Most Trending Punjabi Song 2026',
               channel: 'Ragni Mp3',
               thumbnail: 'https://i.ytimg.com/vi/Z7JlVX1CJtY/hq720.jpg',
               duration: '4:01',
@@ -1514,44 +2223,134 @@
           ];
         }
 
-        // Split videos: first 4-6 in top grid, then Shorts shelf, then rest in bottom grid
         const topSlice = videos.slice(0, 4);
         const bottomSlice = videos.slice(4);
 
-        topSlice.forEach(v => {
-          topVideoGrid.appendChild(createVideoCard(v));
-        });
+        topSlice.forEach(v => topVideoGrid.appendChild(createVideoCard(v)));
+        bottomSlice.forEach(v => bottomVideoGrid.appendChild(createVideoCard(v)));
 
-        bottomSlice.forEach(v => {
-          bottomVideoGrid.appendChild(createVideoCard(v));
-        });
-
-        // Populate Shorts shelf
         const shortsList = shorts.length > 0 ? shorts : [
           { id: '3lSN4XdWpm4', title: 'Navratri outfit inspiration #trending #fashion #shorts', views: '8.3M views', thumbnail: 'https://i.ytimg.com/vi/3lSN4XdWpm4/frame0.jpg' },
           { id: '9WJqdSs5ZQM', title: 'Jethalal epic comedy moment! #shorts #comedy #viral', views: '14M views', thumbnail: 'https://i.ytimg.com/vi/9WJqdSs5ZQM/frame0.jpg' },
           { id: 'xz8htb5-8wM', title: 'Incredible Fitness & Energy motivation #shorts #viral', views: '69M views', thumbnail: 'https://i.ytimg.com/vi/xz8htb5-8wM/frame0.jpg' },
-          { id: 'gCNeDWCI0vo', title: 'Street food cooking skills 1000% #shorts #food', views: '22M views', thumbnail: 'https://i.ytimg.com/vi/gCNeDWCI0vo/frame0.jpg' },
-          { id: 'fJ9rUzIMcZQ', title: 'Bohemian Rhapsody Live Crowd Singing #shorts #legend', views: '31M views', thumbnail: 'https://i.ytimg.com/vi/fJ9rUzIMcZQ/frame0.jpg' }
+          { id: 'gCNeDWCI0vo', title: 'Street food cooking skills 1000% #shorts #food', views: '22M views', thumbnail: 'https://i.ytimg.com/vi/gCNeDWCI0vo/frame0.jpg' }
         ];
 
-        shortsList.slice(0, 6).forEach(s => {
-          shortsGrid.appendChild(createShortCard(s));
-        });
+        shortsList.slice(0, 4).forEach(s => shortsGrid.appendChild(createShortCard(s)));
       }
+
+      // Render Dedicated Shorts View
+      function renderDedicatedShorts() {
+        if (!viewShortsGrid) return;
+        viewShortsGrid.innerHTML = '';
+        const list = allShorts.length > 0 ? allShorts : [
+          { id: '3lSN4XdWpm4', title: 'Navratri outfit inspiration #trending #fashion #shorts', views: '8.3M views', thumbnail: 'https://i.ytimg.com/vi/3lSN4XdWpm4/frame0.jpg' },
+          { id: '9WJqdSs5ZQM', title: 'Jethalal epic comedy moment! #shorts #comedy #viral', views: '14M views', thumbnail: 'https://i.ytimg.com/vi/9WJqdSs5ZQM/frame0.jpg' },
+          { id: 'xz8htb5-8wM', title: 'Incredible Fitness & Energy motivation #shorts #viral', views: '69M views', thumbnail: 'https://i.ytimg.com/vi/xz8htb5-8wM/frame0.jpg' },
+          { id: 'gCNeDWCI0vo', title: 'Street food cooking skills 1000% #shorts #food', views: '22M views', thumbnail: 'https://i.ytimg.com/vi/gCNeDWCI0vo/frame0.jpg' },
+          { id: 'fJ9rUzIMcZQ', title: 'Bohemian Rhapsody Live Crowd Singing #shorts #legend', views: '31M views', thumbnail: 'https://i.ytimg.com/vi/fJ9rUzIMcZQ/frame0.jpg' },
+          { id: 'kJQP7kiw5Fk', title: 'Despacito Chorus live in Stadium #shorts', views: '15M views', thumbnail: 'https://i.ytimg.com/vi/kJQP7kiw5Fk/frame0.jpg' }
+        ];
+        list.forEach(s => viewShortsGrid.appendChild(createShortCard(s)));
+      }
+
+      // Render Subscriptions View
+      function renderSubscriptionsView() {
+        if (subChannelsRow) {
+          subChannelsRow.innerHTML = '';
+          const channels = ['Taylor Swift', 'Queen Official', 'Ragni Mp3', 'Luis Fonsi', 'MrBeast', 'T-Series', 'Veritasium', 'MKBHD'];
+          channels.forEach(name => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'yt-sub-channel-item';
+            btn.setAttribute('role', 'tab');
+            btn.setAttribute('aria-label', name);
+            const init = name.charAt(0).toUpperCase();
+            btn.innerHTML = `
+              <div class="yt-sub-channel-avatar">${init}</div>
+              <span class="yt-sub-channel-name">${escapeHtml(name)}</span>
+            `;
+            btn.addEventListener('click', () => {
+              if (searchInput) searchInput.value = name;
+              loadCatalog(name);
+              switchView('home');
+            });
+            subChannelsRow.appendChild(btn);
+          });
+        }
+
+        if (subsVideoGrid) {
+          subsVideoGrid.innerHTML = '';
+          const sampleSubsVideos = allVideos.slice(0, 6);
+          sampleSubsVideos.forEach(v => subsVideoGrid.appendChild(createVideoCard(v)));
+        }
+      }
+
+      // Render "You" Library View
+      function renderYouView() {
+        if (likedVideoGrid) {
+          likedVideoGrid.innerHTML = '';
+          if (likedVideos.length === 0) {
+            likedVideoGrid.innerHTML = `<div style="grid-column: 1/-1; color: var(--yt-text-secondary); font-size: 13px; padding: 10px 0;">No liked videos yet. Tap "Like" on any video to save it here.</div>`;
+          } else {
+            likedVideos.forEach(v => likedVideoGrid.appendChild(createVideoCard(v)));
+          }
+        }
+
+        if (playlistsGrid) {
+          playlistsGrid.innerHTML = '';
+          const samplePlaylists = [
+            { id: 'Z7JlVX1CJtY', title: 'Watch Party Favorites', channel: 'Party Playlist (12 videos)', duration: '12 videos', thumbnail: 'https://i.ytimg.com/vi/Z7JlVX1CJtY/hqdefault.jpg' },
+            { id: 'RsEZmictANA', title: 'Acoustic Chill Beats', channel: 'ZAMI Curated (24 videos)', duration: '24 videos', thumbnail: 'https://i.ytimg.com/vi/RsEZmictANA/hqdefault.jpg' }
+          ];
+          samplePlaylists.forEach(p => playlistsGrid.appendChild(createVideoCard(p)));
+        }
+      }
+
+      // Render History View
+      function renderHistoryView() {
+        if (!historyVideoGrid) return;
+        historyVideoGrid.innerHTML = '';
+        if (watchHistory.length === 0) {
+          historyVideoGrid.innerHTML = `
+            <div style="grid-column: 1/-1; text-align: center; padding: 40px 10px; color: var(--yt-text-secondary);">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor" style="opacity: 0.4; margin-bottom: 12px;"><path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7a6.98 6.98 0 0 1-5.93-3.28L5.59 17.2A8.96 8.96 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+              <div style="font-size: 15px; font-weight: 600; color: #fff;">Keep track of what you watch</div>
+              <div style="font-size: 13px; margin: 6px 0 16px;">Watch history isn't viewable when signed out or empty.</div>
+              <button type="button" class="yt-signin-btn btn-trigger-signin" style="display: inline-flex; margin: 0 auto;">Sign in</button>
+            </div>
+          `;
+        } else {
+          watchHistory.forEach(v => historyVideoGrid.appendChild(createVideoCard(v)));
+        }
+      }
+
+      document.getElementById('btn-clear-history')?.addEventListener('click', () => {
+        watchHistory = [];
+        try { localStorage.removeItem('zami_yt_history'); } catch (e) {}
+        renderHistoryView();
+        showToast('Watch history cleared', '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>');
+      });
+
+      document.getElementById('btn-pause-history')?.addEventListener('click', () => {
+        showToast('Watch history is paused', '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>');
+      });
 
       // Create Video Card Element
       function createVideoCard(video) {
         const card = document.createElement('div');
         card.className = 'yt-video-card';
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('role', 'article');
+        card.setAttribute('aria-label', video.title || 'YouTube Video');
 
         const thumb = video.thumbnail || `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`;
         const avatarInitial = (video.channel || 'Y').charAt(0).toUpperCase();
         const verifiedSvg = video.isVerified
-          ? `<svg class="yt-verified-icon" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zM9.8 17.3l-4.2-4.1 1.4-1.4 2.8 2.7 7.8-7.8 1.4 1.4-9.2 9.2z"/></svg>`
+          ? `<svg class="yt-verified-icon" viewBox="0 0 24 24" aria-label="Verified"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zM9.8 17.3l-4.2-4.1 1.4-1.4 2.8 2.7 7.8-7.8 1.4 1.4-9.2 9.2z"/></svg>`
           : '';
 
-        const metaStats = [video.views, video.publishedTime].filter(Boolean).join(' • ') || 'YouTube Reel';
+        const metaStats = [video.views, video.publishedTime].filter(Boolean).join(' • ') || 'YouTube Video';
 
         card.innerHTML = `
           <div class="yt-thumb-container">
@@ -1559,11 +2358,11 @@
             ${video.duration ? `<div class="yt-duration-badge">${escapeHtml(video.duration)}</div>` : ''}
 
             <div class="yt-card-hover-actions">
-              <button class="yt-card-action-pill btn-quick-screen" title="Screen to ZAMI Room">
+              <button type="button" class="yt-card-action-pill btn-quick-screen" title="Screen to Watch Party" aria-label="Screen to Watch Party">
                 <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                 <span>Party</span>
               </button>
-              <button class="yt-card-action-pill btn-quick-queue" title="Add to room playlist">
+              <button type="button" class="yt-card-action-pill btn-quick-queue" title="Add to Room Queue" aria-label="Add to Queue">
                 <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
                 <span>Queue</span>
               </button>
@@ -1583,16 +2382,10 @@
               </div>
               <div class="yt-card-stats-row">${escapeHtml(metaStats)}</div>
             </div>
-
-            <button class="yt-card-menu-btn" title="More options">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-                <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path>
-              </svg>
-            </button>
           </div>
         `;
 
-        // Card click -> Play in cinema mode
+        // Card Click Handler
         card.addEventListener('click', (e) => {
           if (e.target.closest('.btn-quick-screen')) {
             e.stopPropagation();
@@ -1607,13 +2400,23 @@
           playVideo(video);
         });
 
+        // Keyboard accessibility
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            playVideo(video);
+          }
+        });
+
         return card;
       }
 
-      // Create Short Card Element (Vertical 9:16)
+      // Create Short Card Element
       function createShortCard(short) {
         const card = document.createElement('div');
         card.className = 'yt-short-card';
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('role', 'article');
+        card.setAttribute('aria-label', short.title || 'YouTube Short');
 
         const thumb = short.thumbnail || `https://i.ytimg.com/vi/${short.id}/frame0.jpg`;
 
@@ -1636,14 +2439,32 @@
           });
         });
 
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            playVideo({
+              id: short.id,
+              title: short.title,
+              channel: 'YouTube Shorts',
+              thumbnail: thumb,
+              fullUrl: `https://www.youtube.com/watch?v=${short.id}`
+            });
+          }
+        });
+
         return card;
       }
 
-      // Play video in Cinema Watch View
+      // Play Video in Watch View
       function playVideo(video) {
         currentVideo = video;
 
-        // Populate watch view elements
+        // Record in history
+        if (!watchHistory.some(v => v.id === video.id)) {
+          watchHistory.unshift(video);
+          if (watchHistory.length > 30) watchHistory.pop();
+          try { localStorage.setItem('zami_yt_history', JSON.stringify(watchHistory)); } catch (e) {}
+        }
+
         if (watchTitle) watchTitle.textContent = video.title;
         if (watchChannel) watchChannel.textContent = video.channel || 'YouTube';
         if (watchAvatar) {
@@ -1658,15 +2479,25 @@
           descStats.textContent = [video.views, video.publishedTime].filter(Boolean).join(' • ') || 'Verified YouTube Stream';
         }
 
+        // Like and Subscribe state update
+        const isLiked = likedVideos.some(v => v.id === video.id);
+        btnWatchLike?.classList.toggle('liked', isLiked);
+
+        const isSubscribed = subscribedChannels.has(video.channel);
+        if (btnWatchSubscribe) {
+          btnWatchSubscribe.textContent = isSubscribed ? 'Subscribed' : 'Subscribe';
+          btnWatchSubscribe.classList.toggle('subscribed', isSubscribed);
+        }
+
         // Official YouTube player embed
-        activePlayer.src = `https://www.youtube-nocookie.com/embed/${video.id}?autoplay=1&enablejsapi=1`;
+        if (activePlayer) {
+          activePlayer.src = `https://www.youtube-nocookie.com/embed/${video.id}?autoplay=1&enablejsapi=1`;
+        }
 
         // Switch to Watch View
-        feedContent.style.display = 'none';
-        watchContainer.style.display = 'flex';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        switchView('watch');
 
-        // Update URL
+        // Update URL query
         try {
           const url = new URL(window.location.href);
           url.searchParams.set('v', video.id);
@@ -1677,26 +2508,19 @@
         renderRelatedVideos(video.id);
       }
 
-      function showFeedView() {
-        if (activePlayer) activePlayer.src = 'about:blank';
-        watchContainer.style.display = 'none';
-        feedContent.style.display = 'block';
-
-        try {
-          const url = new URL(window.location.href);
-          url.searchParams.delete('v');
-          window.history.pushState(null, '', url.toString());
-        } catch (e) {}
-      }
-
       // Populate Up Next / Related videos
       function renderRelatedVideos(excludeId) {
+        if (!relatedList) return;
         relatedList.innerHTML = '';
         const related = allVideos.filter(v => v.id !== excludeId).slice(0, 10);
 
         related.forEach(v => {
           const item = document.createElement('div');
           item.className = 'yt-related-item';
+          item.setAttribute('tabindex', '0');
+          item.setAttribute('role', 'button');
+          item.setAttribute('aria-label', v.title || 'Related Video');
+
           const thumb = v.thumbnail || `https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`;
 
           item.innerHTML = `
@@ -1711,15 +2535,16 @@
             </div>
           `;
 
-          item.addEventListener('click', () => {
-            playVideo(v);
+          item.addEventListener('click', () => playVideo(v));
+          item.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') playVideo(v);
           });
 
           relatedList.appendChild(item);
         });
       }
 
-      // Broadcast to CineSync watch party room
+      // VIDEO ACTIONS: SCREEN TO PARTY & ADD TO QUEUE
       function screenToParty(video) {
         const target = video || currentVideo;
         if (!target) return;
@@ -1736,7 +2561,6 @@
         showToast(`Screening "${target.title}" to Room Watch Party!`, '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>');
       }
 
-      // Add to CineSync watch party queue
       function queueForParty(video) {
         const target = video || currentVideo;
         if (!target) return;
@@ -1753,11 +2577,61 @@
         showToast(`Added "${target.title}" to Party Queue!`, '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>');
       }
 
-      // Watch action bar triggers
       btnScreenParty?.addEventListener('click', () => screenToParty(currentVideo));
       btnQueueParty?.addEventListener('click', () => queueForParty(currentVideo));
 
-      // Initial query router
+      // VIDEO ACTIONS: LIKE, SUBSCRIBE, SHARE
+      btnWatchLike?.addEventListener('click', () => {
+        if (!currentVideo) return;
+        const index = likedVideos.findIndex(v => v.id === currentVideo.id);
+        if (index > -1) {
+          likedVideos.splice(index, 1);
+          btnWatchLike.classList.remove('liked');
+          showToast('Removed from Liked videos');
+        } else {
+          likedVideos.unshift(currentVideo);
+          btnWatchLike.classList.add('liked');
+          showToast('Added to Liked videos. Sign in to sync with your YouTube account.', '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"></path></svg>');
+        }
+        try { localStorage.setItem('zami_yt_liked', JSON.stringify(likedVideos)); } catch (e) {}
+      });
+
+      btnWatchSubscribe?.addEventListener('click', () => {
+        if (!currentVideo) return;
+        const channel = currentVideo.channel || 'YouTube Channel';
+        if (subscribedChannels.has(channel)) {
+          subscribedChannels.delete(channel);
+          btnWatchSubscribe.textContent = 'Subscribe';
+          btnWatchSubscribe.classList.remove('subscribed');
+          showToast(`Unsubscribed from ${channel}`);
+        } else {
+          subscribedChannels.add(channel);
+          btnWatchSubscribe.textContent = 'Subscribed';
+          btnWatchSubscribe.classList.add('subscribed');
+          showToast(`Subscribed to ${channel}! Sign in to manage notifications on YouTube.`, '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>');
+        }
+      });
+
+      btnWatchShare?.addEventListener('click', async () => {
+        const fullUrl = currentVideo?.fullUrl || window.location.href;
+        if (navigator.share) {
+          try {
+            await navigator.share({
+              title: currentVideo?.title || 'YouTube Video',
+              url: fullUrl
+            });
+            return;
+          } catch (e) {}
+        }
+        try {
+          await navigator.clipboard.writeText(fullUrl);
+          showToast('Link copied to clipboard! Share with friends.', '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>');
+        } catch (e) {
+          showToast('Could not copy link to clipboard');
+        }
+      });
+
+      // Initial Query Router
       const urlParams = new URLSearchParams(window.location.search);
       const vParam = urlParams.get('v');
       const qParam = urlParams.get('q');
@@ -1765,7 +2639,7 @@
       if (vParam) {
         playVideo({
           id: vParam,
-          title: `YouTube Stream [${vParam}]`,
+          title: `YouTube Video [${vParam}]`,
           channel: 'YouTube',
           thumbnail: `https://i.ytimg.com/vi/${vParam}/hqdefault.jpg`,
           fullUrl: `https://www.youtube.com/watch?v=${vParam}`
@@ -1773,8 +2647,10 @@
         loadCatalog('trending');
       } else if (qParam) {
         if (searchInput) searchInput.value = qParam;
+        switchView('home');
         loadCatalog(qParam);
       } else {
+        switchView('home');
         loadCatalog('trending');
       }
     })();

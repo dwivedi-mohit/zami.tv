@@ -5462,7 +5462,7 @@ function initRaveSuite(socket, roomId) {
       window.showToast(`Screening: ${e.data.title || 'YouTube Video'}`, 'success');
     } else if (e.data && e.data.type === 'CINESYNC_QUEUE_YOUTUBE') {
       if (window.roomQueueManager && window.roomQueueManager.addItemFromUrl) {
-        window.roomQueueManager.addItemFromUrl(e.data.url, e.data.title || 'YouTube Video');
+        window.roomQueueManager.addItemFromUrl(e.data.url, e.data.title || 'YouTube Video', e.data.poster || null);
       } else if (socket) {
         socket.emit('playlist-add', {
           item: {
@@ -5472,8 +5472,8 @@ function initRaveSuite(socket, roomId) {
             poster: e.data.poster || null
           }
         });
+        if (window.showToast) window.showToast(`Added to queue: ${e.data.title || 'YouTube Video'}`, 'success');
       }
-      window.showToast(`Added to queue: ${e.data.title || 'YouTube Video'}`, 'success');
     }
   });
 
