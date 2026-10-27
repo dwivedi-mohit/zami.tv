@@ -2303,6 +2303,24 @@ io.on('connection', (socket) => {
     }
   });
 
+  socket.on('remote-browser-insert-text', async ({ text, pressEnter }) => {
+    if (!currentRoomId) return;
+    const session = remoteBrowserManager.getSession(currentRoomId);
+    if (session && session.status === 'ready') {
+      const room = rooms.get(currentRoomId);
+      if (room && room.hostOnlyControls && room.hostId !== socket.id) {
+        return; // Host locked controls
+      }
+      if (text) {
+        await session.insertText(text);
+      }
+      if (pressEnter) {
+        await session.dispatchKeyEvent({ type: 'keyDown', key: 'Enter', code: 'Enter', windowsVirtualKeyCode: 13, text: '\r' });
+        await session.dispatchKeyEvent({ type: 'keyUp', key: 'Enter', code: 'Enter', windowsVirtualKeyCode: 13 });
+      }
+    }
+  });
+
   socket.on('remote-browser-back', async () => {
     if (!currentRoomId) return;
     const session = remoteBrowserManager.getSession(currentRoomId);

@@ -1285,6 +1285,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  const btnStageBrowserChoice = document.getElementById('btn-stage-choice-browser');
+  if (btnStageBrowserChoice) {
+    btnStageBrowserChoice.addEventListener('click', () => {
+      if (typeof window.openInbuiltBrowser === 'function') {
+        window.openInbuiltBrowser('https://www.google.com');
+      }
+    });
+  }
+
+  const btnMobileBrowserQuickBar = document.getElementById('btn-mobile-browser-quick');
+  if (btnMobileBrowserQuickBar) {
+    btnMobileBrowserQuickBar.addEventListener('click', () => {
+      if (typeof window.openInbuiltBrowser === 'function') {
+        window.openInbuiltBrowser('https://www.google.com');
+      }
+    });
+  }
+
   // Room Settings Modal Controller
   const btnNavSettings = document.getElementById('btn-nav-settings');
   const btnMobileSettings = document.getElementById('btn-mobile-settings');
@@ -4433,6 +4451,8 @@ function initRaveSuite(socket, roomId) {
 
     // Show stage container with canvas visible, hide fallback iframe
     browserContainer.style.display = 'flex';
+    const playerWrapper = document.querySelector('.player-wrapper');
+    if (playerWrapper) playerWrapper.classList.add('browser-active');
     if (remoteContainer) remoteContainer.style.display = 'block';
     if (browserIframe) browserIframe.style.display = 'none';
 
@@ -4923,11 +4943,35 @@ function initRaveSuite(socket, roomId) {
     let activeTouch = null;
     function getTouchCanvasCoords(touch) {
       const rect = remoteCanvas.getBoundingClientRect();
-      const scaleX = remoteCanvas.width / (rect.width || 1);
-      const scaleY = remoteCanvas.height / (rect.height || 1);
+      const canvasW = remoteCanvas.width || 1920;
+      const canvasH = remoteCanvas.height || 1080;
+      const canvasAspect = canvasW / (canvasH || 1);
+      const rectAspect = (rect.width || 1) / (rect.height || 1);
+
+      let renderWidth = rect.width;
+      let renderHeight = rect.height;
+      let offsetX = 0;
+      let offsetY = 0;
+
+      if (rectAspect > canvasAspect) {
+        // Letterboxed on left and right (pillarbox)
+        renderWidth = rect.height * canvasAspect;
+        offsetX = (rect.width - renderWidth) / 2;
+      } else {
+        // Letterboxed on top and bottom
+        renderHeight = rect.width / canvasAspect;
+        offsetY = (rect.height - renderHeight) / 2;
+      }
+
+      const clientX = touch.clientX - rect.left - offsetX;
+      const clientY = touch.clientY - rect.top - offsetY;
+
+      const scaleX = canvasW / (renderWidth || 1);
+      const scaleY = canvasH / (renderHeight || 1);
+
       return {
-        x: Math.round((touch.clientX - rect.left) * scaleX),
-        y: Math.round((touch.clientY - rect.top) * scaleY)
+        x: Math.round(Math.max(0, Math.min(canvasW, clientX * scaleX))),
+        y: Math.round(Math.max(0, Math.min(canvasH, clientY * scaleY)))
       };
     }
 
@@ -5291,6 +5335,8 @@ function initRaveSuite(socket, roomId) {
   if (btnBrowserClose && browserContainer) {
     btnBrowserClose.addEventListener('click', () => {
       browserContainer.style.display = 'none';
+      const playerWrapper = document.querySelector('.player-wrapper');
+      if (playerWrapper) playerWrapper.classList.remove('browser-active');
       socket.emit('remote-browser-stop');
       disconnectRemoteAudio();
       isRemoteBrowserActive = false;
@@ -5445,6 +5491,103 @@ function initRaveSuite(socket, roomId) {
       if (url) openInbuiltBrowser(url);
     });
   });
+
+  // Mobile Quick Floating Toolbar & Keyboard Controls
+  const btnMobileKb = document.getElementById('btn-browser-mobile-kb');
+  const btnMobileKbClose = document.getElementById('btn-browser-mobile-kb-close');
+  const mobileKbBar = document.getElementById('browser-mobile-keyboard-bar');
+  const mobileKbForm = document.getElementById('browser-mobile-keyboard-form');
+  const mobileTextInput = document.getElementById('browser-mobile-text-input');
+  const btnMobileAudio = document.getElementById('btn-browser-mobile-audio');
+  const btnMobileSync = document.getElementById('btn-browser-mobile-sync');
+  const btnMobileCast = document.getElementById('btn-browser-mobile-cast');
+  const btnMobileQuality = document.getElementById('btn-browser-mobile-quality');
+  const mobileQualityText = document.getElementById('browser-mobile-quality-text');
+
+  if (btnMobileKb) {
+    btnMobileKb.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (!mobileKbBar) return;
+      const isVisible = mobileKbBar.style.display === 'flex' || mobileKbBar.style.display === 'block';
+      if (isVisible) {
+        mobileKbBar.style.display = 'none';
+      } else {
+        mobileKbBar.style.display = 'block';
+        if (mobileTextInput) {
+          setTimeout(() => {
+            mobileTextInput.focus();
+          }, 50);
+        }
+      }
+    });
+  }
+
+  if (btnMobileKbClose && mobileKbBar) {
+    btnMobileKbClose.addEventListener('click', () => {
+      mobileKbBar.style.display = 'none';
+    });
+  }
+
+  if (mobileKbForm && mobileTextInput) {
+    mobileKbForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const text = mobileTextInput.value.trim();
+      if (!text) return;
+      socket.emit('remote-browser-insert-text', { text, pressEnter: true });
+      mobileTextInput.value = '';
+      if (window.showToast) window.showToast(`Typed "${text}" into remote browser`, 'info', 2000);
+      if (mobileKbBar) mobileKbBar.style.display = 'none';
+    });
+  }
+
+  if (btnMobileAudio) {
+    btnMobileAudio.addEventListener('click', () => {
+      const btnRemoteAudio = document.getElementById('btn-remote-audio-toggle');
+      if (btnRemoteAudio) btnRemoteAudio.click();
+    });
+  }
+
+  if (btnMobileSync) {
+    btnMobileSync.addEventListener('click', () => {
+      const btnBrowserSync = document.getElementById('btn-browser-sync-countdown');
+      if (btnBrowserSync) btnBrowserSync.click();
+    });
+  }
+
+  if (btnMobileCast) {
+    btnMobileCast.addEventListener('click', () => {
+      const btnBrowserCast = document.getElementById('btn-browser-cast-stage');
+      if (btnBrowserCast) btnBrowserCast.click();
+    });
+  }
+
+  if (btnMobileQuality) {
+    btnMobileQuality.addEventListener('click', () => {
+      const btnRemoteQuality = document.getElementById('btn-remote-quality-toggle');
+      if (btnRemoteQuality) {
+        btnRemoteQuality.click();
+        if (mobileQualityText && currentRemoteQualityMode) {
+          mobileQualityText.textContent = currentRemoteQualityMode.toUpperCase();
+        }
+      }
+    });
+  }
+
+  // Stage choice card for Virtual Browser
+  const btnStageChoiceBrowser = document.getElementById('btn-stage-choice-browser');
+  if (btnStageChoiceBrowser) {
+    btnStageChoiceBrowser.addEventListener('click', () => {
+      openInbuiltBrowser('https://www.google.com');
+    });
+  }
+
+  // Mobile subplayer quick Virtual Browser button
+  const btnMobileBrowserQuick = document.getElementById('btn-mobile-browser-quick');
+  if (btnMobileBrowserQuick) {
+    btnMobileBrowserQuick.addEventListener('click', () => {
+      openInbuiltBrowser('https://www.google.com');
+    });
+  }
 
   window.openInbuiltBrowser = openInbuiltBrowser;
 

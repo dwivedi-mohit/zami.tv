@@ -694,6 +694,17 @@ class RemoteBrowserSession {
     return this.sendCommand('Input.dispatchKeyEvent', params);
   }
 
+  // Insert Text (Mobile Soft Keyboard & IME support via CDP Input.insertText)
+  async insertText(text) {
+    this.lastActive = Date.now();
+    if (!text) return;
+    try {
+      await this.sendCommand('Input.insertText', { text });
+    } catch (e) {
+      this.warn('Failed to insertText:', e.message);
+    }
+  }
+
   ensureAudioSystemReady() {
     try {
       const { execSync } = require('child_process');

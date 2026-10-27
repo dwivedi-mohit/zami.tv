@@ -245,7 +245,7 @@
                 <span class="browser-ssl-icon">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                 </span>
-                <input type="text" id="browser-url-input" class="browser-url-input" placeholder="Enter URL (netflix.com, hotstar.com, primevideo.com, youtube.com)..." autocomplete="off" aria-label="Enter streaming web URL">
+                <input type="text" id="browser-url-input" class="browser-url-input" placeholder="Enter URL (netflix.com, hotstar.com, primevideo.com, youtube.com)..." autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" inputmode="url" enterkeyhint="go" aria-label="Enter streaming web URL">
                 <button type="submit" class="browser-go-btn" title="Navigate to URL" aria-label="Navigate to URL">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                 </button>
@@ -351,6 +351,43 @@
                 <div id="remote-browser-status-overlay" class="remote-browser-status-overlay" style="display: none;">
                   <div class="remote-status-spinner"></div>
                   <div id="remote-status-text" class="remote-status-text">Starting remote browser session...</div>
+                </div>
+
+                <!-- Mobile Floating Quick Toolbar (Ergonomic thumb-friendly controls on phones) -->
+                <div id="browser-mobile-toolbar" class="browser-mobile-toolbar" aria-label="Mobile browser controls">
+                  <button type="button" id="btn-browser-mobile-kb" class="browser-mobile-bar-btn" title="Open Keyboard to Type">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="6" y1="8" x2="6" y2="8"/><line x1="10" y1="8" x2="10" y2="8"/><line x1="14" y1="8" x2="14" y2="8"/><line x1="18" y1="8" x2="18" y2="8"/><line x1="6" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="18" y2="12"/><line x1="8" y1="16" x2="16" y2="16"/></svg>
+                    <span>Type</span>
+                  </button>
+                  <button type="button" id="btn-browser-mobile-audio" class="browser-mobile-bar-btn" title="Toggle Stage Audio">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                    <span id="browser-mobile-audio-text">Audio</span>
+                  </button>
+                  <button type="button" id="btn-browser-mobile-sync" class="browser-mobile-bar-btn" title="Synchronized 3-2-1 Countdown">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span>Sync</span>
+                  </button>
+                  <button type="button" id="btn-browser-mobile-cast" class="browser-mobile-bar-btn primary" title="Cast Screen to Room">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                    <span>Cast</span>
+                  </button>
+                  <button type="button" id="btn-browser-mobile-quality" class="browser-mobile-bar-btn" title="Switch Resolution (1080p / 720p)">
+                    <span id="browser-mobile-quality-text">1080p</span>
+                  </button>
+                </div>
+
+                <!-- Mobile Keyboard Direct Input Drawer (Summons phone soft keyboard) -->
+                <div id="browser-mobile-keyboard-bar" class="browser-mobile-keyboard-bar" style="display: none;">
+                  <form id="browser-mobile-keyboard-form" class="browser-mobile-keyboard-form">
+                    <span class="mobile-kb-icon">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="6" y1="8" x2="6" y2="8"/><line x1="10" y1="8" x2="10" y2="8"/><line x1="14" y1="8" x2="14" y2="8"/><line x1="18" y1="8" x2="18" y2="8"/><line x1="6" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="18" y2="12"/><line x1="8" y1="16" x2="16" y2="16"/></svg>
+                    </span>
+                    <input type="text" id="browser-mobile-text-input" class="browser-mobile-text-input" placeholder="Type text to send to remote browser..." autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" enterkeyhint="send" aria-label="Mobile text input for remote browser">
+                    <button type="submit" id="btn-browser-mobile-send" class="btn-browser-mobile-send" title="Send text and submit">
+                      Send ↵
+                    </button>
+                    <button type="button" id="btn-browser-mobile-kb-close" class="btn-browser-mobile-kb-close" title="Close Keyboard" aria-label="Close Keyboard">&times;</button>
+                  </form>
                 </div>
               </div>
               <iframe id="browser-iframe" class="browser-iframe" style="display: none;" allow="autoplay; encrypted-media; fullscreen; picture-in-picture; clipboard-write; web-share; camera; microphone; display-capture; screen-wake-lock" allowfullscreen></iframe>
@@ -482,10 +519,25 @@
                   </div>
                   <div class="choice-text-wrap">
                     <span class="choice-title">More Sources</span>
-                    <span class="choice-desc">Screen share, Web &amp; Apps, Files</span>
+                    <span class="choice-desc">Screen share, Files &amp; Vault</span>
                   </div>
                   <div class="card-action-cue">
                     <span>Explore Hub</span>
+                    <svg class="cue-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 18 15 12 9 6"/></svg>
+                  </div>
+                </button>
+
+                <!-- Choice 4: Virtual Web Browser -->
+                <button type="button" class="stage-choice-card" id="btn-stage-choice-browser" aria-label="Open Inbuilt Web Browser">
+                  <div class="choice-icon-wrap" style="color: #10b981; background: rgba(16, 185, 129, 0.12); border-color: rgba(16, 185, 129, 0.3);">
+                    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                  </div>
+                  <div class="choice-text-wrap">
+                    <span class="choice-title">Web Browser</span>
+                    <span class="choice-desc">Netflix, Hotstar, Prime &amp; Web</span>
+                  </div>
+                  <div class="card-action-cue">
+                    <span>Open Webview</span>
                     <svg class="cue-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 18 15 12 9 6"/></svg>
                   </div>
                 </button>
@@ -911,6 +963,9 @@
                   <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
                   <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
                 </svg>
+              </button>
+              <button type="button" id="btn-mobile-browser-quick" class="btn-subplayer-action" title="Open Virtual Web Browser" aria-label="Open Virtual Web Browser">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
               </button>
               <button type="button" id="btn-mobile-open-search" class="btn-subplayer-action" title="Search Media" aria-label="Search Media">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
