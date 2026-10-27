@@ -2163,17 +2163,259 @@
   border-radius: 10px;
 }
 
-/* Google Meet Participant List */
-.peer-tiles-grid.gmeet-participants-list,
-.peer-tiles-grid {
+/* Google Meet View Toggle Switch in Heading */
+.gmeet-heading-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.gmeet-view-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.gmeet-switch-btn {
+  background: transparent;
+  border: none;
+  color: #9aa0a6;
+  width: 26px;
+  height: 24px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.gmeet-switch-btn:hover {
+  color: #e8eaed;
+}
+
+.gmeet-switch-btn.active {
+  background: #3c4043;
+  color: #8ab4f8;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* ==========================================================================
+   Google Meet Grid View (Default & Primary View)
+   ========================================================================== */
+
+.peer-tiles-grid,
+.peer-tiles-grid.gmeet-tiles-grid,
+.peer-tiles-grid:not(.view-list) {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+}
+
+/* Single user expands across full width in grid */
+.peer-tiles-grid:not(.view-list) > .peer-tile:only-child {
+  grid-column: 1 / -1 !important;
+  aspect-ratio: 16 / 9 !important;
+}
+
+.peer-tiles-grid:not(.view-list) .peer-tile {
+  background: #202124 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 12px !important;
+  aspect-ratio: 16 / 10 !important;
+  position: relative !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  min-height: 105px !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35) !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.peer-tiles-grid:not(.view-list) .peer-tile:hover {
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Centered large avatar in grid view */
+.peer-tiles-grid:not(.view-list) .peer-avatar {
+  width: 48px !important;
+  height: 48px !important;
+  min-width: 48px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-family: 'Google Sans', Inter, -apple-system, sans-serif !important;
+  font-weight: 600 !important;
+  font-size: 1.25rem !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35) !important;
+  position: relative !important;
+  transition: box-shadow 0.2s ease, transform 0.2s ease !important;
+}
+
+/* Speaking pulse green ring */
+.peer-tiles-grid:not(.view-list) .peer-tile.speaking {
+  border: 2px solid #81c995 !important;
+  box-shadow: 0 0 16px rgba(129, 201, 149, 0.5) !important;
+}
+
+.peer-tiles-grid:not(.view-list) .peer-tile.speaking .peer-avatar {
+  box-shadow: 0 0 0 3px #81c995, 0 0 14px rgba(129, 201, 149, 0.7) !important;
+  animation: gmeetVoicePulse 1.2s infinite ease-in-out !important;
+}
+
+@keyframes gmeetVoicePulse {
+  0% { box-shadow: 0 0 0 2px #81c995, 0 0 6px rgba(129, 201, 149, 0.4); }
+  50% { box-shadow: 0 0 0 4px #81c995, 0 0 16px rgba(129, 201, 149, 0.7); }
+  100% { box-shadow: 0 0 0 2px #81c995, 0 0 6px rgba(129, 201, 149, 0.4); }
+}
+
+/* Bottom-left floating name badge */
+.peer-tiles-grid:not(.view-list) .peer-label {
+  position: absolute !important;
+  bottom: 8px !important;
+  left: 8px !important;
+  right: auto !important;
+  top: auto !important;
+  background: rgba(0, 0, 0, 0.65) !important;
+  backdrop-filter: blur(4px) !important;
+  border-radius: 12px !important;
+  padding: 3px 8px !important;
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 4px !important;
+  max-width: calc(100% - 16px) !important;
+  overflow: hidden !important;
+  z-index: 3 !important;
+}
+
+.peer-tiles-grid:not(.view-list) .gmeet-peer-name {
+  color: #ffffff !important;
+  font-size: 0.72rem !important;
+  font-weight: 500 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 2px !important;
+}
+
+.peer-tiles-grid:not(.view-list) .gmeet-tag-you {
+  color: rgba(255, 255, 255, 0.7) !important;
+  font-size: 0.66rem !important;
+  margin-left: 2px !important;
+}
+
+.peer-tiles-grid:not(.view-list) .gmeet-tag-host {
+  background: #1a73e8 !important;
+  color: #ffffff !important;
+  font-size: 0.6rem !important;
+  font-weight: 700 !important;
+  padding: 1px 5px !important;
+  border-radius: 6px !important;
+  letter-spacing: 0.04em !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+}
+
+/* Top-right floating mic indicator */
+.peer-tiles-grid:not(.view-list) .peer-mic-status {
+  position: absolute !important;
+  top: 8px !important;
+  right: 8px !important;
+  left: auto !important;
+  bottom: auto !important;
+  width: 26px !important;
+  height: 26px !important;
+  min-width: 26px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: rgba(0, 0, 0, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+  z-index: 4 !important;
+}
+
+.peer-tiles-grid:not(.view-list) .peer-mic-status.muted {
+  background: #ea4335 !important;
+  border-color: #ea4335 !important;
+  color: #ffffff !important;
+}
+
+/* Top-left volume slider on hover */
+.peer-tiles-grid:not(.view-list) .peer-volume-row {
+  position: absolute !important;
+  top: 8px !important;
+  left: 8px !important;
+  background: rgba(0, 0, 0, 0.72) !important;
+  backdrop-filter: blur(4px) !important;
+  border-radius: 12px !important;
+  padding: 2px 6px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity 0.2s ease !important;
+  z-index: 5 !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+.peer-tiles-grid:not(.view-list) .peer-tile:hover .peer-volume-row {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+.peer-tiles-grid:not(.view-list) .peer-vol-slider {
+  width: 36px !important;
+  height: 3px !important;
+}
+
+.peer-tiles-grid:not(.view-list) .gmeet-peer-trailing {
+  display: contents !important;
+}
+
+.peer-tiles-grid:not(.view-list) .gmeet-peer-menu-btn {
+  display: none !important;
+}
+
+/* Video inside grid tile when webcam is on */
+.peer-tiles-grid:not(.view-list) .peer-video {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  z-index: 1 !important;
+}
+
+/* ==========================================================================
+   Google Meet List View (When .view-list is toggled)
+   ========================================================================== */
+
+.peer-tiles-grid.view-list {
   display: flex !important;
   flex-direction: column !important;
   gap: 4px !important;
-  grid-template-columns: none !important;
 }
 
-/* Each Participant Row (Google Meet Style) */
-.peer-tile {
+.peer-tiles-grid.view-list .peer-tile {
   background: transparent !important;
   border: 1px solid transparent !important;
   border-radius: 10px !important;
@@ -2189,13 +2431,12 @@
   box-shadow: none !important;
 }
 
-.peer-tile:hover {
+.peer-tiles-grid.view-list .peer-tile:hover {
   background: rgba(255, 255, 255, 0.05) !important;
   border-color: rgba(255, 255, 255, 0.08) !important;
 }
 
-/* Google Meet Avatar */
-.peer-avatar {
+.peer-tiles-grid.view-list .peer-avatar {
   width: 36px !important;
   height: 36px !important;
   min-width: 36px !important;
@@ -2209,25 +2450,10 @@
   color: #ffffff !important;
   border: none !important;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25) !important;
-  position: relative !important;
-  transition: box-shadow 0.2s ease !important;
   flex-shrink: 0 !important;
 }
 
-/* Speaking Halo Pulse (Google Meet Green Ring) */
-.peer-tile.speaking .peer-avatar {
-  box-shadow: 0 0 0 3px #81c995, 0 0 14px rgba(129, 201, 149, 0.6) !important;
-  animation: gmeetVoicePulse 1.2s infinite ease-in-out !important;
-}
-
-@keyframes gmeetVoicePulse {
-  0% { box-shadow: 0 0 0 2px #81c995, 0 0 6px rgba(129, 201, 149, 0.4); }
-  50% { box-shadow: 0 0 0 4px #81c995, 0 0 16px rgba(129, 201, 149, 0.7); }
-  100% { box-shadow: 0 0 0 2px #81c995, 0 0 6px rgba(129, 201, 149, 0.4); }
-}
-
-/* Participant Info (Center) */
-.peer-label {
+.peer-tiles-grid.view-list .peer-label {
   position: static !important;
   flex: 1 1 auto !important;
   min-width: 0 !important;
@@ -2244,40 +2470,38 @@
   overflow: hidden !important;
 }
 
-.gmeet-peer-name {
-  color: #e8eaed;
-  font-weight: 500;
-  font-size: 0.86rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
+.peer-tiles-grid.view-list .gmeet-peer-name {
+  color: #e8eaed !important;
+  font-weight: 500 !important;
+  font-size: 0.86rem !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
 }
 
-.gmeet-tag-you {
-  color: #9aa0a6;
-  font-size: 0.78rem;
-  font-weight: 400;
-  margin-left: 4px;
+.peer-tiles-grid.view-list .gmeet-tag-you {
+  color: #9aa0a6 !important;
+  font-size: 0.78rem !important;
+  font-weight: 400 !important;
 }
 
-.gmeet-tag-host {
-  font-size: 0.7rem;
-  color: #8ab4f8;
-  font-weight: 500;
-  letter-spacing: 0.02em;
+.peer-tiles-grid.view-list .gmeet-tag-host {
+  font-size: 0.7rem !important;
+  color: #8ab4f8 !important;
+  font-weight: 500 !important;
+  background: transparent !important;
+  padding: 0 !important;
 }
 
-/* Participant Trailing Actions (Right) */
-.gmeet-peer-trailing {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-  margin-left: auto;
+.peer-tiles-grid.view-list .gmeet-peer-trailing {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  flex-shrink: 0 !important;
+  margin-left: auto !important;
 }
 
-.peer-mic-status {
+.peer-tiles-grid.view-list .peer-mic-status {
   position: static !important;
   width: 28px !important;
   height: 28px !important;
@@ -2289,35 +2513,15 @@
   background: rgba(255, 255, 255, 0.08) !important;
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
   color: #9aa0a6 !important;
-  transition: all 0.2s ease !important;
 }
 
-.peer-mic-status.muted {
+.peer-tiles-grid.view-list .peer-mic-status.muted {
   background: rgba(234, 67, 53, 0.15) !important;
   border-color: rgba(234, 67, 53, 0.3) !important;
   color: #ea4335 !important;
 }
 
-.gmeet-peer-menu-btn {
-  background: transparent;
-  border: none;
-  color: #9aa0a6;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-
-.gmeet-peer-menu-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #e8eaed;
-}
-
-.peer-volume-row {
+.peer-tiles-grid.view-list .peer-volume-row {
   position: static !important;
   display: flex !important;
   align-items: center !important;
@@ -2326,23 +2530,12 @@
   padding: 2px 6px !important;
   border-radius: 12px !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
 }
 
-.peer-vol-slider {
-  width: 44px;
-  height: 3px;
-  accent-color: #8ab4f8;
-  cursor: pointer;
-}
-
-.peer-mute-btn {
-  background: transparent;
-  border: none;
-  color: #9aa0a6;
-  padding: 0;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
+.peer-tiles-grid.view-list .gmeet-peer-menu-btn {
+  display: flex !important;
 }
 
 .peer-vu-meter-container {

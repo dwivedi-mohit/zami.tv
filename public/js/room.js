@@ -3475,7 +3475,7 @@ function renderUsers(users, webrtcMgr, currentUserId) {
           ${escapeHtml(user.username)}
           ${isMe ? '<span class="gmeet-tag-you">(You)</span>' : ''}
         </span>
-        ${user.isHost ? '<span class="gmeet-tag-host">Meeting host</span>' : ''}
+        ${user.isHost ? '<span class="gmeet-tag-host">Host</span>' : ''}
       </div>
       <div class="gmeet-peer-trailing">
         ${volControlHtml}
@@ -3577,6 +3577,41 @@ function renderUsers(users, webrtcMgr, currentUserId) {
       const screenBtn = document.getElementById('btn-screenshare-trigger');
       if (screenBtn) screenBtn.click();
     });
+  }
+
+  // View toggle: Grid vs List (default to Grid view)
+  const btnGrid = document.getElementById('btn-gmeet-grid');
+  const btnList = document.getElementById('btn-gmeet-list');
+  if (btnGrid && !btnGrid.dataset.bound) {
+    btnGrid.dataset.bound = 'true';
+    btnGrid.addEventListener('click', () => {
+      btnGrid.classList.add('active');
+      if (btnList) btnList.classList.remove('active');
+      const grid = document.getElementById('peer-tiles-grid');
+      if (grid) grid.classList.remove('view-list');
+      localStorage.setItem('zami_gmeet_view', 'grid');
+    });
+  }
+  if (btnList && !btnList.dataset.bound) {
+    btnList.dataset.bound = 'true';
+    btnList.addEventListener('click', () => {
+      btnList.classList.add('active');
+      if (btnGrid) btnGrid.classList.remove('active');
+      const grid = document.getElementById('peer-tiles-grid');
+      if (grid) grid.classList.add('view-list');
+      localStorage.setItem('zami_gmeet_view', 'list');
+    });
+  }
+
+  const savedView = localStorage.getItem('zami_gmeet_view') || 'grid';
+  if (savedView === 'list') {
+    if (btnList) btnList.classList.add('active');
+    if (btnGrid) btnGrid.classList.remove('active');
+    peerGrid.classList.add('view-list');
+  } else {
+    if (btnGrid) btnGrid.classList.add('active');
+    if (btnList) btnList.classList.remove('active');
+    peerGrid.classList.remove('view-list');
   }
 }
 

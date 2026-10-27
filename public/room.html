@@ -1274,11 +1274,21 @@
             <!-- Google Meet Participants Section -->
             <div class="gmeet-participants-container">
               <div class="gmeet-participants-heading">
-                <span class="gmeet-heading-text">IN CALL</span>
-                <span class="gmeet-count-pill" id="gmeet-participants-badge">1</span>
+                <div class="gmeet-heading-left">
+                  <span class="gmeet-heading-text">IN CALL</span>
+                  <span class="gmeet-count-pill" id="gmeet-participants-badge">1</span>
+                </div>
+                <div class="gmeet-view-switch" id="gmeet-view-switch">
+                  <button type="button" class="gmeet-switch-btn active" id="btn-gmeet-grid" title="Tile Grid View" aria-label="Tile Grid View">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+                  </button>
+                  <button type="button" class="gmeet-switch-btn" id="btn-gmeet-list" title="List View" aria-label="List View">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                  </button>
+                </div>
               </div>
-              <!-- Participants List (Populated dynamically) -->
-              <div id="peer-tiles-grid" class="peer-tiles-grid gmeet-participants-list">
+              <!-- Participants Grid (Populated dynamically) -->
+              <div id="peer-tiles-grid" class="peer-tiles-grid gmeet-tiles-grid">
               </div>
             </div>
           </div>
