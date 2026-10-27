@@ -5468,34 +5468,37 @@ function initRaveSuite(socket, roomId) {
         const mxTab = document.querySelector('.hub-nav-tab[data-tab="mx"]');
         if (mxTab) mxTab.click();
       }
-    } else if (e.data && e.data.type === 'CINESYNC_PLAY_YOUTUBE') {
+    } else if (e.data && (e.data.type === 'CINESYNC_PLAY_MEDIA' || e.data.type === 'CINESYNC_PLAY_YOUTUBE')) {
       if (browserContainer) browserContainer.style.display = 'none';
       if (modalVault) modalVault.classList.remove('active');
-      const videoUrl = e.data.url;
-      if (videoUrl && socket) {
+      const streamUrl = e.data.streamUrl || e.data.url;
+      const mediaType = e.data.mediaType || (e.data.type === 'CINESYNC_PLAY_YOUTUBE' && !e.data.streamUrl ? 'youtube' : 'hls');
+      if (streamUrl && socket) {
         socket.emit('change-media', {
-          type: 'youtube',
-          url: videoUrl,
-          title: e.data.title || 'YouTube Video',
+          type: mediaType,
+          url: streamUrl,
+          title: e.data.title || 'Video',
           poster: e.data.poster || null
         });
       }
-      window.showToast(`Screening: ${e.data.title || 'YouTube Video'}`, 'success');
-    } else if (e.data && e.data.type === 'CINESYNC_QUEUE_YOUTUBE') {
+      window.showToast(`Screening: ${e.data.title || 'Video'}`, 'success');
+    } else if (e.data && (e.data.type === 'CINESYNC_QUEUE_MEDIA' || e.data.type === 'CINESYNC_QUEUE_YOUTUBE')) {
+      const streamUrl = e.data.streamUrl || e.data.url;
+      const mediaType = e.data.mediaType || (e.data.type === 'CINESYNC_QUEUE_YOUTUBE' && !e.data.streamUrl ? 'youtube' : 'hls');
       if (window.roomQueueManager && window.roomQueueManager.addItemFromUrl) {
-        window.roomQueueManager.addItemFromUrl(e.data.url, e.data.title || 'YouTube Video', e.data.poster || null);
+        window.roomQueueManager.addItemFromUrl(streamUrl, e.data.title || 'Video', e.data.poster || null, mediaType);
       } else if (socket) {
         socket.emit('playlist-add', {
           item: {
-            type: 'youtube',
-            url: e.data.url,
-            title: e.data.title || 'YouTube Video',
+            type: mediaType,
+            url: streamUrl,
+            title: e.data.title || 'Video',
             poster: e.data.poster || null
           }
         });
-        if (window.showToast) window.showToast(`Added to queue: ${e.data.title || 'YouTube Video'}`, 'success');
+        if (window.showToast) window.showToast(`Added to queue: ${e.data.title || 'Video'}`, 'success');
       }
-    } else if (e.data && e.data.type === 'CINESYNC_CLOSE_YOUTUBE') {
+    } else if (e.data && (e.data.type === 'CINESYNC_CLOSE_YOUTUBE' || e.data.type === 'CINESYNC_CLOSE_SOURCE')) {
       closeModal();
     }
   });

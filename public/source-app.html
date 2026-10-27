@@ -584,6 +584,72 @@
       border: 1px solid var(--src-border);
     }
 
+    /* EPISODES PICKER */
+    .src-episodes-container {
+      max-height: 58vh;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      padding-right: 4px;
+    }
+
+    .src-episodes-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .src-ep-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 14px;
+      background: var(--src-bg);
+      border: 1px solid var(--src-border);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .src-ep-card:hover {
+      background: var(--src-pill-bg);
+      border-color: var(--src-cyan);
+    }
+
+    .src-ep-info-left {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .src-ep-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--src-text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .src-ep-meta {
+      font-size: 11px;
+      color: var(--src-text-muted);
+    }
+
+    .src-ep-btn-play {
+      background: var(--src-accent);
+      color: #fff;
+      border: none;
+      border-radius: 16px;
+      padding: 5px 12px;
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
     /* TOAST */
     .src-toast {
       position: fixed;
@@ -721,6 +787,18 @@
     </div>
   </dialog>
 
+  <!-- EPISODES PICKER DIALOG -->
+  <dialog id="src-episodes-dialog" class="src-paste-modal" closedby="any" aria-labelledby="episodes-dialog-title">
+    <div class="src-paste-header">
+      <h3 id="episodes-dialog-title">Select Episode</h3>
+      <button type="button" class="btn-close-paste" id="btn-close-episodes" aria-label="Close">&times;</button>
+    </div>
+    <div class="src-episodes-container" id="src-episodes-container">
+      <div id="src-episodes-loading" style="text-align: center; padding: 24px; color: var(--src-text-muted); font-size: 13.5px;">Loading episodes...</div>
+      <div id="src-episodes-list" class="src-episodes-list"></div>
+    </div>
+  </dialog>
+
   <!-- TOAST -->
   <div class="src-toast" id="src-toast" role="status" aria-live="polite"></div>
 
@@ -753,11 +831,11 @@
             { id: 'list', label: 'My List', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>` }
           ],
           catalog: [
-            { id: 'b9EkMc79ZSU', title: 'Stranger Things 4 | Official Trailer', channel: 'Netflix', duration: '3:05', tag: 'Top 10', meta: '4 Seasons • 98% Match • Sci-Fi', thumb: 'https://images.unsplash.com/photo-1618336753974-aae8e04506aa?auto=format&fit=crop&w=720&q=80' },
-            { id: 'oqxAJKy0ii4', title: 'Squid Game | Season 2 Announcement', channel: 'Netflix', duration: '2:12', tag: 'Trending', meta: '99% Match • Suspense • Thriller', thumb: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=720&q=80' },
-            { id: 'Di310BC87gk', title: 'Wednesday | Official Teaser Trailer', channel: 'Netflix', duration: '2:01', tag: 'Popular', meta: '97% Match • Mystery • Comedy', thumb: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=720&q=80' },
-            { id: '_InqQJRqGW4', title: 'Money Heist: Part 5 | Final Season', channel: 'Netflix', duration: '2:45', tag: 'Masterpiece', meta: '5 Seasons • 96% Match • Action', thumb: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=720&q=80' },
-            { id: 'rrwycJ08PSA', title: 'Dark | Complete Trilogy Trailer', channel: 'Netflix', duration: '3:15', tag: 'Sci-Fi Classic', meta: '3 Seasons • 95% Match • Mystery', thumb: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=720&q=80' }
+            { id: '80057281', title: 'Stranger Things', channel: 'Netflix', duration: '5 Seasons', tag: 'NETFLIX ORIGINAL', meta: '98% Match • Sci-Fi • 4K HDR', thumb: 'https://imgcdn.kim/poster/341/80057281.jpg' },
+            { id: '81040344', title: 'Squid Game', channel: 'Netflix', duration: '2 Seasons', tag: 'TOP 10', meta: '99% Match • Suspense • Thriller', thumb: 'https://imgcdn.kim/poster/341/81040344.jpg' },
+            { id: '81231974', title: 'Wednesday', channel: 'Netflix', duration: 'Season 1', tag: 'POPULAR', meta: '97% Match • Mystery • Comedy', thumb: 'https://imgcdn.kim/poster/341/81231974.jpg' },
+            { id: '80192098', title: 'Money Heist', channel: 'Netflix', duration: '5 Seasons', tag: 'MASTERPIECE', meta: '96% Match • Action • Heist', thumb: 'https://imgcdn.kim/poster/341/80192098.jpg' },
+            { id: '80100172', title: 'Dark', channel: 'Netflix', duration: '3 Seasons', tag: 'SCI-FI CLASSIC', meta: '95% Match • Mystery • Mind-Bending', thumb: 'https://imgcdn.kim/poster/341/80100172.jpg' }
           ]
         },
 
@@ -786,11 +864,10 @@
             { id: 'watchlist', label: 'Watchlist', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>` }
           ],
           catalog: [
-            { id: 'MN8fFM14538', title: 'The Boys Season 4 | Official Trailer', channel: 'Prime Video', duration: '2:38', tag: 'Amazon Original', meta: '4 Seasons • 18+ • Action', thumb: 'https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=720&q=80' },
-            { id: 'Vbg7Yo4VUvo', title: 'Fallout | Official Teaser Trailer', channel: 'Prime Video', duration: '2:34', tag: 'New Series', meta: 'Season 1 • Sci-Fi Adventure', thumb: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=720&q=80' },
-            { id: 'GSY5aJ9_5tI', title: 'Reacher Season 2 | Official Trailer', channel: 'Prime Video', duration: '2:24', tag: 'Top 10', meta: '2 Seasons • Crime • Thriller', thumb: 'https://images.unsplash.com/photo-1509281373149-e957c6296406?auto=format&fit=crop&w=720&q=80' },
-            { id: 'u371n4xZqK0', title: 'The Lord of the Rings: The Rings of Power', channel: 'Prime Video', duration: '3:12', tag: 'Epic Fantasy', meta: 'Season 2 • Fantasy Drama', thumb: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=720&q=80' },
-            { id: '9uK40rJ9r7k', title: 'Mirzapur Season 3 | Official Trailer', channel: 'Prime Video', duration: '2:15', tag: 'Trending', meta: '3 Seasons • Crime Thriller', thumb: 'https://images.unsplash.com/photo-1542204165-65bf26472b9b?auto=format&fit=crop&w=720&q=80' }
+            { id: '0KRGHGZCHKS920ZQGY5LBRF7MA', title: 'The Boys', channel: 'Prime Video', duration: '5 Seasons', tag: 'AMAZON ORIGINAL', meta: '18+ • Action • Dark Comedy', thumb: 'https://imgcdn.kim/pv/341/0KRGHGZCHKS920ZQGY5LBRF7MA.jpg' },
+            { id: '0OSBERMU4VQ3X8L55GXGKNQYBN', title: 'The Boys in The Boat', channel: 'Prime Video', duration: 'Full Movie', tag: 'NEW MOVIE', meta: 'George Clooney • Drama', thumb: 'https://imgcdn.kim/pv/341/0OSBERMU4VQ3X8L55GXGKNQYBN.jpg' },
+            { id: '0RV4XNYMFA8LB9GADUL1T4DT9H', title: 'Reacher', channel: 'Prime Video', duration: '2 Seasons', tag: 'TOP 10', meta: 'Crime • Action Thriller', thumb: 'https://imgcdn.kim/pv/341/0RV4XNYMFA8LB9GADUL1T4DT9H.jpg' },
+            { id: '0N9BB22P2FZ8UD2BBLNX07RP22', title: 'The Boys: Season 5', channel: 'Prime Video', duration: 'Season 5', tag: 'EXCLUSIVE', meta: 'Full Season Stream', thumb: 'https://imgcdn.kim/pv/341/0KRGHGZCHKS920ZQGY5LBRF7MA.jpg' }
           ]
         },
 
@@ -819,10 +896,10 @@
             { id: 'watchlist', label: 'Watchlist', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>` }
           ],
           catalog: [
-            { id: 'dug56u8NN7g', title: 'Marvel Studios Loki Season 2 Trailer', channel: 'Disney+ Hotstar', duration: '2:25', tag: 'Hotstar Special', meta: 'Marvel Studios • Sci-Fi Action', thumb: 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=720&q=80' },
-            { id: 'aWzlQ2N6qqg', title: 'ICC Cricket World Cup Thrilling Highlights', channel: 'Hotstar Sports', duration: '12:40', tag: 'Live Sports', meta: '1080p 60fps • Cricket', thumb: 'https://images.unsplash.com/photo-1531415074968-036ba1b575da?auto=format&fit=crop&w=720&q=80' },
-            { id: 'odM92ap8_c0', title: 'Special Ops 1.5 | Official Trailer', channel: 'Hotstar Specials', duration: '2:10', tag: 'Espionage', meta: 'Kay Kay Menon • Thriller', thumb: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=720&q=80' },
-            { id: 'aSiDu3Ywi8E', title: 'The Mandalorian Season 3 | Star Wars', channel: 'Disney+ Hotstar', duration: '2:14', tag: 'Star Wars', meta: 'Lucasfilm • Space Western', thumb: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=720&q=80' }
+            { id: '1260063451', title: 'Loki', channel: 'Disney+ Hotstar', duration: '2 Seasons', tag: 'HOTSTAR SPECIAL', meta: 'Marvel Studios • Sci-Fi Action', thumb: 'https://imgcdn.kim/hs/v/166/1260063451.jpg' },
+            { id: '1260014022', title: 'The Mandalorian', channel: 'Disney+ Hotstar', duration: '3 Seasons', tag: 'STAR WARS', meta: 'Lucasfilm • Space Western', thumb: 'https://imgcdn.kim/hs/v/166/1260014022.jpg' },
+            { id: '1260051386', title: 'WandaVision', channel: 'Disney+ Hotstar', duration: 'Miniseries', tag: 'MARVEL', meta: 'Marvel Studios • Mystery', thumb: 'https://imgcdn.kim/hs/v/166/1260051386.jpg' },
+            { id: '1260098555', title: 'Moon Knight', channel: 'Disney+ Hotstar', duration: 'Season 1', tag: 'SUPERHERO', meta: 'Oscar Isaac • Action', thumb: 'https://imgcdn.kim/hs/v/166/1260098555.jpg' }
           ]
         },
 
@@ -851,10 +928,10 @@
             { id: 'desi', label: 'Desi Hit', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>` }
           ],
           catalog: [
-            { id: 'v1U_KzW7qjM', title: 'Aashram Season 3 | Official Trailer', channel: 'MX Player', duration: '2:40', tag: 'MX Original', meta: 'Bobby Deol • Crime Drama', thumb: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=720&q=80' },
-            { id: 'Yq2vX_y8F68', title: 'Roohaniyat | Romantic Thriller Season 2', channel: 'MX Player', duration: '2:10', tag: 'Trending', meta: 'Romance • Mystery', thumb: 'https://images.unsplash.com/photo-1518173946687-a4c8892bbd9f?auto=format&fit=crop&w=720&q=80' },
-            { id: 'p3E0TzY5qLk', title: 'Bhaukaal 2 | IPS Navniet Sekera Saga', channel: 'MX Player', duration: '2:18', tag: 'Action Crime', meta: 'Mohit Raina • Intense Drama', thumb: 'https://images.unsplash.com/photo-1509281373149-e957c6296406?auto=format&fit=crop&w=720&q=80' },
-            { id: 'm4X8K2Q1v9L', title: 'Dharavi Bank | Official Crime Series', channel: 'MX Player', duration: '2:30', tag: 'Blockbuster', meta: 'Suniel Shetty • Gangster Thriller', thumb: 'https://images.unsplash.com/photo-1542204165-65bf26472b9b?auto=format&fit=crop&w=720&q=80' }
+            { id: 'mx-1', fullUrl: 'https://www.mxplayer.in/show/watch-aashram-series-online-78dff000787a950587dbe637651a14a7', title: 'Aashram Season 3', channel: 'MX Player', duration: '3 Seasons', tag: 'MX ORIGINAL', meta: 'Bobby Deol • Crime Drama', thumb: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=720&q=80' },
+            { id: 'mx-2', fullUrl: 'https://www.mxplayer.in/show/watch-roohaniyat-series-online-63f5d54ad20399ea4f8490a195b058a6', title: 'Roohaniyat', channel: 'MX Player', duration: '2 Seasons', tag: 'TRENDING', meta: 'Arjun Bijlani • Mystery Romance', thumb: 'https://images.unsplash.com/photo-1518173946687-a4c8892bbd9f?auto=format&fit=crop&w=720&q=80' },
+            { id: 'mx-3', fullUrl: 'https://www.mxplayer.in/show/watch-bhaukaal-series-online-c2110c737920fa56cf537616238b6932', title: 'Bhaukaal 2', channel: 'MX Player', duration: '2 Seasons', tag: 'ACTION CRIME', meta: 'Mohit Raina • Intense Drama', thumb: 'https://images.unsplash.com/photo-1509281373149-e957c6296406?auto=format&fit=crop&w=720&q=80' },
+            { id: 'mx-4', fullUrl: 'https://www.mxplayer.in/show/watch-dharavi-bank-series-online-06bca13d07e68fa7f781df5a0aa15750', title: 'Dharavi Bank', channel: 'MX Player', duration: '1 Season', tag: 'BLOCKBUSTER', meta: 'Suniel Shetty • Gangster Thriller', thumb: 'https://images.unsplash.com/photo-1542204165-65bf26472b9b?auto=format&fit=crop&w=720&q=80' }
           ]
         },
 
@@ -883,10 +960,10 @@
             { id: 'watchlist', label: 'Saved', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>` }
           ],
           catalog: [
-            { id: 'Way9Dexny3w', title: 'Dune: Part Two | Official Trailer', channel: 'Warner Bros.', duration: '3:01', tag: 'IMDb 8.6', meta: '2024 • Timothée Chalamet • Sci-Fi', thumb: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=720&q=80' },
-            { id: 'uYPbbksJxIg', title: 'Oppenheimer | New Trailer', channel: 'Universal Pictures', duration: '3:07', tag: 'Oscar Winner', meta: '2023 • Christopher Nolan • Drama', thumb: 'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?auto=format&fit=crop&w=720&q=80' },
-            { id: 'zSWdZVtXT7E', title: 'Interstellar | Official IMAX Trailer', channel: 'Paramount', duration: '2:32', tag: 'IMDb 8.7', meta: '2014 • Matthew McConaughey • Sci-Fi', thumb: 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=720&q=80' },
-            { id: 'YoHD9XEInc0', title: 'Inception | 10th Anniversary Trailer', channel: 'Warner Bros.', duration: '2:28', tag: 'IMDb 8.8', meta: '2010 • Leonardo DiCaprio • Sci-Fi', thumb: 'https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?auto=format&fit=crop&w=720&q=80' }
+            { id: '693134', mediaType: 'movie', title: 'Dune: Part Two', channel: 'Cinema Vault', duration: '2h 46m', tag: 'IMDb 8.6', meta: '2024 • Timothée Chalamet • Full Movie', thumb: 'https://image.tmdb.org/t/p/w500/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg' },
+            { id: '872585', mediaType: 'movie', title: 'Oppenheimer', channel: 'Cinema Vault', duration: '3h 00m', tag: 'OSCAR WINNER', meta: '2023 • Christopher Nolan • Full Movie', thumb: 'https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg' },
+            { id: '157336', mediaType: 'movie', title: 'Interstellar', channel: 'Cinema Vault', duration: '2h 49m', tag: 'IMDb 8.7', meta: '2014 • Matthew McConaughey • Full Movie', thumb: 'https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg' },
+            { id: '27205', mediaType: 'movie', title: 'Inception', channel: 'Cinema Vault', duration: '2h 28m', tag: 'IMDb 8.8', meta: '2010 • Leonardo DiCaprio • Full Movie', thumb: 'https://image.tmdb.org/t/p/w500/oYuLEt3zVCKq57qu2F8dT7NIa6f.jpg' }
           ]
         },
 
@@ -1003,10 +1080,10 @@
             { id: 'genres', label: 'Genres', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>` }
           ],
           catalog: [
-            { id: 'VQGCGyT1Wbs', title: 'Demon Slayer: Kimetsu no Yaiba Hashira Training', channel: 'Aniplex', duration: '2:15', tag: 'Simulcast', meta: 'Sub & Dub • Action Fantasy', thumb: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=720&q=80' },
-            { id: 'M_OauHnAFc8', title: 'Jujutsu Kaisen Season 2 Shibuya Incident', channel: 'MAPPA', duration: '2:05', tag: 'Must Watch', meta: 'Dark Fantasy • 1080p', thumb: 'https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=720&q=80' },
-            { id: 'M7hkxf87yX4', title: 'Solo Leveling | Official Cour 2 Trailer', channel: 'A-1 Pictures', duration: '2:20', tag: 'Top Rated', meta: 'Hunter Guild • Supernatural', thumb: 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=720&q=80' },
-            { id: 'luYPtJ2v1vM', title: 'Attack on Titan Final Season THE FINAL CHAPTERS', channel: 'Pony Canyon', duration: '2:50', tag: 'Masterpiece', meta: 'Action Drama • Complete', thumb: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=720&q=80' }
+            { id: '85937', mediaType: 'tv', title: 'Demon Slayer: Kimetsu no Yaiba', channel: 'Crunchyroll', duration: '4 Seasons', tag: '4K ANIME STREAM', meta: '2160p Master Stream • Action Fantasy', thumb: 'https://image.tmdb.org/t/p/w500/xUfRZu2mi8jH6SzQEJGP6tjBuYj.jpg' },
+            { id: '1429', mediaType: 'tv', title: 'Attack on Titan', channel: 'Crunchyroll', duration: '4 Seasons', tag: 'MASTERPIECE', meta: 'Full Anime Series • Japanese Audio', thumb: 'https://image.tmdb.org/t/p/w500/hTP1DtLGFamjfu8WqjnuQdP1n4i.jpg' },
+            { id: '95479', mediaType: 'tv', title: 'Jujutsu Kaisen', channel: 'Crunchyroll', duration: '2 Seasons', tag: 'MUST WATCH', meta: 'Dark Fantasy • 1080p HLS', thumb: 'https://image.tmdb.org/t/p/w500/fHpKWq9AYF29gYw8bV6x9oX0JjW.jpg' },
+            { id: '114410', mediaType: 'tv', title: 'Chainsaw Man', channel: 'Crunchyroll', duration: 'Season 1', tag: 'TOP RATED', meta: 'MAPPA • Action Horror', thumb: 'https://image.tmdb.org/t/p/w500/npdB6eFz4qt9CdFOEgVuftxyppP.jpg' }
           ]
         }
       };
@@ -1115,7 +1192,11 @@
               queueForParty(item);
               return;
             }
-            screenToParty(item);
+            if (appKey === 'netflix' || appKey === 'prime' || appKey === 'hotstar') {
+              openEpisodesModal(item);
+            } else {
+              screenToParty(item);
+            }
           });
 
           videoList.appendChild(card);
@@ -1130,7 +1211,6 @@
         if (tabId === 'home') {
           renderCatalog(config.catalog || []);
         } else {
-          // Shuffle or filter for varied tab view
           const filtered = (config.catalog || []).slice().reverse();
           renderCatalog(filtered);
         }
@@ -1153,37 +1233,233 @@
         toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
       }
 
-      // Streaming & Queueing Action Handlers
-      function screenToParty(item) {
-        if (!item) return;
-        const videoUrl = item.rawUrl && item.rawUrl !== 'local' ? item.rawUrl : `https://www.youtube.com/watch?v=${item.id}`;
-        const title = `${config.name} // ${item.title}`;
+      // Universal Stream Resolver
+      async function resolveStreamForItem(item, epId) {
+        showToast(`Resolving ${config.name} stream...`);
+        const sKey = appKey;
 
-        window.parent.postMessage({
-          type: 'CINESYNC_PLAY_YOUTUBE',
-          url: videoUrl,
-          title: title,
-          videoId: item.id,
+        // 1. Netflix, Prime Video, Hotstar (Open-Source NetMirror)
+        if (sKey === 'netflix' || sKey === 'prime' || sKey === 'hotstar') {
+          let targetId = epId || item.id;
+          let epTitle = item.title;
+
+          if (!epId) {
+            try {
+              const detailRes = await fetch(`/api/netmirror/details?platform=${sKey}&id=${encodeURIComponent(item.id)}`);
+              const detailJson = await detailRes.json();
+              if (detailJson.success && detailJson.data) {
+                const d = detailJson.data;
+                if (d.type === 'tv' && d.episodes && d.episodes.length > 0) {
+                  targetId = d.episodes[0].id;
+                  epTitle = `${d.title} (${d.episodes[0].title || 'Episode 1'})`;
+                }
+              }
+            } catch(e) {}
+          }
+
+          const res = await fetch(`/api/netmirror/resolve?platform=${sKey}&id=${encodeURIComponent(targetId)}`);
+          const data = await res.json();
+          if (data.success && data.streamUrl) {
+            return {
+              type: 'hls',
+              streamUrl: data.streamUrl,
+              title: `${config.name}: ${data.title || epTitle}${data.ep ? ' • ' + data.ep : ''}`,
+              poster: item.thumb || item.poster
+            };
+          }
+          throw new Error(data.message || 'Could not resolve stream from NetMirror');
+        }
+
+        // 2. MX Player
+        if (sKey === 'mx') {
+          const res = await fetch('/api/mx/resolve', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url: item.fullUrl || item.webUrl, title: item.title })
+          });
+          const data = await res.json();
+          if (data.success && data.streamUrl) {
+            return {
+              type: 'hls',
+              streamUrl: data.streamUrl,
+              title: `MX Player: ${item.title}`,
+              poster: item.thumb
+            };
+          }
+          throw new Error(data.message || 'Stream is protected or unavailable');
+        }
+
+        // 3. Cinema Vault (Movies & Series) or Crunchyroll Anime
+        if (sKey === 'movies' || sKey === 'crunchyroll') {
+          const mType = item.mediaType || (sKey === 'crunchyroll' ? 'tv' : 'movie');
+          const res = await fetch(`/api/stream/resolve?id=${encodeURIComponent(item.id)}&type=${mType}&season=1&episode=1`);
+          const data = await res.json();
+          if (data.success && data.streamUrl) {
+            return {
+              type: 'hls',
+              streamUrl: data.streamUrl,
+              title: `${item.title}`,
+              poster: item.thumb
+            };
+          }
+          throw new Error(data.message || 'Direct stream not indexed');
+        }
+
+        // 4. Direct URL
+        if (sKey === 'url') {
+          const targetUrl = item.rawUrl || item.id;
+          return {
+            type: targetUrl.includes('.m3u8') ? 'hls' : 'url',
+            streamUrl: targetUrl,
+            title: item.title,
+            poster: item.thumb
+          };
+        }
+
+        // 5. YouTube Fallback
+        return {
+          type: 'youtube',
+          streamUrl: item.rawUrl || `https://www.youtube.com/watch?v=${item.id}`,
+          title: item.title,
           poster: item.thumb
-        }, '*');
-
-        showToast(`Screening to Room Watch Party!`);
+        };
       }
 
-      function queueForParty(item) {
+      // Episodes Picker Dialog
+      const epDialog = document.getElementById('src-episodes-dialog');
+      const epTitleEl = document.getElementById('episodes-dialog-title');
+      const epLoading = document.getElementById('src-episodes-loading');
+      const epList = document.getElementById('src-episodes-list');
+      const btnCloseEp = document.getElementById('btn-close-episodes');
+
+      if (btnCloseEp && epDialog) {
+        btnCloseEp.addEventListener('click', () => {
+          if (typeof epDialog.close === 'function') epDialog.close();
+          else epDialog.removeAttribute('open');
+        });
+      }
+
+      if (epDialog && !('closedBy' in HTMLDialogElement.prototype)) {
+        epDialog.addEventListener('click', (event) => {
+          if (event.target !== epDialog) return;
+          const rect = epDialog.getBoundingClientRect();
+          const isDialogContent = (
+            rect.top <= event.clientY &&
+            event.clientY <= rect.top + rect.height &&
+            rect.left <= event.clientX &&
+            event.clientX <= rect.left + rect.width
+          );
+          if (!isDialogContent && typeof epDialog.close === 'function') {
+            epDialog.close();
+          }
+        });
+      }
+
+      async function openEpisodesModal(item) {
+        if (!epDialog) return;
+        if (epTitleEl) epTitleEl.textContent = `${item.title} — Episodes`;
+        if (epLoading) epLoading.style.display = 'block';
+        if (epList) epList.innerHTML = '';
+
+        if (typeof epDialog.showModal === 'function') epDialog.showModal();
+        else epDialog.setAttribute('open', '');
+
+        try {
+          let episodes = [];
+          if (appKey === 'netflix' || appKey === 'prime' || appKey === 'hotstar') {
+            const res = await fetch(`/api/netmirror/details?platform=${appKey}&id=${encodeURIComponent(item.id)}`);
+            const data = await res.json();
+            if (data.success && data.data && data.data.episodes) {
+              episodes = data.data.episodes;
+            }
+          }
+
+          if (epLoading) epLoading.style.display = 'none';
+
+          if (!episodes || episodes.length === 0) {
+            epList.innerHTML = `<div style="text-align: center; padding: 20px; color: var(--src-text-muted);">
+              Single Feature / Direct Play Available.<br><br>
+              <button type="button" class="btn-action-party" style="margin: 0 auto; display: inline-flex;" id="btn-ep-play-single">Screen Feature to Party</button>
+            </div>`;
+            document.getElementById('btn-ep-play-single')?.addEventListener('click', () => {
+              if (typeof epDialog.close === 'function') epDialog.close();
+              screenToParty(item);
+            });
+            return;
+          }
+
+          epList.innerHTML = '';
+          episodes.forEach(ep => {
+            const card = document.createElement('div');
+            card.className = 'src-ep-card';
+            card.innerHTML = `
+              <div class="src-ep-info-left">
+                <span class="src-ep-title">E${escapeHtml(ep.ep)}: ${escapeHtml(ep.title)}</span>
+                <span class="src-ep-meta">${escapeHtml(ep.desc ? ep.desc.substring(0, 90) + '...' : 'Full Episode')}</span>
+              </div>
+              <div style="display: flex; gap: 6px; align-items: center;">
+                <button type="button" class="btn-action-queue" style="font-size: 10px; padding: 4px 8px;">+ Queue</button>
+                <button type="button" class="src-ep-btn-play">Party</button>
+              </div>
+            `;
+
+            card.querySelector('.src-ep-btn-play').addEventListener('click', (e) => {
+              e.stopPropagation();
+              if (typeof epDialog.close === 'function') epDialog.close();
+              screenToParty(item, ep.id);
+            });
+
+            card.querySelector('.btn-action-queue').addEventListener('click', (e) => {
+              e.stopPropagation();
+              if (typeof epDialog.close === 'function') epDialog.close();
+              queueForParty(item, ep.id);
+            });
+
+            card.addEventListener('click', () => {
+              if (typeof epDialog.close === 'function') epDialog.close();
+              screenToParty(item, ep.id);
+            });
+
+            epList.appendChild(card);
+          });
+        } catch(err) {
+          if (epLoading) epLoading.textContent = `Error loading episodes: ${err.message}`;
+        }
+      }
+
+      // Streaming & Queueing Action Handlers
+      async function screenToParty(item, epId) {
         if (!item) return;
-        const videoUrl = item.rawUrl && item.rawUrl !== 'local' ? item.rawUrl : `https://www.youtube.com/watch?v=${item.id}`;
-        const title = `${config.name} // ${item.title}`;
+        try {
+          const resolved = await resolveStreamForItem(item, epId);
+          window.parent.postMessage({
+            type: 'CINESYNC_PLAY_MEDIA',
+            streamUrl: resolved.streamUrl,
+            mediaType: resolved.type,
+            title: resolved.title,
+            poster: resolved.poster
+          }, '*');
+          showToast(`Screening to Room Watch Party!`);
+        } catch(err) {
+          showToast(`Playback error: ${err.message}`);
+        }
+      }
 
-        window.parent.postMessage({
-          type: 'CINESYNC_QUEUE_YOUTUBE',
-          url: videoUrl,
-          title: title,
-          videoId: item.id,
-          poster: item.thumb
-        }, '*');
-
-        showToast(`Added to Party Queue!`);
+      async function queueForParty(item, epId) {
+        if (!item) return;
+        try {
+          const resolved = await resolveStreamForItem(item, epId);
+          window.parent.postMessage({
+            type: 'CINESYNC_QUEUE_MEDIA',
+            streamUrl: resolved.streamUrl,
+            mediaType: resolved.type,
+            title: resolved.title,
+            poster: resolved.poster
+          }, '*');
+          showToast(`Added to Party Queue!`);
+        } catch(err) {
+          showToast(`Queue error: ${err.message}`);
+        }
       }
 
       // Search & Query Submission
@@ -1198,24 +1474,81 @@
         const q = (searchInput?.value || '').trim();
         if (!q) return;
 
-        showToast(`Searching for "${q}"...`);
+        showToast(`Searching ${config.name} for "${q}"...`);
         try {
-          const res = await fetch(`/api/youtube/search?q=${encodeURIComponent(config.name + ' ' + q)}`);
-          const data = await res.json();
-          if (data.results && data.results.length > 0) {
-            renderCatalog(data.results.map(r => ({
-              id: r.id,
-              title: r.title,
-              channel: r.channel,
-              duration: r.duration,
-              meta: `${r.views || ''} • ${r.publishedTime || ''}`,
-              thumb: r.thumbnail,
-              tag: config.name
-            })));
-            document.getElementById('src-feed-title').textContent = `Results for "${q}"`;
+          if (appKey === 'netflix' || appKey === 'prime' || appKey === 'hotstar') {
+            const res = await fetch(`/api/netmirror/search?platform=${appKey}&q=${encodeURIComponent(q)}`);
+            const data = await res.json();
+            if (data.results && data.results.length > 0) {
+              renderCatalog(data.results.map(r => ({
+                id: r.id,
+                title: r.title,
+                channel: config.name,
+                duration: 'Full Stream',
+                tag: config.name.toUpperCase(),
+                meta: 'HD • NetMirror HLS Stream',
+                thumb: r.poster,
+                sourceKey: appKey
+              })));
+              document.getElementById('src-feed-title').textContent = `Results for "${q}"`;
+              return;
+            }
+          } else if (appKey === 'mx') {
+            const res = await fetch(`/api/mx/search?q=${encodeURIComponent(q)}`);
+            const data = await res.json();
+            if (data.results && data.results.length > 0) {
+              renderCatalog(data.results.map(r => ({
+                id: r.id,
+                title: r.title,
+                fullUrl: r.fullUrl,
+                channel: 'MX Player',
+                duration: 'Stream',
+                tag: 'MX STREAM',
+                meta: r.type ? r.type.toUpperCase() : 'SERIES',
+                thumb: r.image || 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=720&q=80',
+                sourceKey: 'mx'
+              })));
+              document.getElementById('src-feed-title').textContent = `Results for "${q}"`;
+              return;
+            }
+          } else if (appKey === 'movies' || appKey === 'crunchyroll') {
+            const res = await fetch(`/api/tmdb/search?q=${encodeURIComponent(q)}`);
+            const data = await res.json();
+            if (data.results && data.results.length > 0) {
+              renderCatalog(data.results.map(r => ({
+                id: r.id,
+                title: r.title,
+                mediaType: r.mediaType || (appKey === 'crunchyroll' ? 'tv' : 'movie'),
+                channel: appKey === 'crunchyroll' ? 'Crunchyroll' : 'Cinema Vault',
+                duration: r.year || 'HD',
+                tag: `IMDb ${r.rating || '8.0'}`,
+                meta: `${r.year || ''} • Full Stream`,
+                thumb: r.poster || 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=720&q=80',
+                sourceKey: appKey
+              })));
+              document.getElementById('src-feed-title').textContent = `Results for "${q}"`;
+              return;
+            }
+          } else if (appKey === 'youtube') {
+            const res = await fetch(`/api/youtube/search?q=${encodeURIComponent(q)}`);
+            const data = await res.json();
+            if (data.results && data.results.length > 0) {
+              renderCatalog(data.results.map(r => ({
+                id: r.id,
+                title: r.title,
+                channel: r.channel,
+                duration: r.duration,
+                meta: `${r.views || ''} • ${r.publishedTime || ''}`,
+                thumb: r.thumbnail,
+                tag: 'YOUTUBE'
+              })));
+              document.getElementById('src-feed-title').textContent = `Results for "${q}"`;
+              return;
+            }
           }
+          showToast(`No results found for "${q}"`);
         } catch(err) {
-          showToast(`Filtered locally for "${q}"`);
+          showToast(`Search error: ${err.message}`);
         }
       });
 
@@ -1238,11 +1571,11 @@
       const btnTopbarClose = document.getElementById('btn-topbar-close');
 
       btnTopbarBack.addEventListener('click', () => {
-        window.parent.postMessage({ type: 'CINESYNC_CLOSE_YOUTUBE' }, '*');
+        window.parent.postMessage({ type: 'CINESYNC_CLOSE_SOURCE' }, '*');
       });
 
       btnTopbarClose.addEventListener('click', () => {
-        window.parent.postMessage({ type: 'CINESYNC_CLOSE_YOUTUBE' }, '*');
+        window.parent.postMessage({ type: 'CINESYNC_CLOSE_SOURCE' }, '*');
       });
 
       // Paste Link Dialog

@@ -234,7 +234,7 @@ app.use(express.json());
 
 // Fallback router: Route root-relative sub-resources from proxied iframes (YouTube, Hotstar, Prime, etc.) to upstream
 app.use((req, res, next) => {
-  const isLocalApi = /^\/api\/(room|resolve-media|proxy-stream|hls-proxy|client-log|download-extension|proxy-web|mx|tmdb|stream|youtube|remote-browser)($|\/|\?)/.test(req.url);
+  const isLocalApi = /^\/api\/(room|resolve-media|proxy-stream|hls-proxy|client-log|download-extension|proxy-web|mx|tmdb|stream|youtube|remote-browser|netmirror|anime)($|\/|\?)/.test(req.url);
   if (
     req.url.startsWith('/proxy/') ||
     req.url.startsWith('/socket.io/') ||
@@ -545,7 +545,10 @@ app.get('/api/hls-proxy', async (req, res) => {
   const targetUrl = req.query.url;
   if (!targetUrl) return res.status(400).send('Missing url parameter');
 
-  const cached = hlsSegmentCache.get(targetUrl);
+  const customReferer = req.query.referer || null;
+  const cacheKey = customReferer ? `${targetUrl}__${customReferer}` : targetUrl;
+
+  const cached = hlsSegmentCache.get(cacheKey);
   if (cached && Date.now() - cached.timestamp < 30 * 60 * 1000) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
@@ -560,10 +563,16 @@ app.get('/api/hls-proxy', async (req, res) => {
   }
 
   try {
+    const upstreamReferer = customReferer || 'https://nextgencloudfabric.com/';
+    let upstreamOrigin = 'https://nextgencloudfabric.com';
+    try {
+      upstreamOrigin = new URL(upstreamReferer).origin;
+    } catch (e) {}
+
     const upstreamRes = await fetch(targetUrl, {
       headers: {
-        'Origin': 'https://nextgencloudfabric.com',
-        'Referer': 'https://nextgencloudfabric.com/',
+        'Origin': upstreamOrigin,
+        'Referer': upstreamReferer,
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
       },
       signal: AbortSignal.timeout(12000)
@@ -582,6 +591,7 @@ app.get('/api/hls-proxy', async (req, res) => {
     if (isPlaylist) {
       const text = await upstreamRes.text();
       const baseUrl = new URL(targetUrl);
+      const refParam = customReferer ? `&referer=${encodeURIComponent(customReferer)}` : '';
 
       // Rewrite manifest entries to route through /api/hls-proxy
       const rewritten = text.split('\n').map(line => {
@@ -593,7 +603,7 @@ app.get('/api/hls-proxy', async (req, res) => {
           return line.replace(/URI="([^"]+)"/g, (match, uri) => {
             try {
               const abs = new URL(uri, baseUrl).href;
-              return `URI="/api/hls-proxy?url=${encodeURIComponent(abs)}"`;
+              return `URI="/api/hls-proxy?url=${encodeURIComponent(abs)}${refParam}"`;
             } catch {
               return match;
             }
@@ -603,7 +613,7 @@ app.get('/api/hls-proxy', async (req, res) => {
         // Relative or absolute stream or chunk URL
         try {
           const absUrl = new URL(trimmed, baseUrl).href;
-          return `/api/hls-proxy?url=${encodeURIComponent(absUrl)}`;
+          return `/api/hls-proxy?url=${encodeURIComponent(absUrl)}${refParam}`;
         } catch {
           return line;
         }
@@ -614,7 +624,7 @@ app.get('/api/hls-proxy', async (req, res) => {
         const oldestKey = hlsSegmentCache.keys().next().value;
         hlsSegmentCache.delete(oldestKey);
       }
-      hlsSegmentCache.set(targetUrl, {
+      hlsSegmentCache.set(cacheKey, {
         timestamp: Date.now(),
         contentType: 'application/vnd.apple.mpegurl; charset=utf-8',
         buffer: playlistBuffer,
@@ -636,7 +646,7 @@ app.get('/api/hls-proxy', async (req, res) => {
         const oldestKey = hlsSegmentCache.keys().next().value;
         hlsSegmentCache.delete(oldestKey);
       }
-      hlsSegmentCache.set(targetUrl, {
+      hlsSegmentCache.set(cacheKey, {
         timestamp: Date.now(),
         contentType: outType,
         buffer: buffer,
@@ -674,6 +684,213 @@ app.get('/app/youtube', (req, res) => {
 
 app.get(['/app/source', '/app/prime', '/app/netflix', '/app/hotstar', '/app/mx', '/app/twitch', '/app/crunchyroll', '/app/movies', '/app/url', '/app/local'], (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'source-app.html'));
+});
+
+// ============================================================================
+// OPEN SOURCE NETMIRROR STREAM RESOLUTION (Netflix, Prime Video, Hotstar)
+// ============================================================================
+const NETMIRROR_DOMAINS = [
+  'aHR0cHM6Ly9tb2JpbGVkZXRlY3RzLmNvbQ==',
+  'aHR0cHM6Ly9tb2JpbGVkZXRlY3QuYXBw',
+  'aHR0cHM6Ly9tb2JpZGV0ZWN0LmFydA==',
+  'aHR0cHM6Ly9tb2JpZGV0ZWN0LmNj',
+  'aHR0cHM6Ly9tb2JpZGV0ZWN0LmNsaWNr',
+  'aHR0cHM6Ly9tb2JpZGV0ZWN0LmxpdmU='
+];
+
+let cachedNetMirrorBase = null;
+let netMirrorBaseExpiry = 0;
+
+async function resolveNetMirrorBase() {
+  if (cachedNetMirrorBase && Date.now() < netMirrorBaseExpiry) {
+    return cachedNetMirrorBase;
+  }
+  for (const enc of NETMIRROR_DOMAINS) {
+    try {
+      const base = Buffer.from(enc, 'base64').toString('utf8').replace(/\/$/, '');
+      const resp = await fetch(`${base}/checknewtv.php`, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        },
+        signal: AbortSignal.timeout(4000)
+      });
+      if (resp.ok) {
+        const data = await resp.json();
+        if (data.token_hash) {
+          cachedNetMirrorBase = Buffer.from(data.token_hash, 'base64').toString('utf8').replace(/\/$/, '');
+          netMirrorBaseExpiry = Date.now() + 60 * 60 * 1000;
+          console.log(`[NETMIRROR] Resolved active base URL: ${cachedNetMirrorBase}`);
+          return cachedNetMirrorBase;
+        }
+      }
+    } catch (e) {}
+  }
+  cachedNetMirrorBase = 'https://tv.imgcdn.kim';
+  netMirrorBaseExpiry = Date.now() + 30 * 60 * 1000;
+  return cachedNetMirrorBase;
+}
+
+const NETMIRROR_PLATFORMS = {
+  netflix: { ott: 'nf', name: 'Netflix', posterBase: 'https://imgcdn.kim/poster/341/' },
+  prime: { ott: 'pv', name: 'Prime Video', posterBase: 'https://imgcdn.kim/pv/341/' },
+  hotstar: { ott: 'hs', name: 'JioHotstar', posterBase: 'https://imgcdn.kim/hs/v/166/' }
+};
+
+function getNetMirrorHeaders(ott = 'nf', extra = {}) {
+  return {
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+    'Pragma': 'no-cache',
+    'Expires': '0',
+    'X-Requested-With': 'NetmirrorNewTV v1.0',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:136.0) Gecko/20100101 Firefox/136.0 /OS.GatuNewTV v1.0',
+    'Accept': 'application/json, text/plain, */*',
+    'Ott': ott,
+    ...extra
+  };
+}
+
+// 1. Search endpoint
+app.get('/api/netmirror/search', async (req, res) => {
+  const platformKey = (req.query.platform || 'netflix').toLowerCase();
+  const query = (req.query.q || '').trim();
+  const platform = NETMIRROR_PLATFORMS[platformKey] || NETMIRROR_PLATFORMS.netflix;
+
+  if (!query) {
+    return res.json({ success: true, count: 0, results: [] });
+  }
+
+  try {
+    const base = await resolveNetMirrorBase();
+    const searchUrl = `${base}/newtv/search.php?s=${encodeURIComponent(query)}`;
+    const resp = await fetch(searchUrl, {
+      headers: getNetMirrorHeaders(platform.ott),
+      signal: AbortSignal.timeout(8000)
+    });
+
+    if (!resp.ok) {
+      return res.status(resp.status).json({ success: false, message: 'Upstream search error' });
+    }
+
+    const data = await resp.json();
+    const rawResults = data.searchResult || [];
+    const results = rawResults.map(item => ({
+      id: item.id,
+      title: item.t,
+      platform: platformKey,
+      ott: platform.ott,
+      poster: `${platform.posterBase}${item.id}.jpg`
+    }));
+
+    return res.json({ success: true, count: results.length, results });
+  } catch (err) {
+    console.error('[NETMIRROR SEARCH ERROR]:', err.message);
+    return res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// 2. Details endpoint (episodes, seasons, descriptions)
+app.get('/api/netmirror/details', async (req, res) => {
+  const platformKey = (req.query.platform || 'netflix').toLowerCase();
+  const contentId = (req.query.id || '').trim();
+  const platform = NETMIRROR_PLATFORMS[platformKey] || NETMIRROR_PLATFORMS.netflix;
+
+  if (!contentId) {
+    return res.status(400).json({ success: false, message: 'id is required' });
+  }
+
+  try {
+    const base = await resolveNetMirrorBase();
+    const postUrl = `${base}/newtv/post.php?id=${encodeURIComponent(contentId)}`;
+    const resp = await fetch(postUrl, {
+      headers: getNetMirrorHeaders(platform.ott, { Lastep: '', Usertoken: '' }),
+      signal: AbortSignal.timeout(8000)
+    });
+
+    if (!resp.ok) {
+      return res.status(resp.status).json({ success: false, message: 'Upstream details error' });
+    }
+
+    const data = await resp.json();
+    const isSeries = data.type === 't' || (Array.isArray(data.episodes) && data.episodes.length > 0 && data.episodes[0] !== null);
+
+    const episodes = [];
+    if (Array.isArray(data.episodes)) {
+      data.episodes.filter(Boolean).forEach(ep => {
+        episodes.push({
+          id: ep.id,
+          title: ep.t || `Episode ${ep.ep || ''}`,
+          ep: ep.ep || '1',
+          desc: ep.ep_desc || '',
+          info: ep.info || []
+        });
+      });
+    }
+
+    return res.json({
+      success: true,
+      data: {
+        id: contentId,
+        title: data.title || data.title_name || 'Title',
+        year: data.year || '',
+        desc: data.desc || '',
+        type: isSeries ? 'tv' : 'movie',
+        seasons: data.season || [],
+        episodes: episodes,
+        poster: `${platform.posterBase}${contentId}.jpg`,
+        mainId: data.main_id || contentId,
+        platform: platformKey
+      }
+    });
+  } catch (err) {
+    console.error('[NETMIRROR DETAILS ERROR]:', err.message);
+    return res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// 3. Resolve endpoint (direct .m3u8 stream)
+app.get('/api/netmirror/resolve', async (req, res) => {
+  const platformKey = (req.query.platform || 'netflix').toLowerCase();
+  const targetId = (req.query.id || '').trim();
+  const platform = NETMIRROR_PLATFORMS[platformKey] || NETMIRROR_PLATFORMS.netflix;
+
+  if (!targetId) {
+    return res.status(400).json({ success: false, message: 'id is required' });
+  }
+
+  try {
+    const base = await resolveNetMirrorBase();
+    const playerUrl = `${base}/newtv/player.php?id=${encodeURIComponent(targetId)}`;
+    const resp = await fetch(playerUrl, {
+      headers: getNetMirrorHeaders(platform.ott, { Usertoken: '' }),
+      signal: AbortSignal.timeout(8000)
+    });
+
+    if (!resp.ok) {
+      return res.status(resp.status).json({ success: false, message: 'Upstream player error' });
+    }
+
+    const data = await resp.json();
+    if (data.video_link) {
+      const referer = data.referer || 'https://net52.cc';
+      const proxiedStream = `/api/hls-proxy?url=${encodeURIComponent(data.video_link)}&referer=${encodeURIComponent(referer)}`;
+
+      return res.json({
+        success: true,
+        type: 'hls',
+        streamUrl: proxiedStream,
+        rawUrl: data.video_link,
+        referer: referer,
+        title: data.title || '',
+        ep: data.ep || '',
+        epTitle: data.ep_title || ''
+      });
+    } else {
+      return res.status(404).json({ success: false, message: 'No video link returned by mirror' });
+    }
+  } catch (err) {
+    console.error('[NETMIRROR RESOLVE ERROR]:', err.message);
+    return res.status(500).json({ success: false, message: err.message });
+  }
 });
 
 app.get('/api/proxy-web', (req, res) => {
