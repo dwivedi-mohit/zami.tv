@@ -268,10 +268,33 @@ class WebRTCManager {
       // Disconnect
       this.leaveVoice();
       if (this.btnToggleVoice) {
-        this.btnToggleVoice.textContent = 'Join Voice Chat';
-        this.btnToggleVoice.className = 'btn btn-primary btn-sm';
+        this.btnToggleVoice.classList.remove('in-call');
+        const joinIcon = this.btnToggleVoice.querySelector('.gmeet-icon-join');
+        const leaveIcon = this.btnToggleVoice.querySelector('.gmeet-icon-leave');
+        const callText = this.btnToggleVoice.querySelector('.gmeet-call-text');
+        if (joinIcon) joinIcon.style.display = 'inline-block';
+        if (leaveIcon) leaveIcon.style.display = 'none';
+        if (callText) callText.textContent = 'Join call';
+        else this.btnToggleVoice.textContent = 'Join call';
+        this.btnToggleVoice.className = 'gmeet-call-pill';
+      }
+      if (this.btnToggleMic) {
+        this.btnToggleMic.disabled = true;
+        this.btnToggleMic.classList.add('is-muted');
+        this.btnToggleMic.classList.remove('is-active');
+        const micOn = this.btnToggleMic.querySelector('.gmeet-icon-mic-on');
+        const micOff = this.btnToggleMic.querySelector('.gmeet-icon-mic-off');
+        if (micOn) micOn.style.display = 'none';
+        if (micOff) micOff.style.display = 'inline-block';
+      }
+      if (this.btnToggleCam) {
+        this.btnToggleCam.disabled = true;
+        this.btnToggleCam.classList.add('is-muted');
+        this.btnToggleCam.classList.remove('is-active');
       }
       if (this.voiceStatusText) this.voiceStatusText.textContent = 'Voice disconnected';
+      const dot = document.getElementById('gmeet-status-dot');
+      if (dot) dot.classList.remove('online');
     } else {
       // Connect
       try {
@@ -296,16 +319,31 @@ class WebRTCManager {
         this.startSpeakingLoop();
 
         if (this.btnToggleVoice) {
-          this.btnToggleVoice.textContent = 'Leave Voice';
-          this.btnToggleVoice.className = 'btn btn-danger btn-sm';
+          this.btnToggleVoice.classList.add('in-call');
+          const joinIcon = this.btnToggleVoice.querySelector('.gmeet-icon-join');
+          const leaveIcon = this.btnToggleVoice.querySelector('.gmeet-icon-leave');
+          const callText = this.btnToggleVoice.querySelector('.gmeet-call-text');
+          if (joinIcon) joinIcon.style.display = 'none';
+          if (leaveIcon) leaveIcon.style.display = 'inline-block';
+          if (callText) callText.textContent = 'Leave call';
+          else this.btnToggleVoice.textContent = 'Leave call';
+          this.btnToggleVoice.className = 'gmeet-call-pill in-call';
         }
         if (this.btnToggleMic) {
           this.btnToggleMic.disabled = false;
-          this.btnToggleMic.textContent = 'Mute Mic';
-          this.btnToggleMic.className = 'btn btn-outline btn-sm';
+          this.btnToggleMic.classList.remove('is-muted');
+          this.btnToggleMic.classList.add('is-active');
+          const micOn = this.btnToggleMic.querySelector('.gmeet-icon-mic-on');
+          const micOff = this.btnToggleMic.querySelector('.gmeet-icon-mic-off');
+          if (micOn) micOn.style.display = 'inline-block';
+          if (micOff) micOff.style.display = 'none';
         }
-        if (this.btnToggleCam) this.btnToggleCam.disabled = false;
-        if (this.voiceStatusText) this.voiceStatusText.textContent = 'Connected (Mic ON)';
+        if (this.btnToggleCam) {
+          this.btnToggleCam.disabled = false;
+        }
+        if (this.voiceStatusText) this.voiceStatusText.textContent = 'In call · Mic ON';
+        const dot = document.getElementById('gmeet-status-dot');
+        if (dot) dot.classList.add('online');
 
         // Broadcast microphone tracks to existing and new peers
         await this.broadcastVoiceTracks();
@@ -324,10 +362,14 @@ class WebRTCManager {
     if (audioTrack) {
       audioTrack.enabled = !audioTrack.enabled;
       this.isMuted = !audioTrack.enabled;
-      this.btnToggleMic.textContent = this.isMuted ? 'Unmute Mic' : 'Mute Mic';
-      this.btnToggleMic.className = this.isMuted ? 'btn btn-secondary btn-sm' : 'btn btn-outline btn-sm';
+      this.btnToggleMic.classList.toggle('is-muted', this.isMuted);
+      this.btnToggleMic.classList.toggle('is-active', !this.isMuted);
+      const micOn = this.btnToggleMic.querySelector('.gmeet-icon-mic-on');
+      const micOff = this.btnToggleMic.querySelector('.gmeet-icon-mic-off');
+      if (micOn) micOn.style.display = this.isMuted ? 'none' : 'inline-block';
+      if (micOff) micOff.style.display = this.isMuted ? 'inline-block' : 'none';
       if (this.voiceStatusText) {
-        this.voiceStatusText.textContent = this.isMuted ? 'Connected (Muted)' : 'Connected (Mic ON)';
+        this.voiceStatusText.textContent = this.isMuted ? 'In call · Muted' : 'In call · Mic ON';
       }
       this.socket.emit('update-av-state', { isMuted: this.isMuted, isCameraOn: this.isCameraOn });
     }
@@ -342,7 +384,12 @@ class WebRTCManager {
         this.localStream.removeTrack(videoTrack);
       }
       this.isCameraOn = false;
-      this.btnToggleCam.textContent = 'Turn On Camera';
+      this.btnToggleCam.classList.remove('is-active');
+      this.btnToggleCam.classList.add('is-muted');
+      const camOn = this.btnToggleCam.querySelector('.gmeet-icon-cam-on');
+      const camOff = this.btnToggleCam.querySelector('.gmeet-icon-cam-off');
+      if (camOn) camOn.style.display = 'none';
+      if (camOff) camOff.style.display = 'inline-block';
       this.updateLocalTile();
     } else {
       try {
@@ -350,7 +397,12 @@ class WebRTCManager {
         const videoTrack = videoStream.getVideoTracks()[0];
         this.localStream.addTrack(videoTrack);
         this.isCameraOn = true;
-        this.btnToggleCam.textContent = 'Turn Off Camera';
+        this.btnToggleCam.classList.add('is-active');
+        this.btnToggleCam.classList.remove('is-muted');
+        const camOn = this.btnToggleCam.querySelector('.gmeet-icon-cam-on');
+        const camOff = this.btnToggleCam.querySelector('.gmeet-icon-cam-off');
+        if (camOn) camOn.style.display = 'inline-block';
+        if (camOff) camOff.style.display = 'none';
 
         // Update senders for peers
         this.peers.forEach(({ pc }) => {

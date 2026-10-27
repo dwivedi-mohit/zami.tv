@@ -1191,44 +1191,94 @@
           </form>
         </div>
 
-        <!-- Tab 2: Voice & Video Call Panel -->
+        <!-- Tab 2: Voice & Video Call Panel (Google Meet Redesign) -->
         <div id="tab-pane-voice" class="tab-pane">
-          <div class="voice-panel">
-            <div class="voice-controls-card">
-              <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span class="eyebrow-tag" style="margin-bottom: 0;">AUDIO PROTOCOL</span>
-                <span id="voice-status-text" style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-dim);">DISCONNECTED</span>
+          <div class="gmeet-panel">
+            <!-- Search & Add People Header -->
+            <div class="gmeet-top-actions">
+              <div class="gmeet-search-box">
+                <svg class="gmeet-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" id="gmeet-people-search" class="gmeet-search-input" placeholder="Search for people" aria-label="Search participants" autocomplete="off">
               </div>
-
-              <div class="voice-action-row">
-                <button id="btn-toggle-voice" class="btn btn-primary btn-sm" style="flex: 1;">
-                  JOIN VOICE
-                </button>
-                <button id="btn-toggle-mic" class="btn btn-outline btn-sm" disabled>
-                  MIC
-                </button>
-                <button id="btn-toggle-cam" class="btn btn-outline btn-sm" disabled>
-                  CAM
-                </button>
-              </div>
-            </div>
-
-            <!-- Screen Share trigger for Hotstar / MX Player -->
-            <div class="voice-controls-card" style="border-color: var(--border-bright);">
-              <div class="eyebrow-tag" style="margin-bottom: 0;">WEBCAST // P2P TAB STREAM</div>
-              <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.5;">
-                Stream your Disney+ Hotstar or MX Player browser tab directly with stereo tab sound to everyone in the room.
-              </p>
-              <button id="btn-screenshare-trigger" class="btn btn-secondary btn-sm" style="width: 100%;">
-                SHARE TAB WITH AUDIO
+              <button type="button" class="gmeet-add-people-btn" id="btn-gmeet-add-people" title="Add people or copy invite link">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/>
+                </svg>
+                <span>Add people</span>
               </button>
             </div>
 
-            <!-- Peer Avatars / Webcams Grid -->
-            <div>
-              <span class="input-label" style="display: block; margin-bottom: 8px;">SCREENING PARTICIPANTS</span>
-              <div id="peer-tiles-grid" class="peer-tiles-grid">
-                <!-- Populated dynamically -->
+            <!-- Google Meet Call Controls Card -->
+            <div class="gmeet-call-card">
+              <div class="gmeet-card-top">
+                <div class="gmeet-status-indicator">
+                  <span class="gmeet-status-dot" id="gmeet-status-dot"></span>
+                  <span id="voice-status-text" class="gmeet-status-text">Voice disconnected</span>
+                </div>
+                <span class="gmeet-p2p-chip">P2P STEREO</span>
+              </div>
+
+              <!-- Iconic Google Meet Circular Controls Row -->
+              <div class="gmeet-controls-dock">
+                <!-- Microphone Toggle -->
+                <button type="button" id="btn-toggle-mic" class="gmeet-circle-btn gmeet-btn-mic is-muted" title="Microphone (Disabled until in call)" aria-label="Toggle Microphone" disabled>
+                  <svg class="gmeet-icon-mic-on" style="display: none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>
+                  </svg>
+                  <svg class="gmeet-icon-mic-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <line x1="1" y1="1" x2="23" y2="23"/><path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"/><path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>
+                  </svg>
+                </button>
+
+                <!-- Camera Toggle -->
+                <button type="button" id="btn-toggle-cam" class="gmeet-circle-btn gmeet-btn-cam is-muted" title="Camera (Disabled until in call)" aria-label="Toggle Camera" disabled>
+                  <svg class="gmeet-icon-cam-on" style="display: none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+                  </svg>
+                  <svg class="gmeet-icon-cam-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <line x1="1" y1="1" x2="23" y2="23"/><path d="M21 21l-3.34-3.34M16 12l7 5V7l-7 5v-3a2 2 0 0 0-2-2H8.66l12 12z"/><rect x="2" y="6" width="14" height="14" rx="2" ry="2"/>
+                  </svg>
+                </button>
+
+                <!-- Present / Screen & Tab Share -->
+                <button type="button" id="btn-screenshare-trigger" class="gmeet-circle-btn gmeet-btn-present" title="Present browser tab with stereo audio" aria-label="Share Screen">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/><polygon points="12 7 9 11 15 11" fill="currentColor"/>
+                  </svg>
+                </button>
+
+                <!-- Join / Leave Call (Pill Button) -->
+                <button type="button" id="btn-toggle-voice" class="gmeet-call-pill" title="Join voice call">
+                  <svg class="gmeet-icon-join" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                  </svg>
+                  <svg class="gmeet-icon-leave" style="display: none;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.42 19.42 0 0 1-3.33-2.67m-2.67-3.34a19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91"/><line x1="1" y1="1" x2="23" y2="23"/>
+                  </svg>
+                  <span class="gmeet-call-text">Join call</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Present Tab Banner (Subtle Google Meet Style) -->
+            <div class="gmeet-tab-banner" id="gmeet-tab-stream-banner">
+              <div class="gmeet-tab-banner-content">
+                <span class="gmeet-tab-badge">TAB BROADCAST</span>
+                <span class="gmeet-tab-text">Stream Disney+ Hotstar or MX Player with full stereo audio</span>
+              </div>
+              <button type="button" class="gmeet-tab-btn" id="btn-gmeet-tab-shortcut" title="Share tab with audio">
+                <span>Present Tab</span>
+              </button>
+            </div>
+
+            <!-- Google Meet Participants Section -->
+            <div class="gmeet-participants-container">
+              <div class="gmeet-participants-heading">
+                <span class="gmeet-heading-text">IN CALL</span>
+                <span class="gmeet-count-pill" id="gmeet-participants-badge">1</span>
+              </div>
+              <!-- Participants List (Populated dynamically) -->
+              <div id="peer-tiles-grid" class="peer-tiles-grid gmeet-participants-list">
               </div>
             </div>
           </div>

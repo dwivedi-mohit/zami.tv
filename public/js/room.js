@@ -3432,7 +3432,19 @@ function renderUsers(users, webrtcMgr, currentUserId) {
   const peerGrid = document.getElementById('peer-tiles-grid');
   if (!peerGrid) return;
 
+  const gmeetCountBadge = document.getElementById('gmeet-participants-badge');
+  if (gmeetCountBadge) gmeetCountBadge.textContent = users.length;
+
   peerGrid.innerHTML = '';
+
+  const GMEET_COLORS = ['#1a73e8', '#1e8e3e', '#d93025', '#f9ab00', '#9334e6', '#00897b', '#e8710a', '#d81b60'];
+  function getGmeetColor(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    return GMEET_COLORS[Math.abs(hash) % GMEET_COLORS.length];
+  }
+
+  const currentSearchTerm = (document.getElementById('gmeet-people-search')?.value || '').toLowerCase().trim();
 
   users.forEach(user => {
     const tile = document.createElement('div');
@@ -3451,17 +3463,35 @@ function renderUsers(users, webrtcMgr, currentUserId) {
     ` : '';
 
     const isMuted = user.isMuted !== false;
+    const avatarColor = user.avatarColor || getGmeetColor(user.username || 'User');
+    const initial = (user.username || 'U').charAt(0).toUpperCase();
+
     tile.innerHTML = `
-      ${volControlHtml}
-      <div class="peer-avatar" style="background-color: ${user.avatarColor || '#d4a359'}">
-        ${user.username.charAt(0).toUpperCase()}
+      <div class="peer-avatar" style="background-color: ${avatarColor}">
+        ${initial}
       </div>
-      <span class="peer-mic-status ${isMuted ? 'muted' : ''}" title="${isMuted ? 'Microphone Muted' : 'Microphone Live'}">${isMuted ? MIC_OFF_SVG : MIC_ON_SVG}</span>
       <div class="peer-label">
-        ${user.isHost ? '<span style="color: var(--accent-primary); font-weight: 700; margin-right: 4px;">HOST ·</span>' : ''}${escapeHtml(user.username)}
+        <span class="gmeet-peer-name">
+          ${escapeHtml(user.username)}
+          ${isMe ? '<span class="gmeet-tag-you">(You)</span>' : ''}
+        </span>
+        ${user.isHost ? '<span class="gmeet-tag-host">Meeting host</span>' : ''}
       </div>
-      <div class="peer-vu-meter-container" title="Live VU Voice Meter"><div class="peer-vu-bar"></div></div>
+      <div class="gmeet-peer-trailing">
+        ${volControlHtml}
+        <span class="peer-mic-status ${isMuted ? 'muted' : ''}" title="${isMuted ? 'Microphone Off' : 'Microphone On'}">
+          ${isMuted ? MIC_OFF_SVG : MIC_ON_SVG}
+        </span>
+        <button type="button" class="gmeet-peer-menu-btn" title="More options" aria-label="More options">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+        </button>
+      </div>
+      <div class="peer-vu-meter-container" title="Live Voice Meter"><div class="peer-vu-bar"></div></div>
     `;
+
+    if (currentSearchTerm && !user.username.toLowerCase().includes(currentSearchTerm)) {
+      tile.style.display = 'none';
+    }
 
     const volSlider = tile.querySelector('.peer-vol-slider');
     const muteBtn = tile.querySelector('.peer-mute-btn');
@@ -3517,6 +3547,37 @@ function renderUsers(users, webrtcMgr, currentUserId) {
 
     peerGrid.appendChild(tile);
   });
+
+  // Initialize Google Meet People actions
+  const gmeetSearch = document.getElementById('gmeet-people-search');
+  if (gmeetSearch && !gmeetSearch.dataset.bound) {
+    gmeetSearch.dataset.bound = 'true';
+    gmeetSearch.addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase().trim();
+      document.querySelectorAll('#peer-tiles-grid .peer-tile').forEach(tile => {
+        const name = tile.querySelector('.gmeet-peer-name')?.textContent?.toLowerCase() || '';
+        tile.style.display = (!q || name.includes(q)) ? 'flex' : 'none';
+      });
+    });
+  }
+
+  const btnAddPeople = document.getElementById('btn-gmeet-add-people');
+  if (btnAddPeople && !btnAddPeople.dataset.bound) {
+    btnAddPeople.dataset.bound = 'true';
+    btnAddPeople.addEventListener('click', () => {
+      const inviteBtn = document.getElementById('btn-header-invite') || document.getElementById('btn-dock-invite');
+      if (inviteBtn) inviteBtn.click();
+    });
+  }
+
+  const btnTabShortcut = document.getElementById('btn-gmeet-tab-shortcut');
+  if (btnTabShortcut && !btnTabShortcut.dataset.bound) {
+    btnTabShortcut.dataset.bound = 'true';
+    btnTabShortcut.addEventListener('click', () => {
+      const screenBtn = document.getElementById('btn-screenshare-trigger');
+      if (screenBtn) screenBtn.click();
+    });
+  }
 }
 
 /**

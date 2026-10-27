@@ -1857,129 +1857,496 @@
 }
 
 /* --------------------------------------------------------------------------
-   Tab 2: Audio Mesh Panel
+   Tab 2: Google Meet Styled People & Call Panel
    -------------------------------------------------------------------------- */
 
-.voice-panel {
-  padding: 16px;
+.gmeet-panel, .voice-panel {
+  padding: 14px 14px 20px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
+  height: 100%;
+  color: #e8eaed;
+  font-family: 'Google Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
-.voice-controls-card {
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-medium);
-  border-radius: var(--radius-sm);
-  padding: 14px;
+
+/* 1. Google Meet Header Section: Search & Add People */
+.gmeet-top-actions {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-}
-.voice-action-row {
-  display: flex;
   gap: 8px;
 }
 
-.peer-tiles-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-  gap: 10px;
-}
-.peer-tile {
-  background: var(--bg-surface);
-  border: 1px solid var(--border-medium);
-  border-radius: var(--radius-xs);
-  aspect-ratio: 4/3;
+.gmeet-search-box {
   position: relative;
-  overflow: hidden;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.gmeet-search-icon {
+  position: absolute;
+  left: 12px;
+  color: #9aa0a6;
+  pointer-events: none;
+}
+
+.gmeet-search-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 24px;
+  padding: 8px 14px 8px 36px;
+  font-size: 0.85rem;
+  color: #e8eaed;
+  outline: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-sizing: border-box;
+}
+
+.gmeet-search-input::placeholder {
+  color: #9aa0a6;
+}
+
+.gmeet-search-input:focus {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #8ab4f8;
+  box-shadow: 0 0 0 2px rgba(138, 180, 248, 0.25);
+}
+
+.gmeet-add-people-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 16px;
+  border-radius: 20px;
+  background: rgba(138, 180, 248, 0.1);
+  color: #8ab4f8;
+  border: 1px solid rgba(138, 180, 248, 0.25);
+  font-size: 0.83rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.gmeet-add-people-btn:hover {
+  background: rgba(138, 180, 248, 0.18);
+  border-color: #8ab4f8;
+  color: #ffffff;
+}
+
+/* 2. Google Meet Call Controls Card */
+.gmeet-call-card {
+  background: #202124;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 12px 14px;
   display: flex;
   flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+.gmeet-card-top {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  justify-content: space-between;
 }
-.peer-video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  position: absolute;
-  inset: 0;
+
+.gmeet-status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
-.peer-avatar {
-  width: 44px;
-  height: 44px;
+
+.gmeet-status-dot {
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
+  background: #5f6368;
+  transition: all 0.3s ease;
+}
+
+.gmeet-status-dot.online {
+  background: #81c995;
+  box-shadow: 0 0 8px #81c995;
+}
+
+.gmeet-status-text {
+  font-size: 0.78rem;
+  color: #9aa0a6;
+  font-weight: 500;
+}
+
+.gmeet-p2p-chip {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 2px 7px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #8ab4f8;
+  border: 1px solid rgba(138, 180, 248, 0.2);
+}
+
+/* Iconic Google Meet Circular Controls Row */
+.gmeet-controls-dock {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-serif);
+  gap: 10px;
+}
+
+.gmeet-circle-btn {
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  background: #3c4043;
+  color: #e8eaed;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  outline: none;
+}
+
+.gmeet-circle-btn:hover:not(:disabled) {
+  background: #4a4e52;
+  transform: scale(1.04);
+}
+
+.gmeet-circle-btn:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+  background: #2b2e31;
+  color: #5f6368;
+}
+
+/* Red circle when muted / off (Google Meet hallmark) */
+.gmeet-circle-btn.is-muted {
+  background: #ea4335 !important;
+  color: #ffffff !important;
+}
+
+.gmeet-circle-btn.is-active {
+  background: #3c4043 !important;
+  color: #ffffff !important;
+}
+
+.gmeet-circle-btn.is-sharing {
+  background: #8ab4f8 !important;
+  color: #202124 !important;
+}
+
+/* Google Meet Call Pill (Join / Leave) */
+.gmeet-call-pill {
+  height: 42px;
+  padding: 0 16px;
+  border-radius: 21px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  font-family: inherit;
+  background: #1a73e8;
+  color: #ffffff;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+}
+
+.gmeet-call-pill:hover {
+  background: #1967d2;
+  box-shadow: 0 2px 8px rgba(26, 115, 232, 0.4);
+}
+
+.gmeet-call-pill.in-call,
+.gmeet-call-pill.btn-danger {
+  background: #ea4335 !important;
+  color: #ffffff !important;
+}
+
+.gmeet-call-pill.in-call:hover,
+.gmeet-call-pill.btn-danger:hover {
+  background: #d93025 !important;
+  box-shadow: 0 2px 8px rgba(234, 67, 53, 0.4);
+}
+
+/* 3. Present Tab Banner */
+.gmeet-tab-banner {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.gmeet-tab-banner-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.gmeet-tab-badge {
+  font-size: 0.65rem;
   font-weight: 700;
-  font-size: 1.2rem;
-  color: #fff;
-  z-index: 2;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-.peer-label {
-  position: absolute;
-  bottom: 6px;
-  left: 6px;
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
+  color: #8ab4f8;
   letter-spacing: 0.04em;
-  padding: 2px 6px;
-  background: rgba(10, 11, 13, 0.85);
-  border-radius: var(--radius-xs);
-  color: var(--text-main);
-  z-index: 3;
 }
-.peer-tile.speaking {
-  border-color: var(--accent-green);
-  box-shadow: 0 0 16px rgba(52, 211, 153, 0.45);
-  animation: speakerPulse 1.2s infinite alternate;
+
+.gmeet-tab-text {
+  font-size: 0.76rem;
+  color: #9aa0a6;
+  line-height: 1.3;
 }
-@keyframes speakerPulse {
-  from { border-color: rgba(52, 211, 153, 0.5); }
-  to { border-color: #34d399; box-shadow: 0 0 20px rgba(52, 211, 153, 0.7); }
+
+.gmeet-tab-btn {
+  padding: 6px 12px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #e8eaed;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.gmeet-tab-btn:hover {
+  background: rgba(138, 180, 248, 0.15);
+  border-color: #8ab4f8;
+  color: #8ab4f8;
+}
+
+/* 4. Google Meet Participants Section */
+.gmeet-participants-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.gmeet-participants-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px;
+}
+
+.gmeet-heading-text {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #9aa0a6;
+}
+
+.gmeet-count-pill {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #e8eaed;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+/* Google Meet Participant List */
+.peer-tiles-grid.gmeet-participants-list,
+.peer-tiles-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  grid-template-columns: none !important;
+}
+
+/* Each Participant Row (Google Meet Style) */
+.peer-tile {
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  border-radius: 10px !important;
+  padding: 8px 10px !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 12px !important;
+  position: relative !important;
+  transition: background 0.15s ease, border-color 0.15s ease !important;
+  min-height: 48px !important;
+  aspect-ratio: auto !important;
+  box-shadow: none !important;
+}
+
+.peer-tile:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Google Meet Avatar */
+.peer-avatar {
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-family: 'Google Sans', Inter, -apple-system, sans-serif !important;
+  font-weight: 600 !important;
+  font-size: 0.92rem !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25) !important;
+  position: relative !important;
+  transition: box-shadow 0.2s ease !important;
+  flex-shrink: 0 !important;
+}
+
+/* Speaking Halo Pulse (Google Meet Green Ring) */
+.peer-tile.speaking .peer-avatar {
+  box-shadow: 0 0 0 3px #81c995, 0 0 14px rgba(129, 201, 149, 0.6) !important;
+  animation: gmeetVoicePulse 1.2s infinite ease-in-out !important;
+}
+
+@keyframes gmeetVoicePulse {
+  0% { box-shadow: 0 0 0 2px #81c995, 0 0 6px rgba(129, 201, 149, 0.4); }
+  50% { box-shadow: 0 0 0 4px #81c995, 0 0 16px rgba(129, 201, 149, 0.7); }
+  100% { box-shadow: 0 0 0 2px #81c995, 0 0 6px rgba(129, 201, 149, 0.4); }
+}
+
+/* Participant Info (Center) */
+.peer-label {
+  position: static !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 2px !important;
+  padding: 0 !important;
+  background: transparent !important;
+  color: #e8eaed !important;
+  font-family: inherit !important;
+  font-size: 0.88rem !important;
+  font-weight: 500 !important;
+  overflow: hidden !important;
+}
+
+.gmeet-peer-name {
+  color: #e8eaed;
+  font-weight: 500;
+  font-size: 0.86rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.gmeet-tag-you {
+  color: #9aa0a6;
+  font-size: 0.78rem;
+  font-weight: 400;
+  margin-left: 4px;
+}
+
+.gmeet-tag-host {
+  font-size: 0.7rem;
+  color: #8ab4f8;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+/* Participant Trailing Actions (Right) */
+.gmeet-peer-trailing {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  margin-left: auto;
 }
 
 .peer-mic-status {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  font-size: 0.7rem;
-  background: rgba(10, 11, 13, 0.85);
-  border: 1px solid var(--border-medium);
+  position: static !important;
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #9aa0a6 !important;
+  transition: all 0.2s ease !important;
+}
+
+.peer-mic-status.muted {
+  background: rgba(234, 67, 53, 0.15) !important;
+  border-color: rgba(234, 67, 53, 0.3) !important;
+  color: #ea4335 !important;
+}
+
+.gmeet-peer-menu-btn {
+  background: transparent;
+  border: none;
+  color: #9aa0a6;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
-  width: 22px;
-  height: 22px;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 4;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
 }
-.peer-mic-status.muted {
-  border-color: rgba(239, 68, 68, 0.4);
+
+.gmeet-peer-menu-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #e8eaed;
 }
 
 .peer-volume-row {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  background: rgba(10, 11, 13, 0.85);
-  padding: 2px 6px;
-  border-radius: var(--radius-xs);
-  z-index: 3;
-  border: 1px solid var(--border-subtle);
+  position: static !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  padding: 2px 6px !important;
+  border-radius: 12px !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
+
 .peer-vol-slider {
   width: 44px;
   height: 3px;
-  accent-color: var(--accent-primary);
+  accent-color: #8ab4f8;
   cursor: pointer;
+}
+
+.peer-mute-btn {
+  background: transparent;
+  border: none;
+  color: #9aa0a6;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.peer-vu-meter-container {
+  display: none !important;
 }
 
 /* --------------------------------------------------------------------------
