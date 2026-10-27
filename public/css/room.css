@@ -1028,7 +1028,7 @@
   bottom: 74px;
   left: 50%;
   transform: translateX(-50%);
-  display: flex;
+  display: none !important;
   align-items: center;
   gap: 6px;
   padding: 6px 14px;
@@ -1041,6 +1041,9 @@
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
   opacity: 0.95;
   transition: opacity 0.2s, transform 0.2s;
+}
+.room-container.is-playing .floating-reactions {
+  display: flex !important;
 }
 .floating-reactions:hover {
   opacity: 1;
@@ -5406,22 +5409,13 @@
   font-weight: 700;
 }
 
-/* Empty Stage: Dynamic Room Stage Backdrop & Glowing Double-Ring halo */
 .player-placeholder.empty-stage-minimal,
-.player-placeholder.empty-stage-hub {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: transparent !important;
-  background-image: none !important;
-  color: var(--text-muted);
-  z-index: 10;
-  padding: 24px;
-  overflow: hidden;
-  transition: opacity 0.2s ease, visibility 0.2s ease;
+.player-placeholder.empty-stage-hub,
+.player-placeholder {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
 }
 
 .player-placeholder.hidden,
