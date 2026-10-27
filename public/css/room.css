@@ -1897,13 +1897,18 @@
   color: #ffffff;
 }
 
-/* 2. Google Meet Call Controls Card */
+/* 2. Google Meet Call Controls Card (Removed from UI) */
+.gmeet-call-card,
+.gmeet-tab-banner {
+  display: none !important;
+}
+
 .gmeet-call-card {
   background: #202124;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;
   padding: 12px 14px;
-  display: flex;
+  display: none !important;
   flex-direction: column;
   gap: 12px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
@@ -10189,6 +10194,13 @@ body[data-theme="vhs"] .zami-text-logo {
 .dock-pill-btn:hover, .dock-pill-btn.active {
   color: #ffffff;
   background: rgba(255, 255, 255, 0.12);
+}
+.dock-action-btn.active, .dock-pill-btn.active {
+  color: #81c995 !important;
+  background: rgba(129, 201, 149, 0.15) !important;
+}
+.dock-action-btn.is-muted, .dock-pill-btn.is-muted {
+  color: #ea4335 !important;
 }
 .dock-pill-divider {
   width: 1px;

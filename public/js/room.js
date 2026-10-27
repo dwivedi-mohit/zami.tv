@@ -6435,7 +6435,11 @@ function initWatch2GetherRoomClone() {
     if (legacyCamBtn && !legacyCamBtn.disabled) {
       legacyCamBtn.click();
     } else if (window.webrtcManager) {
-      window.webrtcManager.toggleCam();
+      if (typeof window.webrtcManager.toggleCamera === 'function') {
+        window.webrtcManager.toggleCamera();
+      } else if (typeof window.webrtcManager.toggleCam === 'function') {
+        window.webrtcManager.toggleCam();
+      }
     } else {
       if (window.showToast) window.showToast('Join voice protocol to enable camera', 'info');
     }

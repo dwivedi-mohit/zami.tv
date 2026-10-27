@@ -35,8 +35,11 @@ class WebRTCManager {
     this.analysers = new Map();
     this.speakingLoopInterval = null;
 
+    this.toggleCam = this.toggleCamera.bind(this);
+
     this.initSocketSignaling();
     this.initUIControls();
+    this.updateDockAVButtons();
 
     // Auto-resume AudioContext and unlock any pending peer audio on user click
     window.addEventListener('click', () => {
@@ -224,6 +227,25 @@ class WebRTCManager {
     }
   }
 
+  updateDockAVButtons() {
+    const dockMic = document.getElementById('btn-dock-mic');
+    const desktopMic = document.getElementById('btn-desktop-mic');
+    const dockCam = document.getElementById('btn-dock-cam');
+    const desktopCam = document.getElementById('btn-desktop-cam');
+
+    [dockMic, desktopMic].forEach(btn => {
+      if (!btn) return;
+      btn.classList.toggle('active', !this.isMuted);
+      btn.classList.toggle('is-muted', this.isMuted);
+    });
+
+    [dockCam, desktopCam].forEach(btn => {
+      if (!btn) return;
+      btn.classList.toggle('active', this.isCameraOn);
+      btn.classList.toggle('is-muted', !this.isCameraOn);
+    });
+  }
+
   updateScreenshareUI() {
     const isLive = this.isSharingScreen;
 
@@ -353,6 +375,7 @@ class WebRTCManager {
         }
         this.localStream.addTrack(audioTrack);
         this.isMuted = false;
+        this.updateDockAVButtons();
 
         this.attachAudioAnalyser('local', this.localStream);
         this.startSpeakingLoop();
@@ -380,6 +403,7 @@ class WebRTCManager {
     // Audio track already exists: toggle mute
     existingTrack.enabled = !existingTrack.enabled;
     this.isMuted = !existingTrack.enabled;
+    this.updateDockAVButtons();
     if (this.btnToggleMic) {
       this.btnToggleMic.classList.toggle('is-muted', this.isMuted);
       this.btnToggleMic.classList.toggle('is-active', !this.isMuted);
@@ -409,6 +433,7 @@ class WebRTCManager {
         }
       }
       this.isCameraOn = false;
+      this.updateDockAVButtons();
       if (this.btnToggleCam) {
         this.btnToggleCam.classList.remove('is-active');
         this.btnToggleCam.classList.add('is-muted');
@@ -447,6 +472,7 @@ class WebRTCManager {
         }
         this.localStream.addTrack(videoTrack);
         this.isCameraOn = true;
+        this.updateDockAVButtons();
 
         if (this.btnToggleCam) {
           this.btnToggleCam.classList.add('is-active');
@@ -1054,6 +1080,7 @@ class WebRTCManager {
     }
     this.isMuted = true;
     this.isCameraOn = false;
+    this.updateDockAVButtons();
 
     if (this.btnToggleMic) {
       this.btnToggleMic.classList.add('is-muted');
