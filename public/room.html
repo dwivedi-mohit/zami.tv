@@ -29,173 +29,89 @@
     </div>
 
     <!-- Top Masthead / Cinematic Lounge Top Bar -->
-    <header class="room-navbar">
-      <div class="nav-left">
-        <a href="/" class="brand-logo" title="Back to Screening Index" aria-label="Zami">
-          <span class="zami-text-logo">
-            <span class="z-cursive">Z</span><span class="ami-serif">ami</span>
-          </span>
+    <!-- Watch2Gether Exact Positioning Desktop Header -->
+    <header class="w2g-header" id="w2g-header">
+      <div class="w2g-header-left">
+        <!-- Hamburger Menu -->
+        <button type="button" id="btn-w2g-menu" class="w2g-icon-btn" title="Main Navigation Menu" aria-label="Main Navigation Menu">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+
+        <!-- Brand Logo (ZAMI gold cursive + serif) -->
+        <a href="/" class="w2g-brand" title="Back to Screening Index" aria-label="Zami">
+          <div class="w2g-logo-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <path d="M4 6h16L8 18h12" stroke="#e5a93c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <span class="w2g-logo-text"><span class="w2g-logo-gold">Z</span>ami</span>
         </a>
 
-        <!-- Room Title Dropdown Pill -->
-        <div class="room-dropdown-pill" id="room-identity-group" title="Screening Room">
-          <span id="room-id-display" class="room-dropdown-title">Bollywood Night</span>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        <!-- Room Title Dropdown & Copy -->
+        <div class="w2g-room-selector" id="room-identity-group" role="button" tabindex="0" title="Click to view room details">
+          <span id="room-id-display" class="w2g-room-name">Bollywood Night</span>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          <button type="button" id="btn-header-copy-room" class="w2g-copy-btn" title="Copy Room Invite Link" aria-label="Copy Room Invite Link">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </button>
         </div>
 
-        <!-- Live Presence Avatars Stack -->
-        <div class="nav-presence-stack" id="nav-presence-stack" title="Active viewers in this room">
-          <div class="nav-avatar-circles" id="nav-avatar-circles">
-            <div class="nav-mini-avatar" title="Alex">
-              <div class="avatar-ph avatar-c1">A</div>
-            </div>
-            <div class="nav-mini-avatar" title="Priya">
-              <div class="avatar-ph avatar-c2">P</div>
-            </div>
-            <div class="nav-mini-avatar" title="David">
-              <div class="avatar-ph avatar-c3">D</div>
-            </div>
-            <div class="nav-mini-avatar" title="Rohan">
-              <div class="avatar-ph avatar-c4">R</div>
-            </div>
+        <!-- Apps Grid Icon (W2G 9-dot grid) -->
+        <button type="button" id="btn-w2g-apps" class="w2g-icon-btn" title="Streaming Apps &amp; Sources" aria-label="Streaming Apps">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="4" height="4" rx="1"/><rect x="10" y="3" width="4" height="4" rx="1"/><rect x="17" y="3" width="4" height="4" rx="1"/>
+            <rect x="3" y="10" width="4" height="4" rx="1"/><rect x="10" y="10" width="4" height="4" rx="1"/><rect x="17" y="10" width="4" height="4" rx="1"/>
+            <rect x="3" y="17" width="4" height="4" rx="1"/><rect x="10" y="17" width="4" height="4" rx="1"/><rect x="17" y="17" width="4" height="4" rx="1"/>
+          </svg>
+        </button>
+
+        <!-- W2G Integrated Direct Search Bar -->
+        <div class="w2g-header-search" id="w2g-header-search">
+          <div class="w2g-search-prefix" title="YouTube / Direct Stream">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
           </div>
-          <span class="nav-viewer-counter" id="nav-presence-count">4 watching</span>
-        </div>
-
-        <!-- Mobile Quick Actions in Header (Invite + Settings + Leave) -->
-        <div class="mobile-nav-actions">
-          <button type="button" id="btn-mobile-invite" class="btn-mobile-invite" title="Invite Friends via Native Share" aria-label="Invite Friends">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="12" y1="5" x2="12" y2="19"></line>
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
-            <span>Invite</span>
+          <input type="text" id="w2g-header-search-input" placeholder="Search or paste a video link..." autocomplete="off" aria-label="Search or paste a video link">
+          <button type="button" id="w2g-header-search-clear" class="w2g-search-clear-btn" style="display: none;" title="Clear" aria-label="Clear Search">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
-          <button type="button" id="btn-mobile-settings" class="btn-mobile-icon-action" title="Room Options &amp; Settings" aria-label="Room Settings">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="3"/>
-              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-            </svg>
+          <button type="button" id="w2g-header-search-submit" class="w2g-search-submit-btn" title="Search" aria-label="Submit Search">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           </button>
-          <a href="/" class="btn-mobile-icon-action btn-mobile-leave" title="Leave Watch Room" aria-label="Leave Watch Room">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-              <polyline points="16 17 21 12 16 7"></polyline>
-              <line x1="21" y1="12" x2="9" y2="12"></line>
-            </svg>
-          </a>
+          <button type="button" id="btn-theater-mode" class="w2g-split-btn" title="Cinema Theater Mode (T)" aria-label="Theater Mode">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="15" rx="2" ry="2"/><line x1="2" y1="18" x2="22" y2="18"/></svg>
+          </button>
         </div>
 
-        <!-- Restrained Teal Sync Status Indicator -->
-        <div id="sync-indicator" class="sync-status-pill" title="Playback synchronization state with room">
-          <span class="sync-dot"></span>
-          <span id="sync-text">SYNCED</span>
-        </div>
-
-        <!-- Live Telemetry & Latency HUD Pill -->
-        <div id="stage-telemetry-pill" class="stage-telemetry-pill" title="Real-time network latency, quality, and stream telemetry">
-          <span id="telemetry-dot" class="telemetry-dot live-dot-green"></span>
-          <span id="telemetry-ping-text">Ping: 18ms</span>
-          <span class="telemetry-sep">|</span>
-          <span id="telemetry-quality-text">1080p HD</span>
+        <!-- Hidden legacy anchors for backwards compatibility -->
+        <div style="display: none;">
+          <div id="sync-indicator"><span id="sync-text"></span></div>
+          <div id="stage-telemetry-pill"><span id="telemetry-ping-text"></span><span id="telemetry-quality-text"></span></div>
+          <button id="btn-navbar-screenshare"></button>
+          <button id="btn-nav-wallpaper"></button>
+          <button id="btn-nav-theme"></button>
+          <button id="btn-nav-settings"></button>
+          <button id="btn-nav-shortcuts"></button>
+          <button id="btn-toggle-sidebar"></button>
+          <button id="btn-mobile-invite"></button>
+          <button id="btn-mobile-settings"></button>
         </div>
       </div>
 
-      <div class="nav-right">
-        <!-- Cast Screen / Tab Button -->
-        <button id="btn-navbar-screenshare" class="btn-top-icon" title="Broadcast tab or screen to room">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="2" y="3" width="20" height="14" rx="2"/>
-            <line x1="8" y1="21" x2="16" y2="21"/>
-            <line x1="12" y1="17" x2="12" y2="21"/>
-          </svg>
-        </button>
+      <div class="w2g-header-right">
+        <!-- Upgrade Link -->
+        <button type="button" id="btn-w2g-upgrade" class="w2g-upgrade-link" title="ZAMI Cinema Pro Features">Upgrade</button>
 
-        <!-- Picture in Picture (PiP) -->
-        <button type="button" id="btn-theater-mode" class="btn-top-icon" title="Cinema Theater Mode (T)" aria-label="Cinema Theater Mode">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="2" y="3" width="20" height="15" rx="2" ry="2"/>
-            <line x1="2" y1="18" x2="22" y2="18"/>
-          </svg>
-        </button>
-
-        <!-- Stage Wallpaper Switcher Button -->
-        <button type="button" id="btn-nav-wallpaper" class="btn-top-icon" title="Change Stage Wallpaper" aria-label="Change Stage Wallpaper">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-            <circle cx="8.5" cy="8.5" r="1.5"/>
-            <polyline points="21 15 16 10 5 21"/>
-          </svg>
-        </button>
-
-        <!-- Cinema Theme Switcher Button -->
-        <div class="nav-theme-container" style="position: relative;">
-          <button type="button" id="btn-nav-theme" class="btn-top-icon" title="Cinema Themes &amp; OLED Presets" aria-label="Cinema Themes &amp; OLED Presets">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
-            </svg>
-          </button>
-          <div id="theme-switcher-flyout" class="theme-switcher-flyout" style="display: none;">
-            <div class="theme-flyout-header">CINEMA THEMES</div>
-            <div class="theme-options-grid">
-              <button type="button" class="theme-opt-btn active" data-theme="default">
-                <span class="theme-color-dot dot-default"></span>
-                <span>ZAMI Classic</span>
-              </button>
-              <button type="button" class="theme-opt-btn" data-theme="cyberpunk">
-                <span class="theme-color-dot dot-cyberpunk"></span>
-                <span>Cyberpunk Neon</span>
-              </button>
-              <button type="button" class="theme-opt-btn" data-theme="oled">
-                <span class="theme-color-dot dot-oled"></span>
-                <span>Pure OLED Black</span>
-              </button>
-              <button type="button" class="theme-opt-btn" data-theme="amber">
-                <span class="theme-color-dot dot-amber"></span>
-                <span>Warm Amber</span>
-              </button>
-              <button type="button" class="theme-opt-btn" data-theme="vhs">
-                <span class="theme-color-dot dot-vhs"></span>
-                <span>Retro VHS 80s</span>
-              </button>
-            </div>
-          </div>
+        <!-- Live Viewers Presence Badge -->
+        <div class="w2g-presence-badge" title="Active viewers in this room">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span id="nav-presence-count">1</span>
         </div>
 
-        <!-- Room Settings -->
-        <button type="button" id="btn-nav-settings" class="btn-top-icon" title="Room Settings">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="3"/>
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-          </svg>
+        <!-- Watch2Gether Yellow/Gold "+ Invite" Button -->
+        <button type="button" id="btn-copy-link" class="w2g-btn-invite" title="Invite friends to watch with you!" aria-label="Invite Friends">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0c1017" stroke-width="2.5"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+          <span>+ Invite</span>
         </button>
-
-        <!-- Keyboard Shortcuts (?) -->
-        <button type="button" id="btn-nav-shortcuts" class="btn-top-icon" title="Keyboard Shortcuts (?)" aria-label="Keyboard Shortcuts">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="2" y="4" width="20" height="16" rx="2"/>
-            <path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M6 12h.01M10 12h.01M14 12h.01M18 12h.01M8 16h8"/>
-          </svg>
-        </button>
-
-        <!-- Social Panel Trigger (Chat & People Lounge) -->
-        <button id="btn-toggle-sidebar" class="btn-top-icon active" title="Social Lounge Panel (Chat & People)" aria-label="Social Lounge Panel (Chat & People)">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-            <line x1="15" y1="3" x2="15" y2="21"/>
-          </svg>
-          <span id="nav-chat-unread-dot" class="nav-unread-dot" style="display: none;"></span>
-        </button>
-
-        <!-- Invite Button (Warm Amber/Gold Pill) -->
-        <button id="btn-copy-link" class="btn-top-invite" title="Invite Friends">
-          <span>Invite</span>
-        </button>
-
-        <!-- Leave Room (Dark Red Pill) -->
-        <a href="/" class="btn-top-leave" title="Leave Watch Room">
-          <span>Leave Room</span>
-        </a>
       </div>
     </header>
 
@@ -924,7 +840,69 @@
                 </button>
               </div>
             </div>
+          </div>
         </div>
+
+        <!-- Watch2Gether Mobile Sub-player Bar (Directly beneath video player) -->
+        <div class="w2g-subplayer-bar" id="w2g-subplayer-bar">
+            <div class="subplayer-left">
+              <div class="subplayer-room-pill" id="mobile-room-identity-group" role="button" tabindex="0">
+                <span id="mobile-sub-room-name">Bollywood Night</span>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+            </div>
+
+            <div class="subplayer-center">
+              <button type="button" id="btn-mobile-resize-player" class="btn-subplayer-resize" title="Resize player" aria-label="Resize player">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+            </div>
+
+            <div class="subplayer-right">
+              <button type="button" id="btn-mobile-split-toggle" class="btn-subplayer-action" title="Split Screen" aria-label="Split Screen">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="3" x2="12" y2="21"/></svg>
+              </button>
+              <button type="button" id="btn-mobile-open-search" class="btn-subplayer-action active-glow" title="Search Media" aria-label="Search Media">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              </button>
+              <button type="button" id="btn-mobile-open-settings" class="btn-subplayer-action" title="Room Settings" aria-label="Room Settings">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Watch2Gether Desktop Stage Bottom Avatars & Controls Bar -->
+          <div class="w2g-stage-bottom-bar" id="w2g-stage-bottom-bar" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(12, 16, 23, 0.7); border-radius: 8px; margin-top: 8px;">
+            <div id="w2g-desktop-avatars" style="display: flex; align-items: center; gap: 10px;">
+              <div class="w2g-user-card" id="w2g-my-card">
+                <div class="w2g-user-avatar-wrap">
+                  <span id="w2g-my-initial">Y</span>
+                </div>
+                <div class="w2g-host-crown" title="Room Host">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14v2H5v-2z"/></svg>
+                </div>
+                <div class="w2g-user-name-tag" id="w2g-my-name-tag">You</div>
+              </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <button type="button" id="btn-desktop-cam" class="dock-action-btn" title="Toggle Webcam" aria-label="Toggle Webcam">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+              </button>
+              <button type="button" id="btn-desktop-mic" class="dock-action-btn" title="Toggle Microphone" aria-label="Toggle Microphone">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+              </button>
+              <div style="width: 1px; height: 16px; background: rgba(255,255,255,0.15); margin: 0 4px;"></div>
+              <button type="button" id="btn-desktop-zoom-out" class="dock-action-btn" title="Scale Down">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+              </button>
+              <button type="button" id="btn-desktop-zoom-in" class="dock-action-btn" title="Scale Up">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+              </button>
+            </div>
+          </div>
 
         <!-- Rave Inbuilt App Dock (Quick App Switcher during playback, hidden by default on home hub) -->
         <div class="rave-dock" id="rave-dock" style="display: none;">
@@ -1200,50 +1178,175 @@
     </main>
     </div> <!-- .room-body-container -->
 
-    <!-- Mobile Fixed Bottom Navigation Bar (Native Icon-Only Dock) -->
-    <nav class="mobile-bottom-nav" id="mobile-bottom-nav" aria-label="Mobile Navigation">
-      <button type="button" class="mobile-nav-btn active" data-tab="chat" id="mob-nav-chat" aria-label="Live Chat" title="Live Chat">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-        </svg>
-        <span class="mob-nav-badge" id="mob-chat-badge" style="display: none;">0</span>
-      </button>
+    <!-- Watch2Gether Exact Positioning Mobile Bottom Action Dock -->
+    <nav class="w2g-mobile-dock" id="w2g-mobile-dock" aria-label="Mobile Navigation Controls">
+      <div class="dock-actions-row">
+        <!-- 1. Leave Room Button -->
+        <a href="/" class="dock-action-btn dock-btn-leave" title="Leave room" aria-label="Leave room">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+        </a>
 
-      <button type="button" class="mobile-nav-btn" data-tab="voice" id="mob-nav-people" aria-label="Participants &amp; Voice" title="Participants &amp; Voice">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-          <circle cx="9" cy="7" r="4"></circle>
-          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-        </svg>
-        <span class="mob-nav-badge" id="mob-people-badge">1</span>
-      </button>
+        <!-- 2. Yellow/Gold Invite Button -->
+        <button type="button" id="btn-dock-invite" class="dock-action-btn dock-btn-invite" title="Invite friends to watch with you!" aria-label="Invite Friends">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#0c1017" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/>
+          </svg>
+        </button>
 
-      <button type="button" class="mobile-nav-btn" data-tab="queue" id="mob-nav-queue" aria-label="Media Queue" title="Media Queue">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="8" y1="6" x2="21" y2="6"></line>
-          <line x1="8" y1="12" x2="21" y2="12"></line>
-          <line x1="8" y1="18" x2="21" y2="18"></line>
-          <line x1="3" y1="6" x2="3.01" y2="6"></line>
-          <line x1="3" y1="12" x2="3.01" y2="12"></line>
-          <line x1="3" y1="18" x2="3.01" y2="18"></line>
-        </svg>
-        <span class="mob-nav-badge" id="mob-queue-badge" style="display: none;">0</span>
-      </button>
+        <!-- 3. Center Pill: Cam | Mic -->
+        <div class="dock-pill-group">
+          <button type="button" id="btn-dock-cam" class="dock-pill-btn" title="Toggle Webcam" aria-label="Toggle Webcam">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+          </button>
+          <div class="dock-pill-divider"></div>
+          <button type="button" id="btn-dock-mic" class="dock-pill-btn" title="Toggle Microphone" aria-label="Toggle Microphone">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+          </button>
+        </div>
 
-      <button type="button" class="mobile-nav-btn mob-nav-btn-media" data-action="media" id="mob-nav-media" aria-label="Load Media" title="Load Media">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
-          <line x1="7" y1="2" x2="7" y2="22"></line>
-          <line x1="17" y1="2" x2="17" y2="22"></line>
-          <line x1="2" y1="12" x2="22" y2="12"></line>
-          <line x1="2" y1="7" x2="7" y2="7"></line>
-          <line x1="2" y1="17" x2="7" y2="17"></line>
-          <line x1="17" y1="17" x2="22" y2="17"></line>
-          <line x1="17" y1="7" x2="22" y2="7"></line>
-        </svg>
-      </button>
+        <!-- 4. Right Pill: Zoom- | Zoom+ -->
+        <div class="dock-pill-group">
+          <button type="button" id="btn-dock-zoom-out" class="dock-pill-btn" title="Zoom Out" aria-label="Zoom Out">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+          </button>
+          <div class="dock-pill-divider"></div>
+          <button type="button" id="btn-dock-zoom-in" class="dock-pill-btn" title="Zoom In" aria-label="Zoom In">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- 5. Swiper Bullets (Pagination Dots: 0=People, 1=Playlists, 2=Chat) -->
+      <div class="w2g-dock-bullets" id="w2g-dock-bullets">
+        <button type="button" class="w2g-bullet active" data-slide="0" aria-label="Slide 1: People"></button>
+        <button type="button" class="w2g-bullet" data-slide="1" aria-label="Slide 2: Playlists"></button>
+        <button type="button" class="w2g-bullet" data-slide="2" aria-label="Slide 3: Chat"></button>
+      </div>
+
+      <!-- Hidden legacy buttons for script bindings -->
+      <div style="display: none;">
+        <button class="mobile-nav-btn" data-tab="chat" id="mob-nav-chat"><span id="mob-chat-badge">0</span></button>
+        <button class="mobile-nav-btn" data-tab="voice" id="mob-nav-people"><span id="mob-people-badge">1</span></button>
+        <button class="mobile-nav-btn" data-tab="queue" id="mob-nav-queue"><span id="mob-queue-badge">0</span></button>
+        <button class="mobile-nav-btn mob-nav-btn-media" data-action="media" id="mob-nav-media"></button>
+      </div>
     </nav>
+
+    <!-- Watch2Gether Top-Down Search Drawer Overlay -->
+    <div id="w2g-search-drawer" class="w2g-search-drawer" style="display: none;">
+      <div class="drawer-header-bar">
+        <div class="drawer-search-box">
+          <div class="drawer-platform-badge" id="drawer-active-badge">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="#ef4444"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          </div>
+          <input type="text" id="w2g-drawer-search-input" placeholder="Search YouTube or paste link..." autocomplete="off" aria-label="Search media or paste URL">
+          <button type="button" id="w2g-drawer-search-clear" class="btn-drawer-clear" style="display: none;" title="Clear Search" aria-label="Clear Search">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+          <button type="button" id="w2g-drawer-search-submit" class="btn-drawer-submit" title="Search" aria-label="Execute Search">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </button>
+        </div>
+        <button type="button" id="btn-close-search-drawer" class="btn-drawer-close" title="Close Search (Esc)" aria-label="Close Search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <!-- Subnav Category Tabs -->
+      <div class="drawer-subnav">
+        <button type="button" class="drawer-tab-btn active" data-view="contents">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <span>Contents</span>
+        </button>
+        <button type="button" class="drawer-tab-btn" data-view="apps">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <span>Apps</span>
+        </button>
+        <button type="button" class="drawer-tab-btn" data-view="screenshare">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          <span>Screenshare</span>
+        </button>
+        <button type="button" class="drawer-tab-btn" data-view="local">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+          <span>Local Video</span>
+        </button>
+      </div>
+
+      <!-- Quick Platform Pills -->
+      <div class="drawer-platform-pills">
+        <button type="button" class="platform-pill active" data-platform="youtube">YouTube</button>
+        <button type="button" class="platform-pill" data-platform="movies">Movies</button>
+        <button type="button" class="platform-pill" data-platform="twitch">Twitch</button>
+        <button type="button" class="platform-pill" data-platform="websites">Websites</button>
+        <button type="button" class="platform-pill" data-platform="local">Local Video</button>
+        <button type="button" class="platform-pill" data-platform="wallpaper">Stage Wallpaper</button>
+      </div>
+
+      <!-- Search Results / Trending Reel Scroll -->
+      <div class="drawer-results-scroll" id="drawer-results-container">
+        <!-- Dynamically rendered -->
+      </div>
+    </div>
+
+    <!-- Watch2Gether Exact Clone Invite Friends Modal Dialog -->
+    <dialog id="w2g-invite-dialog" class="w2g-modal-dialog" aria-labelledby="w2g-invite-title">
+      <div class="w2g-modal-card">
+        <div class="w2g-modal-header">
+          <h2 id="w2g-invite-title">Invite friends to watch with you!</h2>
+        </div>
+
+        <div class="w2g-modal-tabs">
+          <button type="button" class="modal-tab-btn active" data-tab="link">Invitation link</button>
+          <button type="button" class="modal-tab-btn" data-tab="share">Email / Social networks</button>
+          <button type="button" class="modal-tab-btn" data-tab="qr">QR-Code</button>
+        </div>
+
+        <div class="w2g-modal-body">
+          <div id="tab-invite-link" class="invite-tab-pane active">
+            <label class="w2g-invite-label" for="input-w2g-invite-url">Copy and share this link:</label>
+            <div class="w2g-invite-copy-row">
+              <input type="text" id="input-w2g-invite-url" readonly class="w2g-invite-input" aria-label="Room Invite Link">
+              <button type="button" id="btn-do-copy-invite" class="w2g-copy-action-btn" aria-label="Copy Room URL">Copy</button>
+            </div>
+
+            <div class="w2g-invite-info-box">
+              <div class="invite-info-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/>
+                </svg>
+              </div>
+              <div class="invite-info-text">
+                ZAMI is a social video service that allows you to watch videos together and in sync with friends. Invite some friends and the fun can begin!
+              </div>
+            </div>
+          </div>
+
+          <div id="tab-invite-share" class="invite-tab-pane" style="display: none; padding: 12px 0;">
+            <p style="font-size: 0.85rem; color: #cbd5e1; margin-bottom: 12px;">Share directly using your preferred platform:</p>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <button type="button" id="btn-share-whatsapp" class="btn btn-secondary btn-sm" style="flex: 1; min-width: 120px;">WhatsApp</button>
+              <button type="button" id="btn-share-telegram" class="btn btn-secondary btn-sm" style="flex: 1; min-width: 120px;">Telegram</button>
+              <button type="button" id="btn-share-native" class="btn btn-primary btn-sm" style="flex: 1; min-width: 120px;">More Apps...</button>
+            </div>
+          </div>
+
+          <div id="tab-invite-qr" class="invite-tab-pane" style="display: none; text-align: center; padding: 16px 0;">
+            <div id="w2g-qr-box" style="display: flex; justify-content: center; align-items: center; min-height: 140px;">
+              <img id="w2g-qr-img" src="" alt="Room QR Code" style="max-width: 150px; border-radius: 8px; background: white; padding: 8px;">
+            </div>
+            <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 10px;">Scan with phone camera to join instantly</p>
+          </div>
+        </div>
+
+        <div class="w2g-modal-footer">
+          <button type="button" id="btn-close-w2g-invite" class="w2g-btn-close-modal" aria-label="Close invite modal">Close</button>
+        </div>
+      </div>
+    </dialog>
 
     <!-- Progressive Disclosure Load Media & Screening Hub -->
     <div id="media-modal" class="modal-overlay cinema-hub-overlay" role="dialog" aria-modal="true" aria-labelledby="vault-modal-title" style="display: none;">

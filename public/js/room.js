@@ -5734,3 +5734,644 @@ function initRaveSuite(socket, roomId) {
   const initialTheme = localStorage.getItem('zami_cinema_theme') || 'default';
   document.body.setAttribute('data-theme', initialTheme);
 }
+
+
+/* ==========================================================================
+   WATCH2GETHER ROOM CONTROLLER (EXACT CLONE LOGIC & USER EXPERIENCE)
+   ========================================================================== */
+function initWatch2GetherRoomClone() {
+  const curSocket = window.socket || (typeof socket !== 'undefined' ? socket : null);
+
+  // Sync Room Name display in all headers
+  const roomCode = window.location.pathname.split('/').pop() || 'Party Room';
+  const prettyRoomName = roomCode.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+
+  const subRoomNameEl = document.getElementById('mobile-sub-room-name');
+  if (subRoomNameEl) subRoomNameEl.textContent = prettyRoomName;
+
+  const w2gHeaderRoomName = document.querySelector('.w2g-room-name');
+  if (w2gHeaderRoomName) w2gHeaderRoomName.textContent = prettyRoomName;
+
+  // Invite URL setup
+  const roomUrl = window.location.href;
+  const inviteInput = document.getElementById('input-w2g-invite-url');
+  if (inviteInput) inviteInput.value = roomUrl;
+
+  const qrImg = document.getElementById('w2g-qr-img');
+  if (qrImg) {
+    qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(roomUrl)}`;
+  }
+
+  // --- Watch2Gether Invite Dialog Controls ---
+  const inviteDialog = document.getElementById('w2g-invite-dialog');
+  const btnCloseInvite = document.getElementById('btn-close-w2g-invite');
+  const btnCopyInviteAction = document.getElementById('btn-do-copy-invite');
+  const btnDockInvite = document.getElementById('btn-dock-invite');
+  const btnCopyLinkDesktop = document.getElementById('btn-copy-link');
+  const btnHeaderCopyRoom = document.getElementById('btn-header-copy-room');
+
+  function openInviteDialog() {
+    if (inviteDialog) {
+      if (typeof inviteDialog.showModal === 'function') {
+        inviteDialog.showModal();
+      } else {
+        inviteDialog.setAttribute('open', 'true');
+      }
+    }
+  }
+
+  function closeInviteDialog() {
+    if (inviteDialog) {
+      if (typeof inviteDialog.close === 'function') {
+        inviteDialog.close();
+      } else {
+        inviteDialog.removeAttribute('open');
+      }
+    }
+  }
+
+  if (btnDockInvite) btnDockInvite.addEventListener('click', openInviteDialog);
+  if (btnCopyLinkDesktop) btnCopyLinkDesktop.addEventListener('click', openInviteDialog);
+  if (btnCloseInvite) btnCloseInvite.addEventListener('click', closeInviteDialog);
+
+  if (inviteDialog) {
+    inviteDialog.addEventListener('click', (e) => {
+      if (e.target === inviteDialog) closeInviteDialog();
+    });
+  }
+
+  if (btnCopyInviteAction) {
+    btnCopyInviteAction.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(roomUrl);
+        btnCopyInviteAction.textContent = 'Copied!';
+        setTimeout(() => { btnCopyInviteAction.textContent = 'Copy'; }, 2000);
+        if (window.showToast) window.showToast('Room link copied to clipboard!', 'success');
+      } catch (err) {
+        if (inviteInput) {
+          inviteInput.select();
+          document.execCommand('copy');
+          btnCopyInviteAction.textContent = 'Copied!';
+          setTimeout(() => { btnCopyInviteAction.textContent = 'Copy'; }, 2000);
+        }
+      }
+    });
+  }
+
+  if (btnHeaderCopyRoom) {
+    btnHeaderCopyRoom.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      try {
+        await navigator.clipboard.writeText(roomUrl);
+        if (window.showToast) window.showToast('Room link copied!', 'success');
+      } catch (err) {
+        openInviteDialog();
+      }
+    });
+  }
+
+  // Invite Modal Tab Switching
+  const modalTabBtns = document.querySelectorAll('.w2g-modal-tabs .modal-tab-btn');
+  modalTabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      modalTabBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const target = btn.dataset.tab;
+      document.querySelectorAll('.invite-tab-pane').forEach(p => p.style.display = 'none');
+      const pane = document.getElementById(`tab-invite-${target}`);
+      if (pane) pane.style.display = 'block';
+    });
+  });
+
+  // Sharing links
+  const btnShareWhatsapp = document.getElementById('btn-share-whatsapp');
+  if (btnShareWhatsapp) {
+    btnShareWhatsapp.addEventListener('click', () => {
+      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent('Join my ZAMI Watch Party: ' + roomUrl)}`, '_blank');
+    });
+  }
+  const btnShareTelegram = document.getElementById('btn-share-telegram');
+  if (btnShareTelegram) {
+    btnShareTelegram.addEventListener('click', () => {
+      window.open(`https://t.me/share/url?url=${encodeURIComponent(roomUrl)}&text=${encodeURIComponent('Join my ZAMI Watch Party!')}`, '_blank');
+    });
+  }
+  const btnShareNative = document.getElementById('btn-share-native');
+  if (btnShareNative) {
+    btnShareNative.addEventListener('click', () => {
+      if (navigator.share) {
+        navigator.share({ title: 'ZAMI Watch Party', url: roomUrl }).catch(() => {});
+      } else {
+        openInviteDialog();
+      }
+    });
+  }
+
+  // --- Watch2Gether Search Drawer Logic ---
+  const searchDrawer = document.getElementById('w2g-search-drawer');
+  const btnOpenSearchMobile = document.getElementById('btn-mobile-open-search');
+  const btnCloseSearchDrawer = document.getElementById('btn-close-search-drawer');
+  const drawerSearchInput = document.getElementById('w2g-drawer-search-input');
+  const drawerSearchClear = document.getElementById('w2g-drawer-search-clear');
+  const drawerSearchSubmit = document.getElementById('w2g-drawer-search-submit');
+  const drawerResultsContainer = document.getElementById('drawer-results-container');
+
+  function openSearchDrawer(initialQuery = '') {
+    if (searchDrawer) {
+      searchDrawer.style.display = 'flex';
+      if (drawerSearchInput) {
+        if (initialQuery) drawerSearchInput.value = initialQuery;
+        drawerSearchInput.focus();
+        if (initialQuery) {
+          executeW2GSearch(initialQuery);
+        } else if (!drawerResultsContainer.children.length) {
+          executeW2GSearch('trending');
+        }
+      }
+    }
+  }
+
+  function closeSearchDrawer() {
+    if (searchDrawer) {
+      searchDrawer.style.display = 'none';
+    }
+  }
+
+  if (btnOpenSearchMobile) {
+    btnOpenSearchMobile.addEventListener('click', () => openSearchDrawer());
+  }
+  if (btnCloseSearchDrawer) {
+    btnCloseSearchDrawer.addEventListener('click', closeSearchDrawer);
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && searchDrawer && searchDrawer.style.display !== 'none') {
+      closeSearchDrawer();
+    }
+  });
+
+  if (drawerSearchInput) {
+    drawerSearchInput.addEventListener('input', () => {
+      if (drawerSearchClear) {
+        drawerSearchClear.style.display = drawerSearchInput.value ? 'block' : 'none';
+      }
+    });
+    drawerSearchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const q = drawerSearchInput.value.trim();
+        if (q) executeW2GSearch(q);
+      }
+    });
+  }
+
+  if (drawerSearchClear) {
+    drawerSearchClear.addEventListener('click', () => {
+      if (drawerSearchInput) {
+        drawerSearchInput.value = '';
+        drawerSearchClear.style.display = 'none';
+        drawerSearchInput.focus();
+      }
+    });
+  }
+
+  if (drawerSearchSubmit) {
+    drawerSearchSubmit.addEventListener('click', () => {
+      const q = (drawerSearchInput?.value || '').trim();
+      if (q) executeW2GSearch(q);
+    });
+  }
+
+  // Desktop Header Search Bar
+  const headerSearchInput = document.getElementById('w2g-header-search-input');
+  const headerSearchClear = document.getElementById('w2g-header-search-clear');
+  const headerSearchSubmit = document.getElementById('w2g-header-search-submit');
+
+  if (headerSearchInput) {
+    headerSearchInput.addEventListener('input', () => {
+      if (headerSearchClear) {
+        headerSearchClear.style.display = headerSearchInput.value ? 'block' : 'none';
+      }
+    });
+    headerSearchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const val = headerSearchInput.value.trim();
+        if (val) handleUniversalSearchOrUrl(val);
+      }
+    });
+  }
+
+  if (headerSearchClear) {
+    headerSearchClear.addEventListener('click', () => {
+      if (headerSearchInput) {
+        headerSearchInput.value = '';
+        headerSearchClear.style.display = 'none';
+        headerSearchInput.focus();
+      }
+    });
+  }
+
+  if (headerSearchSubmit) {
+    headerSearchSubmit.addEventListener('click', () => {
+      const val = (headerSearchInput?.value || '').trim();
+      if (val) handleUniversalSearchOrUrl(val);
+    });
+  }
+
+  function handleUniversalSearchOrUrl(val) {
+    const isUrl = val.startsWith('http://') || val.startsWith('https://') || val.includes('.com') || val.includes('.be') || val.includes('.org') || val.includes('.m3u8');
+    if (isUrl) {
+      if (window.handleLoadDirectStream) {
+        window.handleLoadDirectStream(val);
+      } else if (curSocket) {
+        curSocket.emit('change-media', { type: val.includes('.m3u8') ? 'hls' : 'url', url: val, title: 'Web Stream' });
+      }
+      if (headerSearchInput) headerSearchInput.value = '';
+      if (window.showToast) window.showToast('Streaming media link...', 'info');
+    } else {
+      openSearchDrawer(val);
+    }
+  }
+
+  // Search API execution and rendering
+  async function executeW2GSearch(query) {
+    if (!drawerResultsContainer) return;
+
+    const isUrl = query.startsWith('http://') || query.startsWith('https://') || query.includes('.com') || query.includes('.be') || query.includes('.m3u8');
+    if (isUrl) {
+      handleUniversalSearchOrUrl(query);
+      closeSearchDrawer();
+      return;
+    }
+
+    drawerResultsContainer.innerHTML = `
+      <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; color: #a1a1aa;">
+        <div class="cinema-spinner-ring mini" style="margin-bottom: 12px;"></div>
+        <span style="font-size: 0.85rem;">Searching Watch2Gether catalog...</span>
+      </div>
+    `;
+
+    try {
+      const res = await fetch(`/api/youtube/search?q=${encodeURIComponent(query)}`);
+      const data = await res.json();
+
+      if (!data.success || !data.results || data.results.length === 0) {
+        drawerResultsContainer.innerHTML = `
+          <div style="text-align: center; padding: 40px; color: #71717a;">
+            <p style="font-size: 0.9rem; margin-bottom: 6px;">No video results found for "${query}"</p>
+            <p style="font-size: 0.78rem;">Try searching for a movie title, music video, or paste a direct YouTube/HLS link.</p>
+          </div>
+        `;
+        return;
+      }
+
+      drawerResultsContainer.innerHTML = data.results.map(item => `
+        <div class="w2g-drawer-card">
+          <div class="w2g-drawer-thumb-wrap">
+            <img src="${item.thumbnail}" alt="${item.title}" loading="lazy">
+            <span class="w2g-drawer-duration">${item.duration || 'Video'}</span>
+          </div>
+          <div class="w2g-drawer-info">
+            <div>
+              <div class="w2g-drawer-title">${item.title}</div>
+              <div class="w2g-drawer-channel">${item.channel || 'YouTube'}</div>
+            </div>
+            <div class="w2g-drawer-card-actions">
+              <button type="button" class="btn-w2g-play" data-id="${item.id}" data-title="${encodeURIComponent(item.title)}" data-thumb="${item.thumbnail}">
+                Play Now
+              </button>
+              <button type="button" class="btn-w2g-queue" data-id="${item.id}" data-title="${encodeURIComponent(item.title)}" data-thumb="${item.thumbnail}">
+                + Playlist
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      // Wire Play and Queue buttons
+      drawerResultsContainer.querySelectorAll('.btn-w2g-play').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.dataset.id;
+          const title = decodeURIComponent(btn.dataset.title);
+          const thumb = btn.dataset.thumb;
+          const url = `https://www.youtube.com/watch?v=${id}`;
+
+          if (curSocket) {
+            curSocket.emit('change-media', {
+              type: 'youtube',
+              url: url,
+              title: title,
+              poster: thumb
+            });
+          }
+          closeSearchDrawer();
+          if (window.showToast) window.showToast(`Playing: "${title}"`, 'success');
+        });
+      });
+
+      drawerResultsContainer.querySelectorAll('.btn-w2g-queue').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.dataset.id;
+          const title = decodeURIComponent(btn.dataset.title);
+          const thumb = btn.dataset.thumb;
+          const url = `https://www.youtube.com/watch?v=${id}`;
+
+          if (curSocket) {
+            curSocket.emit('playlist-add', {
+              item: {
+                type: 'youtube',
+                url: url,
+                title: title,
+                poster: thumb
+              }
+            });
+          }
+          btn.textContent = 'Added ✓';
+          btn.style.opacity = '0.7';
+          if (window.showToast) window.showToast(`Queued: "${title}"`, 'success');
+        });
+      });
+
+    } catch (err) {
+      drawerResultsContainer.innerHTML = `
+        <div style="text-align: center; padding: 40px; color: #ef4444;">
+          <p>Failed to load search results. Please check your connection.</p>
+        </div>
+      `;
+    }
+  }
+
+  // Platform pills in search drawer
+  const platformPills = document.querySelectorAll('.platform-pill');
+  platformPills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      platformPills.forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      const platform = pill.dataset.platform;
+
+      if (platform === 'youtube') {
+        if (drawerSearchInput) drawerSearchInput.placeholder = 'Search YouTube or paste link...';
+        executeW2GSearch('trending');
+      } else if (platform === 'movies') {
+        closeSearchDrawer();
+        const mediaModal = document.getElementById('media-modal');
+        if (mediaModal) {
+          mediaModal.classList.add('active');
+          mediaModal.style.display = 'flex';
+          if (window.showVaultView) window.showVaultView('movies');
+        }
+      } else if (platform === 'websites') {
+        closeSearchDrawer();
+        const mediaModal = document.getElementById('media-modal');
+        if (mediaModal) {
+          mediaModal.classList.add('active');
+          mediaModal.style.display = 'flex';
+          if (window.showVaultView) window.showVaultView('apps');
+        }
+      } else if (platform === 'local') {
+        closeSearchDrawer();
+        const mediaModal = document.getElementById('media-modal');
+        if (mediaModal) {
+          mediaModal.classList.add('active');
+          mediaModal.style.display = 'flex';
+          if (window.showVaultView) window.showVaultView('menu');
+        }
+      } else if (platform === 'wallpaper') {
+        closeSearchDrawer();
+        const wpBtn = document.getElementById('btn-nav-wallpaper');
+        if (wpBtn) wpBtn.click();
+      } else {
+        executeW2GSearch(platform);
+      }
+    });
+  });
+
+  // Drawer category tabs
+  const drawerTabBtns = document.querySelectorAll('.drawer-tab-btn');
+  drawerTabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      drawerTabBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const view = btn.dataset.view;
+
+      if (view === 'contents') {
+        executeW2GSearch('trending');
+      } else if (view === 'apps') {
+        closeSearchDrawer();
+        const appsBtn = document.getElementById('btn-w2g-apps');
+        if (appsBtn) appsBtn.click();
+      } else if (view === 'screenshare') {
+        closeSearchDrawer();
+        if (window.webrtcManager) window.webrtcManager.toggleScreenShare();
+      } else if (view === 'local') {
+        closeSearchDrawer();
+        const mediaModal = document.getElementById('media-modal');
+        if (mediaModal) {
+          mediaModal.classList.add('active');
+          mediaModal.style.display = 'flex';
+          if (window.showVaultView) window.showVaultView('menu');
+        }
+      }
+    });
+  });
+
+  // --- Mobile Subplayer Bar Actions ---
+  const mobileRoomPill = document.getElementById('mobile-room-identity-group');
+  const btnMobileSettings = document.getElementById('btn-mobile-open-settings');
+  const settingsModal = document.getElementById('room-settings-modal');
+
+  function openRoomSettingsModal() {
+    if (settingsModal) {
+      if (typeof settingsModal.showModal === 'function') {
+        settingsModal.showModal();
+      } else {
+        settingsModal.setAttribute('open', 'true');
+      }
+    }
+  }
+
+  if (mobileRoomPill) mobileRoomPill.addEventListener('click', openRoomSettingsModal);
+  if (btnMobileSettings) btnMobileSettings.addEventListener('click', openRoomSettingsModal);
+
+  const btnMobileResize = document.getElementById('btn-mobile-resize-player');
+  if (btnMobileResize) {
+    let isExpanded = false;
+    btnMobileResize.addEventListener('click', () => {
+      const playerWrapper = document.querySelector('.player-wrapper');
+      if (playerWrapper) {
+        isExpanded = !isExpanded;
+        playerWrapper.style.maxHeight = isExpanded ? '340px' : '235px';
+        btnMobileResize.style.transform = isExpanded ? 'rotate(180deg)' : 'rotate(0deg)';
+      }
+    });
+  }
+
+  const btnMobileSplit = document.getElementById('btn-mobile-split-toggle');
+  if (btnMobileSplit) {
+    btnMobileSplit.addEventListener('click', () => {
+      document.body.classList.toggle('w2g-split');
+      if (window.showToast) {
+        window.showToast(document.body.classList.contains('w2g-split') ? 'Split view enabled' : 'Standard view', 'info');
+      }
+    });
+  }
+
+  // --- Mobile Bottom Dock Pagination Bullets ---
+  const roomSidebar = document.getElementById('room-sidebar');
+  const dockBullets = document.querySelectorAll('.w2g-dock-bullets .w2g-bullet');
+
+  // Slide mapping: 0 = People (voice), 1 = Playlists (queue), 2 = Chat (chat)
+  function scrollRoomToSlide(index) {
+    if (!roomSidebar) return;
+    const w = roomSidebar.clientWidth || window.innerWidth;
+    roomSidebar.scrollTo({
+      left: index * w,
+      behavior: 'smooth'
+    });
+    updateActiveBullet(index);
+    const slideTabs = ['voice', 'queue', 'chat'];
+    const activeTab = slideTabs[index];
+    if (activeTab && window.switchRoomTab) {
+      window.switchRoomTab(activeTab);
+    }
+  }
+
+  function updateActiveBullet(index) {
+    dockBullets.forEach((b, i) => {
+      b.classList.toggle('active', i === index);
+    });
+  }
+
+  dockBullets.forEach(bullet => {
+    bullet.addEventListener('click', () => {
+      const slideIdx = parseInt(bullet.dataset.slide, 10);
+      scrollRoomToSlide(slideIdx);
+    });
+  });
+
+  if (roomSidebar) {
+    let scrollTimeout = null;
+    roomSidebar.addEventListener('scroll', () => {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        const w = roomSidebar.clientWidth || window.innerWidth;
+        if (w > 0) {
+          const currentSlide = Math.round(roomSidebar.scrollLeft / w);
+          updateActiveBullet(Math.max(0, Math.min(2, currentSlide)));
+        }
+      }, 50);
+    }, { passive: true });
+
+    // Initial positioning on mobile (Slide 0)
+    if (window.innerWidth <= 900) {
+      setTimeout(() => {
+        scrollRoomToSlide(0);
+      }, 200);
+    }
+  }
+
+  // Bottom Dock Mic & Cam toggles
+  const btnDockCam = document.getElementById('btn-dock-cam');
+  const btnDockMic = document.getElementById('btn-dock-mic');
+  const btnDesktopCam = document.getElementById('btn-desktop-cam');
+  const btnDesktopMic = document.getElementById('btn-desktop-mic');
+
+  function toggleLocalMic() {
+    const legacyMicBtn = document.getElementById('btn-toggle-mic');
+    if (legacyMicBtn && !legacyMicBtn.disabled) {
+      legacyMicBtn.click();
+    } else if (window.webrtcManager) {
+      window.webrtcManager.toggleMic();
+    } else {
+      if (window.showToast) window.showToast('Join voice protocol to enable microphone', 'info');
+    }
+  }
+
+  function toggleLocalCam() {
+    const legacyCamBtn = document.getElementById('btn-toggle-cam');
+    if (legacyCamBtn && !legacyCamBtn.disabled) {
+      legacyCamBtn.click();
+    } else if (window.webrtcManager) {
+      window.webrtcManager.toggleCam();
+    } else {
+      if (window.showToast) window.showToast('Join voice protocol to enable camera', 'info');
+    }
+  }
+
+  if (btnDockMic) btnDockMic.addEventListener('click', toggleLocalMic);
+  if (btnDesktopMic) btnDesktopMic.addEventListener('click', toggleLocalMic);
+  if (btnDockCam) btnDockCam.addEventListener('click', toggleLocalCam);
+  if (btnDesktopCam) btnDesktopCam.addEventListener('click', toggleLocalCam);
+
+  // Bottom Dock Zoom toggles
+  let currentStageScale = 1;
+  function changeStageZoom(delta) {
+    currentStageScale = Math.max(0.7, Math.min(1.4, currentStageScale + delta));
+    const stage = document.querySelector('.room-stage');
+    if (stage) {
+      stage.style.transform = `scale(${currentStageScale})`;
+      stage.style.transformOrigin = 'top center';
+    }
+  }
+  const btnDockZoomIn = document.getElementById('btn-dock-zoom-in');
+  const btnDockZoomOut = document.getElementById('btn-dock-zoom-out');
+  const btnDesktopZoomIn = document.getElementById('btn-desktop-zoom-in');
+  const btnDesktopZoomOut = document.getElementById('btn-desktop-zoom-out');
+
+  if (btnDockZoomIn) btnDockZoomIn.addEventListener('click', () => changeStageZoom(0.08));
+  if (btnDockZoomOut) btnDockZoomOut.addEventListener('click', () => changeStageZoom(-0.08));
+  if (btnDesktopZoomIn) btnDesktopZoomIn.addEventListener('click', () => changeStageZoom(0.08));
+  if (btnDesktopZoomOut) btnDesktopZoomOut.addEventListener('click', () => changeStageZoom(-0.08));
+
+  // Sync user profile display on user avatar card
+  function updateUserCardProfile() {
+    const profile = JSON.parse(localStorage.getItem('zami_profile') || '{}');
+    const myName = profile.name || localStorage.getItem('zami_room_nickname') || 'You';
+    const myInitial = myName.charAt(0).toUpperCase() || 'Y';
+
+    const myNameTag = document.getElementById('w2g-my-name-tag');
+    if (myNameTag) myNameTag.textContent = myName;
+
+    const myInitialEl = document.getElementById('w2g-my-initial');
+    if (myInitialEl) myInitialEl.textContent = myInitial;
+  }
+  updateUserCardProfile();
+  window.addEventListener('storage', updateUserCardProfile);
+
+  // Apps Menu button (Desktop)
+  const btnW2gApps = document.getElementById('btn-w2g-apps');
+  if (btnW2gApps) {
+    btnW2gApps.addEventListener('click', () => {
+      const mediaModal = document.getElementById('media-modal');
+      if (mediaModal) {
+        mediaModal.classList.add('active');
+        mediaModal.style.display = 'flex';
+        if (window.showVaultView) window.showVaultView('apps');
+      }
+    });
+  }
+
+  // Hamburger Menu button (Desktop)
+  const btnW2gMenu = document.getElementById('btn-w2g-menu');
+  if (btnW2gMenu) {
+    btnW2gMenu.addEventListener('click', openRoomSettingsModal);
+  }
+
+  // Upgrade button
+  const btnW2gUpgrade = document.getElementById('btn-w2g-upgrade');
+  if (btnW2gUpgrade) {
+    btnW2gUpgrade.addEventListener('click', () => {
+      if (window.showToast) {
+        window.showToast('ZAMI Pro: 4K 60fps Ultra HD Cinema Streaming Unlocked!', 'success', 3000);
+      }
+    });
+  }
+}
+
+// Automatically invoke on DOMContentLoaded or immediate execution
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initWatch2GetherRoomClone);
+} else {
+  initWatch2GetherRoomClone();
+}
