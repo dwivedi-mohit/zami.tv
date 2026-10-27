@@ -1478,9 +1478,9 @@
   width: 350px;
   min-width: 320px;
   max-width: 420px;
-  background: rgba(8, 10, 15, 0.75) !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
+  background: #090b10 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   border-left: 1px solid rgba(255, 255, 255, 0.08) !important;
   display: flex !important;
   flex-direction: column;
@@ -9052,8 +9052,8 @@ kbd {
   pointer-events: none;
   z-index: 0;
   opacity: 0;
-  filter: blur(var(--ambilight-blur, 75px)) saturate(var(--ambilight-sat, 2.2));
-  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s linear;
+  filter: saturate(var(--ambilight-sat, 1.8));
+  transition: opacity 0.4s ease, box-shadow 0.25s ease-out;
   will-change: box-shadow, opacity;
 }
 .stage-ambilight-glow.active,
@@ -9161,6 +9161,18 @@ kbd {
   border-radius: 16px;
   overflow: visible;
   transition: opacity 0.4s ease;
+  contain: layout paint;
+}
+
+.room-container.is-playing .stage-snake-border,
+.room-stage.is-playing .stage-snake-border,
+.player-wrapper.is-playing .stage-snake-border {
+  display: none !important;
+  animation: none !important;
+}
+
+.room-container.is-playing .room-bg-video {
+  display: none !important;
 }
 
 .stage-snake-svg {
@@ -9179,11 +9191,10 @@ kbd {
 .snake-glow-wide {
   fill: none;
   stroke: url(#snake-gradient);
-  stroke-width: 8;
+  stroke-width: 6;
   stroke-linecap: round;
   stroke-dasharray: 20 80;
-  filter: blur(8px);
-  opacity: 0.85;
+  opacity: 0.8;
   animation: snakeWalk 4.5s linear infinite;
   will-change: stroke-dashoffset;
 }
@@ -9191,10 +9202,10 @@ kbd {
 .snake-glow-core {
   fill: none;
   stroke: url(#snake-gradient);
-  stroke-width: 3.5;
+  stroke-width: 3;
   stroke-linecap: round;
   stroke-dasharray: 18 82;
-  filter: drop-shadow(0 0 6px #f59e0b);
+  filter: drop-shadow(0 0 4px #f59e0b);
   animation: snakeWalk 4.5s linear infinite;
   will-change: stroke-dashoffset;
 }
@@ -9202,10 +9213,10 @@ kbd {
 .snake-head-spark {
   fill: none;
   stroke: #ffffff;
-  stroke-width: 4;
+  stroke-width: 3.5;
   stroke-linecap: round;
   stroke-dasharray: 2 98;
-  filter: drop-shadow(0 0 8px #ffffff) drop-shadow(0 0 14px #f59e0b);
+  filter: drop-shadow(0 0 6px #ffffff);
   animation: snakeWalk 4.5s linear infinite;
   will-change: stroke-dashoffset;
 }
@@ -10983,6 +10994,27 @@ body[data-theme="vhs"] .zami-text-logo {
   }
   .player-top-bar, .room-title-bar {
     display: none !important;
+  }
+  /* Performance optimizations for mobile devices */
+  .room-bg-video {
+    display: none !important;
+  }
+  .stage-snake-border {
+    display: none !important;
+  }
+  .stage-ambilight,
+  .stage-ambilight-canvas,
+  .stage-ambilight-glow,
+  .room-ambilight-wall {
+    display: none !important;
+  }
+  .mobile-bottom-dock,
+  .mobile-bottom-nav,
+  .room-navbar,
+  .stage-wallpaper-pill,
+  .chat-input-bar {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
   }
   .stage-brand-logo {
     display: inline-flex !important;

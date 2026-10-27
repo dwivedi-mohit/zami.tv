@@ -314,13 +314,24 @@ document.addEventListener('DOMContentLoaded', () => {
   // Ensure background video plays smoothly upon user interaction if browser blocked it
   const initBgVideoAutoplay = () => {
     const bgVideo = document.getElementById('room-bg-video');
+    // On mobile screens, disable background video decoding to eliminate CPU/GPU lag
+    if (window.innerWidth <= 900) {
+      if (bgVideo) {
+        bgVideo.pause();
+        bgVideo.style.display = 'none';
+      }
+      return;
+    }
+
     if (bgVideo && isVideoBackdrop(currentStageBackdrop)) {
       bgVideo.muted = true;
       const p = bgVideo.play();
       if (p !== undefined) {
         p.catch(() => {
           const resume = () => {
-            bgVideo.play().catch(() => {});
+            if (window.innerWidth > 900 && !document.querySelector('.room-container.is-playing')) {
+              bgVideo.play().catch(() => {});
+            }
             window.removeEventListener('click', resume);
             window.removeEventListener('keydown', resume);
             window.removeEventListener('touchstart', resume);
@@ -332,6 +343,16 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   };
+
+  document.addEventListener('visibilitychange', () => {
+    const bgVideo = document.getElementById('room-bg-video');
+    if (!bgVideo) return;
+    if (document.hidden) {
+      if (!bgVideo.paused) bgVideo.pause();
+    } else if (window.innerWidth > 900 && !document.querySelector('.room-container.is-playing')) {
+      bgVideo.play().catch(() => {});
+    }
+  });
 
   // Immediately apply initial backdrop & initialize wallpaper manager
   setStageBackdrop(currentStageBackdrop, false);
@@ -5533,6 +5554,7 @@ function initRaveSuite(socket, roomId) {
         laserTrails.push(stroke);
         socket.emit('stage-laser-draw', stroke);
         lastDrawCoord = pos;
+        requestLaserRender();
       }
     });
 
@@ -5558,6 +5580,7 @@ function initRaveSuite(socket, roomId) {
         color: data.senderColor || '#00f2fe',
         lastSeen: Date.now()
       });
+      requestLaserRender();
     });
 
     socket.on('stage-laser-draw', (data) => {
@@ -5571,15 +5594,29 @@ function initRaveSuite(socket, roomId) {
         createdAt: Date.now(),
         duration: 2500
       });
+      requestLaserRender();
     });
 
     socket.on('stage-laser-clear', () => {
       laserTrails.length = 0;
       remotePointers.clear();
+      if (laserRafId) {
+        cancelAnimationFrame(laserRafId);
+        laserRafId = null;
+      }
+      laserCtx.clearRect(0, 0, laserCanvas.width, laserCanvas.height);
     });
 
-    // Render loop for laser pointer and fading neon strokes
+    // Render loop for laser pointer and fading neon strokes (only runs when active)
+    let laserRafId = null;
+    const requestLaserRender = () => {
+      if (!laserRafId) {
+        laserRafId = requestAnimationFrame(renderLaserLoop);
+      }
+    };
+
     const renderLaserLoop = () => {
+      laserRafId = null;
       const w = laserCanvas.width;
       const h = laserCanvas.height;
       laserCtx.clearRect(0, 0, w, h);
@@ -5668,10 +5705,10 @@ function initRaveSuite(socket, roomId) {
         laserCtx.restore();
       });
 
-      requestAnimationFrame(renderLaserLoop);
+      if (laserTrails.length > 0 || remotePointers.size > 0) {
+        laserRafId = requestAnimationFrame(renderLaserLoop);
+      }
     };
-
-    requestAnimationFrame(renderLaserLoop);
   }
 
   // ==========================================================================

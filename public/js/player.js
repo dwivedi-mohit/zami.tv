@@ -156,7 +156,12 @@ class UniversalPlayer {
     this.videoEl.addEventListener('play', () => {
       this.hideBigPlayOverlay();
       this.updatePlayButton(true);
-      if (this.ambilightEnabled) {
+      // Free hardware decoder: pause background video while watching media
+      const roomBgVideo = document.getElementById('room-bg-video');
+      if (roomBgVideo && !roomBgVideo.paused) {
+        roomBgVideo.pause();
+      }
+      if (this.ambilightEnabled && window.innerWidth > 900) {
         this.startAmbilightLoop();
       }
       if (this.activeType !== 'screenshare') {
@@ -237,6 +242,10 @@ class UniversalPlayer {
       clearTimeout(bufferingTimer);
       this.updatePlayButton(false);
       this.stopAmbilightLoop();
+      const roomBgVideo = document.getElementById('room-bg-video');
+      if (roomBgVideo && roomBgVideo.paused && window.innerWidth > 900 && !document.hidden) {
+        roomBgVideo.play().catch(() => {});
+      }
       if (this.activeType !== 'screenshare') {
         if (!this.videoEl.seeking && this.getCurrentTime() > 0.5) {
           this.showBigPlayOverlay();
@@ -1342,7 +1351,7 @@ class UniversalPlayer {
   }
 
   startAmbilightLoop() {
-    if (!this.ambilightEnabled || this.ambilightLoopActive) return;
+    if (!this.ambilightEnabled || this.ambilightLoopActive || window.innerWidth <= 900) return;
     this.ambilightLoopActive = true;
 
     if (this.ambilightGlowEl) this.ambilightGlowEl.classList.add('active');
@@ -1353,7 +1362,7 @@ class UniversalPlayer {
 
     const loop = (timestamp) => {
       if (!this.ambilightLoopActive) return;
-      if (timestamp - this.lastAmbilightSample >= 40) { // 25fps sampling
+      if (timestamp - this.lastAmbilightSample >= 150) { // Smooth 6.6fps sampling with CSS interpolation
         this.lastAmbilightSample = timestamp;
         this.sampleAmbilightColor();
       }
@@ -1491,13 +1500,14 @@ class UniversalPlayer {
       const cR_str = `${Math.round(cur.right[0])}, ${Math.round(cur.right[1])}, ${Math.round(cur.right[2])}`;
       const cC_str = `${Math.round(cur.center[0])}, ${Math.round(cur.center[1])}, ${Math.round(cur.center[2])}`;
 
-      // Update CSS custom properties for room wall projection
-      const root = document.documentElement;
-      root.style.setProperty('--ambilight-c-top', `rgba(${cT_str}, 0.28)`);
-      root.style.setProperty('--ambilight-c-bottom', `rgba(${cB_str}, 0.25)`);
-      root.style.setProperty('--ambilight-c-left', `rgba(${cL_str}, 0.25)`);
-      root.style.setProperty('--ambilight-c-right', `rgba(${cR_str}, 0.25)`);
-      root.style.setProperty('--ambilight-c-center', `rgba(${cC_str}, 0.22)`);
+      // Update CSS custom properties for room wall projection (confined to wall element)
+      if (this.ambilightWallEl && this.ambilightWallEnabled) {
+        this.ambilightWallEl.style.setProperty('--ambilight-c-top', `rgba(${cT_str}, 0.28)`);
+        this.ambilightWallEl.style.setProperty('--ambilight-c-bottom', `rgba(${cB_str}, 0.25)`);
+        this.ambilightWallEl.style.setProperty('--ambilight-c-left', `rgba(${cL_str}, 0.25)`);
+        this.ambilightWallEl.style.setProperty('--ambilight-c-right', `rgba(${cR_str}, 0.25)`);
+        this.ambilightWallEl.style.setProperty('--ambilight-c-center', `rgba(${cC_str}, 0.22)`);
+      }
 
       // Update multi-edge box shadow on stage glow
       const shadowAlpha = (0.85 + audioEnergy * 0.15).toFixed(2);

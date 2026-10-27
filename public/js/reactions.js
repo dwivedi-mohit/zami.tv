@@ -33,10 +33,12 @@ class ReactionEngine {
     const storedSound = localStorage.getItem('cinesync_sound_enabled');
     this.soundEnabled = storedSound !== null ? storedSound === 'true' : true;
 
+    this.isLooping = false;
+    this.rafId = null;
+
     if (this.canvas) {
       this.resizeCanvas();
       window.addEventListener('resize', () => this.resizeCanvas());
-      this.loop();
     }
   }
 
@@ -265,11 +267,18 @@ class ReactionEngine {
         gravity: -0.05
       });
     }
+
+    if (!this.isLooping && this.particles.length > 0) {
+      this.isLooping = true;
+      this.rafId = requestAnimationFrame(() => this.loop());
+    }
   }
 
   loop() {
-    requestAnimationFrame(() => this.loop());
-    if (!this.ctx || !this.canvas) return;
+    if (!this.ctx || !this.canvas) {
+      this.isLooping = false;
+      return;
+    }
 
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
@@ -299,6 +308,14 @@ class ReactionEngine {
       this.ctx.shadowBlur = 8;
       this.ctx.fill(VECTOR_PATHS[p.type] || VECTOR_PATHS.star);
       this.ctx.restore();
+    }
+
+    if (this.particles.length > 0) {
+      this.rafId = requestAnimationFrame(() => this.loop());
+    } else {
+      this.isLooping = false;
+      this.rafId = null;
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
   }
 }

@@ -823,40 +823,54 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
+    function startLoop() {
+      if (!animFrameId && !showcaseVideo.paused && !showcaseVideo.ended) {
+        animFrameId = requestAnimationFrame(renderLoop);
+      }
+    }
+
+    function stopLoop() {
+      if (animFrameId) {
+        cancelAnimationFrame(animFrameId);
+        animFrameId = null;
+      }
+    }
+
     function renderLoop() {
       if (!showcaseVideo.paused && !showcaseVideo.ended) {
         if (showcaseCanvas.width !== (showcaseVideo.videoWidth || 720)) {
           resizeCanvas();
         }
         ctx.drawImage(showcaseVideo, 0, 0, showcaseCanvas.width, showcaseCanvas.height);
+        animFrameId = requestAnimationFrame(renderLoop);
+      } else {
+        stopLoop();
       }
-      animFrameId = requestAnimationFrame(renderLoop);
     }
 
     showcaseVideo.addEventListener("loadedmetadata", resizeCanvas);
-    showcaseVideo.addEventListener("canplay", () => {
-      resizeCanvas();
-      if (!animFrameId) {
-        animFrameId = requestAnimationFrame(renderLoop);
-      }
-    });
-    showcaseVideo.addEventListener("play", () => {
-      if (!animFrameId) {
-        animFrameId = requestAnimationFrame(renderLoop);
-      }
-    });
+    showcaseVideo.addEventListener("canplay", resizeCanvas);
+    showcaseVideo.addEventListener("play", startLoop);
+    showcaseVideo.addEventListener("pause", stopLoop);
+    showcaseVideo.addEventListener("ended", stopLoop);
 
-    const playPromise = showcaseVideo.play();
-    if (playPromise !== undefined) {
-      playPromise.catch(() => {
-        showcaseVideo.muted = true;
-        showcaseVideo.play().catch(() => {});
-      });
-    }
-
-    if (showcaseVideo.readyState >= 2) {
-      resizeCanvas();
-      animFrameId = requestAnimationFrame(renderLoop);
+    // Efficient Background Processing: only render when visible in viewport
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            showcaseVideo.play().catch(() => {});
+            startLoop();
+          } else {
+            showcaseVideo.pause();
+            stopLoop();
+          }
+        });
+      }, { threshold: 0.05 });
+      observer.observe(showcaseCanvas);
+    } else {
+      showcaseVideo.play().catch(() => {});
+      startLoop();
     }
   }
 
