@@ -5204,7 +5204,7 @@ function initRaveSuite(socket, roomId) {
         return;
       }
       if (app === 'browser') {
-        openRaveSourceSheet('url');
+        openInbuiltBrowser('https://www.google.com');
         return;
       }
       openRaveSourceSheet(app);
