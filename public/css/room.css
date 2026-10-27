@@ -1023,31 +1023,12 @@
 }
 
 /* Floating Quick Reactions Bar (Frosted Glassmorphism) */
-.floating-reactions {
-  position: absolute;
-  bottom: 74px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: none !important;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
-  background: rgba(10, 12, 18, 0.78) !important;
-  backdrop-filter: blur(14px) !important;
-  -webkit-backdrop-filter: blur(14px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  border-radius: 9999px;
-  z-index: 30;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
-  opacity: 0.95;
-  transition: opacity 0.2s, transform 0.2s;
-}
+.floating-reactions,
 .room-container.is-playing .floating-reactions {
-  display: flex !important;
-}
-.floating-reactions:hover {
-  opacity: 1;
-  transform: translateX(-50%) translateY(-2px);
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
 }
 .reaction-btn {
   display: inline-flex;
@@ -1218,35 +1199,13 @@
   50% { box-shadow: 0 12px 36px rgba(0, 0, 0, 0.85), 0 0 28px rgba(212, 163, 89, 0.7); }
 }
 
-/* Big Center Play Button Overlay */
-.player-big-play-btn {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 84px;
-  height: 84px;
-  background: rgba(14, 15, 18, 0.88);
-  border: 2px solid var(--accent-primary);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--accent-primary);
-  cursor: pointer;
-  z-index: 23;
-  backdrop-filter: blur(12px);
-  box-shadow: 0 0 35px rgba(212, 163, 89, 0.45);
-  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s, color 0.2s;
-}
-.player-big-play-btn:hover {
-  transform: translate(-50%, -50%) scale(1.14);
-  background: var(--accent-primary);
-  color: #0b0c10;
-  box-shadow: 0 0 50px rgba(212, 163, 89, 0.75);
-}
-.player-big-play-btn svg {
-  margin-left: 5px;
+/* Big Center Play Button Overlay (Permanently hidden to prevent disruption) */
+.player-big-play-btn,
+#player-big-play-btn {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -7876,225 +7835,225 @@
     display: none !important;
   }
 
+  /* Completely remove top mobile playing header (Interstellar title, avatars, back button) */
+  #mobile-playing-header,
+  .mobile-playing-header,
   .room-container.is-playing .mobile-playing-header {
-    display: flex !important;
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
   }
 
+  /* Completely remove big center play button & floating emojis from streaming screen */
+  #player-big-play-btn,
+  .player-big-play-btn,
+  #floating-reactions,
+  .floating-reactions,
+  .stage-floating-chat,
+  #stage-floating-chat {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  /* Direct Playing Stage Poster/Still Backdrop (only for demo mockup) */
+  .playing-stage-backdrop {
+    position: absolute !important;
+    inset: 0 !important;
+    background-size: cover !important;
+    background-position: center !important;
+    z-index: 10 !important;
+    display: none;
+  }
+
+  .room-container.is-demo-playing .playing-stage-backdrop {
+    display: block !important;
+  }
+
+  .embed-player-container {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    inset: 0;
+    z-index: 12;
+    background: #000000;
+  }
+
+  /* Very short, sleek, non-disruptive player controls at bottom edge of video */
+  .custom-controls,
   .room-container.is-playing .custom-controls {
+    position: absolute !important;
+    inset-inline: 0 !important;
+    bottom: 0 !important;
+    padding: 2px 10px 4px 10px !important;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.25) 75%, transparent 100%) !important;
     display: flex !important;
+    flex-direction: column !important;
+    gap: 3px !important;
+    z-index: 25 !important;
     opacity: 1 !important;
     pointer-events: auto !important;
-    padding: 24px 16px 20px !important;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.5) 60%, transparent 100%) !important;
+    transition: opacity 0.35s ease !important;
+    height: auto !important;
+    max-height: 42px !important;
   }
 
-  .mobile-playing-header {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 56px;
-    padding: 0 16px;
-    display: none;
-    align-items: center;
-    justify-content: space-between;
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.35) 60%, transparent 100%);
-    z-index: 35;
+  /* Auto-hide controls when idle so video is 100% clean and unobstructed */
+  .player-wrapper.idle .custom-controls,
+  .room-container.is-playing .player-wrapper.idle .custom-controls {
+    opacity: 0 !important;
+    pointer-events: none !important;
   }
 
-  .mobile-playing-left {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .btn-playing-back {
-    background: none;
-    border: none;
-    color: #e5a93c;
-    cursor: pointer;
-    padding: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .mobile-playing-title {
-    font-family: var(--font-sans);
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: #ffffff;
-    letter-spacing: -0.01em;
-  }
-
-  .mobile-playing-right {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .btn-playing-more {
-    background: none;
-    border: none;
-    color: #ffffff;
-    cursor: pointer;
-    padding: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .nav-avatar-circles.mini .nav-mini-avatar {
-    width: 26px;
-    height: 26px;
-  }
-
-  .nav-avatar-circles.mini .avatar-ph {
-    font-size: 0.68rem;
-  }
-
+  /* Ultra-thin, sleek progress scrubber */
+  #progress-bar-container,
   .room-container.is-playing #progress-bar-container {
-    height: 4px !important;
+    height: 3px !important;
     border-radius: 2px !important;
     background: rgba(255, 255, 255, 0.25) !important;
     position: relative !important;
-    margin-bottom: 14px !important;
+    margin: 0 0 2px 0 !important;
+    width: 100% !important;
   }
 
+  #progress-filled,
   .room-container.is-playing #progress-filled {
     background: #e5a93c !important;
     position: relative !important;
+    height: 100% !important;
   }
 
+  #progress-filled::after,
   .room-container.is-playing #progress-filled::after {
-    content: "";
-    position: absolute;
-    right: -5px;
-    top: -4px;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: #ffffff;
-    box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
+    content: "" !important;
+    position: absolute !important;
+    right: -3px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: 7px !important;
+    height: 7px !important;
+    border-radius: 50% !important;
+    background: #ffffff !important;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.6) !important;
   }
 
-/* Direct Playing Stage Poster/Still Backdrop (only for demo mockup) */
-.playing-stage-backdrop {
-  position: absolute !important;
-  inset: 0 !important;
-  background-size: cover !important;
-  background-position: center !important;
-  z-index: 10 !important;
-  display: none;
-}
-
-.room-container.is-demo-playing .playing-stage-backdrop {
-  display: block !important;
-}
-
-.embed-player-container {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  inset: 0;
-  z-index: 12;
-  background: #000000;
-}
-
-  .room-container.is-playing #volume-slider,
-  .room-container.is-playing #speed-select,
-  .room-container.is-playing #current-media-title,
-  .room-container.is-playing #ctrl-subtitles,
-  .room-container.is-playing #stage-ambilight,
-  .room-container.is-playing #ctrl-ambilight,
-  .room-container.is-playing #ctrl-snapshot,
-  .room-container.is-playing #ctrl-reaction-cannon,
-  .room-container.is-playing #ctrl-laser-pointer,
-  .room-container.is-playing #ctrl-record-clip,
-  .room-container.is-playing #ctrl-quick-shelf,
-  .room-container.is-playing #btn-volume-boost,
-  .room-container.is-playing #ctrl-theater,
-  .room-container.is-playing #ctrl-pip,
-  .room-container.is-playing #ctrl-audio-tracks {
-    display: none !important;
-  }
-
+  /* Controls row: Single short bar with Play/Pause, Mute/Unmute, Time, and Fullscreen */
+  .controls-row,
   .room-container.is-playing .controls-row {
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
     width: 100% !important;
-    position: relative !important;
+    height: 26px !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
-  .room-container.is-playing .volume-control {
-    order: 1 !important;
-    display: flex !important;
-  }
-
+  .controls-left,
   .room-container.is-playing .controls-left {
-    order: 2 !important;
     display: flex !important;
     align-items: center !important;
-    gap: 28px !important;
-    justify-content: center !important;
-    flex: unset !important;
-    margin: 0 auto !important;
-  }
-
-  .room-container.is-playing .controls-right {
-    order: 3 !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 12px !important;
-  }
-
-  .room-container.is-playing #ctrl-volume {
-    width: 38px !important;
-    height: 38px !important;
-    color: #ffffff !important;
-  }
-
-  .room-container.is-playing #ctrl-back-10 {
-    width: 38px !important;
-    height: 38px !important;
-    color: #ffffff !important;
+    gap: 6px !important;
     order: 1 !important;
+    margin: 0 !important;
+    flex: 1 !important;
+    justify-content: flex-start !important;
   }
 
-  .room-container.is-playing #ctrl-play {
-    order: 2 !important;
-    width: 48px !important;
-    height: 48px !important;
-    border-radius: 50% !important;
+  .controls-right,
+  .room-container.is-playing .controls-right {
     display: flex !important;
     align-items: center !important;
-    justify-content: center !important;
-    color: #ffffff !important;
-    background: none !important;
+    gap: 6px !important;
+    order: 2 !important;
+    margin: 0 !important;
+    flex-shrink: 0 !important;
+    justify-content: flex-end !important;
   }
 
-  .room-container.is-playing #ctrl-fwd-10 {
-    width: 38px !important;
-    height: 38px !important;
-    color: #ffffff !important;
-    order: 3 !important;
-  }
-
-  .room-container.is-playing #ctrl-theater-mode,
+  /* Clean minimal buttons (28px height, 16px icons) */
+  .ctrl-btn,
+  .room-container.is-playing .ctrl-btn,
+  .room-container.is-playing #ctrl-play,
+  .room-container.is-playing #ctrl-volume,
   .room-container.is-playing #ctrl-fullscreen {
-    width: 36px !important;
-    height: 36px !important;
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    border-radius: 6px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: transparent !important;
+    border: none !important;
     color: #ffffff !important;
+    padding: 0 !important;
+    cursor: pointer !important;
   }
 
+  .ctrl-btn:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+  }
+
+  .ctrl-btn:active {
+    transform: scale(0.92) !important;
+  }
+
+  .ctrl-btn svg,
+  .room-container.is-playing .ctrl-btn svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  /* Compact time display */
+  .time-display,
   .room-container.is-playing #time-display {
-    position: absolute !important;
-    top: -24px !important;
-    right: 0 !important;
-    font-family: var(--font-mono, monospace) !important;
-    font-size: 0.72rem !important;
-    color: #d1d5db !important;
+    position: static !important;
+    font-size: 0.68rem !important;
+    font-family: inherit !important;
+    color: rgba(255, 255, 255, 0.85) !important;
+    margin-left: 2px !important;
+    white-space: nowrap !important;
+  }
+
+  /* Hide all unnecessary stage clutter */
+  #ctrl-back-10,
+  #ctrl-fwd-10,
+  #volume-slider,
+  #btn-volume-boost,
+  #speed-select,
+  #ctrl-subtitles,
+  #subtitle-flyout,
+  #ctrl-audio-tracks,
+  #audio-tracks-flyout,
+  #ctrl-reaction-cannon,
+  #ctrl-snapshot,
+  #ctrl-ambilight,
+  #ctrl-laser-pointer,
+  #ctrl-record-clip,
+  #ctrl-quick-shelf,
+  #ctrl-pip,
+  #ctrl-theater,
+  #ctrl-theater-mode,
+  #current-media-title,
+  .room-container.is-playing #ctrl-back-10,
+  .room-container.is-playing #ctrl-fwd-10,
+  .room-container.is-playing #volume-slider,
+  .room-container.is-playing #btn-volume-boost,
+  .room-container.is-playing #speed-select,
+  .room-container.is-playing #ctrl-subtitles,
+  .room-container.is-playing #ctrl-audio-tracks,
+  .room-container.is-playing #ctrl-reaction-cannon,
+  .room-container.is-playing #ctrl-snapshot,
+  .room-container.is-playing #ctrl-ambilight,
+  .room-container.is-playing #ctrl-laser-pointer,
+  .room-container.is-playing #ctrl-record-clip,
+  .room-container.is-playing #ctrl-quick-shelf,
+  .room-container.is-playing #ctrl-pip,
+  .room-container.is-playing #ctrl-theater,
+  .room-container.is-playing #ctrl-theater-mode,
+  .room-container.is-playing #current-media-title {
+    display: none !important;
   }
 }
 

@@ -294,10 +294,7 @@ class UniversalPlayer {
   }
 
   showBigPlayOverlay() {
-    if (this.activeType === 'screenshare') return;
-    if (this.bigPlayBtn && (!this.spinnerEl || this.spinnerEl.style.display === 'none')) {
-      this.bigPlayBtn.style.display = 'flex';
-    }
+    if (this.bigPlayBtn) this.bigPlayBtn.style.display = 'none';
   }
 
   hideBigPlayOverlay() {

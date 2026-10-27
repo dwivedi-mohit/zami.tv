@@ -2160,7 +2160,7 @@ function setupCinemaDiscoveryHub(socket) {
     const placeholder = document.getElementById('player-placeholder');
     if (placeholder) placeholder.style.display = 'none';
     const mobHeader = document.getElementById('mobile-playing-header');
-    if (mobHeader) mobHeader.style.display = 'flex';
+    if (mobHeader) mobHeader.style.display = 'none';
     const mobTitle = document.getElementById('mobile-playing-title');
     if (mobTitle) mobTitle.textContent = title;
     const customControls = document.getElementById('custom-controls');
