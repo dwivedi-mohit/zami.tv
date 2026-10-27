@@ -2252,7 +2252,7 @@
   height: 48px !important;
   min-width: 48px !important;
   border-radius: 50% !important;
-  display: flex !important;
+  display: flex;
   align-items: center !important;
   justify-content: center !important;
   font-family: 'Google Sans', Inter, -apple-system, sans-serif !important;
@@ -2263,6 +2263,11 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35) !important;
   position: relative !important;
   transition: box-shadow 0.2s ease, transform 0.2s ease !important;
+}
+
+.peer-tile .peer-avatar[style*="display: none"],
+.peer-tile .peer-avatar.is-hidden {
+  display: none !important;
 }
 
 /* Speaking pulse green ring */
@@ -2403,6 +2408,32 @@
   height: 100% !important;
   object-fit: cover !important;
   z-index: 1 !important;
+  border-radius: 12px !important;
+}
+
+/* Natural mirror reflection for user's own camera (Google Meet style) */
+.peer-tile[data-is-me="true"] .peer-video {
+  transform: scaleX(-1) !important;
+}
+
+/* Google Meet Leave / Hangup Button */
+.gmeet-btn-leave {
+  background: #ea4335 !important;
+  color: #ffffff !important;
+}
+.gmeet-btn-leave:hover:not(:disabled) {
+  background: #d93025 !important;
+  transform: scale(1.06);
+}
+
+/* Google Meet Rejoin Call Button */
+.gmeet-btn-join {
+  background: #1e8e3e !important;
+  color: #ffffff !important;
+}
+.gmeet-btn-join:hover:not(:disabled) {
+  background: #188038 !important;
+  transform: scale(1.06);
 }
 
 /* ==========================================================================

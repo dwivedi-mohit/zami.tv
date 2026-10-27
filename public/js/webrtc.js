@@ -15,6 +15,7 @@ class WebRTCManager {
     this.isMuted = true;
     this.isCameraOn = false;
     this.isSharingScreen = false;
+    this.isInCall = true;
 
     this.activeScreenSharerId = null;
     this.activeScreenSharerName = null;
@@ -263,47 +264,81 @@ class WebRTCManager {
     }
   }
 
-  async toggleVoiceConnection() {
-    if (this.localStream) {
-      // Disconnect
-      this.leaveVoice();
-      if (this.btnToggleVoice) {
-        this.btnToggleVoice.classList.remove('in-call');
-        const joinIcon = this.btnToggleVoice.querySelector('.gmeet-icon-join');
-        const leaveIcon = this.btnToggleVoice.querySelector('.gmeet-icon-leave');
-        const callText = this.btnToggleVoice.querySelector('.gmeet-call-text');
-        if (joinIcon) joinIcon.style.display = 'inline-block';
-        if (leaveIcon) leaveIcon.style.display = 'none';
-        if (callText) callText.textContent = 'Join call';
-        else this.btnToggleVoice.textContent = 'Join call';
-        this.btnToggleVoice.className = 'gmeet-call-pill';
-      }
-      if (this.btnToggleMic) {
-        this.btnToggleMic.disabled = true;
-        this.btnToggleMic.classList.add('is-muted');
-        this.btnToggleMic.classList.remove('is-active');
-        const micOn = this.btnToggleMic.querySelector('.gmeet-icon-mic-on');
-        const micOff = this.btnToggleMic.querySelector('.gmeet-icon-mic-off');
-        if (micOn) micOn.style.display = 'none';
-        if (micOff) micOff.style.display = 'inline-block';
-      }
-      if (this.btnToggleCam) {
-        this.btnToggleCam.disabled = true;
-        this.btnToggleCam.classList.add('is-muted');
-        this.btnToggleCam.classList.remove('is-active');
-      }
-      if (this.voiceStatusText) this.voiceStatusText.textContent = 'Voice disconnected';
-      const dot = document.getElementById('gmeet-status-dot');
-      if (dot) dot.classList.remove('online');
-    } else {
-      // Connect
-      try {
-        // Resume AudioContext on user gesture
-        const ctx = this.getAudioContext();
-        if (ctx && ctx.state === 'suspended') {
-          ctx.resume().catch(() => {});
-        }
+  autoJoinOnRoomEntry() {
+    this.isInCall = true;
+    this.updateInCallUI(true);
 
+    // Immediately initiate WebRTC connections to existing peers so we receive their video/audio
+    if (this.knownPeerIds) {
+      this.knownPeerIds.forEach((peerId) => {
+        if (peerId && peerId !== this.socket.id && !this.peers.has(peerId)) {
+          this.initiateCallTo(peerId);
+        }
+      });
+    }
+  }
+
+  updateInCallUI(inCall) {
+    this.isInCall = inCall;
+    const dot = document.getElementById('gmeet-status-dot');
+    if (dot) {
+      dot.classList.toggle('online', inCall);
+      dot.classList.toggle('paused', !inCall);
+    }
+    if (this.voiceStatusText) {
+      if (inCall) {
+        this.voiceStatusText.textContent = this.isMuted ? 'In call · Muted' : 'In call · Mic ON';
+      } else {
+        this.voiceStatusText.textContent = 'Call paused';
+      }
+    }
+    if (this.btnToggleVoice) {
+      this.btnToggleVoice.classList.toggle('in-call', inCall);
+      this.btnToggleVoice.classList.toggle('gmeet-btn-leave', inCall);
+      this.btnToggleVoice.classList.toggle('gmeet-btn-join', !inCall);
+      this.btnToggleVoice.title = inCall ? 'Leave call' : 'Rejoin call';
+      const joinIcon = this.btnToggleVoice.querySelector('.gmeet-icon-join');
+      const leaveIcon = this.btnToggleVoice.querySelector('.gmeet-icon-leave');
+      const callText = this.btnToggleVoice.querySelector('.gmeet-call-text');
+      if (joinIcon) joinIcon.style.display = inCall ? 'none' : 'inline-block';
+      if (leaveIcon) leaveIcon.style.display = inCall ? 'inline-block' : 'none';
+      if (callText) callText.textContent = inCall ? 'Leave call' : 'Rejoin call';
+    }
+    if (this.btnToggleMic) {
+      this.btnToggleMic.disabled = !inCall;
+    }
+    if (this.btnToggleCam) {
+      this.btnToggleCam.disabled = !inCall;
+    }
+  }
+
+  async toggleVoiceConnection() {
+    if (this.isInCall) {
+      // User clicked Leave Call (Hangup)
+      this.leaveVoice();
+      this.isInCall = false;
+      this.updateInCallUI(false);
+      if (window.showToast) window.showToast('You left the call. Click Rejoin to join again.', 'info', 2500);
+    } else {
+      // User clicked Rejoin Call
+      this.autoJoinOnRoomEntry();
+      const ctx = this.getAudioContext();
+      if (ctx && ctx.state === 'suspended') {
+        ctx.resume().catch(() => {});
+      }
+      if (window.showToast) window.showToast('Rejoined call!', 'success', 2000);
+    }
+  }
+
+  async toggleMic() {
+    if (!this.isInCall) {
+      this.autoJoinOnRoomEntry();
+    }
+
+    const existingTrack = this.localStream ? this.localStream.getAudioTracks()[0] : null;
+    if (!existingTrack) {
+      // Prompt microphone permission on demand
+      try {
         const stream = await navigator.mediaDevices.getUserMedia({
           audio: {
             echoCancellation: true,
@@ -312,25 +347,17 @@ class WebRTCManager {
           },
           video: false
         });
-
-        this.localStream = stream;
+        const audioTrack = stream.getAudioTracks()[0];
+        if (!this.localStream) {
+          this.localStream = new MediaStream();
+        }
+        this.localStream.addTrack(audioTrack);
         this.isMuted = false;
+
         this.attachAudioAnalyser('local', this.localStream);
         this.startSpeakingLoop();
 
-        if (this.btnToggleVoice) {
-          this.btnToggleVoice.classList.add('in-call');
-          const joinIcon = this.btnToggleVoice.querySelector('.gmeet-icon-join');
-          const leaveIcon = this.btnToggleVoice.querySelector('.gmeet-icon-leave');
-          const callText = this.btnToggleVoice.querySelector('.gmeet-call-text');
-          if (joinIcon) joinIcon.style.display = 'none';
-          if (leaveIcon) leaveIcon.style.display = 'inline-block';
-          if (callText) callText.textContent = 'Leave call';
-          else this.btnToggleVoice.textContent = 'Leave call';
-          this.btnToggleVoice.className = 'gmeet-call-pill in-call';
-        }
         if (this.btnToggleMic) {
-          this.btnToggleMic.disabled = false;
           this.btnToggleMic.classList.remove('is-muted');
           this.btnToggleMic.classList.add('is-active');
           const micOn = this.btnToggleMic.querySelector('.gmeet-icon-mic-on');
@@ -338,80 +365,130 @@ class WebRTCManager {
           if (micOn) micOn.style.display = 'inline-block';
           if (micOff) micOff.style.display = 'none';
         }
-        if (this.btnToggleCam) {
-          this.btnToggleCam.disabled = false;
-        }
         if (this.voiceStatusText) this.voiceStatusText.textContent = 'In call · Mic ON';
-        const dot = document.getElementById('gmeet-status-dot');
-        if (dot) dot.classList.add('online');
 
-        // Broadcast microphone tracks to existing and new peers
         await this.broadcastVoiceTracks();
         this.socket.emit('update-av-state', { isMuted: false, isCameraOn: this.isCameraOn });
-        if (window.showToast) window.showToast('Connected to Voice Chat!', 'success');
+        if (window.showToast) window.showToast('Microphone ON', 'info', 2000);
       } catch (err) {
         console.error('Microphone access denied:', err);
-        if (window.showToast) window.showToast('Microphone access was denied or unavailable.', 'error');
+        if (window.showToast) window.showToast('Microphone access denied: ' + (err.message || 'Permission denied'), 'error');
       }
+      return;
     }
-  }
 
-  toggleMic() {
-    if (!this.localStream) return;
-    const audioTrack = this.localStream.getAudioTracks()[0];
-    if (audioTrack) {
-      audioTrack.enabled = !audioTrack.enabled;
-      this.isMuted = !audioTrack.enabled;
+    // Audio track already exists: toggle mute
+    existingTrack.enabled = !existingTrack.enabled;
+    this.isMuted = !existingTrack.enabled;
+    if (this.btnToggleMic) {
       this.btnToggleMic.classList.toggle('is-muted', this.isMuted);
       this.btnToggleMic.classList.toggle('is-active', !this.isMuted);
       const micOn = this.btnToggleMic.querySelector('.gmeet-icon-mic-on');
       const micOff = this.btnToggleMic.querySelector('.gmeet-icon-mic-off');
       if (micOn) micOn.style.display = this.isMuted ? 'none' : 'inline-block';
       if (micOff) micOff.style.display = this.isMuted ? 'inline-block' : 'none';
-      if (this.voiceStatusText) {
-        this.voiceStatusText.textContent = this.isMuted ? 'In call · Muted' : 'In call · Mic ON';
-      }
-      this.socket.emit('update-av-state', { isMuted: this.isMuted, isCameraOn: this.isCameraOn });
     }
+    if (this.voiceStatusText) {
+      this.voiceStatusText.textContent = this.isMuted ? 'In call · Muted' : 'In call · Mic ON';
+    }
+    this.socket.emit('update-av-state', { isMuted: this.isMuted, isCameraOn: this.isCameraOn });
   }
 
   async toggleCamera() {
-    if (!this.localStream) return;
+    if (!this.isInCall) {
+      this.autoJoinOnRoomEntry();
+    }
+
     if (this.isCameraOn) {
-      const videoTrack = this.localStream.getVideoTracks()[0];
-      if (videoTrack) {
-        videoTrack.stop();
-        this.localStream.removeTrack(videoTrack);
+      // Turn camera off
+      if (this.localStream) {
+        const videoTrack = this.localStream.getVideoTracks()[0];
+        if (videoTrack) {
+          videoTrack.stop();
+          this.localStream.removeTrack(videoTrack);
+        }
       }
       this.isCameraOn = false;
-      this.btnToggleCam.classList.remove('is-active');
-      this.btnToggleCam.classList.add('is-muted');
-      const camOn = this.btnToggleCam.querySelector('.gmeet-icon-cam-on');
-      const camOff = this.btnToggleCam.querySelector('.gmeet-icon-cam-off');
-      if (camOn) camOn.style.display = 'none';
-      if (camOff) camOff.style.display = 'inline-block';
-      this.updateLocalTile();
-    } else {
-      try {
-        const videoStream = await navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 240 } });
-        const videoTrack = videoStream.getVideoTracks()[0];
-        this.localStream.addTrack(videoTrack);
-        this.isCameraOn = true;
-        this.btnToggleCam.classList.add('is-active');
-        this.btnToggleCam.classList.remove('is-muted');
+      if (this.btnToggleCam) {
+        this.btnToggleCam.classList.remove('is-active');
+        this.btnToggleCam.classList.add('is-muted');
         const camOn = this.btnToggleCam.querySelector('.gmeet-icon-cam-on');
         const camOff = this.btnToggleCam.querySelector('.gmeet-icon-cam-off');
-        if (camOn) camOn.style.display = 'inline-block';
-        if (camOff) camOff.style.display = 'none';
+        if (camOn) camOn.style.display = 'none';
+        if (camOff) camOff.style.display = 'inline-block';
+      }
+      this.updateLocalTile();
 
-        // Update senders for peers
-        this.peers.forEach(({ pc }) => {
-          pc.addTrack(videoTrack, this.localStream);
+      // Remove video track from peers
+      this.peers.forEach(({ pc }) => {
+        if (pc) {
+          pc.getSenders().forEach(sender => {
+            if (sender.track && sender.track.kind === 'video') {
+              try { pc.removeTrack(sender); } catch (_) {}
+            }
+          });
+        }
+      });
+      this.socket.emit('update-av-state', { isMuted: this.isMuted, isCameraOn: false });
+      if (window.showToast) window.showToast('Camera turned off', 'info', 2000);
+    } else {
+      // Turn camera on
+      try {
+        const videoStream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            width: { ideal: 640 },
+            height: { ideal: 480 },
+            facingMode: 'user'
+          }
         });
+        const videoTrack = videoStream.getVideoTracks()[0];
+        if (!this.localStream) {
+          this.localStream = new MediaStream();
+        }
+        this.localStream.addTrack(videoTrack);
+        this.isCameraOn = true;
+
+        if (this.btnToggleCam) {
+          this.btnToggleCam.classList.add('is-active');
+          this.btnToggleCam.classList.remove('is-muted');
+          const camOn = this.btnToggleCam.querySelector('.gmeet-icon-cam-on');
+          const camOff = this.btnToggleCam.querySelector('.gmeet-icon-cam-off');
+          if (camOn) camOn.style.display = 'inline-block';
+          if (camOff) camOff.style.display = 'none';
+        }
+
         this.updateLocalTile();
+
+        // Broadcast camera track to all peers
+        for (const [peerId, peerObj] of this.peers.entries()) {
+          const pc = peerObj.pc;
+          if (pc) {
+            try {
+              const videoSender = pc.getSenders().find(s => s.track && s.track.kind === 'video') ||
+                                  pc.getSenders().find(s => !s.track && s.kind === 'video');
+              if (videoSender && typeof videoSender.replaceTrack === 'function') {
+                await videoSender.replaceTrack(videoTrack);
+              } else {
+                pc.addTrack(videoTrack, this.localStream);
+              }
+              const offer = await pc.createOffer();
+              await pc.setLocalDescription(offer);
+              this.socket.emit('webrtc-signal', {
+                targetId: peerId,
+                signal: { type: 'offer', sdp: pc.localDescription },
+                streamType: 'camera'
+              });
+            } catch (e) {
+              console.warn('Renegotiate camera track error for peer', peerId, e);
+            }
+          }
+        }
+
+        this.socket.emit('update-av-state', { isMuted: this.isMuted, isCameraOn: true });
+        if (window.showToast) window.showToast('Camera turned on', 'info', 2000);
       } catch (err) {
         console.error('Camera access error:', err);
-        if (window.showToast) window.showToast('Could not access camera.', 'error');
+        if (window.showToast) window.showToast('Could not access camera: ' + (err.message || 'Permission denied'), 'error');
       }
     }
   }
@@ -568,6 +645,14 @@ class WebRTCManager {
       this.handleRemoteStream(peerId, remoteStream, event.track);
     };
 
+    // Add audio and video transceivers with direction 'sendrecv' so SDP negotiates both media channels immediately
+    try {
+      pc.addTransceiver('audio', { direction: 'sendrecv' });
+      pc.addTransceiver('video', { direction: 'sendrecv' });
+    } catch (e) {
+      // Fallback for older WebRTC engines
+    }
+
     // Attach local voice tracks if active
     if (this.localStream) {
       this.localStream.getTracks().forEach(track => {
@@ -582,7 +667,7 @@ class WebRTCManager {
       });
     }
 
-    const peerObj = { pc, stream: null, pendingCandidates: [], audioEl: null };
+    const peerObj = { pc, stream: null, pendingCandidates: [], audioEl: null, videoStream: null };
     this.peers.set(peerId, peerObj);
     return pc;
   }
@@ -603,6 +688,40 @@ class WebRTCManager {
         }
         return;
       }
+
+      // Camera video track from remote peer in Google Meet grid
+      let peerObj = this.peers.get(peerId);
+      if (!peerObj) {
+        peerObj = { pc: null, stream: null, pendingCandidates: [], audioEl: null, videoStream: null };
+        this.peers.set(peerId, peerObj);
+      }
+      peerObj.videoStream = stream;
+
+      const peerTile = document.querySelector(`.peer-tile[data-peer-id="${peerId}"]`);
+      if (peerTile) {
+        const video = peerTile.querySelector('.peer-video');
+        const avatar = peerTile.querySelector('.peer-avatar');
+        if (video) {
+          video.srcObject = stream;
+          video.style.display = 'block';
+          video.play().catch(() => {});
+        }
+        if (avatar) avatar.style.display = 'none';
+      }
+
+      track.onended = () => {
+        const pTile = document.querySelector(`.peer-tile[data-peer-id="${peerId}"]`);
+        if (pTile) {
+          const v = pTile.querySelector('.peer-video');
+          const a = pTile.querySelector('.peer-avatar');
+          if (v) {
+            v.style.display = 'none';
+            v.srcObject = null;
+          }
+          if (a) a.style.display = 'flex';
+        }
+      };
+      return;
     }
 
     // If it's an audio track from the screen sharer, it's rendered through HTML5 video element via setupScreenShare
@@ -613,7 +732,7 @@ class WebRTCManager {
     // Voice Chat Microphone handling
     let peerObj = this.peers.get(peerId);
     if (!peerObj) {
-      peerObj = { pc: null, stream: null, pendingCandidates: [], audioEl: null };
+      peerObj = { pc: null, stream: null, pendingCandidates: [], audioEl: null, videoStream: null };
       this.peers.set(peerId, peerObj);
     }
 
@@ -733,7 +852,7 @@ class WebRTCManager {
       // If we are currently sharing screen, send the stream to newcomer immediately!
       if (this.isSharingScreen && this.screenStream && user && user.id !== this.socket.id) {
         this.initiateCallTo(user.id);
-      } else if (this.localStream && user && user.id !== this.socket.id) {
+      } else if (this.isInCall && user && user.id !== this.socket.id) {
         this.initiateCallTo(user.id);
       }
     });
@@ -800,7 +919,7 @@ class WebRTCManager {
       this.knownPeerIds.add(peerId);
       if (this.isSharingScreen && this.screenStream) {
         this.initiateCallTo(peerId);
-      } else if (this.localStream) {
+      } else if (this.isInCall) {
         this.initiateCallTo(peerId);
       }
     });
@@ -880,20 +999,47 @@ class WebRTCManager {
   }
 
   updateLocalTile() {
-    const localVideo = document.getElementById('local-video-preview');
-    const localAvatar = document.getElementById('local-avatar-preview');
-    if (this.isCameraOn && this.localStream) {
-      if (localVideo) {
-        localVideo.style.display = 'block';
-        localVideo.srcObject = this.localStream;
+    let localTile = document.querySelector('.peer-tile[data-is-me="true"]');
+    if (!localTile && this.socket) {
+      localTile = document.querySelector(`.peer-tile[data-peer-id="${this.socket.id}"]`);
+    }
+    if (!localTile && window.currentUser) {
+      localTile = document.querySelector(`.peer-tile[data-peer-id="${window.currentUser.id}"]`);
+    }
+
+    if (localTile) {
+      const localVideo = localTile.querySelector('.peer-video');
+      const localAvatar = localTile.querySelector('.peer-avatar');
+      if (this.isCameraOn && this.localStream && this.localStream.getVideoTracks().length > 0) {
+        if (localVideo) {
+          localVideo.srcObject = this.localStream;
+          localVideo.style.display = 'block';
+          localVideo.play().catch(() => {});
+        }
+        if (localAvatar) localAvatar.style.display = 'none';
+      } else {
+        if (localVideo) {
+          localVideo.style.display = 'none';
+          localVideo.srcObject = null;
+        }
+        if (localAvatar) localAvatar.style.display = 'flex';
       }
-      if (localAvatar) localAvatar.style.display = 'none';
-    } else {
-      if (localVideo) {
-        localVideo.style.display = 'none';
-        localVideo.srcObject = null;
+    }
+
+    // Also support any floating preview elements if present
+    const legacyVideo = document.getElementById('local-video-preview');
+    const legacyAvatar = document.getElementById('local-avatar-preview');
+    if (legacyVideo) {
+      if (this.isCameraOn && this.localStream) {
+        legacyVideo.style.display = 'block';
+        legacyVideo.srcObject = this.localStream;
+      } else {
+        legacyVideo.style.display = 'none';
+        legacyVideo.srcObject = null;
       }
-      if (localAvatar) localAvatar.style.display = 'flex';
+    }
+    if (legacyAvatar) {
+      legacyAvatar.style.display = this.isCameraOn ? 'none' : 'flex';
     }
   }
 
@@ -906,17 +1052,37 @@ class WebRTCManager {
       this.localStream.getTracks().forEach(track => track.stop());
       this.localStream = null;
     }
+    this.isMuted = true;
+    this.isCameraOn = false;
+
+    if (this.btnToggleMic) {
+      this.btnToggleMic.classList.add('is-muted');
+      this.btnToggleMic.classList.remove('is-active');
+      const micOn = this.btnToggleMic.querySelector('.gmeet-icon-mic-on');
+      const micOff = this.btnToggleMic.querySelector('.gmeet-icon-mic-off');
+      if (micOn) micOn.style.display = 'none';
+      if (micOff) micOff.style.display = 'inline-block';
+    }
+    if (this.btnToggleCam) {
+      this.btnToggleCam.classList.add('is-muted');
+      this.btnToggleCam.classList.remove('is-active');
+      const camOn = this.btnToggleCam.querySelector('.gmeet-icon-cam-on');
+      const camOff = this.btnToggleCam.querySelector('.gmeet-icon-cam-off');
+      if (camOn) camOn.style.display = 'none';
+      if (camOff) camOff.style.display = 'inline-block';
+    }
+    this.updateLocalTile();
 
     if (this.socket) {
       this.socket.emit('update-av-state', { isMuted: true, isCameraOn: false });
     }
 
-    // Remove voice audio senders from peer connections
+    // Remove voice audio and video senders from peer connections
     this.peers.forEach(({ pc }) => {
       if (pc) {
         pc.getSenders().forEach(sender => {
-          if (sender.track && sender.track.kind === 'audio') {
-            if (!this.screenStream || !this.screenStream.getAudioTracks().some(t => t.id === sender.track.id)) {
+          if (sender.track && (sender.track.kind === 'audio' || sender.track.kind === 'video')) {
+            if (!this.screenStream || !this.screenStream.getTracks().some(t => t.id === sender.track.id)) {
               try { pc.removeTrack(sender); } catch (_) {}
             }
           }

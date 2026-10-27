@@ -410,6 +410,9 @@ document.addEventListener('DOMContentLoaded', () => {
       webrtcManager = new window.WebRTCManager(socket);
       window.webrtcManager = webrtcManager;
     }
+    if (webrtcManager && typeof webrtcManager.autoJoinOnRoomEntry === 'function') {
+      webrtcManager.autoJoinOnRoomEntry();
+    }
 
     if (data.screenShare && data.screenShare.active) {
       webrtcManager.activeScreenSharerId = data.screenShare.sharerId;
@@ -501,6 +504,26 @@ document.addEventListener('DOMContentLoaded', () => {
       if (micBadge) {
         micBadge.innerHTML = isMuted ? MIC_OFF_SVG : MIC_ON_SVG;
         micBadge.classList.toggle('muted', !!isMuted);
+      }
+      const videoEl = tile.querySelector('.peer-video');
+      const avatarEl = tile.querySelector('.peer-avatar');
+      if (isCameraOn) {
+        if (videoEl && webrtcManager) {
+          const isMe = currentUser && currentUser.id === userId;
+          const stream = isMe ? webrtcManager.localStream : (webrtcManager.peers?.get(userId)?.videoStream);
+          if (stream) {
+            videoEl.srcObject = stream;
+            videoEl.style.display = 'block';
+            if (avatarEl) avatarEl.style.display = 'none';
+            videoEl.play().catch(() => {});
+          }
+        }
+      } else {
+        if (videoEl) {
+          videoEl.style.display = 'none';
+          videoEl.srcObject = null;
+        }
+        if (avatarEl) avatarEl.style.display = 'flex';
       }
     }
   });
@@ -3467,6 +3490,7 @@ function renderUsers(users, webrtcMgr, currentUserId) {
     const initial = (user.username || 'U').charAt(0).toUpperCase();
 
     tile.innerHTML = `
+      <video class="peer-video" autoplay playsinline ${isMe ? 'muted' : ''} style="display: none;"></video>
       <div class="peer-avatar" style="background-color: ${avatarColor}">
         ${initial}
       </div>
@@ -3488,6 +3512,27 @@ function renderUsers(users, webrtcMgr, currentUserId) {
       </div>
       <div class="peer-vu-meter-container" title="Live Voice Meter"><div class="peer-vu-bar"></div></div>
     `;
+
+    // Attach active camera video stream if camera is on
+    const videoEl = tile.querySelector('.peer-video');
+    const avatarEl = tile.querySelector('.peer-avatar');
+    if (isMe) {
+      tile.dataset.isMe = 'true';
+      if (webrtcMgr && webrtcMgr.isCameraOn && webrtcMgr.localStream && videoEl) {
+        videoEl.srcObject = webrtcMgr.localStream;
+        videoEl.style.display = 'block';
+        if (avatarEl) avatarEl.style.display = 'none';
+        videoEl.play().catch(() => {});
+      }
+    } else if (webrtcMgr && videoEl) {
+      const peerObj = webrtcMgr.peers ? webrtcMgr.peers.get(user.id) : null;
+      if (peerObj && peerObj.videoStream) {
+        videoEl.srcObject = peerObj.videoStream;
+        videoEl.style.display = 'block';
+        if (avatarEl) avatarEl.style.display = 'none';
+        videoEl.play().catch(() => {});
+      }
+    }
 
     if (currentSearchTerm && !user.username.toLowerCase().includes(currentSearchTerm)) {
       tile.style.display = 'none';
