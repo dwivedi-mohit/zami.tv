@@ -362,7 +362,10 @@ class WebRTCManager {
 
     const existingTrack = this.localStream ? this.localStream.getAudioTracks()[0] : null;
     if (!existingTrack) {
-      // Prompt microphone permission on demand
+      // Prompt microphone permission on demand with explanation
+      if (window.showToast) {
+        window.showToast('Requesting microphone access for room voice chat...', 'info', 3000);
+      }
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           audio: {
@@ -460,7 +463,10 @@ class WebRTCManager {
       this.socket.emit('update-av-state', { isMuted: this.isMuted, isCameraOn: false });
       if (window.showToast) window.showToast('Camera turned off', 'info', 2000);
     } else {
-      // Turn camera on
+      // Turn camera on with explanation
+      if (window.showToast) {
+        window.showToast('Requesting camera access for your video tile...', 'info', 3000);
+      }
       try {
         const videoStream = await navigator.mediaDevices.getUserMedia({
           video: {
@@ -533,7 +539,10 @@ class WebRTCManager {
     }
 
     try {
-      // Prompt user with full stereo tab audio options
+      // Prompt user with full stereo tab audio options with explanation
+      if (window.showToast) {
+        window.showToast('Requesting screen share permission for room broadcast...', 'info', 3000);
+      }
       const stream = await navigator.mediaDevices.getDisplayMedia({
         video: {
           cursor: 'always',

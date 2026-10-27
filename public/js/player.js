@@ -222,8 +222,9 @@ class UniversalPlayer {
           }
         }
         this.hideSpinner();
+        this.showPlaybackError('The requested video stream could not be loaded or was interrupted.');
         if (window.showToast) {
-          window.showToast('Stream interrupted. Retrying or switch sources.', 'error', 4000);
+          window.showToast('Unable to play media. Retrying or switch sources.', 'error', 4000);
         }
       }
     });
@@ -299,6 +300,55 @@ class UniversalPlayer {
 
   hideBigPlayOverlay() {
     if (this.bigPlayBtn) this.bigPlayBtn.style.display = 'none';
+  }
+
+  showPlaybackError(message) {
+    this.hideSpinner();
+    const errorState = document.getElementById('player-error-state');
+    const errorMsg = document.getElementById('player-error-message');
+    if (errorState) {
+      if (errorMsg && message) errorMsg.textContent = message;
+      errorState.style.display = 'flex';
+    }
+    if (this.placeholderEl) {
+      this.placeholderEl.style.setProperty('display', 'none', 'important');
+      this.placeholderEl.classList.add('hidden');
+    }
+  }
+
+  clearPlaybackError() {
+    const errorState = document.getElementById('player-error-state');
+    if (errorState) {
+      errorState.style.display = 'none';
+    }
+  }
+
+  resetToEmptyState() {
+    this.clearPlaybackError();
+    if (this.videoEl) {
+      this.videoEl.pause();
+      this.videoEl.removeAttribute('src');
+      this.videoEl.load();
+    }
+    if (this.hls) {
+      this.hls.destroy();
+      this.hls = null;
+    }
+    if (this.ytContainer) this.ytContainer.style.display = 'none';
+    this.activeType = 'empty';
+    this.currentSource = null;
+    if (this.placeholderEl) {
+      this.placeholderEl.style.removeProperty('display');
+      this.placeholderEl.style.display = 'flex';
+      this.placeholderEl.classList.remove('hidden');
+    }
+    const roomContainer = document.querySelector('.room-container');
+    if (roomContainer) {
+      roomContainer.classList.remove('is-playing', 'has-media');
+    }
+    const titleEl = document.getElementById('current-media-title');
+    if (titleEl) titleEl.textContent = 'Screening Stage Ready';
+    this.hideSpinner();
   }
 
   isMuted() {
@@ -630,12 +680,57 @@ class UniversalPlayer {
         this.audioTracksFlyout.style.display = 'none';
       });
     }
+
+    // Playback Error State Actions
+    const btnRetry = document.getElementById('btn-player-error-retry');
+    const btnBrowse = document.getElementById('btn-player-error-browse');
+    const btnReset = document.getElementById('btn-player-error-reset');
+
+    if (btnRetry) {
+      btnRetry.addEventListener('click', () => {
+        this.clearPlaybackError();
+        if (this.currentSource) {
+          this.videoRetryCount = 0;
+          this.loadSource(this.currentSource);
+        } else {
+          this.resetToEmptyState();
+        }
+      });
+    }
+
+    if (btnBrowse) {
+      btnBrowse.addEventListener('click', () => {
+        this.clearPlaybackError();
+        const mediaModal = document.getElementById('media-modal');
+        if (mediaModal) {
+          mediaModal.classList.add('active');
+          mediaModal.style.display = 'flex';
+          if (window.showVaultView) window.showVaultView('movies');
+        }
+      });
+    }
+
+    if (btnReset) {
+      btnReset.addEventListener('click', () => {
+        this.clearPlaybackError();
+        this.resetToEmptyState();
+      });
+    }
   }
 
   initKeyboardShortcuts() {
     document.addEventListener('keydown', (e) => {
-      // Don't intercept when user is typing in chat, input, or remote browser canvas
-      if (['INPUT', 'TEXTAREA'].includes(e.target.tagName) || (e.target && e.target.id === 'remote-browser-canvas')) return;
+      // Don't intercept when user is typing in interactive element, button, dialog, or remote browser
+      const target = e.target;
+      if (target) {
+        const el = target instanceof Element ? target : target.parentElement;
+        if (el) {
+          if (el.closest('input, textarea, select, button, [role="button"], [contenteditable="true"]')) return;
+          if (el.closest('dialog[open], [role="dialog"], .modal-overlay:not([style*="display: none"]), .wallpaper-modal-overlay:not([style*="display: none"]), .w2g-search-drawer:not([style*="display: none"])')) return;
+          if (el.id === 'remote-browser-canvas' || (el.closest && el.closest('#remote-browser-canvas'))) return;
+        }
+      }
+      if (document.querySelector('dialog[open], .modal-overlay:not([style*="display: none"]), .wallpaper-modal-overlay:not([style*="display: none"]), .w2g-search-drawer:not([style*="display: none"])')) return;
 
       if (this.activeType === 'screenshare') {
         if (e.code === 'KeyF') {
@@ -1638,6 +1733,7 @@ class UniversalPlayer {
 
   // Load a new media source
   loadSource(source) {
+    this.clearPlaybackError();
     const token = window.mediaSourceManager ? window.mediaSourceManager.acquireTransition(source) : null;
     this.currentTransitionToken = token;
     this.currentSource = source;
@@ -1956,6 +2052,7 @@ class UniversalPlayer {
                 }
               }
               this.hls.destroy();
+              this.showPlaybackError('The requested video stream could not be loaded or was interrupted.');
               break;
           }
         }
@@ -2052,6 +2149,7 @@ class UniversalPlayer {
       this.videoEl.srcObject = null;
     }
     this.activeType = 'empty';
+    this.clearPlaybackError();
     if (this.placeholderEl) {
       this.placeholderEl.style.display = 'flex';
       this.placeholderEl.classList.remove('hidden');

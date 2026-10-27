@@ -20,6 +20,8 @@ class RoomQueueManager {
 
   initControls() {
     if (this.btnSkip) {
+      this.btnSkip.disabled = true;
+      this.btnSkip.setAttribute('aria-disabled', 'true');
       this.btnSkip.addEventListener('click', () => {
         if (!this.playlist || this.playlist.length === 0) {
           if (window.showToast) window.showToast('No more videos in queue', 'info');
@@ -31,6 +33,8 @@ class RoomQueueManager {
     }
 
     if (this.btnClear) {
+      this.btnClear.disabled = true;
+      this.btnClear.setAttribute('aria-disabled', 'true');
       this.btnClear.addEventListener('click', () => {
         if (!this.playlist || this.playlist.length === 0) {
           if (window.showToast) window.showToast('Queue is already empty', 'info');
@@ -119,15 +123,18 @@ class RoomQueueManager {
 
     const btnSkip = document.getElementById('btn-queue-skip');
     const btnClear = document.getElementById('btn-queue-clear');
+    const isEmpty = !this.playlist || this.playlist.length === 0;
     if (btnSkip) {
-      btnSkip.disabled = this.playlist.length === 0;
-      btnSkip.style.opacity = this.playlist.length === 0 ? '0.35' : '1';
-      btnSkip.style.pointerEvents = this.playlist.length === 0 ? 'none' : 'auto';
+      btnSkip.disabled = isEmpty;
+      btnSkip.setAttribute('aria-disabled', String(isEmpty));
+      btnSkip.style.opacity = isEmpty ? '0.35' : '1';
+      btnSkip.style.pointerEvents = isEmpty ? 'none' : 'auto';
     }
     if (btnClear) {
-      btnClear.disabled = this.playlist.length === 0;
-      btnClear.style.opacity = this.playlist.length === 0 ? '0.35' : '1';
-      btnClear.style.pointerEvents = this.playlist.length === 0 ? 'none' : 'auto';
+      btnClear.disabled = isEmpty;
+      btnClear.setAttribute('aria-disabled', String(isEmpty));
+      btnClear.style.opacity = isEmpty ? '0.35' : '1';
+      btnClear.style.pointerEvents = isEmpty ? 'none' : 'auto';
     }
 
     if (!this.container) return;

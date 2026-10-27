@@ -508,6 +508,26 @@
             </div>
           </div>
 
+          <!-- Playback Error State: Displayed ONLY upon actual playback failure -->
+          <div id="player-error-state" class="player-error-state" style="display: none;" role="alert" aria-live="assertive">
+            <div class="player-error-card">
+              <div class="player-error-icon-box">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="12" y1="8" x2="12" y2="12"/>
+                  <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+              </div>
+              <h3 class="player-error-title">Unable to play media</h3>
+              <p class="player-error-message" id="player-error-message">The requested video stream could not be loaded or was interrupted.</p>
+              <div class="player-error-actions">
+                <button type="button" id="btn-player-error-retry" class="btn btn-primary btn-sm">Try Again</button>
+                <button type="button" id="btn-player-error-browse" class="btn btn-secondary btn-sm">Browse Movies</button>
+                <button type="button" id="btn-player-error-reset" class="btn btn-outline btn-sm">Change Source</button>
+              </div>
+            </div>
+          </div>
+
           <!-- Floating Reaction Emoji Canvas -->
           <canvas id="reaction-canvas"></canvas>
 
@@ -1179,8 +1199,8 @@
                 <span class="queue-header-count" id="queue-header-count">0 items</span>
               </div>
               <div class="queue-header-actions">
-                <button type="button" id="btn-queue-skip" class="queue-ghost-btn" title="Skip to next queued item">Skip</button>
-                <button type="button" id="btn-queue-clear" class="queue-ghost-btn" title="Clear queue">Clear</button>
+                <button type="button" id="btn-queue-skip" class="queue-ghost-btn" title="Skip to next queued item" disabled aria-disabled="true">Skip</button>
+                <button type="button" id="btn-queue-clear" class="queue-ghost-btn" title="Clear queue" disabled aria-disabled="true">Clear</button>
               </div>
             </div>
 
@@ -1206,9 +1226,9 @@
 
     <!-- Sleek Minimalist Mobile Bottom Navigation Dock (Pure 3-Tab View Navigation) -->
     <nav class="w2g-mobile-dock" id="w2g-mobile-dock" aria-label="Mobile Navigation Controls">
-      <div class="dock-actions-row">
+      <div class="dock-actions-row" role="tablist" aria-label="Room views">
         <!-- 1. People / Voice Tab (Slide 0) -->
-        <button type="button" id="btn-dock-people" class="dock-action-btn active" title="People & Voice" aria-label="People & Voice" data-slide="0">
+        <button type="button" id="btn-dock-people" class="dock-action-btn active" title="People & Voice" aria-label="People & Voice" role="tab" aria-selected="true" data-slide="0">
           <div class="dock-icon-wrap">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
@@ -1219,7 +1239,7 @@
         </button>
 
         <!-- 2. Queue / Playlist Tab (Slide 1) -->
-        <button type="button" id="btn-dock-queue" class="dock-action-btn" title="Queue & Playlist" aria-label="Queue & Playlist" data-slide="1">
+        <button type="button" id="btn-dock-queue" class="dock-action-btn" title="Queue & Playlist" aria-label="Queue & Playlist" role="tab" aria-selected="false" data-slide="1">
           <div class="dock-icon-wrap">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
@@ -1230,7 +1250,7 @@
         </button>
 
         <!-- 3. Chat Tab (Slide 2) -->
-        <button type="button" id="btn-dock-chat" class="dock-action-btn" title="Live Chat" aria-label="Live Chat" data-slide="2">
+        <button type="button" id="btn-dock-chat" class="dock-action-btn" title="Live Chat" aria-label="Live Chat" role="tab" aria-selected="false" data-slide="2">
           <div class="dock-icon-wrap">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>

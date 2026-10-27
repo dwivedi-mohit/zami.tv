@@ -1278,9 +1278,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnSaveRoomNickname = document.getElementById('btn-save-room-nickname');
   let lastActiveElementBeforeSettings = null;
 
-  function openSettingsModal() {
+  function openSettingsModal(opener) {
     if (settingsModal) {
-      lastActiveElementBeforeSettings = document.activeElement;
+      lastActiveElementBeforeSettings = (opener instanceof Element) ? opener : (document.activeElement instanceof Element ? document.activeElement : null);
       if (settingsRoomUrl) settingsRoomUrl.value = window.location.href;
       if (hostControlsStatusText) {
         const isHostLock = syncEngine && syncEngine.hostOnlyControls;
@@ -1298,6 +1298,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   }
+  window.openSettingsModal = openSettingsModal;
 
   function closeSettingsModal() {
     if (settingsModal) {
@@ -1305,9 +1306,11 @@ document.addEventListener('DOMContentLoaded', () => {
       settingsModal.setAttribute('aria-hidden', 'true');
       if (lastActiveElementBeforeSettings && typeof lastActiveElementBeforeSettings.focus === 'function') {
         lastActiveElementBeforeSettings.focus();
+        lastActiveElementBeforeSettings = null;
       }
     }
   }
+  window.closeSettingsModal = closeSettingsModal;
 
   function saveRoomNickname() {
     if (!roomSettingsNickname) return;
@@ -1333,8 +1336,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  if (btnNavSettings) btnNavSettings.addEventListener('click', openSettingsModal);
-  if (btnMobileSettings) btnMobileSettings.addEventListener('click', openSettingsModal);
+  if (btnNavSettings) btnNavSettings.addEventListener('click', () => openSettingsModal(btnNavSettings));
+  if (btnMobileSettings) btnMobileSettings.addEventListener('click', () => openSettingsModal(btnMobileSettings));
   if (btnCloseSettings) btnCloseSettings.addEventListener('click', closeSettingsModal);
   if (settingsModal) {
     settingsModal.addEventListener('click', (e) => {
@@ -1581,14 +1584,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const dialog = document.getElementById('shortcuts-modal');
     const btnOpen = document.getElementById('btn-nav-shortcuts');
     const btnClose = document.getElementById('btn-close-shortcuts-modal');
+    let lastActiveOpenerShortcuts = null;
 
     if (!dialog) return;
 
-    function openModal() {
+    function openModal(opener) {
+      lastActiveOpenerShortcuts = (opener instanceof Element) ? opener : (document.activeElement instanceof Element ? document.activeElement : null);
       if (typeof dialog.showModal === 'function') {
         if (!dialog.open) dialog.showModal();
       } else {
         dialog.setAttribute('open', '');
+      }
+      const focusable = dialog.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])');
+      if (focusable.length > 0) {
+        setTimeout(() => focusable[0].focus(), 40);
       }
     }
 
@@ -1598,13 +1607,17 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         dialog.removeAttribute('open');
       }
+      if (lastActiveOpenerShortcuts && typeof lastActiveOpenerShortcuts.focus === 'function') {
+        lastActiveOpenerShortcuts.focus();
+        lastActiveOpenerShortcuts = null;
+      }
     }
 
-    function toggleModal() {
+    function toggleModal(opener) {
       if (dialog.open) {
         closeModal();
       } else {
-        openModal();
+        openModal(opener);
       }
     }
     window.toggleShortcutsModal = toggleModal;
@@ -1614,7 +1627,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnOpen) {
       btnOpen.addEventListener('click', (e) => {
         e.stopPropagation();
-        toggleModal();
+        toggleModal(btnOpen);
       });
     }
     if (btnClose) {
@@ -1623,6 +1636,28 @@ document.addEventListener('DOMContentLoaded', () => {
         closeModal();
       });
     }
+
+    // Tab trap and Escape handling inside shortcuts dialog
+    dialog.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closeModal();
+        return;
+      }
+      if (e.key === 'Tab') {
+        const focusable = Array.from(dialog.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')).filter(el => el.offsetParent !== null);
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    });
 
     // Light-dismiss click outside dialog content box
     dialog.addEventListener('click', (e) => {
@@ -1640,23 +1675,57 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 4. Comprehensive Global Keyboard Shortcuts Handler
   function initGlobalShortcuts() {
-    function isInputElement(target) {
+    function isInteractiveOrInDialog(target) {
       if (!target) return false;
-      const tag = target.tagName ? target.tagName.toUpperCase() : '';
-      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(tag)) return true;
-      if (target.isContentEditable) return true;
+      const el = target instanceof Element ? target : target.parentElement;
+      if (!el) return false;
+      if (el.closest('input, textarea, select, button, [role="button"], [contenteditable="true"]')) {
+        return true;
+      }
+      if (el.closest('dialog[open], [role="dialog"], .modal-overlay:not([style*="display: none"]), .wallpaper-modal-overlay:not([style*="display: none"]), .w2g-search-drawer:not([style*="display: none"])')) {
+        return true;
+      }
+      if (document.querySelector('dialog[open], .modal-overlay:not([style*="display: none"]), .wallpaper-modal-overlay:not([style*="display: none"]), .w2g-search-drawer:not([style*="display: none"])')) {
+        return true;
+      }
       const remoteCanvas = document.getElementById('remote-browser-canvas');
-      if (remoteCanvas && (document.activeElement === remoteCanvas || remoteCanvas.contains(target))) {
+      if (remoteCanvas && (document.activeElement === remoteCanvas || remoteCanvas.contains(el))) {
         return true;
       }
       return false;
     }
 
     document.addEventListener('keydown', (e) => {
-      // If typing in an interactive form input, ignore shortcuts except Escape
-      if (isInputElement(e.target)) {
+      // If typing in an interactive form input, button, or dialog, ignore shortcuts except Escape
+      if (isInteractiveOrInDialog(e.target)) {
         if (e.key === 'Escape') {
-          e.target.blur();
+          if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
+            e.target.blur();
+          }
+          const openSearch = document.getElementById('w2g-search-drawer');
+          if (openSearch && openSearch.style.display !== 'none' && window.closeSearchDrawer) {
+            window.closeSearchDrawer();
+          }
+          const shortcutsDialog = document.getElementById('shortcuts-modal');
+          if (shortcutsDialog && shortcutsDialog.open && window.closeShortcutsModal) {
+            window.closeShortcutsModal();
+          }
+          const settingsModal = document.getElementById('settings-modal');
+          if (settingsModal && settingsModal.style.display !== 'none' && window.closeSettingsModal) {
+            window.closeSettingsModal();
+          }
+          const wallpaperModal = document.getElementById('wallpaper-modal');
+          if (wallpaperModal && wallpaperModal.style.display !== 'none' && window.closeWallpaperModal) {
+            window.closeWallpaperModal();
+          }
+          const inviteDialog = document.getElementById('w2g-invite-dialog');
+          if (inviteDialog && (inviteDialog.open || inviteDialog.hasAttribute('open')) && window.closeInviteDialog) {
+            window.closeInviteDialog();
+          }
+          const mediaModal = document.getElementById('media-modal');
+          if (mediaModal && mediaModal.classList.contains('active') && window.closeModal) {
+            window.closeModal();
+          }
         }
         return;
       }
@@ -2554,12 +2623,23 @@ function setupCinemaDiscoveryHub(socket) {
     const card = document.createElement('article');
     card.className = 'film-card';
     card.tabIndex = 0;
+    card.setAttribute('role', 'button');
 
     const posterUrl = film.poster || 'https://via.placeholder.com/300x450?text=No+Poster';
     const ratingText = film.rating ? `${STAR_ICON_SVG} <span>${film.rating}</span>` : `${STAR_ICON_SVG} <span>8.0</span>`;
     const isTv = film.mediaType === 'tv';
     const typeLabel = isTv ? 'TV' : 'FILM';
     const yearText = film.year ? film.year : '';
+    card.setAttribute('aria-label', `Select ${film.title} (${isTv ? 'TV Series' : 'Movie'}${yearText ? ', ' + yearText : ''})`);
+
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        if (e.target === card) {
+          e.preventDefault();
+          card.click();
+        }
+      }
+    });
 
     card.innerHTML = `
       <div class="film-poster-wrap">
@@ -2816,6 +2896,17 @@ function setupCinemaDiscoveryHub(socket) {
     const card = document.createElement('article');
     card.className = 'film-card';
     card.tabIndex = 0;
+    card.setAttribute('role', 'button');
+    card.setAttribute('aria-label', `Select ${item.title} (Bollywood Archive)`);
+
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        if (e.target === card) {
+          e.preventDefault();
+          card.click();
+        }
+      }
+    });
 
     const posterUrl = item.poster || 'https://via.placeholder.com/300x450?text=MX';
 
@@ -6077,12 +6168,19 @@ function initWatch2GetherRoomClone() {
   const btnCopyLinkDesktop = document.getElementById('btn-copy-link');
   const btnHeaderCopyRoom = document.getElementById('btn-header-copy-room');
 
-  function openInviteDialog() {
+  let lastActiveOpenerInvite = null;
+
+  function openInviteDialog(opener) {
     if (inviteDialog) {
+      lastActiveOpenerInvite = (opener instanceof Element) ? opener : (document.activeElement instanceof Element ? document.activeElement : null);
       if (typeof inviteDialog.showModal === 'function') {
-        inviteDialog.showModal();
+        if (!inviteDialog.open) inviteDialog.showModal();
       } else {
         inviteDialog.setAttribute('open', 'true');
+      }
+      const focusTarget = btnCopyInviteAction || inviteInput || btnCloseInvite;
+      if (focusTarget) {
+        setTimeout(() => focusTarget.focus(), 50);
       }
     }
   }
@@ -6090,14 +6188,20 @@ function initWatch2GetherRoomClone() {
   function closeInviteDialog() {
     if (inviteDialog) {
       if (typeof inviteDialog.close === 'function') {
-        inviteDialog.close();
+        if (inviteDialog.open) inviteDialog.close();
       } else {
         inviteDialog.removeAttribute('open');
       }
+      if (lastActiveOpenerInvite && typeof lastActiveOpenerInvite.focus === 'function') {
+        lastActiveOpenerInvite.focus();
+        lastActiveOpenerInvite = null;
+      }
     }
   }
+  window.openInviteDialog = openInviteDialog;
+  window.closeInviteDialog = closeInviteDialog;
 
-  async function handleMobileInvite() {
+  async function handleMobileInvite(opener) {
     const shareData = {
       title: 'Join my ZAMI room',
       text: 'Watch movies and videos together in sync on ZAMI!',
@@ -6111,18 +6215,43 @@ function initWatch2GetherRoomClone() {
         if (err.name === 'AbortError') return;
       }
     }
-    openInviteDialog();
+    openInviteDialog(opener);
   }
 
-  if (btnDockInvite) btnDockInvite.addEventListener('click', handleMobileInvite);
+  if (btnDockInvite) btnDockInvite.addEventListener('click', () => handleMobileInvite(btnDockInvite));
   const btnMobileShareQuick = document.getElementById('btn-mobile-share-quick');
-  if (btnMobileShareQuick) btnMobileShareQuick.addEventListener('click', handleMobileInvite);
-  if (btnCopyLinkDesktop) btnCopyLinkDesktop.addEventListener('click', openInviteDialog);
+  if (btnMobileShareQuick) btnMobileShareQuick.addEventListener('click', () => handleMobileInvite(btnMobileShareQuick));
+  if (btnCopyLinkDesktop) btnCopyLinkDesktop.addEventListener('click', () => openInviteDialog(btnCopyLinkDesktop));
+  if (btnHeaderCopyRoom) btnHeaderCopyRoom.addEventListener('click', () => openInviteDialog(btnHeaderCopyRoom));
   if (btnCloseInvite) btnCloseInvite.addEventListener('click', closeInviteDialog);
 
   if (inviteDialog) {
     inviteDialog.addEventListener('click', (e) => {
       if (e.target === inviteDialog) closeInviteDialog();
+    });
+    inviteDialog.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closeInviteDialog();
+        return;
+      }
+      if (e.key === 'Tab') {
+        const focusable = Array.from(inviteDialog.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')).filter(el => el.offsetParent !== null);
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    });
+    inviteDialog.addEventListener('cancel', (e) => {
+      e.preventDefault();
+      closeInviteDialog();
     });
   }
 
@@ -6202,12 +6331,15 @@ function initWatch2GetherRoomClone() {
   const drawerSearchSubmit = document.getElementById('w2g-drawer-search-submit');
   const drawerResultsContainer = document.getElementById('drawer-results-container');
 
-  function openSearchDrawer(initialQuery = '') {
+  let lastActiveOpenerSearch = null;
+
+  function openSearchDrawer(initialQuery = '', opener = null) {
     if (searchDrawer) {
+      lastActiveOpenerSearch = (opener instanceof Element) ? opener : (document.activeElement instanceof Element ? document.activeElement : null);
       searchDrawer.style.display = 'flex';
       if (drawerSearchInput) {
         if (initialQuery) drawerSearchInput.value = initialQuery;
-        drawerSearchInput.focus();
+        setTimeout(() => drawerSearchInput.focus(), 50);
         if (initialQuery) {
           executeW2GSearch(initialQuery);
         } else if (!drawerResultsContainer.children.length) {
@@ -6220,21 +6352,44 @@ function initWatch2GetherRoomClone() {
   function closeSearchDrawer() {
     if (searchDrawer) {
       searchDrawer.style.display = 'none';
+      if (lastActiveOpenerSearch && typeof lastActiveOpenerSearch.focus === 'function') {
+        lastActiveOpenerSearch.focus();
+        lastActiveOpenerSearch = null;
+      }
     }
   }
+  window.openSearchDrawer = openSearchDrawer;
+  window.closeSearchDrawer = closeSearchDrawer;
 
   if (btnOpenSearchMobile) {
-    btnOpenSearchMobile.addEventListener('click', () => openSearchDrawer());
+    btnOpenSearchMobile.addEventListener('click', () => openSearchDrawer('', btnOpenSearchMobile));
   }
   if (btnCloseSearchDrawer) {
     btnCloseSearchDrawer.addEventListener('click', closeSearchDrawer);
   }
 
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && searchDrawer && searchDrawer.style.display !== 'none') {
-      closeSearchDrawer();
-    }
-  });
+  if (searchDrawer) {
+    searchDrawer.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closeSearchDrawer();
+        return;
+      }
+      if (e.key === 'Tab') {
+        const focusable = Array.from(searchDrawer.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')).filter(el => el.offsetParent !== null);
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    });
+  }
 
   if (drawerSearchInput) {
     drawerSearchInput.addEventListener('input', () => {
@@ -6334,48 +6489,185 @@ function initWatch2GetherRoomClone() {
     drawerResultsContainer.innerHTML = `
       <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; color: #a1a1aa;">
         <div class="cinema-spinner-ring mini" style="margin-bottom: 12px;"></div>
-        <span style="font-size: 0.85rem;">Searching Watch2Gether catalog...</span>
+        <span style="font-size: 0.85rem;">Searching Zami catalog &amp; web sources for "${escapeHtml(query)}"...</span>
       </div>
     `;
 
     try {
-      const res = await fetch(`/api/youtube/search?q=${encodeURIComponent(query)}`);
-      const data = await res.json();
+      const isTrending = query === 'trending';
+      const tmdbQuery = isTrending ? 'movie' : query;
+      const [tmdbRes, ytRes] = await Promise.all([
+        fetch(`/api/tmdb/search?q=${encodeURIComponent(tmdbQuery)}`).then(r => r.json()).catch(() => ({ results: [] })),
+        fetch(`/api/youtube/search?q=${encodeURIComponent(query)}`).then(r => r.json()).catch(() => ({ results: [] }))
+      ]);
 
-      if (!data.success || !data.results || data.results.length === 0) {
+      const movieItems = (tmdbRes.results || []).slice(0, 8);
+      const ytItems = (ytRes.results || []).slice(0, 12);
+
+      if (movieItems.length === 0 && ytItems.length === 0) {
         drawerResultsContainer.innerHTML = `
           <div style="text-align: center; padding: 40px; color: #71717a;">
-            <p style="font-size: 0.9rem; margin-bottom: 6px;">No video results found for "${query}"</p>
-            <p style="font-size: 0.78rem;">Try searching for a movie title, music video, or paste a direct YouTube/HLS link.</p>
+            <p style="font-size: 0.9rem; margin-bottom: 6px;">No results found for "${escapeHtml(query)}"</p>
+            <p style="font-size: 0.78rem;">Try searching for a film title, director, artist, or paste a direct video link.</p>
           </div>
         `;
         return;
       }
 
-      drawerResultsContainer.innerHTML = data.results.map(item => `
-        <div class="w2g-drawer-card">
-          <div class="w2g-drawer-thumb-wrap">
-            <img src="${item.thumbnail}" alt="${item.title}" loading="lazy">
-            <span class="w2g-drawer-duration">${item.duration || 'Video'}</span>
-          </div>
-          <div class="w2g-drawer-info">
-            <div>
-              <div class="w2g-drawer-title">${item.title}</div>
-              <div class="w2g-drawer-channel">${item.channel || 'YouTube'}</div>
-            </div>
-            <div class="w2g-drawer-card-actions">
-              <button type="button" class="btn-w2g-play" data-id="${item.id}" data-title="${encodeURIComponent(item.title)}" data-thumb="${item.thumbnail}">
-                Play Now
-              </button>
-              <button type="button" class="btn-w2g-queue" data-id="${item.id}" data-title="${encodeURIComponent(item.title)}" data-thumb="${item.thumbnail}">
-                + Playlist
-              </button>
-            </div>
-          </div>
-        </div>
-      `).join('');
+      let html = '';
 
-      // Wire Play and Queue buttons
+      // Section 1: Feature Films & Series (Catalog)
+      if (movieItems.length > 0) {
+        html += `
+          <div class="search-category-section">
+            <div class="search-category-header">
+              <div class="search-category-title-wrap">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
+                <span class="search-category-title">Feature Films &amp; Series</span>
+              </div>
+              <span class="search-category-badge">${movieItems.length} Titles</span>
+            </div>
+            <div class="search-movies-grid">
+              ${movieItems.map(item => {
+                const isTv = item.mediaType === 'tv';
+                const poster = item.poster || 'https://via.placeholder.com/300x450?text=No+Poster';
+                const year = item.year ? `(${item.year})` : '';
+                return `
+                  <div class="drawer-movie-card" role="button" tabindex="0" aria-label="Play movie: ${escapeHtml(item.title)} ${year}" data-id="${item.id}" data-type="${item.mediaType || 'movie'}" data-title="${encodeURIComponent(item.title)}" data-poster="${poster}">
+                    <div class="drawer-movie-poster-wrap">
+                      <img src="${poster}" alt="${escapeHtml(item.title)}" class="drawer-movie-poster" loading="lazy">
+                      <span class="drawer-movie-badge">${isTv ? 'SERIES' : 'MOVIE'}</span>
+                    </div>
+                    <div class="drawer-movie-info">
+                      <div class="drawer-movie-title" title="${escapeHtml(item.title)}">${escapeHtml(item.title)}</div>
+                      <div class="drawer-movie-meta">${item.year || (isTv ? 'Series' : 'Feature')}</div>
+                      <div class="drawer-movie-actions">
+                        <button type="button" class="btn btn-primary btn-sm btn-drawer-movie-play" aria-label="Play ${escapeHtml(item.title)}">${isTv ? 'Episodes' : 'Play'}</button>
+                        <button type="button" class="btn btn-secondary btn-sm btn-drawer-movie-queue" aria-label="Add ${escapeHtml(item.title)} to queue">+ Queue</button>
+                      </div>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      // Section 2: Web Videos & Clips (YouTube)
+      if (ytItems.length > 0) {
+        html += `
+          <div class="search-category-section">
+            <div class="search-category-header">
+              <div class="search-category-title-wrap">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg>
+                <span class="search-category-title">Web Videos &amp; Clips</span>
+              </div>
+              <span class="search-category-badge">${ytItems.length} Videos</span>
+            </div>
+            <div class="drawer-youtube-list">
+              ${ytItems.map(item => `
+                <div class="w2g-drawer-card">
+                  <div class="w2g-drawer-thumb-wrap">
+                    <img src="${item.thumbnail}" alt="${escapeHtml(item.title)}" loading="lazy">
+                    <span class="w2g-drawer-duration">${item.duration || 'Video'}</span>
+                  </div>
+                  <div class="w2g-drawer-info">
+                    <div>
+                      <div class="w2g-drawer-title">${escapeHtml(item.title)}</div>
+                      <div class="w2g-drawer-channel">${escapeHtml(item.channel || 'YouTube')}</div>
+                    </div>
+                    <div class="w2g-drawer-card-actions">
+                      <button type="button" class="btn-w2g-play" aria-label="Play video: ${escapeHtml(item.title)}" data-id="${item.id}" data-title="${encodeURIComponent(item.title)}" data-thumb="${item.thumbnail}">
+                        Play Now
+                      </button>
+                      <button type="button" class="btn-w2g-queue" aria-label="Queue video: ${escapeHtml(item.title)}" data-id="${item.id}" data-title="${encodeURIComponent(item.title)}" data-thumb="${item.thumbnail}">
+                        + Playlist
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      drawerResultsContainer.innerHTML = html;
+
+      // Wire Movie Cards (Click + Keyboard Enter/Space)
+      drawerResultsContainer.querySelectorAll('.drawer-movie-card').forEach(card => {
+        const playMovie = async () => {
+          const id = card.dataset.id;
+          const type = card.dataset.type || 'movie';
+          const title = decodeURIComponent(card.dataset.title);
+          closeSearchDrawer();
+          if (window.universalPlayer) window.universalPlayer.showSpinner(`CONNECTING: ${title.toUpperCase()}...`);
+          try {
+            const resp = await fetch(`/api/stream/resolve?id=${id}&type=${type}`);
+            const result = await resp.json();
+            if (result.success && result.streamUrl && curSocket) {
+              curSocket.emit('change-media', {
+                type: 'hls',
+                url: result.streamUrl,
+                streams: result.streams,
+                title: title,
+                poster: card.dataset.poster,
+                isPlaying: true
+              });
+              if (window.showToast) window.showToast(`Now playing: ${title}`, 'success');
+              return;
+            }
+          } catch(e) {}
+          if (curSocket) {
+            curSocket.emit('change-media', {
+              type: 'embed',
+              url: `https://vidsrc.sh/embed/${type === 'tv' ? 'tv' : 'movie'}?tmdb=${id}`,
+              title: title,
+              poster: card.dataset.poster,
+              isPlaying: true
+            });
+            if (window.showToast) window.showToast(`Now playing: ${title}`, 'info');
+          }
+        };
+
+        const queueMovie = async () => {
+          const id = card.dataset.id;
+          const type = card.dataset.type || 'movie';
+          const title = decodeURIComponent(card.dataset.title);
+          if (curSocket) {
+            curSocket.emit('playlist-add', {
+              item: {
+                type: 'embed',
+                url: `https://vidsrc.sh/embed/${type === 'tv' ? 'tv' : 'movie'}?tmdb=${id}`,
+                title: title,
+                poster: card.dataset.poster
+              }
+            });
+            if (window.showToast) window.showToast(`Queued: "${title}"`, 'success');
+          }
+        };
+
+        card.addEventListener('click', (e) => {
+          if (e.target.closest('.btn-drawer-movie-queue')) {
+            e.stopPropagation();
+            queueMovie();
+          } else {
+            playMovie();
+          }
+        });
+
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            if (e.target === card) {
+              e.preventDefault();
+              playMovie();
+            }
+          }
+        });
+      });
+
+      // Wire YouTube Play and Queue buttons
       drawerResultsContainer.querySelectorAll('.btn-w2g-play').forEach(btn => {
         btn.addEventListener('click', () => {
           const id = btn.dataset.id;
@@ -6505,20 +6797,32 @@ function initWatch2GetherRoomClone() {
   // --- Mobile Subplayer Bar Actions ---
   const mobileRoomPill = document.getElementById('mobile-room-identity-group');
   const btnMobileSettings = document.getElementById('btn-mobile-open-settings');
-  const settingsModal = document.getElementById('room-settings-modal');
 
-  function openRoomSettingsModal() {
-    if (settingsModal) {
-      if (typeof settingsModal.showModal === 'function') {
-        settingsModal.showModal();
-      } else {
-        settingsModal.setAttribute('open', 'true');
-      }
+  function openRoomSettingsModal(opener) {
+    if (window.openSettingsModal) {
+      window.openSettingsModal(opener);
     }
   }
 
-  if (mobileRoomPill) mobileRoomPill.addEventListener('click', openRoomSettingsModal);
-  if (btnMobileSettings) btnMobileSettings.addEventListener('click', openRoomSettingsModal);
+  if (mobileRoomPill) {
+    mobileRoomPill.addEventListener('click', () => openRoomSettingsModal(mobileRoomPill));
+    mobileRoomPill.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openRoomSettingsModal(mobileRoomPill);
+      }
+    });
+  }
+
+  if (btnMobileSettings) {
+    btnMobileSettings.addEventListener('click', () => openRoomSettingsModal(btnMobileSettings));
+    btnMobileSettings.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openRoomSettingsModal(btnMobileSettings);
+      }
+    });
+  }
 
   const btnMobileResize = document.getElementById('btn-mobile-resize-player');
   if (btnMobileResize) {
@@ -6570,14 +6874,44 @@ function initWatch2GetherRoomClone() {
     dockBullets.forEach((b, i) => {
       b.classList.toggle('active', i === index);
     });
-    if (btnDockPeople) btnDockPeople.classList.toggle('active', index === 0);
-    if (btnDockQueue) btnDockQueue.classList.toggle('active', index === 1);
-    if (btnDockChat) btnDockChat.classList.toggle('active', index === 2);
+    if (btnDockPeople) {
+      btnDockPeople.classList.toggle('active', index === 0);
+      btnDockPeople.setAttribute('aria-selected', String(index === 0));
+    }
+    if (btnDockQueue) {
+      btnDockQueue.classList.toggle('active', index === 1);
+      btnDockQueue.setAttribute('aria-selected', String(index === 1));
+    }
+    if (btnDockChat) {
+      btnDockChat.classList.toggle('active', index === 2);
+      btnDockChat.setAttribute('aria-selected', String(index === 2));
+    }
   }
 
   if (btnDockPeople) btnDockPeople.addEventListener('click', () => scrollRoomToSlide(0));
   if (btnDockQueue) btnDockQueue.addEventListener('click', () => scrollRoomToSlide(1));
   if (btnDockChat) btnDockChat.addEventListener('click', () => scrollRoomToSlide(2));
+
+  const dockRow = document.querySelector('.dock-actions-row');
+  if (dockRow) {
+    dockRow.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        const tabs = [btnDockPeople, btnDockQueue, btnDockChat].filter(Boolean);
+        const curIdx = tabs.indexOf(document.activeElement);
+        const nextIdx = curIdx >= 0 ? (curIdx + 1) % tabs.length : 0;
+        tabs[nextIdx].focus();
+        scrollRoomToSlide(nextIdx);
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        const tabs = [btnDockPeople, btnDockQueue, btnDockChat].filter(Boolean);
+        const curIdx = tabs.indexOf(document.activeElement);
+        const prevIdx = curIdx >= 0 ? (curIdx - 1 + tabs.length) % tabs.length : tabs.length - 1;
+        tabs[prevIdx].focus();
+        scrollRoomToSlide(prevIdx);
+      }
+    });
+  }
 
   dockBullets.forEach(bullet => {
     bullet.addEventListener('click', () => {
@@ -6695,7 +7029,7 @@ function initWatch2GetherRoomClone() {
   // Hamburger Menu button (Desktop)
   const btnW2gMenu = document.getElementById('btn-w2g-menu');
   if (btnW2gMenu) {
-    btnW2gMenu.addEventListener('click', openRoomSettingsModal);
+    btnW2gMenu.addEventListener('click', () => openRoomSettingsModal(btnW2gMenu));
   }
 
   // Upgrade button
