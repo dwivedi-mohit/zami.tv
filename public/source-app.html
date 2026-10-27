@@ -598,12 +598,17 @@
       gap: 8px;
     }
 
+    dialog#src-episodes-dialog {
+      max-width: 480px;
+      width: 95%;
+      padding: 18px 14px;
+    }
+
     .src-ep-card {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 10px 14px;
+      flex-direction: column;
+      gap: 8px;
+      padding: 10px 12px;
       background: var(--src-bg);
       border: 1px solid var(--src-border);
       border-radius: 12px;
@@ -616,7 +621,14 @@
       border-color: var(--src-cyan);
     }
 
-    .src-ep-info-left {
+    .src-ep-card-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .src-ep-info-header {
       display: flex;
       flex-direction: column;
       gap: 2px;
@@ -625,17 +637,85 @@
     }
 
     .src-ep-title {
-      font-size: 13.5px;
+      font-size: 13px;
       font-weight: 700;
       color: var(--src-text);
-      white-space: nowrap;
+      line-height: 1.3;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
       overflow: hidden;
-      text-overflow: ellipsis;
     }
 
     .src-ep-meta {
       font-size: 11px;
       color: var(--src-text-muted);
+    }
+
+    .src-ep-actions {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .src-ep-desc {
+      font-size: 11.5px;
+      line-height: 1.4;
+      color: var(--src-text-muted);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-top: 2px;
+    }
+
+    .src-episodes-seasons {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 0 0 12px 0;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .src-episodes-seasons::-webkit-scrollbar {
+      display: none;
+    }
+
+    .src-season-chip {
+      background: var(--src-bg);
+      border: 1px solid var(--src-border);
+      color: var(--src-text-muted);
+      border-radius: 9999px;
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+      touch-action: manipulation;
+    }
+
+    .src-season-chip:hover {
+      color: var(--src-text);
+      background: var(--src-surface-hover);
+    }
+
+    .src-season-chip.active {
+      background: var(--src-accent);
+      border-color: var(--src-accent);
+      color: #ffffff;
+      box-shadow: 0 2px 10px var(--src-accentGlow, rgba(229, 9, 20, 0.4));
+    }
+
+    .src-ep-thumb {
+      width: 76px;
+      height: 48px;
+      object-fit: cover;
+      border-radius: 6px;
+      flex-shrink: 0;
+      background: #000;
     }
 
     .src-ep-btn-play {
@@ -794,6 +874,7 @@
       <button type="button" class="btn-close-paste" id="btn-close-episodes" aria-label="Close">&times;</button>
     </div>
     <div class="src-episodes-container" id="src-episodes-container">
+      <div id="src-episodes-seasons" class="src-episodes-seasons"></div>
       <div id="src-episodes-loading" style="text-align: center; padding: 24px; color: var(--src-text-muted); font-size: 13.5px;">Loading episodes...</div>
       <div id="src-episodes-list" class="src-episodes-list"></div>
     </div>
@@ -831,11 +912,11 @@
             { id: 'list', label: 'My List', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>` }
           ],
           catalog: [
-            { id: '80057281', title: 'Stranger Things', channel: 'Netflix', duration: '5 Seasons', tag: 'NETFLIX ORIGINAL', meta: '98% Match • Sci-Fi • 4K HDR', thumb: 'https://imgcdn.kim/poster/341/80057281.jpg' },
-            { id: '81040344', title: 'Squid Game', channel: 'Netflix', duration: '2 Seasons', tag: 'TOP 10', meta: '99% Match • Suspense • Thriller', thumb: 'https://imgcdn.kim/poster/341/81040344.jpg' },
-            { id: '81231974', title: 'Wednesday', channel: 'Netflix', duration: 'Season 1', tag: 'POPULAR', meta: '97% Match • Mystery • Comedy', thumb: 'https://imgcdn.kim/poster/341/81231974.jpg' },
-            { id: '80192098', title: 'Money Heist', channel: 'Netflix', duration: '5 Seasons', tag: 'MASTERPIECE', meta: '96% Match • Action • Heist', thumb: 'https://imgcdn.kim/poster/341/80192098.jpg' },
-            { id: '80100172', title: 'Dark', channel: 'Netflix', duration: '3 Seasons', tag: 'SCI-FI CLASSIC', meta: '95% Match • Mystery • Mind-Bending', thumb: 'https://imgcdn.kim/poster/341/80100172.jpg' }
+            { id: '66732', mediaType: 'tv', title: 'Stranger Things', channel: 'Netflix', duration: '5 Seasons', tag: 'NETFLIX ORIGINAL', meta: '98% Match • Sci-Fi • 4K HDR', thumb: 'https://image.tmdb.org/t/p/w500/uOOtwVbSr4QDjAGIifLDwpb2Pdl.jpg' },
+            { id: '93405', mediaType: 'tv', title: 'Squid Game', channel: 'Netflix', duration: '3 Seasons', tag: 'TOP 10', meta: '99% Match • Suspense • Thriller', thumb: 'https://image.tmdb.org/t/p/w500/1QdXdRYfktUSONkl1oD5gc6Be0s.jpg' },
+            { id: '119051', mediaType: 'tv', title: 'Wednesday', channel: 'Netflix', duration: 'Season 1', tag: 'POPULAR', meta: '97% Match • Mystery • Comedy', thumb: 'https://image.tmdb.org/t/p/w500/9PFonBhy4cQy7Jz20NpMygczOkv.jpg' },
+            { id: '71446', mediaType: 'tv', title: 'Money Heist', channel: 'Netflix', duration: '3 Seasons', tag: 'MASTERPIECE', meta: '96% Match • Action • Heist', thumb: 'https://image.tmdb.org/t/p/w500/reEMJA1uzscCbkpeRJeTT2bjqUp.jpg' },
+            { id: '70523', mediaType: 'tv', title: 'Dark', channel: 'Netflix', duration: '3 Seasons', tag: 'SCI-FI CLASSIC', meta: '95% Match • Mystery • Mind-Bending', thumb: 'https://image.tmdb.org/t/p/w500/wiiyc3m6HKaQhFBYeuM7ySCNQsG.jpg' }
           ]
         },
 
@@ -864,10 +945,10 @@
             { id: 'watchlist', label: 'Watchlist', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>` }
           ],
           catalog: [
-            { id: '0KRGHGZCHKS920ZQGY5LBRF7MA', title: 'The Boys', channel: 'Prime Video', duration: '5 Seasons', tag: 'AMAZON ORIGINAL', meta: '18+ • Action • Dark Comedy', thumb: 'https://imgcdn.kim/pv/341/0KRGHGZCHKS920ZQGY5LBRF7MA.jpg' },
-            { id: '0OSBERMU4VQ3X8L55GXGKNQYBN', title: 'The Boys in The Boat', channel: 'Prime Video', duration: 'Full Movie', tag: 'NEW MOVIE', meta: 'George Clooney • Drama', thumb: 'https://imgcdn.kim/pv/341/0OSBERMU4VQ3X8L55GXGKNQYBN.jpg' },
-            { id: '0RV4XNYMFA8LB9GADUL1T4DT9H', title: 'Reacher', channel: 'Prime Video', duration: '2 Seasons', tag: 'TOP 10', meta: 'Crime • Action Thriller', thumb: 'https://imgcdn.kim/pv/341/0RV4XNYMFA8LB9GADUL1T4DT9H.jpg' },
-            { id: '0N9BB22P2FZ8UD2BBLNX07RP22', title: 'The Boys: Season 5', channel: 'Prime Video', duration: 'Season 5', tag: 'EXCLUSIVE', meta: 'Full Season Stream', thumb: 'https://imgcdn.kim/pv/341/0KRGHGZCHKS920ZQGY5LBRF7MA.jpg' }
+            { id: '76479', mediaType: 'tv', title: 'The Boys', channel: 'Prime Video', duration: '5 Seasons', tag: 'AMAZON ORIGINAL', meta: '18+ • Action • Dark Comedy', thumb: 'https://image.tmdb.org/t/p/w500/in1R2dDc421JxsoRWaIIAqVI2KE.jpg' },
+            { id: '106379', mediaType: 'tv', title: 'Fallout', channel: 'Prime Video', duration: '2 Seasons', tag: 'AMAZON ORIGINAL', meta: '94% Match • Sci-Fi Adventure', thumb: 'https://image.tmdb.org/t/p/w500/c15BtJxCXMrISLVmysdsnZUPQft.jpg' },
+            { id: '108978', mediaType: 'tv', title: 'Reacher', channel: 'Prime Video', duration: '4 Seasons', tag: 'TOP 10', meta: 'Crime • Action Thriller', thumb: 'https://image.tmdb.org/t/p/w500/f1VCQIG2iCyOookdgOzwtUpwWC0.jpg' },
+            { id: '95557', mediaType: 'tv', title: 'Invincible', channel: 'Prime Video', duration: '5 Seasons', tag: 'ANIMATED HIT', meta: 'Superhero • High Octane Action', thumb: 'https://image.tmdb.org/t/p/w500/4tblBrslcKSifMVZ3TmtT2ukMor.jpg' }
           ]
         },
 
@@ -896,10 +977,10 @@
             { id: 'watchlist', label: 'Watchlist', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>` }
           ],
           catalog: [
-            { id: '1260063451', title: 'Loki', channel: 'Disney+ Hotstar', duration: '2 Seasons', tag: 'HOTSTAR SPECIAL', meta: 'Marvel Studios • Sci-Fi Action', thumb: 'https://imgcdn.kim/hs/v/166/1260063451.jpg' },
-            { id: '1260014022', title: 'The Mandalorian', channel: 'Disney+ Hotstar', duration: '3 Seasons', tag: 'STAR WARS', meta: 'Lucasfilm • Space Western', thumb: 'https://imgcdn.kim/hs/v/166/1260014022.jpg' },
-            { id: '1260051386', title: 'WandaVision', channel: 'Disney+ Hotstar', duration: 'Miniseries', tag: 'MARVEL', meta: 'Marvel Studios • Mystery', thumb: 'https://imgcdn.kim/hs/v/166/1260051386.jpg' },
-            { id: '1260098555', title: 'Moon Knight', channel: 'Disney+ Hotstar', duration: 'Season 1', tag: 'SUPERHERO', meta: 'Oscar Isaac • Action', thumb: 'https://imgcdn.kim/hs/v/166/1260098555.jpg' }
+            { id: '84958', mediaType: 'tv', title: 'Loki', channel: 'Disney+ Hotstar', duration: '2 Seasons', tag: 'HOTSTAR SPECIAL', meta: 'Marvel Studios • Sci-Fi Action', thumb: 'https://image.tmdb.org/t/p/w500/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg' },
+            { id: '82856', mediaType: 'tv', title: 'The Mandalorian', channel: 'Disney+ Hotstar', duration: '3 Seasons', tag: 'STAR WARS', meta: 'Lucasfilm • Space Western', thumb: 'https://image.tmdb.org/t/p/w500/sWgBv7LV2PRoQgkxwlibdGXKz1S.jpg' },
+            { id: '85271', mediaType: 'tv', title: 'WandaVision', channel: 'Disney+ Hotstar', duration: 'Miniseries', tag: 'MARVEL', meta: 'Marvel Studios • Mystery', thumb: 'https://image.tmdb.org/t/p/w500/ijWWwINc8h71NQ8j1LTJMFSj5wr.jpg' },
+            { id: '92749', mediaType: 'tv', title: 'Moon Knight', channel: 'Disney+ Hotstar', duration: 'Season 1', tag: 'SUPERHERO', meta: 'Oscar Isaac • Action', thumb: 'https://image.tmdb.org/t/p/w500/9K3lbMf8TKvL9xGEbzi7TggWCNQ.jpg' }
           ]
         },
 
@@ -1192,7 +1273,7 @@
               queueForParty(item);
               return;
             }
-            if (appKey === 'netflix' || appKey === 'prime' || appKey === 'hotstar') {
+            if (item.mediaType === 'tv' || appKey === 'netflix' || appKey === 'prime' || appKey === 'hotstar' || appKey === 'crunchyroll') {
               openEpisodesModal(item);
             } else {
               screenToParty(item);
@@ -1234,40 +1315,37 @@
       }
 
       // Universal Stream Resolver
-      async function resolveStreamForItem(item, epId) {
+      async function resolveStreamForItem(item, epInfo) {
         showToast(`Resolving ${config.name} stream...`);
         const sKey = appKey;
 
-        // 1. Netflix, Prime Video, Hotstar (Open-Source NetMirror)
-        if (sKey === 'netflix' || sKey === 'prime' || sKey === 'hotstar') {
-          let targetId = epId || item.id;
-          let epTitle = item.title;
+        // 1. Netflix, Prime Video, Hotstar, Cinema Vault, Crunchyroll (Universal TMDB + VAPlayer / VidSrc)
+        if (sKey === 'netflix' || sKey === 'prime' || sKey === 'hotstar' || sKey === 'movies' || sKey === 'crunchyroll') {
+          const mType = item.mediaType || (sKey === 'movies' ? 'movie' : 'tv');
+          const s = (epInfo && epInfo.season) ? epInfo.season : (item.season || 1);
+          const e = (epInfo && epInfo.episode) ? epInfo.episode : (item.episode || 1);
+          const epName = (epInfo && epInfo.name) ? epInfo.name : null;
 
-          if (!epId) {
-            try {
-              const detailRes = await fetch(`/api/netmirror/details?platform=${sKey}&id=${encodeURIComponent(item.id)}`);
-              const detailJson = await detailRes.json();
-              if (detailJson.success && detailJson.data) {
-                const d = detailJson.data;
-                if (d.type === 'tv' && d.episodes && d.episodes.length > 0) {
-                  targetId = d.episodes[0].id;
-                  epTitle = `${d.title} (${d.episodes[0].title || 'Episode 1'})`;
-                }
-              }
-            } catch(e) {}
-          }
-
-          const res = await fetch(`/api/netmirror/resolve?platform=${sKey}&id=${encodeURIComponent(targetId)}`);
+          const res = await fetch(`/api/stream/resolve?id=${encodeURIComponent(item.id)}&type=${mType}&season=${s}&episode=${e}`);
           const data = await res.json();
           if (data.success && data.streamUrl) {
+            const epTag = mType === 'tv' ? ` (S${s} E${e}${epName ? ': ' + epName : ''})` : '';
             return {
               type: 'hls',
               streamUrl: data.streamUrl,
-              title: `${config.name}: ${data.title || epTitle}${data.ep ? ' • ' + data.ep : ''}`,
+              title: `${item.title}${epTag}`,
               poster: item.thumb || item.poster
             };
           }
-          throw new Error(data.message || 'Could not resolve stream from NetMirror');
+          if (data.fallbackUrl) {
+            return {
+              type: 'hls',
+              streamUrl: data.fallbackUrl,
+              title: `${item.title} (Fallback)`,
+              poster: item.thumb || item.poster
+            };
+          }
+          throw new Error(data.message || 'Direct stream not indexed');
         }
 
         // 2. MX Player
@@ -1289,23 +1367,7 @@
           throw new Error(data.message || 'Stream is protected or unavailable');
         }
 
-        // 3. Cinema Vault (Movies & Series) or Crunchyroll Anime
-        if (sKey === 'movies' || sKey === 'crunchyroll') {
-          const mType = item.mediaType || (sKey === 'crunchyroll' ? 'tv' : 'movie');
-          const res = await fetch(`/api/stream/resolve?id=${encodeURIComponent(item.id)}&type=${mType}&season=1&episode=1`);
-          const data = await res.json();
-          if (data.success && data.streamUrl) {
-            return {
-              type: 'hls',
-              streamUrl: data.streamUrl,
-              title: `${item.title}`,
-              poster: item.thumb
-            };
-          }
-          throw new Error(data.message || 'Direct stream not indexed');
-        }
-
-        // 4. Direct URL
+        // 3. Direct URL
         if (sKey === 'url') {
           const targetUrl = item.rawUrl || item.id;
           return {
@@ -1316,7 +1378,7 @@
           };
         }
 
-        // 5. YouTube Fallback
+        // 4. YouTube Fallback
         return {
           type: 'youtube',
           streamUrl: item.rawUrl || `https://www.youtube.com/watch?v=${item.id}`,
@@ -1330,6 +1392,7 @@
       const epTitleEl = document.getElementById('episodes-dialog-title');
       const epLoading = document.getElementById('src-episodes-loading');
       const epList = document.getElementById('src-episodes-list');
+      const epSeasons = document.getElementById('src-episodes-seasons');
       const btnCloseEp = document.getElementById('btn-close-episodes');
 
       if (btnCloseEp && epDialog) {
@@ -1358,80 +1421,169 @@
       async function openEpisodesModal(item) {
         if (!epDialog) return;
         if (epTitleEl) epTitleEl.textContent = `${item.title} — Episodes`;
-        if (epLoading) epLoading.style.display = 'block';
+        if (epLoading) {
+          epLoading.style.display = 'block';
+          epLoading.textContent = 'Loading episodes...';
+        }
         if (epList) epList.innerHTML = '';
+        if (epSeasons) epSeasons.innerHTML = '';
 
         if (typeof epDialog.showModal === 'function') epDialog.showModal();
         else epDialog.setAttribute('open', '');
 
+        // If item is explicitly a movie, render single feature playback
+        if (item.mediaType === 'movie') {
+          if (epLoading) epLoading.style.display = 'none';
+          epList.innerHTML = `
+            <div style="text-align: center; padding: 24px 16px; color: var(--src-text-muted);">
+              <div style="font-size: 16px; font-weight: 700; color: var(--src-text); margin-bottom: 6px;">${escapeHtml(item.title)}</div>
+              <p style="font-size: 13px; margin-bottom: 20px;">Full Feature Length Movie • High-Bitrate 1080p Stream</p>
+              <div style="display: flex; gap: 10px; justify-content: center;">
+                <button type="button" class="btn-paste-action secondary" id="btn-ep-queue-single">+ Queue</button>
+                <button type="button" class="btn-paste-action primary" id="btn-ep-play-single">Screen Feature to Party</button>
+              </div>
+            </div>
+          `;
+          document.getElementById('btn-ep-play-single')?.addEventListener('click', () => {
+            if (typeof epDialog.close === 'function') epDialog.close();
+            screenToParty(item);
+          });
+          document.getElementById('btn-ep-queue-single')?.addEventListener('click', () => {
+            if (typeof epDialog.close === 'function') epDialog.close();
+            queueForParty(item);
+          });
+          return;
+        }
+
         try {
-          let episodes = [];
-          if (appKey === 'netflix' || appKey === 'prime' || appKey === 'hotstar') {
-            const res = await fetch(`/api/netmirror/details?platform=${appKey}&id=${encodeURIComponent(item.id)}`);
-            const data = await res.json();
-            if (data.success && data.data && data.data.episodes) {
-              episodes = data.data.episodes;
+          // Fetch series details to find seasons
+          let seasons = [];
+          try {
+            const detRes = await fetch(`/api/tmdb/details?id=${encodeURIComponent(item.id)}&type=tv`);
+            if (detRes.ok) {
+              const detData = await detRes.json();
+              seasons = (detData?.details?.seasons || []).filter(s => s.season_number > 0);
+            }
+          } catch (e) {}
+
+          if (!seasons || seasons.length === 0) {
+            seasons = [{ season_number: 1, name: 'Season 1', episode_count: 8 }];
+          }
+
+          let currentSeason = seasons[0].season_number;
+
+          function renderSeasonChips() {
+            if (!epSeasons) return;
+            epSeasons.innerHTML = '';
+            if (seasons.length > 1) {
+              seasons.forEach(s => {
+                const chip = document.createElement('button');
+                chip.type = 'button';
+                chip.className = `src-season-chip ${s.season_number === currentSeason ? 'active' : ''}`;
+                chip.textContent = s.name || `Season ${s.season_number}`;
+                chip.addEventListener('click', () => {
+                  currentSeason = s.season_number;
+                  renderSeasonChips();
+                  loadSeason(currentSeason);
+                });
+                epSeasons.appendChild(chip);
+              });
             }
           }
 
-          if (epLoading) epLoading.style.display = 'none';
+          async function loadSeason(seasonNum) {
+            if (epLoading) {
+              epLoading.style.display = 'block';
+              epLoading.textContent = `Loading Season ${seasonNum} episodes...`;
+            }
+            if (epList) epList.innerHTML = '';
 
-          if (!episodes || episodes.length === 0) {
-            epList.innerHTML = `<div style="text-align: center; padding: 20px; color: var(--src-text-muted);">
-              Single Feature / Direct Play Available.<br><br>
-              <button type="button" class="btn-action-party" style="margin: 0 auto; display: inline-flex;" id="btn-ep-play-single">Screen Feature to Party</button>
-            </div>`;
-            document.getElementById('btn-ep-play-single')?.addEventListener('click', () => {
-              if (typeof epDialog.close === 'function') epDialog.close();
-              screenToParty(item);
-            });
-            return;
+            try {
+              const sRes = await fetch(`/api/tmdb/season?id=${encodeURIComponent(item.id)}&season=${seasonNum}`);
+              const sData = await sRes.json();
+              const episodes = sData?.episodes || [];
+
+              if (epLoading) epLoading.style.display = 'none';
+
+              if (episodes.length === 0) {
+                epList.innerHTML = `
+                  <div style="text-align: center; padding: 24px; color: var(--src-text-muted);">
+                    Direct Play Available for Season ${seasonNum}.<br><br>
+                    <button type="button" class="src-ep-btn-play" style="margin: 0 auto; display: inline-flex;" id="btn-ep-play-single">Screen to Party</button>
+                  </div>
+                `;
+                document.getElementById('btn-ep-play-single')?.addEventListener('click', () => {
+                  if (typeof epDialog.close === 'function') epDialog.close();
+                  screenToParty(item, { season: seasonNum, episode: 1 });
+                });
+                return;
+              }
+
+              epList.innerHTML = '';
+              episodes.forEach(ep => {
+                const card = document.createElement('div');
+                card.className = 'src-ep-card';
+                card.innerHTML = `
+                  <div class="src-ep-card-top">
+                    ${ep.still ? `<img class="src-ep-thumb" src="${ep.still}" alt="" loading="lazy">` : ''}
+                    <div class="src-ep-info-header">
+                      <div class="src-ep-title">E${ep.episodeNumber}: ${escapeHtml(ep.name || `Episode ${ep.episodeNumber}`)}</div>
+                      ${ep.airDate ? `<div class="src-ep-meta">${escapeHtml(ep.airDate)}</div>` : ''}
+                    </div>
+                    <div class="src-ep-actions">
+                      <button type="button" class="btn-action-queue" style="font-size: 11px; padding: 5px 8px;">+ Queue</button>
+                      <button type="button" class="src-ep-btn-play">Party</button>
+                    </div>
+                  </div>
+                  ${ep.overview ? `<div class="src-ep-desc">${escapeHtml(ep.overview)}</div>` : ''}
+                `;
+
+                card.querySelector('.src-ep-btn-play').addEventListener('click', (e) => {
+                  e.stopPropagation();
+                  if (typeof epDialog.close === 'function') epDialog.close();
+                  screenToParty(item, { season: seasonNum, episode: ep.episodeNumber, name: ep.name });
+                });
+
+                card.querySelector('.btn-action-queue').addEventListener('click', (e) => {
+                  e.stopPropagation();
+                  if (typeof epDialog.close === 'function') epDialog.close();
+                  queueForParty(item, { season: seasonNum, episode: ep.episodeNumber, name: ep.name });
+                });
+
+                card.addEventListener('click', () => {
+                  if (typeof epDialog.close === 'function') epDialog.close();
+                  screenToParty(item, { season: seasonNum, episode: ep.episodeNumber, name: ep.name });
+                });
+
+                epList.appendChild(card);
+              });
+            } catch (err) {
+              if (epLoading) epLoading.style.display = 'none';
+              epList.innerHTML = `<div style="text-align: center; padding: 20px; color: var(--src-text-muted);">Could not load episodes for Season ${seasonNum}.<br><br><button type="button" class="src-ep-btn-play" id="btn-ep-retry">Play Episode 1</button></div>`;
+              document.getElementById('btn-ep-retry')?.addEventListener('click', () => {
+                if (typeof epDialog.close === 'function') epDialog.close();
+                screenToParty(item, { season: seasonNum, episode: 1 });
+              });
+            }
           }
 
-          epList.innerHTML = '';
-          episodes.forEach(ep => {
-            const card = document.createElement('div');
-            card.className = 'src-ep-card';
-            card.innerHTML = `
-              <div class="src-ep-info-left">
-                <span class="src-ep-title">E${escapeHtml(ep.ep)}: ${escapeHtml(ep.title)}</span>
-                <span class="src-ep-meta">${escapeHtml(ep.desc ? ep.desc.substring(0, 90) + '...' : 'Full Episode')}</span>
-              </div>
-              <div style="display: flex; gap: 6px; align-items: center;">
-                <button type="button" class="btn-action-queue" style="font-size: 10px; padding: 4px 8px;">+ Queue</button>
-                <button type="button" class="src-ep-btn-play">Party</button>
-              </div>
-            `;
-
-            card.querySelector('.src-ep-btn-play').addEventListener('click', (e) => {
-              e.stopPropagation();
-              if (typeof epDialog.close === 'function') epDialog.close();
-              screenToParty(item, ep.id);
-            });
-
-            card.querySelector('.btn-action-queue').addEventListener('click', (e) => {
-              e.stopPropagation();
-              if (typeof epDialog.close === 'function') epDialog.close();
-              queueForParty(item, ep.id);
-            });
-
-            card.addEventListener('click', () => {
-              if (typeof epDialog.close === 'function') epDialog.close();
-              screenToParty(item, ep.id);
-            });
-
-            epList.appendChild(card);
+          renderSeasonChips();
+          await loadSeason(currentSeason);
+        } catch (err) {
+          if (epLoading) epLoading.style.display = 'none';
+          epList.innerHTML = `<div style="text-align: center; padding: 20px; color: var(--src-text-muted);">Error fetching season data: ${escapeHtml(err.message)}<br><br><button type="button" class="src-ep-btn-play" id="btn-ep-direct">Screen to Party</button></div>`;
+          document.getElementById('btn-ep-direct')?.addEventListener('click', () => {
+            if (typeof epDialog.close === 'function') epDialog.close();
+            screenToParty(item);
           });
-        } catch(err) {
-          if (epLoading) epLoading.textContent = `Error loading episodes: ${err.message}`;
         }
       }
 
       // Streaming & Queueing Action Handlers
-      async function screenToParty(item, epId) {
+      async function screenToParty(item, epInfo) {
         if (!item) return;
         try {
-          const resolved = await resolveStreamForItem(item, epId);
+          const resolved = await resolveStreamForItem(item, epInfo);
           window.parent.postMessage({
             type: 'CINESYNC_PLAY_MEDIA',
             streamUrl: resolved.streamUrl,
@@ -1439,16 +1591,16 @@
             title: resolved.title,
             poster: resolved.poster
           }, '*');
-          showToast(`Screening to Room Watch Party!`);
+          showToast(`Screening to Watch Party Room!`);
         } catch(err) {
           showToast(`Playback error: ${err.message}`);
         }
       }
 
-      async function queueForParty(item, epId) {
+      async function queueForParty(item, epInfo) {
         if (!item) return;
         try {
-          const resolved = await resolveStreamForItem(item, epId);
+          const resolved = await resolveStreamForItem(item, epInfo);
           window.parent.postMessage({
             type: 'CINESYNC_QUEUE_MEDIA',
             streamUrl: resolved.streamUrl,
@@ -1476,18 +1628,19 @@
 
         showToast(`Searching ${config.name} for "${q}"...`);
         try {
-          if (appKey === 'netflix' || appKey === 'prime' || appKey === 'hotstar') {
-            const res = await fetch(`/api/netmirror/search?platform=${appKey}&q=${encodeURIComponent(q)}`);
+          if (appKey === 'netflix' || appKey === 'prime' || appKey === 'hotstar' || appKey === 'movies' || appKey === 'crunchyroll') {
+            const res = await fetch(`/api/tmdb/search?q=${encodeURIComponent(q)}`);
             const data = await res.json();
             if (data.results && data.results.length > 0) {
               renderCatalog(data.results.map(r => ({
                 id: r.id,
                 title: r.title,
+                mediaType: r.mediaType || (appKey === 'crunchyroll' ? 'tv' : 'movie'),
                 channel: config.name,
-                duration: 'Full Stream',
-                tag: config.name.toUpperCase(),
-                meta: 'HD • NetMirror HLS Stream',
-                thumb: r.poster,
+                duration: r.year || (r.mediaType === 'tv' ? 'Series' : 'Movie'),
+                tag: `★ ${r.rating || '8.0'}`,
+                meta: `${r.year || ''} • ${r.mediaType === 'tv' ? 'TV Series' : 'Movie'} • HD 1080p`,
+                thumb: r.poster || 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=720&q=80',
                 sourceKey: appKey
               })));
               document.getElementById('src-feed-title').textContent = `Results for "${q}"`;
@@ -1507,24 +1660,6 @@
                 meta: r.type ? r.type.toUpperCase() : 'SERIES',
                 thumb: r.image || 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=720&q=80',
                 sourceKey: 'mx'
-              })));
-              document.getElementById('src-feed-title').textContent = `Results for "${q}"`;
-              return;
-            }
-          } else if (appKey === 'movies' || appKey === 'crunchyroll') {
-            const res = await fetch(`/api/tmdb/search?q=${encodeURIComponent(q)}`);
-            const data = await res.json();
-            if (data.results && data.results.length > 0) {
-              renderCatalog(data.results.map(r => ({
-                id: r.id,
-                title: r.title,
-                mediaType: r.mediaType || (appKey === 'crunchyroll' ? 'tv' : 'movie'),
-                channel: appKey === 'crunchyroll' ? 'Crunchyroll' : 'Cinema Vault',
-                duration: r.year || 'HD',
-                tag: `IMDb ${r.rating || '8.0'}`,
-                meta: `${r.year || ''} • Full Stream`,
-                thumb: r.poster || 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=720&q=80',
-                sourceKey: appKey
               })));
               document.getElementById('src-feed-title').textContent = `Results for "${q}"`;
               return;

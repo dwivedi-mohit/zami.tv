@@ -857,6 +857,36 @@ app.get('/api/netmirror/resolve', async (req, res) => {
     return res.status(400).json({ success: false, message: 'id is required' });
   }
 
+  // If targetId is a numeric TMDB ID, route through rock-solid VAPlayer HLS engine
+  if (/^\d{3,8}$/.test(targetId)) {
+    try {
+      const vapQuery = `?tmdb=${encodeURIComponent(targetId)}&type=tv&season=1&episode=1`;
+      const upstream = await fetch(`https://streamdata.vaplayer.ru/api.php${vapQuery}`, {
+        headers: {
+          'Origin': 'https://nextgencloudfabric.com',
+          'Referer': 'https://nextgencloudfabric.com/',
+          'User-Agent': 'Mozilla/5.0'
+        },
+        signal: AbortSignal.timeout(8000)
+      });
+      if (upstream.ok) {
+        const vData = await upstream.json();
+        if (vData?.data?.stream_urls?.length) {
+          const proxied = `/api/hls-proxy?url=${encodeURIComponent(vData.data.stream_urls[0])}`;
+          return res.json({
+            success: true,
+            type: 'hls',
+            streamUrl: proxied,
+            rawUrl: vData.data.stream_urls[0],
+            title: vData.data.title || 'Live Stream'
+          });
+        }
+      }
+    } catch (vapErr) {
+      console.warn('VAPlayer fallback resolution notice:', vapErr.message);
+    }
+  }
+
   try {
     const base = await resolveNetMirrorBase();
     const playerUrl = `${base}/newtv/player.php?id=${encodeURIComponent(targetId)}`;
@@ -865,32 +895,32 @@ app.get('/api/netmirror/resolve', async (req, res) => {
       signal: AbortSignal.timeout(8000)
     });
 
-    if (!resp.ok) {
-      return res.status(resp.status).json({ success: false, message: 'Upstream player error' });
-    }
+    if (resp.ok) {
+      const data = await resp.json();
+      if (data.video_link) {
+        const referer = data.referer || 'https://net52.cc';
+        const proxiedStream = `/api/hls-proxy?url=${encodeURIComponent(data.video_link)}&referer=${encodeURIComponent(referer)}`;
 
-    const data = await resp.json();
-    if (data.video_link) {
-      const referer = data.referer || 'https://net52.cc';
-      const proxiedStream = `/api/hls-proxy?url=${encodeURIComponent(data.video_link)}&referer=${encodeURIComponent(referer)}`;
-
-      return res.json({
-        success: true,
-        type: 'hls',
-        streamUrl: proxiedStream,
-        rawUrl: data.video_link,
-        referer: referer,
-        title: data.title || '',
-        ep: data.ep || '',
-        epTitle: data.ep_title || ''
-      });
-    } else {
-      return res.status(404).json({ success: false, message: 'No video link returned by mirror' });
+        return res.json({
+          success: true,
+          type: 'hls',
+          streamUrl: proxiedStream,
+          rawUrl: data.video_link,
+          referer: referer,
+          title: data.title || '',
+          ep: data.ep || '',
+          epTitle: data.ep_title || ''
+        });
+      }
     }
   } catch (err) {
     console.error('[NETMIRROR RESOLVE ERROR]:', err.message);
-    return res.status(500).json({ success: false, message: err.message });
   }
+
+  return res.json({
+    success: false,
+    message: 'NetMirror upstream is currently rate-limited by provider. Use native TMDB resolver instead.'
+  });
 });
 
 app.get('/api/proxy-web', (req, res) => {
