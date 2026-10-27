@@ -10,20 +10,40 @@ const BELL_ON_SVG = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none"
 const BELL_OFF_SVG = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13.73 21a2 2 0 0 1-3.46 0"/><path d="M18.63 13A17.89 17.89 0 0 1 18 8"/><path d="M6.26 6.26A5.86 5.86 0 0 0 6 8c0 7-3 9-3 9h14"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
 const STAR_ICON_SVG = '<svg class="icon-star-inline" width="11" height="11" viewBox="0 0 24 24" fill="#f59e0b" stroke="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
 
-// Toast notification helper
+// Toast notification helper (Sonner / Linear style)
 window.showToast = function(message, type = 'info', duration = 3500) {
   const container = document.getElementById('toast-container');
   if (container) {
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
-    toast.textContent = message;
+
+    const dot = document.createElement('span');
+    dot.className = 'toast-dot';
+
+    const msg = document.createElement('span');
+    msg.className = 'toast-msg';
+    msg.textContent = message;
+
+    const closeBtn = document.createElement('button');
+    closeBtn.type = 'button';
+    closeBtn.className = 'toast-close-btn';
+    closeBtn.setAttribute('aria-label', 'Close toast');
+    closeBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+
+    const dismiss = () => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(8px) scale(0.96)';
+      setTimeout(() => toast.remove(), 220);
+    };
+
+    closeBtn.addEventListener('click', dismiss);
+
+    toast.appendChild(dot);
+    toast.appendChild(msg);
+    toast.appendChild(closeBtn);
     container.appendChild(toast);
 
-    setTimeout(() => {
-      toast.style.opacity = '0';
-      toast.style.transform = 'translateX(100%)';
-      setTimeout(() => toast.remove(), 300);
-    }, duration);
+    setTimeout(dismiss, duration);
   }
 
   // Screen reader announcement
