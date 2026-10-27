@@ -6826,13 +6826,14 @@ function initWatch2GetherRoomClone() {
 
   const btnMobileResize = document.getElementById('btn-mobile-resize-player');
   if (btnMobileResize) {
-    let isExpanded = false;
     btnMobileResize.addEventListener('click', () => {
       const playerWrapper = document.querySelector('.player-wrapper');
       if (playerWrapper) {
-        isExpanded = !isExpanded;
-        playerWrapper.style.maxHeight = isExpanded ? '340px' : '235px';
+        const isExpanded = playerWrapper.classList.toggle('is-expanded');
         btnMobileResize.style.transform = isExpanded ? 'rotate(180deg)' : 'rotate(0deg)';
+        btnMobileResize.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+        btnMobileResize.setAttribute('title', isExpanded ? 'Collapse streaming area' : 'Expand streaming area');
+        btnMobileResize.setAttribute('aria-label', isExpanded ? 'Collapse streaming area' : 'Expand streaming area');
       }
     });
   }
