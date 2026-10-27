@@ -6263,39 +6263,37 @@
   gap: 10px;
 }
 
+.brand-logo-cursive {
+  font-family: 'Satisfy', 'Yellowtail', 'Pinyon Script', cursive !important;
+  font-size: 1.60rem;
+  font-weight: 400;
+  color: #FFB84D !important;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  text-decoration: none !important;
+  display: inline-flex;
+  align-items: center;
+  text-shadow: 0 0 18px rgba(255, 184, 77, 0.35);
+  transition: transform 0.2s ease, opacity 0.2s ease, color 0.2s ease;
+  user-select: none;
+  flex-shrink: 0;
+  padding: 0 2px;
+}
+.brand-logo-cursive:hover {
+  transform: scale(1.04);
+  opacity: 0.95;
+  color: #ffd285 !important;
+}
+
 .stage-brand-logo {
   display: none;
-  align-items: center;
-  gap: 6px;
   text-decoration: none;
   flex-shrink: 0;
 }
 
-.stage-logo-icon {
-  width: 20px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(229, 169, 60, 0.12);
-  border: 1px solid rgba(229, 169, 60, 0.3);
-  border-radius: 5px;
-}
-
-.stage-logo-text {
-  font-family: var(--font-serif, 'Playfair Display', serif);
-  font-size: 0.92rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  color: #f4f4f5;
-  display: inline-flex;
-  align-items: baseline;
-}
-
 .mobile-playing-brand {
   display: inline-flex;
-  align-items: center;
-  gap: 6px;
+  font-size: 1.30rem;
   text-decoration: none;
   flex-shrink: 0;
 }
@@ -9913,34 +9911,8 @@ body[data-theme="vhs"] .zami-text-logo {
 }
 
 .w2g-brand {
-  display: flex;
-  align-items: center;
-  gap: 8px;
   text-decoration: none;
   flex-shrink: 0;
-}
-.w2g-logo-icon {
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(229, 169, 60, 0.12);
-  border: 1px solid rgba(229, 169, 60, 0.3);
-  border-radius: 6px;
-}
-.w2g-logo-text {
-  font-family: var(--font-serif, 'Playfair Display', serif);
-  font-size: 1.05rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  color: #f4f4f5;
-}
-.w2g-logo-gold {
-  color: #e5a93c;
-  font-family: var(--font-cursive, 'Pinyon Script', cursive);
-  font-size: 1.30rem;
-  margin-right: 1px;
 }
 
 .w2g-room-selector {
@@ -11014,6 +10986,7 @@ body[data-theme="vhs"] .zami-text-logo {
   }
   .stage-brand-logo {
     display: inline-flex !important;
+    font-size: 1.35rem !important;
   }
   .room-sidebar {
     display: flex !important;
