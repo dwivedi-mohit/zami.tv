@@ -7284,28 +7284,30 @@
     margin: 0 !important;
   }
 
-  /* Responsive 16:9 Media Stage on Mobile */
+  /* Responsive Streaming Stage on Mobile - Increased height */
   .room-stage {
     width: 100% !important;
     max-width: 100% !important;
-    aspect-ratio: 16 / 9 !important;
-    height: auto !important;
-    max-height: 220px !important;
-    min-height: 155px !important;
+    height: 270px !important;
+    max-height: 285px !important;
+    min-height: 240px !important;
+    aspect-ratio: auto !important;
     flex: 0 0 auto !important;
     display: flex !important;
     position: relative !important;
     overflow: hidden !important;
-    background: #000000 !important;
+    background: transparent !important;
     box-sizing: border-box !important;
   }
 
   .player-wrapper {
     width: 100% !important;
     height: 100% !important;
+    min-height: 100% !important;
     display: flex !important;
     position: relative !important;
     overflow: hidden !important;
+    background: transparent !important;
   }
 
   .player-placeholder {
@@ -10785,19 +10787,25 @@ body[data-theme="vhs"] .zami-text-logo {
   }
   .room-stage {
     position: relative;
-    width: 100%;
+    width: 100% !important;
+    height: 270px !important;
+    max-height: 285px !important;
+    min-height: 240px !important;
+    aspect-ratio: auto !important;
     flex-shrink: 0;
     z-index: 20;
-    background: #000;
+    background: transparent !important;
     padding: 0 !important;
   }
   .player-wrapper {
     width: 100%;
-    aspect-ratio: 16 / 9;
-    max-height: 225px;
+    height: 100% !important;
+    max-height: none !important;
+    aspect-ratio: auto !important;
     position: relative;
     inset: auto;
     border-radius: 0 !important;
+    background: transparent !important;
   }
   .w2g-subplayer-bar {
     display: flex !important;
@@ -10806,48 +10814,14 @@ body[data-theme="vhs"] .zami-text-logo {
     display: flex !important;
   }
 
-  /* Compact Mobile 16:9 Empty Stage Placeholder */
+  /* Keep mobile streaming stage 100% clean video with no overlay text/boxes */
+  .player-placeholder,
+  .empty-stage-hub,
   .empty-stage-top-bar {
     display: none !important;
-  }
-  .empty-stage-hub {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
-    height: 100% !important;
-    padding: 10px !important;
-    box-sizing: border-box !important;
-    background: #000000 !important;
-  }
-  .empty-stage-subtitle {
-    display: none !important;
-  }
-  .empty-stage-title {
-    font-size: 0.95rem !important;
-    margin: 0 0 10px 0 !important;
-    text-align: center !important;
-  }
-  .empty-stage-choices-grid {
-    display: flex !important;
-    flex-direction: row !important;
-    gap: 8px !important;
-    width: 100% !important;
-    max-width: 360px !important;
-    justify-content: center !important;
-  }
-  .stage-choice-card {
-    padding: 8px 10px !important;
-    min-height: auto !important;
-  }
-  .choice-desc {
-    display: none !important;
-  }
-  .btn-stage-wallpaper-select {
-    display: none !important;
-  }
-  .inbuilt-app-tip {
-    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    opacity: 0 !important;
   }
 }
 
