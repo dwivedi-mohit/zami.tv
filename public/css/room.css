@@ -6639,11 +6639,18 @@
   justify-content: center;
   border-radius: 6px;
   transition: all 0.15s ease;
+  outline: none;
 }
 
 .vault-back-btn:hover {
   color: #f4f4f5;
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.vault-back-btn:focus-visible {
+  background: rgba(255, 255, 255, 0.08);
+  outline: 1.5px solid rgba(255, 255, 255, 0.25);
+  outline-offset: 1px;
 }
 
 .hub-heading {
@@ -6845,8 +6852,8 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 14px 22px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 12px 20px;
+  border-bottom: 1px solid #27272a;
   flex-shrink: 0;
 }
 
@@ -6855,62 +6862,74 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #161821;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
-  padding: 9px 14px;
-  color: #8b8f9e;
+  background: #18181b;
+  border: 1px solid #27272a;
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #71717a;
+  transition: border-color 0.15s ease;
+}
+
+.vault-search-box:focus-within {
+  border-color: #3f3f46;
 }
 
 .vault-search-input {
   background: none;
   border: none;
-  color: #ffffff;
-  font-family: var(--font-sans);
-  font-size: 0.88rem;
+  color: #f4f4f5;
+  font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+  font-size: 13px;
   outline: none;
   width: 100%;
 }
 
 .vault-search-input::placeholder {
-  color: #636775;
+  color: #71717a;
 }
 
 .vault-search-clear {
   background: none;
   border: none;
-  color: #717582;
+  color: #71717a;
   cursor: pointer;
   padding: 2px;
   display: flex;
   align-items: center;
+  border-radius: 4px;
+}
+
+.vault-search-clear:hover {
+  color: #f4f4f5;
 }
 
 .vault-filter-toggle-btn {
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
-  background: #161821;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #8b8f9e;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: #18181b;
+  border: 1px solid #27272a;
+  color: #a1a1aa;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
-  transition: all 0.16s ease;
+  transition: all 0.15s ease;
+  outline: none;
 }
 
 .vault-filter-toggle-btn:hover {
-  background: #1c1f2b;
-  color: #ffffff;
+  background: #202024;
+  border-color: #3f3f46;
+  color: #f4f4f5;
 }
 
 /* Pills Row */
 .vault-pills-row {
   display: flex;
-  gap: 8px;
-  padding: 12px 22px 8px;
+  gap: 6px;
+  padding: 10px 20px;
   overflow-x: auto;
   scrollbar-width: none;
   flex-shrink: 0;
@@ -6921,68 +6940,74 @@
 }
 
 .vault-pill {
-  padding: 6px 16px;
-  border-radius: 16px;
-  background: #161821;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  color: #8b8f9e;
-  font-family: var(--font-sans);
-  font-size: 0.82rem;
-  font-weight: 600;
+  padding: 5px 14px;
+  border-radius: 9999px;
+  background: transparent;
+  border: 1px solid #27272a;
+  color: #a1a1aa;
+  font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+  font-size: 12px;
+  font-weight: 500;
   cursor: pointer;
   white-space: nowrap;
-  transition: all 0.16s ease;
+  transition: all 0.15s ease;
   outline: none;
 }
 
 .vault-pill:hover:not(.active) {
-  background: #1c1f2b;
-  color: #ffffff;
+  background: rgba(255, 255, 255, 0.04);
+  border-color: #3f3f46;
+  color: #f4f4f5;
 }
 
 .vault-pill.active {
-  background: #e5a93c;
-  color: #0a0b0e;
-  border-color: #e5a93c;
-  font-weight: 700;
+  background: #f4f4f5;
+  color: #121215;
+  border-color: #f4f4f5;
+  font-weight: 600;
 }
 
 /* 2. Movies Catalog Grid */
 .movies-catalog-viewport {
   flex: 1;
   overflow-y: auto;
-  padding: 4px 0;
+  padding: 4px 0 16px;
+  overscroll-behavior: contain;
 }
 
 .movies-posters-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px 10px;
-  padding: 6px 18px 16px;
+  gap: 12px;
+  padding: 8px 20px 20px;
 }
 
 .movie-poster-card {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 7px;
   cursor: pointer;
-  transition: transform 0.18s ease;
+  transition: transform 0.15s ease;
   outline: none;
 }
 
 .movie-poster-card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-2px);
 }
 
 .movie-poster-wrap {
   width: 100%;
-  aspect-ratio: 2 / 2.65;
-  border-radius: 12px;
+  aspect-ratio: 2 / 3;
+  border-radius: 10px;
   overflow: hidden;
-  background: #181a24;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
+  background: #18181b;
+  border: 1px solid #27272a;
+  transition: border-color 0.15s ease;
 }
 
+.movie-poster-card:hover .movie-poster-wrap {
+  border-color: #3f3f46;
+}
 
 .movie-poster-img {
   width: 100%;
@@ -6994,14 +7019,14 @@
 .movie-poster-info {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
 }
 
 .movie-poster-title {
-  font-family: var(--font-sans);
-  font-size: 0.86rem;
-  font-weight: 700;
-  color: #ffffff;
+  font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #f4f4f5;
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
@@ -7012,78 +7037,88 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-family: var(--font-sans);
-  font-size: 0.76rem;
-  color: #8b8f9e;
+  font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+  font-size: 11px;
+  color: #71717a;
 }
 
 .movie-rating {
-  color: #e5a93c;
-  font-weight: 600;
+  color: #a1a1aa;
+  font-weight: 500;
   display: inline-flex;
   align-items: center;
   gap: 3px;
 }
 
+.movie-rating svg {
+  color: #e4e4e7;
+}
+
 .star-gold {
-  color: #e5a93c;
+  color: #e4e4e7;
 }
 
 /* 3. Apps 12-Squircle Grid */
 .apps-grid-viewport {
   flex: 1;
   overflow-y: auto;
-  padding: 8px 0;
+  padding: 4px 0 16px;
+  overscroll-behavior: contain;
 }
 
 .apps-squircles-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 18px 14px;
-  padding: 10px 22px 24px;
+  gap: 12px;
+  padding: 8px 20px 20px;
 }
 
 .app-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   cursor: pointer;
 }
 
 .app-squircle {
   width: 100%;
-  height: 80px;
-  border-radius: 16px;
-  background: #161821;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  height: 68px;
+  border-radius: 12px;
+  background: #18181b;
+  border: 1px solid #27272a;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
   outline: none;
   padding: 8px;
 }
 
 .app-squircle:hover {
-  background: #1c1f2b;
-  border-color: rgba(229, 169, 60, 0.45);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  background: #202024;
+  border-color: #3f3f46;
+  transform: translateY(-1px);
 }
 
 .app-squircle:active {
+  background: #1a1a1d;
   transform: translateY(0);
 }
 
 .app-label {
-  font-family: var(--font-sans);
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: #ffffff;
+  font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+  font-size: 11.5px;
+  font-weight: 500;
+  color: #a1a1aa;
   text-align: center;
   white-space: nowrap;
+  transition: color 0.15s ease;
+}
+
+.app-item:hover .app-label {
+  color: #f4f4f5;
 }
 
 /* Sub-views: YouTube, URL, Local */
@@ -7942,28 +7977,29 @@
   }
 
   .movies-posters-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 14px 10px;
-    padding: 10px 16px 20px;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px 10px !important;
+    padding: 6px 16px 20px !important;
   }
 
   .apps-squircles-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px 10px;
-    padding: 10px 16px 20px;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 10px 8px !important;
+    padding: 6px 16px 20px !important;
   }
 
   .app-squircle {
-    height: 68px;
-    border-radius: 14px;
+    height: 62px !important;
+    border-radius: 10px !important;
   }
 
   .vault-search-filter-row {
-    padding: 12px 16px;
+    padding: 10px 16px !important;
   }
 
   .vault-pills-row {
-    padding: 10px 16px 6px;
+    padding: 8px 16px 4px !important;
+    gap: 6px !important;
   }
 
   /* Mobile Screen 5: Playing Stage Overrides */
