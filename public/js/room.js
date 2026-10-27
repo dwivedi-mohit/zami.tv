@@ -6115,6 +6115,8 @@ function initWatch2GetherRoomClone() {
   }
 
   if (btnDockInvite) btnDockInvite.addEventListener('click', handleMobileInvite);
+  const btnMobileShareQuick = document.getElementById('btn-mobile-share-quick');
+  if (btnMobileShareQuick) btnMobileShareQuick.addEventListener('click', handleMobileInvite);
   if (btnCopyLinkDesktop) btnCopyLinkDesktop.addEventListener('click', openInviteDialog);
   if (btnCloseInvite) btnCloseInvite.addEventListener('click', closeInviteDialog);
 

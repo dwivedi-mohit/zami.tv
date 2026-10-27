@@ -889,6 +889,12 @@
                   <line x1="8" y1="23" x2="16" y2="23"/>
                 </svg>
               </button>
+              <button type="button" id="btn-mobile-share-quick" class="btn-subplayer-action" title="Share &amp; Invite" aria-label="Share &amp; Invite">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                </svg>
+              </button>
               <button type="button" id="btn-mobile-open-search" class="btn-subplayer-action" title="Search Media" aria-label="Search Media">
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
               </button>
@@ -1198,7 +1204,7 @@
     </main>
     </div> <!-- .room-body-container -->
 
-    <!-- Sleek Minimalist Mobile Bottom Navigation Dock -->
+    <!-- Sleek Minimalist Mobile Bottom Navigation Dock (Pure 3-Tab View Navigation) -->
     <nav class="w2g-mobile-dock" id="w2g-mobile-dock" aria-label="Mobile Navigation Controls">
       <div class="dock-actions-row">
         <!-- 1. People / Voice Tab (Slide 0) -->
@@ -1223,17 +1229,7 @@
           <span class="dock-label">Queue</span>
         </button>
 
-        <!-- 3. Share / Invite Sheet -->
-        <button type="button" id="btn-dock-invite" class="dock-action-btn dock-btn-invite" title="Invite friends to watch with you!" aria-label="Invite Friends">
-          <div class="dock-icon-wrap">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-            </svg>
-          </div>
-          <span class="dock-label">Share</span>
-        </button>
-
-        <!-- 4. Chat Tab (Slide 2) -->
+        <!-- 3. Chat Tab (Slide 2) -->
         <button type="button" id="btn-dock-chat" class="dock-action-btn" title="Live Chat" aria-label="Live Chat" data-slide="2">
           <div class="dock-icon-wrap">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1243,20 +1239,12 @@
           </div>
           <span class="dock-label">Chat</span>
         </button>
-
-        <!-- 5. Quick Mic Toggle -->
-        <button type="button" id="btn-dock-mic" class="dock-action-btn dock-btn-mic" title="Toggle Microphone" aria-label="Toggle Microphone">
-          <div class="dock-icon-wrap">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>
-            </svg>
-          </div>
-          <span class="dock-label">Mic</span>
-        </button>
       </div>
 
       <!-- Preserved legacy elements for script compatibility (hidden) -->
       <div style="display: none;" aria-hidden="true">
+        <button type="button" id="btn-dock-invite" class="dock-action-btn dock-btn-invite"></button>
+        <button type="button" id="btn-dock-mic" class="dock-action-btn dock-btn-mic"></button>
         <a href="/" class="dock-action-btn dock-btn-leave" id="btn-dock-leave-legacy"></a>
         <button type="button" id="btn-dock-cam" class="dock-pill-btn"></button>
         <button type="button" id="btn-dock-zoom-out" class="dock-pill-btn"></button>
