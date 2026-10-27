@@ -131,23 +131,61 @@ class RoomQueueManager {
     if (this.playlist.length === 0) {
       this.container.innerHTML = `
         <div class="queue-empty-state">
-          <div class="queue-empty-icon">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#e5a93c" stroke-width="1.8"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          <div class="queue-empty-icon-glow">
+            <div class="queue-empty-icon">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="2" width="20" height="20" rx="3"/>
+                <line x1="7" y1="2" x2="7" y2="22"/>
+                <line x1="17" y1="2" x2="17" y2="22"/>
+                <line x1="2" y1="12" x2="22" y2="12"/>
+                <line x1="2" y1="7" x2="7" y2="7"/>
+                <line x1="2" y1="17" x2="7" y2="17"/>
+                <line x1="17" y1="7" x2="22" y2="7"/>
+                <line x1="17" y1="17" x2="22" y2="17"/>
+              </svg>
+            </div>
           </div>
-          <div class="queue-empty-title">What would you like to watch?</div>
-          <div class="queue-empty-desc">Choose a source below or paste a video link to start co-watching:</div>
+          <div class="queue-empty-title">Queue is empty</div>
+          <div class="queue-empty-desc">Choose a source below or paste a video link to start co-watching with everyone in the room:</div>
           <div class="queue-empty-choices">
-            <button type="button" class="btn-queue-choice" id="btn-queue-choice-movies">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#e5a93c" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
-              <span>Browse Movies</span>
+            <button type="button" class="btn-queue-choice choice-movies" id="btn-queue-choice-movies">
+              <div class="choice-icon-wrap icon-amber">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="5 3 19 12 5 21 5 3"/>
+                </svg>
+              </div>
+              <div class="choice-text">
+                <span class="choice-title">Browse Movies</span>
+                <span class="choice-sub">Cinema Vault, IMDb, Trending</span>
+              </div>
+              <svg class="choice-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 18 15 12 9 6"/></svg>
             </button>
-            <button type="button" class="btn-queue-choice" id="btn-queue-choice-link">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-              <span>Paste Video Link</span>
+            <button type="button" class="btn-queue-choice choice-link" id="btn-queue-choice-link">
+              <div class="choice-icon-wrap icon-red">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                </svg>
+              </div>
+              <div class="choice-text">
+                <span class="choice-title">Paste Video Link</span>
+                <span class="choice-sub">YouTube, MP4, HLS, Reels</span>
+              </div>
+              <svg class="choice-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 18 15 12 9 6"/></svg>
             </button>
-            <button type="button" class="btn-queue-choice" id="btn-queue-choice-more">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-              <span>More Sources</span>
+            <button type="button" class="btn-queue-choice choice-more" id="btn-queue-choice-more">
+              <div class="choice-icon-wrap icon-cyan">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="3" width="20" height="14" rx="2"/>
+                  <line x1="8" y1="21" x2="16" y2="21"/>
+                  <line x1="12" y1="17" x2="12" y2="21"/>
+                </svg>
+              </div>
+              <div class="choice-text">
+                <span class="choice-title">More Sources</span>
+                <span class="choice-sub">Disney+, Netflix, Tab Cast Stereo</span>
+              </div>
+              <svg class="choice-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 18 15 12 9 6"/></svg>
             </button>
           </div>
         </div>
@@ -198,30 +236,37 @@ class RoomQueueManager {
       const durationStr = item.duration ? `${Math.floor(item.duration / 60)}m` : '';
       return `
         <div class="queue-item-card" data-id="${item.id}">
-          <span class="queue-item-idx">#${idx + 1}</span>
-          <img src="${poster}" class="queue-item-thumb" alt="${escape(item.title)}" onerror="this.src='https://via.placeholder.com/80x45?text=Reel'">
+          <div class="queue-item-drag-idx">
+            <span class="queue-item-idx">#${idx + 1}</span>
+          </div>
+          <div class="queue-thumb-wrap">
+            <img src="${poster}" class="queue-item-thumb" alt="${escape(item.title)}" onerror="this.src='https://via.placeholder.com/80x45?text=Reel'">
+            <button class="queue-thumb-play-btn btn-queue-play" title="Play Now" data-id="${item.id}">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            </button>
+          </div>
           <div class="queue-item-details">
             <div class="queue-item-title" title="${escape(item.title)}">${escape(item.title)}</div>
             <div class="queue-item-meta">
-              <span class="queue-item-badge">${escape(item.type.toUpperCase())}</span>
+              <span class="queue-item-badge badge-${escape(item.type)}">${escape(item.type.toUpperCase())}</span>
               <span class="queue-item-by">by ${escape(item.addedBy || 'Member')}</span>
               ${durationStr ? `<span class="queue-item-dur">${durationStr}</span>` : ''}
             </div>
           </div>
           <div class="queue-item-actions">
             ${idx > 0 ? `
-            <button class="btn-queue-move-up btn btn-icon btn-xs" title="Move Up in Queue" data-index="${idx}">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
+            <button class="btn-queue-move-up queue-mini-btn" title="Move Up in Queue" data-index="${idx}">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="18 15 12 9 6 15"/></svg>
             </button>` : ''}
             ${idx < this.playlist.length - 1 ? `
-            <button class="btn-queue-move-down btn btn-icon btn-xs" title="Move Down in Queue" data-index="${idx}">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            <button class="btn-queue-move-down queue-mini-btn" title="Move Down in Queue" data-index="${idx}">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg>
             </button>` : ''}
-            <button class="btn-queue-play btn btn-icon btn-xs" title="Play Now" data-id="${item.id}">
+            <button class="btn-queue-play queue-mini-btn queue-play-btn" title="Play Now" data-id="${item.id}">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
             </button>
-            <button class="btn-queue-remove btn btn-icon btn-xs" title="Remove" data-id="${item.id}">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            <button class="btn-queue-remove queue-mini-btn queue-del-btn" title="Remove" data-id="${item.id}">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
           </div>
         </div>
