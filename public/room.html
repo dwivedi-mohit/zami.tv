@@ -32,11 +32,6 @@
     <!-- Watch2Gether Exact Positioning Desktop Header -->
     <header class="w2g-header" id="w2g-header">
       <div class="w2g-header-left">
-        <!-- Hamburger Menu -->
-        <button type="button" id="btn-w2g-menu" class="w2g-icon-btn" title="Main Navigation Menu" aria-label="Main Navigation Menu">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-        </button>
-
         <!-- Brand Logo (ZAMI gold cursive + serif) -->
         <a href="/" class="w2g-brand" title="Back to Screening Index" aria-label="Zami">
           <div class="w2g-logo-icon">
@@ -46,6 +41,11 @@
           </div>
           <span class="w2g-logo-text"><span class="w2g-logo-gold">Z</span>ami</span>
         </a>
+
+        <!-- Hamburger Menu -->
+        <button type="button" id="btn-w2g-menu" class="w2g-icon-btn" title="Main Navigation Menu" aria-label="Main Navigation Menu">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
 
         <!-- Room Title Dropdown & Copy -->
         <div class="w2g-room-selector" id="room-identity-group" role="button" tabindex="0" title="Click to view room details">
@@ -178,6 +178,14 @@
                   <polyline points="12 19 5 12 12 5"></polyline>
                 </svg>
               </button>
+              <a href="/" class="mobile-playing-brand" title="Back to Screening Index" aria-label="Zami">
+                <div class="stage-logo-icon">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                    <path d="M4 6h16L8 18h12" stroke="#e5a93c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <span class="stage-logo-text"><span class="w2g-logo-gold">Z</span>ami</span>
+              </a>
               <span id="mobile-playing-title" class="mobile-playing-title">Interstellar</span>
             </div>
             <div class="mobile-playing-right">
@@ -411,9 +419,19 @@
           <div id="player-placeholder" class="player-placeholder empty-stage-hub">
             <!-- Top Room Identity & Invite Banner -->
             <div class="empty-stage-top-bar">
-              <div class="empty-stage-room-info">
-                <span class="room-pulse-dot" aria-hidden="true"></span>
-                <span class="room-code-tag" id="empty-stage-room-name">Party Room</span>
+              <div class="empty-stage-left-brand">
+                <a href="/" class="stage-brand-logo" title="Back to Screening Index" aria-label="Zami">
+                  <div class="stage-logo-icon">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                      <path d="M4 6h16L8 18h12" stroke="#e5a93c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                  <span class="stage-logo-text"><span class="w2g-logo-gold">Z</span>ami</span>
+                </a>
+                <div class="empty-stage-room-info">
+                  <span class="room-pulse-dot" aria-hidden="true"></span>
+                  <span class="room-code-tag" id="empty-stage-room-name">Party Room</span>
+                </div>
               </div>
               <button type="button" id="btn-empty-stage-invite" class="empty-stage-invite-btn" aria-label="Invite Friends to Watch Party">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">

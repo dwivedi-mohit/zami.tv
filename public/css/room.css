@@ -6257,6 +6257,49 @@
   z-index: 10;
 }
 
+.empty-stage-left-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.stage-brand-logo {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.stage-logo-icon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(229, 169, 60, 0.12);
+  border: 1px solid rgba(229, 169, 60, 0.3);
+  border-radius: 5px;
+}
+
+.stage-logo-text {
+  font-family: var(--font-serif, 'Playfair Display', serif);
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #f4f4f5;
+  display: inline-flex;
+  align-items: baseline;
+}
+
+.mobile-playing-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
 .empty-stage-room-info {
   display: inline-flex;
   align-items: center;
@@ -10968,6 +11011,9 @@ body[data-theme="vhs"] .zami-text-logo {
   }
   .player-top-bar, .room-title-bar {
     display: none !important;
+  }
+  .stage-brand-logo {
+    display: inline-flex !important;
   }
   .room-sidebar {
     display: flex !important;
