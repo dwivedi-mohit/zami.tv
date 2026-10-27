@@ -5534,11 +5534,7 @@
   margin: auto 0;
   width: 100%;
   max-width: 680px;
-  padding: 22px 28px 24px;
-  background: radial-gradient(ellipse 90% 75% at 50% 50%, rgba(9, 11, 16, 0.82) 0%, rgba(9, 11, 16, 0.5) 70%, transparent 100%);
-  border-radius: 26px;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  padding: 10px 16px;
   position: relative;
   z-index: 10;
 }
