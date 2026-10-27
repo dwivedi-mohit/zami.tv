@@ -1476,8 +1476,8 @@
               
               <!-- 1. Share Screen -->
               <button type="button" class="load-media-card" data-action="screenshare" title="Cast screen or tab">
-                <div class="load-media-icon-wrap" style="color: #38bdf8;">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <div class="load-media-icon-wrap" aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="2" y="3" width="20" height="14" rx="2"/>
                     <line x1="8" y1="21" x2="16" y2="21"/>
                     <line x1="12" y1="17" x2="12" y2="21"/>
@@ -1491,16 +1491,16 @@
 
               <!-- 2. Movies -->
               <button type="button" class="load-media-card" data-action="movies" title="Browse movies & series">
-                <div class="load-media-icon-wrap" style="color: #e5a93c;">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#e5a93c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="2" y="2" width="20" height="20" rx="2.18"/>
-                    <line x1="7" y1="2" x2="7" y2="22"/>
-                    <line x1="17" y1="2" x2="17" y2="22"/>
-                    <line x1="2" y1="12" x2="22" y2="12"/>
-                    <line x1="2" y1="7" x2="7" y2="7"/>
-                    <line x1="2" y1="17" x2="7" y2="17"/>
-                    <line x1="17" y1="17" x2="22" y2="17"/>
-                    <line x1="17" y1="7" x2="22" y2="7"/>
+                <div class="load-media-icon-wrap" aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <rect width="18" height="18" x="3" y="3" rx="2"/>
+                    <path d="M7 3v18"/>
+                    <path d="M3 7.5h4"/>
+                    <path d="M3 12h18"/>
+                    <path d="M3 16.5h4"/>
+                    <path d="M17 3v18"/>
+                    <path d="M17 7.5h4"/>
+                    <path d="M17 16.5h4"/>
                   </svg>
                 </div>
                 <div class="load-media-info">
@@ -1511,8 +1511,8 @@
 
               <!-- 3. Websites & Apps -->
               <button type="button" class="load-media-card" data-action="apps" title="Websites & streaming apps">
-                <div class="load-media-icon-wrap" style="color: #a855f7;">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <div class="load-media-icon-wrap" aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="3" y="3" width="7" height="7" rx="1.5"/>
                     <rect x="14" y="3" width="7" height="7" rx="1.5"/>
                     <rect x="14" y="14" width="7" height="7" rx="1.5"/>
@@ -1527,9 +1527,9 @@
 
               <!-- 4. YouTube or Direct Links -->
               <button type="button" class="load-media-card" data-action="youtube" title="YouTube or direct video links">
-                <div class="load-media-icon-wrap" style="color: #ef4444;">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="#ef4444">
-                    <polygon points="5 3 19 12 5 21 5 3"/>
+                <div class="load-media-icon-wrap" aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="6 3 20 12 6 21 6 3"/>
                   </svg>
                 </div>
                 <div class="load-media-info">
@@ -1543,17 +1543,17 @@
             <!-- Secondary Utility Row -->
             <div class="load-media-secondary-row">
               <button type="button" class="load-media-subcard load-media-card" data-action="local" title="From your device">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <ellipse cx="12" cy="5" rx="9" ry="3"/>
-                  <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
-                  <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                  <path d="m10 15 5-3-5-3v6Z"/>
                 </svg>
                 <span>Local Video File</span>
               </button>
 
               <button type="button" class="load-media-subcard load-media-card" data-action="wallpaper" title="Customize Stage Wallpaper">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ec4899" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
                   <circle cx="8.5" cy="8.5" r="1.5"/>
                   <polyline points="21 15 16 10 5 21"/>
                 </svg>
