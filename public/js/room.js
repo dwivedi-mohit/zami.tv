@@ -78,6 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Stage Wallpaper Management & Room Defaults
   // --------------------------------------------------------------------------
   const STAGE_WALLPAPER_PRESETS = [
+    { id: 'summer-outfit', name: 'Summer Outfit Inspiration (Video)', url: '/video/summer-outfit-bg.mp4', poster: '/img/summer_outfit_poster.jpg', isVideo: true },
     { id: 'tv-static', name: 'Television Static (Video)', url: '/video/tv-static.mp4', poster: '/img/tv_static_poster.jpg', isVideo: true },
     { id: 'astronaut', name: 'Cosmic Astronaut', url: '/img/backdrop_astronaut.jpg' },
     { id: 'sunset', name: 'Sunset Silhouettes', url: '/img/backdrop_sunset.jpg' },
@@ -95,11 +96,11 @@ document.addEventListener('DOMContentLoaded', () => {
   function getRoomDefaultBackdrop(rId) {
     try {
       const localSaved = localStorage.getItem('zami_room_backdrop_' + rId);
-      if (localSaved && localSaved !== '/img/backdrop_astronaut.jpg' && localSaved !== '/img/backdrop_sunset.jpg' && localSaved !== '/img/backdrop_neon.jpg') {
+      if (localSaved && localSaved !== '/video/tv-static.mp4' && localSaved !== '/img/backdrop_astronaut.jpg' && localSaved !== '/img/backdrop_sunset.jpg' && localSaved !== '/img/backdrop_neon.jpg') {
         return localSaved;
       }
     } catch (e) {}
-    return '/video/tv-static.mp4';
+    return '/video/summer-outfit-bg.mp4';
   }
 
   let currentStageBackdrop = getRoomDefaultBackdrop(roomId);

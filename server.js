@@ -288,7 +288,7 @@ app.use('/libs/hls', express.static(path.join(__dirname, 'node_modules/hls.js/di
 const rooms = new Map();
 
 function getDefaultRoomBackdrop(roomId) {
-  return '/video/tv-static.mp4';
+  return '/video/summer-outfit-bg.mp4';
 }
 
 /**
