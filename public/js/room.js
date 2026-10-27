@@ -2084,6 +2084,35 @@ function setupCinemaDiscoveryHub(socket) {
     }
   }
 
+  const RAVE_SHEET_SOURCES = ['youtube', 'netflix', 'prime', 'hotstar', 'mx', 'twitch', 'crunchyroll', 'movies', 'url', 'local'];
+
+  function openRaveSourceSheet(sourceName) {
+    const clean = (sourceName || 'youtube').toLowerCase();
+    const iframe = document.getElementById('yt-official-iframe');
+    const container = document.getElementById('cinema-hub-container');
+
+    if (iframe) {
+      if (clean === 'youtube') {
+        iframe.src = '/app/youtube';
+      } else {
+        iframe.src = `/app/source?app=${encodeURIComponent(clean)}`;
+      }
+    }
+
+    const views = document.querySelectorAll('.vault-view');
+    views.forEach(v => v.classList.remove('active'));
+    const targetView = document.getElementById('hub-view-youtube');
+    if (targetView) targetView.classList.add('active');
+
+    if (container) {
+      container.classList.add('youtube-sheet-mode');
+      container.classList.remove('menu-mode');
+    }
+    openModal();
+    closeDrawer();
+  }
+  window.openRaveSourceSheet = openRaveSourceSheet;
+
   function showVaultView(viewName) {
     if (viewName === 'screenshare') {
       closeModal();
@@ -2101,6 +2130,11 @@ function setupCinemaDiscoveryHub(socket) {
       return;
     }
 
+    if (RAVE_SHEET_SOURCES.includes(viewName)) {
+      openRaveSourceSheet(viewName);
+      return;
+    }
+
     const container = document.getElementById('cinema-hub-container');
     const views = document.querySelectorAll('.vault-view');
     views.forEach(v => v.classList.remove('active'));
@@ -2115,6 +2149,7 @@ function setupCinemaDiscoveryHub(socket) {
       if (container) {
         container.classList.add('menu-mode');
         container.classList.remove('content-mode');
+        container.classList.remove('youtube-sheet-mode');
       }
       if (btnBack) btnBack.style.display = 'none';
       if (modalTitle) modalTitle.textContent = 'Load Media';
@@ -2122,6 +2157,7 @@ function setupCinemaDiscoveryHub(socket) {
       if (container) {
         container.classList.remove('menu-mode');
         container.classList.add('content-mode');
+        container.classList.remove('youtube-sheet-mode');
       }
       if (btnBack) btnBack.style.display = 'inline-flex';
 
@@ -2133,20 +2169,8 @@ function setupCinemaDiscoveryHub(socket) {
         local: 'Local Video'
       };
       if (modalTitle) modalTitle.textContent = titles[viewName] || 'Load Media';
-
-      if (viewName === 'movies') {
-        const searchInput = document.getElementById('input-catalog-search');
-        if (searchInput && !searchInput.value) {
-          renderMovieGrid(REFERENCE_POPULAR_MOVIES);
-        }
-      }
     }
 
-    if (viewName === 'youtube') {
-      if (container) container.classList.add('youtube-sheet-mode');
-    } else {
-      if (container) container.classList.remove('youtube-sheet-mode');
-    }
     closeDrawer();
   }
 
@@ -2331,17 +2355,10 @@ function setupCinemaDiscoveryHub(socket) {
       const appKey = item.dataset.app;
       const appName = item.querySelector('.app-label')?.textContent || appKey;
       closeModal();
-      if (appKey === 'youtube') {
-        showVaultView('youtube');
-        openModal();
-        return;
-      }
-      const targetUrl = APP_URLS[appKey] || 'https://www.youtube.com';
-      if (window.openInbuiltBrowser) {
-        window.openInbuiltBrowser(targetUrl);
-        window.showToast(`Launching ${appName} on cinema stage...`, 'info', 3000);
+      if (window.openRaveSourceSheet) {
+        window.openRaveSourceSheet(appKey);
       } else {
-        window.open(targetUrl, '_blank');
+        showVaultView(appKey);
       }
     });
   }
@@ -5175,32 +5192,22 @@ function initRaveSuite(socket, roomId) {
     crunchyroll: 'https://www.crunchyroll.com'
   };
 
-  // Rave App Buttons (Stage Grid + Dock) - Opens original website directly embedded on stage
+  // Rave App Buttons (Stage Grid + Dock) - Opens matching Rave sheet for all sources
   document.querySelectorAll('.rave-btn-app').forEach(btn => {
     btn.addEventListener('click', () => {
       const app = btn.dataset.app;
       document.querySelectorAll('.rave-btn-app').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
 
-      if (app === 'youtube') {
-        showVaultView('youtube');
-        openModal();
+      if (app === 'vault') {
+        openRaveSourceSheet('movies');
         return;
       }
-
-      if (appTargetUrls[app]) {
-        openInbuiltBrowser(appTargetUrls[app]);
-      } else if (app === 'vault') {
-        hideInbuiltAppStage();
-        if (browserContainer) browserContainer.style.display = 'none';
-        if (modalVault) {
-          modalVault.classList.add('active');
-          const curatedTab = document.querySelector('.hub-nav-tab[data-tab="curated"]');
-          if (curatedTab) curatedTab.click();
-        }
-      } else if (app === 'browser') {
-        openInbuiltBrowser('https://www.youtube.com');
+      if (app === 'browser') {
+        openRaveSourceSheet('url');
+        return;
       }
+      openRaveSourceSheet(app);
     });
   });
 

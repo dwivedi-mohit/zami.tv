@@ -672,20 +672,8 @@ app.get('/app/youtube', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'youtube-app.html'));
 });
 
-app.get('/app/prime', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'prime-app.html'));
-});
-
-app.get('/app/netflix', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'netflix-app.html'));
-});
-
-app.get('/app/hotstar', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'hotstar-app.html'));
-});
-
-app.get('/app/mx', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'mx-app.html'));
+app.get(['/app/source', '/app/prime', '/app/netflix', '/app/hotstar', '/app/mx', '/app/twitch', '/app/crunchyroll', '/app/movies', '/app/url', '/app/local'], (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'source-app.html'));
 });
 
 app.get('/api/proxy-web', (req, res) => {

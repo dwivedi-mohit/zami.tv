@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ZAMI Watch Party — Media Source</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --src-bg: #141414;
+      --src-surface: #1f1f1f;
+      --src-surface-hover: #2a2a2a;
+      --src-text: #ffffff;
+      --src-text-muted: #8e8e8e;
+      --src-accent: #e50914;
+      --src-accent-hover: #b80710;
+      --src-pill-bg: #2a2a2a;
+      --src-border: rgba(255, 255, 255, 0.08);
+      --src-cyan: #00bcd4;
+      --src-card-bg: #1a1a1a;
+      --src-card-shadow: 0 10px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    html, body {
+      background: var(--src-bg);
+      color: var(--src-text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      width: 100%;
+      max-width: 100%;
+      height: 100vh;
+      overflow-x: hidden;
+      overflow-y: hidden;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    /* TOP BAR (< × Title Action) */
+    .src-modal-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 48px;
+      padding: 0 16px;
+      background: var(--src-bg);
+      flex-shrink: 0;
+      z-index: 50;
+      border-bottom: 1px solid var(--src-border);
+    }
+
+    .src-topbar-nav-group {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .btn-topbar-nav {
+      background: transparent;
+      border: none;
+      color: var(--src-text);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+      line-height: 1;
+      transition: opacity 0.15s;
+      touch-action: manipulation;
+    }
+
+    .btn-topbar-nav:active {
+      opacity: 0.6;
+    }
+
+    .src-modal-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--src-text);
+      letter-spacing: -0.01em;
+    }
+
+    .btn-paste-link {
+      background: transparent;
+      border: none;
+      color: var(--src-cyan);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 6px 4px;
+      transition: color 0.15s;
+      touch-action: manipulation;
+    }
+
+    .btn-paste-link:hover {
+      filter: brightness(1.15);
+    }
+
+    /* SUB-HEADER (Brand Wordmark + Search Icon) */
+    .src-sub-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 48px;
+      padding: 0 16px;
+      background: var(--src-bg);
+      flex-shrink: 0;
+    }
+
+    .src-brand-logo-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      touch-action: manipulation;
+      color: var(--src-text);
+    }
+
+    .src-brand-logo-text {
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      line-height: 1;
+      color: var(--src-text);
+    }
+
+    .btn-search-icon {
+      background: transparent;
+      border: none;
+      color: var(--src-text);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px;
+      border-radius: 50%;
+      transition: background 0.15s;
+      touch-action: manipulation;
+    }
+
+    .btn-search-icon:active {
+      background: var(--src-pill-bg);
+    }
+
+    /* SCROLLABLE VIEWPORT */
+    .src-viewport {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      background: var(--src-bg);
+      padding-bottom: 60px; /* space for bottom nav */
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* HOME GETTING STARTED STATE */
+    .src-home-getting-started {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px 16px 32px 16px;
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    /* Big Center Brand Emblem */
+    .src-center-logo-wrap {
+      margin: 32px 0 24px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .src-big-emblem {
+      width: 88px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      filter: drop-shadow(0 6px 18px var(--src-accent-glow, rgba(229, 9, 20, 0.4)));
+    }
+
+    /* Search Row */
+    .src-search-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      margin-bottom: 24px;
+    }
+
+    .btn-round-action {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--src-pill-bg);
+      border: 1px solid var(--src-border);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--src-text);
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background 0.15s, transform 0.1s;
+      touch-action: manipulation;
+    }
+
+    .btn-round-action:active {
+      transform: scale(0.95);
+    }
+
+    .src-search-pill-form {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      background: var(--src-pill-bg);
+      border: 1px solid var(--src-border);
+      border-radius: 24px;
+      height: 44px;
+      padding: 0 16px;
+      min-width: 0;
+      transition: background 0.15s, box-shadow 0.15s, border-color 0.15s;
+    }
+
+    .src-search-pill-form:focus-within {
+      background: var(--src-surface);
+      border-color: var(--src-accent);
+      box-shadow: 0 0 0 1.5px var(--src-accent);
+    }
+
+    .src-search-pill-input {
+      width: 100%;
+      border: none;
+      background: transparent;
+      color: var(--src-text);
+      font-size: 14.5px;
+      outline: none;
+    }
+
+    .src-search-pill-input::placeholder {
+      color: var(--src-text-muted);
+    }
+
+    /* Floating Card */
+    .src-getting-started-card {
+      background: var(--src-card-bg);
+      border-radius: 22px;
+      box-shadow: var(--src-card-shadow);
+      border: 1px solid var(--src-border);
+      width: 100%;
+      padding: 30px 22px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .src-started-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--src-text);
+      margin-bottom: 10px;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+    }
+
+    .src-started-desc {
+      font-size: 14px;
+      color: var(--src-text-muted);
+      line-height: 1.45;
+      max-width: 320px;
+      margin: 0 auto;
+    }
+
+    /* FEED SECTION */
+    .src-feed-section {
+      width: 100%;
+      margin-top: 12px;
+    }
+
+    .src-feed-heading {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--src-text);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 4px;
+    }
+
+    .src-video-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .src-video-card {
+      display: flex;
+      flex-direction: column;
+      background: var(--src-card-bg);
+      border-radius: 14px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 1px solid var(--src-border);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .src-video-card:active {
+      transform: scale(0.985);
+    }
+
+    .src-thumb-wrapper {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #111;
+      overflow: hidden;
+    }
+
+    .src-thumb-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .src-duration-badge {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      background: rgba(0, 0, 0, 0.85);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .src-badge-tag {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: var(--src-accent);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    }
+
+    .src-card-actions {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      display: flex;
+      gap: 6px;
+      z-index: 5;
+    }
+
+    .btn-action-party {
+      background: var(--src-accent);
+      color: #ffffff;
+      border: none;
+      border-radius: 16px;
+      padding: 5px 12px;
+      font-size: 11px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+      touch-action: manipulation;
+    }
+
+    .btn-action-queue {
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(6px);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 16px;
+      padding: 5px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    .src-card-info {
+      padding: 12px 14px;
+      display: flex;
+      gap: 12px;
+    }
+
+    .src-avatar-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--src-pill-bg);
+      color: var(--src-text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 14px;
+      flex-shrink: 0;
+      border: 1px solid var(--src-border);
+    }
+
+    .src-card-text {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .src-card-title {
+      font-size: 14.5px;
+      font-weight: 600;
+      color: var(--src-text);
+      line-height: 19px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-bottom: 4px;
+    }
+
+    .src-card-meta {
+      font-size: 12px;
+      color: var(--src-text-muted);
+      line-height: 16px;
+    }
+
+    /* BOTTOM NAVIGATION BAR */
+    .src-bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 52px;
+      background: var(--src-bg);
+      border-top: 1px solid var(--src-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      z-index: 100;
+    }
+
+    .src-bottom-tab {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      background: transparent;
+      border: none;
+      color: var(--src-text-muted);
+      font-size: 11px;
+      cursor: pointer;
+      flex: 1;
+      padding: 4px 0;
+      touch-action: manipulation;
+      transition: color 0.15s;
+    }
+
+    .src-bottom-tab.active {
+      color: var(--src-text);
+      font-weight: 700;
+    }
+
+    .src-bottom-tab.active svg {
+      color: var(--src-accent);
+      stroke: var(--src-accent);
+    }
+
+    .src-bottom-tab svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    /* PASTE LINK MODAL */
+    dialog.src-paste-modal {
+      border: none;
+      border-radius: 20px;
+      background: var(--src-surface);
+      color: var(--src-text);
+      padding: 24px;
+      max-width: 440px;
+      width: 90%;
+      margin: auto;
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
+      border: 1px solid var(--src-border);
+    }
+
+    dialog.src-paste-modal:modal {
+      overscroll-behavior: contain;
+    }
+
+    dialog.src-paste-modal::backdrop {
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(4px);
+      overflow: hidden;
+      overscroll-behavior: contain;
+    }
+
+    .src-paste-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .src-paste-header h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--src-text);
+    }
+
+    .btn-close-paste {
+      background: transparent;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--src-text-muted);
+      line-height: 1;
+    }
+
+    .src-paste-input {
+      width: 100%;
+      height: 46px;
+      border: 1.5px solid var(--src-border);
+      border-radius: 12px;
+      padding: 0 14px;
+      font-size: 14px;
+      color: var(--src-text);
+      background: var(--src-bg);
+      outline: none;
+      margin-bottom: 16px;
+    }
+
+    .src-paste-input:focus {
+      border-color: var(--src-cyan);
+    }
+
+    .src-paste-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .btn-paste-action {
+      border-radius: 18px;
+      padding: 9px 18px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      touch-action: manipulation;
+    }
+
+    .btn-paste-action.primary {
+      background: var(--src-accent);
+      color: #fff;
+    }
+
+    .btn-paste-action.secondary {
+      background: var(--src-pill-bg);
+      color: var(--src-text);
+      border: 1px solid var(--src-border);
+    }
+
+    /* TOAST */
+    .src-toast {
+      position: fixed;
+      bottom: 64px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #0f0f0f;
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 10px 20px;
+      border-radius: 24px;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      z-index: 9999;
+      opacity: 0;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+      max-width: 90%;
+      text-align: center;
+    }
+
+    .src-toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP BAR (< × Title Action) -->
+  <header class="src-modal-topbar">
+    <div class="src-topbar-nav-group">
+      <button type="button" class="btn-topbar-nav" id="btn-topbar-back" aria-label="Go Back">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+
+      <button type="button" class="btn-topbar-nav" id="btn-topbar-close" aria-label="Close">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+
+      <span class="src-modal-title" id="src-topbar-title">Media Source</span>
+    </div>
+
+    <button type="button" class="btn-paste-link" id="btn-open-paste">Paste link</button>
+  </header>
+
+  <!-- SUB-HEADER (Brand Logo + Search Magnifier Icon) -->
+  <div class="src-sub-header">
+    <button type="button" class="src-brand-logo-btn" id="btn-brand-home" aria-label="Home">
+      <div id="src-brand-logo-icon"></div>
+      <span class="src-brand-logo-text" id="src-brand-logo-text">Platform</span>
+    </button>
+
+    <button type="button" class="btn-search-icon" id="btn-header-search" aria-label="Search">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="7.5"></circle>
+        <line x1="21" y1="21" x2="16.5" y2="16.5"></line>
+      </svg>
+    </button>
+  </div>
+
+  <!-- MAIN VIEWPORT -->
+  <main class="src-viewport" id="src-viewport">
+
+    <div class="src-home-getting-started" id="src-view-main">
+      <!-- Big Center Brand Emblem -->
+      <div class="src-center-logo-wrap">
+        <div class="src-big-emblem" id="src-center-emblem"></div>
+      </div>
+
+      <!-- Search Row: [🧭 Compass] [Search Input] [🎙️ Mic] -->
+      <div class="src-search-row">
+        <button type="button" class="btn-round-action" id="btn-explore-compass" title="Explore Trending" aria-label="Explore Trending">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9.5"></circle>
+            <polygon points="14.8,9.2 13.2,13.8 9.2,14.8 10.8,10.2" fill="currentColor"></polygon>
+          </svg>
+        </button>
+
+        <form class="src-search-pill-form" id="src-search-form" role="search">
+          <input type="text" class="src-search-pill-input" id="src-search-input" placeholder="Search..." autocomplete="off" aria-label="Search">
+        </form>
+
+        <button type="button" class="btn-round-action" id="btn-voice-mic" title="Voice Search" aria-label="Voice Search">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path>
+            <path d="M19 10v1a7 7 0 0 1-14 0v-1"></path>
+            <line x1="12" y1="18" x2="12" y2="22"></line>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Floating Card: Try searching to get started -->
+      <div class="src-getting-started-card">
+        <h2 class="src-started-title" id="src-card-title">Try searching to get<br>started</h2>
+        <p class="src-started-desc" id="src-card-desc">Watch videos and movies to help us build a feed you'll love.</p>
+      </div>
+
+      <!-- Feed / Catalog Section -->
+      <div class="src-feed-section">
+        <div class="src-feed-heading">
+          <span id="src-feed-title">Trending Now</span>
+          <span style="font-size: 12px; color: var(--src-text-muted);" id="src-feed-count"></span>
+        </div>
+        <div class="src-video-list" id="src-video-list"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- BOTTOM NAVIGATION BAR -->
+  <nav class="src-bottom-nav" id="src-bottom-nav" role="tablist" aria-label="Source Navigation"></nav>
+
+  <!-- PASTE LINK DIALOG -->
+  <dialog id="src-paste-dialog" class="src-paste-modal" closedby="any" aria-labelledby="paste-dialog-title">
+    <div class="src-paste-header">
+      <h3 id="paste-dialog-title">Paste Video Link</h3>
+      <button type="button" class="btn-close-paste" id="btn-close-paste" aria-label="Close">&times;</button>
+    </div>
+    <div>
+      <input type="url" id="src-paste-input" class="src-paste-input" placeholder="https://..." autocomplete="off">
+      <div class="src-paste-actions">
+        <button type="button" class="btn-paste-action secondary" id="btn-paste-queue">Add to Queue</button>
+        <button type="button" class="btn-paste-action primary" id="btn-paste-play">Screen to Party</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- TOAST -->
+  <div class="src-toast" id="src-toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (function() {
+      // SOURCE CONFIGURATIONS DATABASE
+      const SOURCES = {
+        netflix: {
+          name: 'Netflix',
+          theme: {
+            bg: '#141414',
+            surface: '#1f1f1f',
+            accent: '#e50914',
+            accentGlow: 'rgba(229, 9, 20, 0.45)',
+            text: '#ffffff',
+            cardBg: '#181818',
+            pillBg: '#262626'
+          },
+          title: 'Netflix',
+          logoText: 'NETFLIX',
+          logoIcon: `<svg viewBox="0 0 24 30" width="22" height="28" fill="none"><path d="M0 0h5.5l9 22.5h.3V0h5.5v30h-5.5L5.8 7.5h-.3V30H0V0z" fill="#e50914"/></svg>`,
+          centerEmblem: `<svg viewBox="0 0 60 76" width="60" height="76" fill="none"><path d="M0 0h14l22.5 56h.7V0H51v76H37L14.5 20h-.7v56H0V0z" fill="#e50914"/></svg>`,
+          placeholder: 'Search Netflix movies, series...',
+          cardTitle: 'Try searching to get<br>started',
+          cardDesc: 'Stream Netflix Originals and blockbusters together with synchronized room playback.',
+          tabs: [
+            { id: 'home', label: 'Home', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>` },
+            { id: 'series', label: 'Series', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="15" rx="2"/><polyline points="17 2 12 7 7 2"/></svg>` },
+            { id: 'movies', label: 'Movies', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg>` },
+            { id: 'list', label: 'My List', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>` }
+          ],
+          catalog: [
+            { id: 'b9EkMc79ZSU', title: 'Stranger Things 4 | Official Trailer', channel: 'Netflix', duration: '3:05', tag: 'Top 10', meta: '4 Seasons • 98% Match • Sci-Fi', thumb: 'https://images.unsplash.com/photo-1618336753974-aae8e04506aa?auto=format&fit=crop&w=720&q=80' },
+            { id: 'oqxAJKy0ii4', title: 'Squid Game | Season 2 Announcement', channel: 'Netflix', duration: '2:12', tag: 'Trending', meta: '99% Match • Suspense • Thriller', thumb: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=720&q=80' },
+            { id: 'Di310BC87gk', title: 'Wednesday | Official Teaser Trailer', channel: 'Netflix', duration: '2:01', tag: 'Popular', meta: '97% Match • Mystery • Comedy', thumb: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=720&q=80' },
+            { id: '_InqQJRqGW4', title: 'Money Heist: Part 5 | Final Season', channel: 'Netflix', duration: '2:45', tag: 'Masterpiece', meta: '5 Seasons • 96% Match • Action', thumb: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=720&q=80' },
+            { id: 'rrwycJ08PSA', title: 'Dark | Complete Trilogy Trailer', channel: 'Netflix', duration: '3:15', tag: 'Sci-Fi Classic', meta: '3 Seasons • 95% Match • Mystery', thumb: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=720&q=80' }
+          ]
+        },
+
+        prime: {
+          name: 'Prime Video',
+          theme: {
+            bg: '#0b1118',
+            surface: '#151f2b',
+            accent: '#00a8e1',
+            accentGlow: 'rgba(0, 168, 225, 0.4)',
+            text: '#ffffff',
+            cardBg: '#111923',
+            pillBg: '#1c2837'
+          },
+          title: 'Prime Video',
+          logoText: 'prime video',
+          logoIcon: `<svg viewBox="0 0 32 20" width="30" height="19" fill="none"><path d="M4 14c7 4 17 4 24-2" stroke="#00a8e1" stroke-width="2.5" stroke-linecap="round"/><path d="M25 8l4 4-5 1" stroke="#00a8e1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+          centerEmblem: `<svg viewBox="0 0 68 44" width="68" height="44" fill="none"><rect width="68" height="44" rx="14" fill="#00a8e1"/><polygon points="28,14 46,22 28,30" fill="#ffffff"/></svg>`,
+          placeholder: 'Search Prime Video, Amazon Originals...',
+          cardTitle: 'Try searching to get<br>started',
+          cardDesc: 'Watch Prime Video blockbusters and Amazon Originals with friends in real-time.',
+          tabs: [
+            { id: 'home', label: 'Home', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>` },
+            { id: 'originals', label: 'Originals', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>` },
+            { id: 'movies', label: 'Movies', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/></svg>` },
+            { id: 'watchlist', label: 'Watchlist', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>` }
+          ],
+          catalog: [
+            { id: 'MN8fFM14538', title: 'The Boys Season 4 | Official Trailer', channel: 'Prime Video', duration: '2:38', tag: 'Amazon Original', meta: '4 Seasons • 18+ • Action', thumb: 'https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=720&q=80' },
+            { id: 'Vbg7Yo4VUvo', title: 'Fallout | Official Teaser Trailer', channel: 'Prime Video', duration: '2:34', tag: 'New Series', meta: 'Season 1 • Sci-Fi Adventure', thumb: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=720&q=80' },
+            { id: 'GSY5aJ9_5tI', title: 'Reacher Season 2 | Official Trailer', channel: 'Prime Video', duration: '2:24', tag: 'Top 10', meta: '2 Seasons • Crime • Thriller', thumb: 'https://images.unsplash.com/photo-1509281373149-e957c6296406?auto=format&fit=crop&w=720&q=80' },
+            { id: 'u371n4xZqK0', title: 'The Lord of the Rings: The Rings of Power', channel: 'Prime Video', duration: '3:12', tag: 'Epic Fantasy', meta: 'Season 2 • Fantasy Drama', thumb: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=720&q=80' },
+            { id: '9uK40rJ9r7k', title: 'Mirzapur Season 3 | Official Trailer', channel: 'Prime Video', duration: '2:15', tag: 'Trending', meta: '3 Seasons • Crime Thriller', thumb: 'https://images.unsplash.com/photo-1542204165-65bf26472b9b?auto=format&fit=crop&w=720&q=80' }
+          ]
+        },
+
+        hotstar: {
+          name: 'JioHotstar',
+          theme: {
+            bg: '#0c111b',
+            surface: '#151d2e',
+            accent: '#00d2ff',
+            accentGlow: 'rgba(0, 210, 255, 0.4)',
+            text: '#ffffff',
+            cardBg: '#121824',
+            pillBg: '#1e293b'
+          },
+          title: 'JioHotstar',
+          logoText: 'Disney+ HOTSTAR',
+          logoIcon: `<svg viewBox="0 0 32 22" width="30" height="21" fill="none"><path d="M4 18 C 10 4, 22 2, 28 8" stroke="#00d2ff" stroke-width="2.5" stroke-linecap="round"/><polygon points="26,10 27,13 30,13 28,15 28.5,18 26,16 23.5,18 24,15 22,13 25,13" fill="#ffb703"/></svg>`,
+          centerEmblem: `<svg viewBox="0 0 68 44" width="68" height="44" fill="none"><rect width="68" height="44" rx="14" fill="#00d2ff"/><polygon points="28,14 46,22 28,30" fill="#0c111b"/></svg>`,
+          placeholder: 'Search Hotstar, Marvel, Sports...',
+          cardTitle: 'Try searching to get<br>started',
+          cardDesc: 'Stream Disney+, Marvel Studios, and Hotstar Specials live with synchronized stereo sound.',
+          tabs: [
+            { id: 'home', label: 'Home', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>` },
+            { id: 'sports', label: 'Sports', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M4.93 4.93l4.24 4.24m5.66 5.66l4.24 4.24M19.07 4.93l-4.24 4.24m-5.66 5.66l-4.24 4.24"/></svg>` },
+            { id: 'movies', label: 'Movies', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2"/><line x1="7" y1="2" x2="7" y2="22"/></svg>` },
+            { id: 'watchlist', label: 'Watchlist', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>` }
+          ],
+          catalog: [
+            { id: 'dug56u8NN7g', title: 'Marvel Studios Loki Season 2 Trailer', channel: 'Disney+ Hotstar', duration: '2:25', tag: 'Hotstar Special', meta: 'Marvel Studios • Sci-Fi Action', thumb: 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=720&q=80' },
+            { id: 'aWzlQ2N6qqg', title: 'ICC Cricket World Cup Thrilling Highlights', channel: 'Hotstar Sports', duration: '12:40', tag: 'Live Sports', meta: '1080p 60fps • Cricket', thumb: 'https://images.unsplash.com/photo-1531415074968-036ba1b575da?auto=format&fit=crop&w=720&q=80' },
+            { id: 'odM92ap8_c0', title: 'Special Ops 1.5 | Official Trailer', channel: 'Hotstar Specials', duration: '2:10', tag: 'Espionage', meta: 'Kay Kay Menon • Thriller', thumb: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=720&q=80' },
+            { id: 'aSiDu3Ywi8E', title: 'The Mandalorian Season 3 | Star Wars', channel: 'Disney+ Hotstar', duration: '2:14', tag: 'Star Wars', meta: 'Lucasfilm • Space Western', thumb: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=720&q=80' }
+          ]
+        },
+
+        mx: {
+          name: 'MX Player',
+          theme: {
+            bg: '#0d131f',
+            surface: '#151e30',
+            accent: '#0066ff',
+            accentGlow: 'rgba(0, 102, 255, 0.45)',
+            text: '#ffffff',
+            cardBg: '#121927',
+            pillBg: '#1c283f'
+          },
+          title: 'MX Player',
+          logoText: 'MX PLAYER',
+          logoIcon: `<svg viewBox="0 0 28 22" width="28" height="22" fill="none"><rect width="28" height="22" rx="6" fill="#0066ff"/><text x="14" y="16" font-family="sans-serif" font-size="12" font-weight="900" fill="#fff" text-anchor="middle">MX</text></svg>`,
+          centerEmblem: `<svg viewBox="0 0 68 44" width="68" height="44" fill="none"><rect width="68" height="44" rx="14" fill="#0066ff"/><polygon points="28,14 46,22 28,30" fill="#ffffff"/></svg>`,
+          placeholder: 'Search MX Player web shows, dramas...',
+          cardTitle: 'Try searching to get<br>started',
+          cardDesc: 'Watch trending MX Original series and regional blockbusters with whole room co-viewing.',
+          tabs: [
+            { id: 'home', label: 'Home', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>` },
+            { id: 'shows', label: 'Shows', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="15" rx="2"/></svg>` },
+            { id: 'movies', label: 'Movies', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2"/></svg>` },
+            { id: 'desi', label: 'Desi Hit', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>` }
+          ],
+          catalog: [
+            { id: 'v1U_KzW7qjM', title: 'Aashram Season 3 | Official Trailer', channel: 'MX Player', duration: '2:40', tag: 'MX Original', meta: 'Bobby Deol • Crime Drama', thumb: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=720&q=80' },
+            { id: 'Yq2vX_y8F68', title: 'Roohaniyat | Romantic Thriller Season 2', channel: 'MX Player', duration: '2:10', tag: 'Trending', meta: 'Romance • Mystery', thumb: 'https://images.unsplash.com/photo-1518173946687-a4c8892bbd9f?auto=format&fit=crop&w=720&q=80' },
+            { id: 'p3E0TzY5qLk', title: 'Bhaukaal 2 | IPS Navniet Sekera Saga', channel: 'MX Player', duration: '2:18', tag: 'Action Crime', meta: 'Mohit Raina • Intense Drama', thumb: 'https://images.unsplash.com/photo-1509281373149-e957c6296406?auto=format&fit=crop&w=720&q=80' },
+            { id: 'm4X8K2Q1v9L', title: 'Dharavi Bank | Official Crime Series', channel: 'MX Player', duration: '2:30', tag: 'Blockbuster', meta: 'Suniel Shetty • Gangster Thriller', thumb: 'https://images.unsplash.com/photo-1542204165-65bf26472b9b?auto=format&fit=crop&w=720&q=80' }
+          ]
+        },
+
+        movies: {
+          name: 'Movies & Series',
+          theme: {
+            bg: '#121215',
+            surface: '#1c1c22',
+            accent: '#f59e0b',
+            accentGlow: 'rgba(245, 158, 11, 0.45)',
+            text: '#ffffff',
+            cardBg: '#18181e',
+            pillBg: '#26262e'
+          },
+          title: 'Movies & Series',
+          logoText: 'CINEMA VAULT',
+          logoIcon: `<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#f59e0b" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg>`,
+          centerEmblem: `<svg viewBox="0 0 68 44" width="68" height="44" fill="none"><rect width="68" height="44" rx="14" fill="#f59e0b"/><polygon points="28,14 46,22 28,30" fill="#121215"/></svg>`,
+          placeholder: 'Search 10,000+ Movies & Series...',
+          cardTitle: 'Try searching to get<br>started',
+          cardDesc: 'Stream Hollywood, Bollywood, and world cinema in full 1080p with whole room sync.',
+          tabs: [
+            { id: 'popular', label: 'Popular', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>` },
+            { id: 'toprated', label: 'Top Rated', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20m10-10H2"/></svg>` },
+            { id: 'series', label: 'TV Shows', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="15" rx="2"/></svg>` },
+            { id: 'watchlist', label: 'Saved', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>` }
+          ],
+          catalog: [
+            { id: 'Way9Dexny3w', title: 'Dune: Part Two | Official Trailer', channel: 'Warner Bros.', duration: '3:01', tag: 'IMDb 8.6', meta: '2024 • Timothée Chalamet • Sci-Fi', thumb: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=720&q=80' },
+            { id: 'uYPbbksJxIg', title: 'Oppenheimer | New Trailer', channel: 'Universal Pictures', duration: '3:07', tag: 'Oscar Winner', meta: '2023 • Christopher Nolan • Drama', thumb: 'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?auto=format&fit=crop&w=720&q=80' },
+            { id: 'zSWdZVtXT7E', title: 'Interstellar | Official IMAX Trailer', channel: 'Paramount', duration: '2:32', tag: 'IMDb 8.7', meta: '2014 • Matthew McConaughey • Sci-Fi', thumb: 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=720&q=80' },
+            { id: 'YoHD9XEInc0', title: 'Inception | 10th Anniversary Trailer', channel: 'Warner Bros.', duration: '2:28', tag: 'IMDb 8.8', meta: '2010 • Leonardo DiCaprio • Sci-Fi', thumb: 'https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?auto=format&fit=crop&w=720&q=80' }
+          ]
+        },
+
+        url: {
+          name: 'Direct URL',
+          theme: {
+            bg: '#0e1117',
+            surface: '#171d27',
+            accent: '#10b981',
+            accentGlow: 'rgba(16, 185, 129, 0.45)',
+            text: '#ffffff',
+            cardBg: '#131822',
+            pillBg: '#1f2937'
+          },
+          title: 'Direct Video URL',
+          logoText: 'UNIVERSAL STREAM',
+          logoIcon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#10b981" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`,
+          centerEmblem: `<svg viewBox="0 0 68 44" width="68" height="44" fill="none"><rect width="68" height="44" rx="14" fill="#10b981"/><path d="M26 22h16m-10-6l6 6-6 6" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+          placeholder: 'Paste MP4, HLS, M3U8, or Video URL...',
+          cardTitle: 'Paste URL to get<br>started',
+          cardDesc: 'Screen any direct MP4, WebM, HLS (.m3u8), or video link with zero lag across the entire room.',
+          tabs: [
+            { id: 'url', label: 'Direct URL', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>` },
+            { id: 'hls', label: 'HLS Live', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.83a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/></svg>` },
+            { id: 'presets', label: 'Presets', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/></svg>` }
+          ],
+          catalog: [
+            { id: 'aqz-KE-bpKQ', rawUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', title: 'Big Buck Bunny (4K Ultra HD MP4)', channel: 'Blender Foundation', duration: '9:56', tag: 'MP4 60FPS', meta: 'Universal Direct Stream • Zero Lag', thumb: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=720&q=80' },
+            { id: 'fJ9rUzIMcZQ', rawUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4', title: 'Tears of Steel (VFX Sci-Fi Showcase)', channel: 'Blender Open Movie', duration: '12:14', tag: 'HLS / MP4', meta: '1080p Master Stream • Cinema Sync', thumb: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=720&q=80' },
+            { id: 'Z7JlVX1CJtY', rawUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4', title: 'Elephants Dream (Classic Open Movie)', channel: 'Orange Open Project', duration: '10:53', tag: 'WebM / MP4', meta: 'High Bitrate Stereo Stream', thumb: 'https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?auto=format&fit=crop&w=720&q=80' }
+          ]
+        },
+
+        local: {
+          name: 'Local Video',
+          theme: {
+            bg: '#0f121a',
+            surface: '#181d2a',
+            accent: '#8b5cf6',
+            accentGlow: 'rgba(139, 92, 246, 0.45)',
+            text: '#ffffff',
+            cardBg: '#141824',
+            pillBg: '#22293b'
+          },
+          title: 'Local Video File',
+          logoText: 'LOCAL CINEMA',
+          logoIcon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#8b5cf6" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>`,
+          centerEmblem: `<svg viewBox="0 0 68 44" width="68" height="44" fill="none"><rect width="68" height="44" rx="14" fill="#8b5cf6"/><polygon points="28,14 46,22 28,30" fill="#ffffff"/></svg>`,
+          placeholder: 'Select a video file from your device...',
+          cardTitle: 'Select file to get<br>started',
+          cardDesc: 'Stream any video file (MP4, MKV, WebM, MOV) directly to room members via P2P zero-upload streaming.',
+          tabs: [
+            { id: 'select', label: 'Select File', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>` },
+            { id: 'p2p', label: 'P2P Mesh', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>` },
+            { id: 'guide', label: 'Guide', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>` }
+          ],
+          catalog: [
+            { id: 'local-demo-1', rawUrl: 'local', title: 'Zero-Upload Peer-to-Peer Streaming', channel: 'ZAMI WebRTC Engine', duration: 'P2P Ready', tag: 'Instant', meta: 'No File Size Limit • Encrypted', thumb: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=720&q=80' },
+            { id: 'local-demo-2', rawUrl: 'local', title: 'Supported Formats: MP4, WebM, MKV, MOV', channel: 'Universal Player', duration: 'Full HD', tag: 'Lossless', meta: 'Original Bitrate • Multi-Audio', thumb: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=720&q=80' }
+          ]
+        },
+
+        twitch: {
+          name: 'Twitch Live',
+          theme: {
+            bg: '#0e0e10',
+            surface: '#18181b',
+            accent: '#9146ff',
+            accentGlow: 'rgba(145, 70, 255, 0.45)',
+            text: '#ffffff',
+            cardBg: '#131316',
+            pillBg: '#1f1f23'
+          },
+          title: 'Twitch Live',
+          logoText: 'Twitch',
+          logoIcon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#9146ff" stroke-width="2"><path d="M21 2H3v16h5v4l4-4h5l4-4V2zm-10 9V7m5 4V7"/></svg>`,
+          centerEmblem: `<svg viewBox="0 0 68 44" width="68" height="44" fill="none"><rect width="68" height="44" rx="14" fill="#9146ff"/><polygon points="28,14 46,22 28,30" fill="#ffffff"/></svg>`,
+          placeholder: 'Search channels, games, streamers...',
+          cardTitle: 'Try searching to get<br>started',
+          cardDesc: 'Watch live gaming, esports tournaments, and creator broadcasts synchronized with your whole room.',
+          tabs: [
+            { id: 'live', label: 'Live', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>` },
+            { id: 'games', label: 'Games', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><circle cx="16" cy="11" r="1"/><circle cx="18" cy="13" r="1"/></svg>` },
+            { id: 'following', label: 'Following', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>` }
+          ],
+          catalog: [
+            { id: 'kJQP7kiw5Fk', title: 'VALORANT Champions Tour 2026 Grand Finals', channel: 'VALORANT', duration: 'LIVE', tag: '240K Viewers', meta: 'Riot Games • Esports Live', thumb: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=720&q=80' },
+            { id: 'Z7JlVX1CJtY', title: 'Just Chatting & Chill Community Gaming Night', channel: 'Twitch Community', duration: 'LIVE', tag: 'Trending', meta: 'Cozy Room • Stereo Sound', thumb: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=720&q=80' },
+            { id: 'RsEZmictANA', title: 'Apex Legends Global Series Season Opener', channel: 'PlayApex', duration: 'LIVE', tag: '185K Viewers', meta: 'EA Sports • Battle Royale', thumb: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=720&q=80' }
+          ]
+        },
+
+        crunchyroll: {
+          name: 'Crunchyroll',
+          theme: {
+            bg: '#0d0f12',
+            surface: '#16191f',
+            accent: '#f47521',
+            accentGlow: 'rgba(244, 117, 33, 0.45)',
+            text: '#ffffff',
+            cardBg: '#121418',
+            pillBg: '#20242c'
+          },
+          title: 'Crunchyroll',
+          logoText: 'Crunchyroll',
+          logoIcon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="#f47521"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4" fill="#0d0f12"/></svg>`,
+          centerEmblem: `<svg viewBox="0 0 68 44" width="68" height="44" fill="none"><rect width="68" height="44" rx="14" fill="#f47521"/><polygon points="28,14 46,22 28,30" fill="#0d0f12"/></svg>`,
+          placeholder: 'Search anime, simulcasts, movies...',
+          cardTitle: 'Try searching to get<br>started',
+          cardDesc: 'Stream latest anime simulcasts and Japanese animations with co-watching friends.',
+          tabs: [
+            { id: 'popular', label: 'Popular', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>` },
+            { id: 'simulcasts', label: 'Simulcasts', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>` },
+            { id: 'genres', label: 'Genres', icon: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>` }
+          ],
+          catalog: [
+            { id: 'VQGCGyT1Wbs', title: 'Demon Slayer: Kimetsu no Yaiba Hashira Training', channel: 'Aniplex', duration: '2:15', tag: 'Simulcast', meta: 'Sub & Dub • Action Fantasy', thumb: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=720&q=80' },
+            { id: 'M_OauHnAFc8', title: 'Jujutsu Kaisen Season 2 Shibuya Incident', channel: 'MAPPA', duration: '2:05', tag: 'Must Watch', meta: 'Dark Fantasy • 1080p', thumb: 'https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=720&q=80' },
+            { id: 'M7hkxf87yX4', title: 'Solo Leveling | Official Cour 2 Trailer', channel: 'A-1 Pictures', duration: '2:20', tag: 'Top Rated', meta: 'Hunter Guild • Supernatural', thumb: 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=720&q=80' },
+            { id: 'luYPtJ2v1vM', title: 'Attack on Titan Final Season THE FINAL CHAPTERS', channel: 'Pony Canyon', duration: '2:50', tag: 'Masterpiece', meta: 'Action Drama • Complete', thumb: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=720&q=80' }
+          ]
+        }
+      };
+
+      // Detect current source from URL parameter or pathname
+      const urlParams = new URLSearchParams(window.location.search);
+      const pathSource = window.location.pathname.replace(/^\/app\//, '').replace(/\/$/, '').toLowerCase();
+      let appKey = (urlParams.get('app') || pathSource || 'netflix').toLowerCase();
+      if (!SOURCES[appKey]) appKey = 'netflix';
+      const config = SOURCES[appKey];
+
+      // Apply source theme CSS variables
+      const root = document.documentElement;
+      if (config.theme) {
+        if (config.theme.bg) root.style.setProperty('--src-bg', config.theme.bg);
+        if (config.theme.surface) root.style.setProperty('--src-surface', config.theme.surface);
+        if (config.theme.accent) root.style.setProperty('--src-accent', config.theme.accent);
+        if (config.theme.accentGlow) root.style.setProperty('--src-accent-glow', config.theme.accentGlow);
+        if (config.theme.cardBg) root.style.setProperty('--src-card-bg', config.theme.cardBg);
+        if (config.theme.pillBg) root.style.setProperty('--src-pill-bg', config.theme.pillBg);
+        if (config.theme.text) root.style.setProperty('--src-text', config.theme.text);
+      }
+
+      // Populate Topbar & Brand elements
+      document.title = `${config.title} — ZAMI Watch Party`;
+      document.getElementById('src-topbar-title').textContent = config.title;
+      document.getElementById('src-brand-logo-text').textContent = config.logoText || config.name;
+      document.getElementById('src-brand-logo-icon').innerHTML = config.logoIcon || '';
+      document.getElementById('src-center-emblem').innerHTML = config.centerEmblem || '';
+      document.getElementById('src-search-input').placeholder = config.placeholder || 'Search...';
+      document.getElementById('src-card-title').innerHTML = config.cardTitle;
+      document.getElementById('src-card-desc').textContent = config.cardDesc;
+
+      // Populate Navigation Tabs
+      const bottomNav = document.getElementById('src-bottom-nav');
+      if (bottomNav && config.tabs) {
+        bottomNav.innerHTML = '';
+        config.tabs.forEach((tab, index) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = `src-bottom-tab ${index === 0 ? 'active' : ''}`;
+          btn.dataset.tab = tab.id;
+          btn.setAttribute('role', 'tab');
+          btn.setAttribute('aria-selected', index === 0 ? 'true' : 'false');
+          btn.innerHTML = `${tab.icon}<span>${tab.label}</span>`;
+          btn.addEventListener('click', () => {
+            document.querySelectorAll('.src-bottom-tab').forEach(b => {
+              b.classList.remove('active');
+              b.setAttribute('aria-selected', 'false');
+            });
+            btn.classList.add('active');
+            btn.setAttribute('aria-selected', 'true');
+            filterTab(tab.id);
+          });
+          bottomNav.appendChild(btn);
+        });
+      }
+
+      // Populate Video List Feed
+      const videoList = document.getElementById('src-video-list');
+      const feedCount = document.getElementById('src-feed-count');
+      function renderCatalog(items) {
+        if (!videoList) return;
+        videoList.innerHTML = '';
+        if (feedCount) feedCount.textContent = `${items.length} titles`;
+
+        items.forEach(item => {
+          const card = document.createElement('div');
+          card.className = 'src-video-card';
+          const thumb = item.thumb || `https://i.ytimg.com/vi/${item.id}/hqdefault.jpg`;
+          const initial = (item.channel || config.name).charAt(0).toUpperCase();
+
+          card.innerHTML = `
+            <div class="src-thumb-wrapper">
+              <img class="src-thumb-img" src="${thumb}" alt="${escapeHtml(item.title)}" loading="lazy">
+              ${item.duration ? `<div class="src-duration-badge">${escapeHtml(item.duration)}</div>` : ''}
+              ${item.tag ? `<div class="src-badge-tag">${escapeHtml(item.tag)}</div>` : ''}
+              <div class="src-card-actions">
+                <button type="button" class="btn-action-party" title="Screen to Watch Party Room">
+                  <svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                  <span>Party</span>
+                </button>
+                <button type="button" class="btn-action-queue" title="Add to Room Queue">
+                  <svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                  <span>Queue</span>
+                </button>
+              </div>
+            </div>
+            <div class="src-card-info">
+              <div class="src-avatar-circle">${initial}</div>
+              <div class="src-card-text">
+                <div class="src-card-title">${escapeHtml(item.title)}</div>
+                <div class="src-card-meta">${escapeHtml(item.meta || item.channel || config.name)}</div>
+              </div>
+            </div>
+          `;
+
+          card.addEventListener('click', (e) => {
+            if (e.target.closest('.btn-action-party')) {
+              e.stopPropagation();
+              screenToParty(item);
+              return;
+            }
+            if (e.target.closest('.btn-action-queue')) {
+              e.stopPropagation();
+              queueForParty(item);
+              return;
+            }
+            screenToParty(item);
+          });
+
+          videoList.appendChild(card);
+        });
+      }
+
+      renderCatalog(config.catalog || []);
+
+      // Filter by Tab
+      function filterTab(tabId) {
+        showToast(`Viewing ${tabId.toUpperCase()}`);
+        if (tabId === 'home') {
+          renderCatalog(config.catalog || []);
+        } else {
+          // Shuffle or filter for varied tab view
+          const filtered = (config.catalog || []).slice().reverse();
+          renderCatalog(filtered);
+        }
+      }
+
+      function escapeHtml(t) {
+        const d = document.createElement('div');
+        d.textContent = t || '';
+        return d.innerHTML;
+      }
+
+      // Toast System
+      const toast = document.getElementById('src-toast');
+      let toastTimer = null;
+      function showToast(text) {
+        if (!toast) return;
+        if (toastTimer) clearTimeout(toastTimer);
+        toast.textContent = text;
+        toast.classList.add('show');
+        toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
+      }
+
+      // Streaming & Queueing Action Handlers
+      function screenToParty(item) {
+        if (!item) return;
+        const videoUrl = item.rawUrl && item.rawUrl !== 'local' ? item.rawUrl : `https://www.youtube.com/watch?v=${item.id}`;
+        const title = `${config.name} // ${item.title}`;
+
+        window.parent.postMessage({
+          type: 'CINESYNC_PLAY_YOUTUBE',
+          url: videoUrl,
+          title: title,
+          videoId: item.id,
+          poster: item.thumb
+        }, '*');
+
+        showToast(`Screening to Room Watch Party!`);
+      }
+
+      function queueForParty(item) {
+        if (!item) return;
+        const videoUrl = item.rawUrl && item.rawUrl !== 'local' ? item.rawUrl : `https://www.youtube.com/watch?v=${item.id}`;
+        const title = `${config.name} // ${item.title}`;
+
+        window.parent.postMessage({
+          type: 'CINESYNC_QUEUE_YOUTUBE',
+          url: videoUrl,
+          title: title,
+          videoId: item.id,
+          poster: item.thumb
+        }, '*');
+
+        showToast(`Added to Party Queue!`);
+      }
+
+      // Search & Query Submission
+      const searchForm = document.getElementById('src-search-form');
+      const searchInput = document.getElementById('src-search-input');
+      const btnExploreCompass = document.getElementById('btn-explore-compass');
+      const btnVoiceMic = document.getElementById('btn-voice-mic');
+      const btnHeaderSearch = document.getElementById('btn-header-search');
+
+      searchForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const q = (searchInput?.value || '').trim();
+        if (!q) return;
+
+        showToast(`Searching for "${q}"...`);
+        try {
+          const res = await fetch(`/api/youtube/search?q=${encodeURIComponent(config.name + ' ' + q)}`);
+          const data = await res.json();
+          if (data.results && data.results.length > 0) {
+            renderCatalog(data.results.map(r => ({
+              id: r.id,
+              title: r.title,
+              channel: r.channel,
+              duration: r.duration,
+              meta: `${r.views || ''} • ${r.publishedTime || ''}`,
+              thumb: r.thumbnail,
+              tag: config.name
+            })));
+            document.getElementById('src-feed-title').textContent = `Results for "${q}"`;
+          }
+        } catch(err) {
+          showToast(`Filtered locally for "${q}"`);
+        }
+      });
+
+      btnExploreCompass.addEventListener('click', () => {
+        renderCatalog(config.catalog || []);
+        document.getElementById('src-feed-title').textContent = 'Trending Now';
+        showToast('Loaded Trending Content');
+      });
+
+      btnVoiceMic.addEventListener('click', () => {
+        showToast('Listening for voice search...');
+      });
+
+      btnHeaderSearch.addEventListener('click', () => {
+        if (searchInput) searchInput.focus();
+      });
+
+      // Topbar Navigation Actions
+      const btnTopbarBack = document.getElementById('btn-topbar-back');
+      const btnTopbarClose = document.getElementById('btn-topbar-close');
+
+      btnTopbarBack.addEventListener('click', () => {
+        window.parent.postMessage({ type: 'CINESYNC_CLOSE_YOUTUBE' }, '*');
+      });
+
+      btnTopbarClose.addEventListener('click', () => {
+        window.parent.postMessage({ type: 'CINESYNC_CLOSE_YOUTUBE' }, '*');
+      });
+
+      // Paste Link Dialog
+      const btnOpenPaste = document.getElementById('btn-open-paste');
+      const pasteDialog = document.getElementById('src-paste-dialog');
+      const btnClosePaste = document.getElementById('btn-close-paste');
+      const pasteInput = document.getElementById('src-paste-input');
+      const btnPastePlay = document.getElementById('btn-paste-play');
+      const btnPasteQueue = document.getElementById('btn-paste-queue');
+
+      btnOpenPaste.addEventListener('click', () => {
+        if (pasteInput) pasteInput.value = '';
+        if (typeof pasteDialog.showModal === 'function') {
+          pasteDialog.showModal();
+        } else {
+          pasteDialog.setAttribute('open', '');
+        }
+      });
+
+      btnClosePaste.addEventListener('click', () => {
+        if (typeof pasteDialog.close === 'function') {
+          pasteDialog.close();
+        } else {
+          pasteDialog.removeAttribute('open');
+        }
+      });
+
+      // Fallback for browsers without native closedby support
+      if (pasteDialog && !('closedBy' in HTMLDialogElement.prototype)) {
+        pasteDialog.addEventListener('click', (event) => {
+          if (event.target !== pasteDialog) return;
+          const rect = pasteDialog.getBoundingClientRect();
+          const isDialogContent = (
+            rect.top <= event.clientY &&
+            event.clientY <= rect.top + rect.height &&
+            rect.left <= event.clientX &&
+            event.clientX <= rect.left + rect.width
+          );
+          if (!isDialogContent && typeof pasteDialog.close === 'function') {
+            pasteDialog.close();
+          }
+        });
+      }
+
+      btnPastePlay.addEventListener('click', () => {
+        const val = (pasteInput?.value || '').trim();
+        if (!val) return;
+        screenToParty({
+          id: val,
+          rawUrl: val,
+          title: `Direct Link [${val.substring(0, 24)}]`,
+          thumb: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=720&q=80'
+        });
+        if (typeof pasteDialog.close === 'function') pasteDialog.close();
+      });
+
+      btnPasteQueue.addEventListener('click', () => {
+        const val = (pasteInput?.value || '').trim();
+        if (!val) return;
+        queueForParty({
+          id: val,
+          rawUrl: val,
+          title: `Direct Link [${val.substring(0, 24)}]`,
+          thumb: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=720&q=80'
+        });
+        if (typeof pasteDialog.close === 'function') pasteDialog.close();
+      });
+
+    })();
+  </script>
+</body>
+</html>
