@@ -230,12 +230,15 @@ class WebRTCManager {
   updateDockAVButtons() {
     const dockMic = document.getElementById('btn-dock-mic');
     const desktopMic = document.getElementById('btn-desktop-mic');
+    const quickMic = document.getElementById('btn-mobile-mic-quick');
     const dockCam = document.getElementById('btn-dock-cam');
     const desktopCam = document.getElementById('btn-desktop-cam');
 
-    [dockMic, desktopMic].forEach(btn => {
+    [dockMic, desktopMic, quickMic].forEach(btn => {
       if (!btn) return;
       btn.classList.toggle('active', !this.isMuted);
+      btn.classList.toggle('mic-live', !this.isMuted);
+      btn.classList.toggle('mic-muted', this.isMuted);
       btn.classList.toggle('is-muted', this.isMuted);
     });
 

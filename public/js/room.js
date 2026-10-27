@@ -724,20 +724,165 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Mobile Bottom Sheet Swipe-Down to Dismiss
-  const sheetHandle = document.querySelector('.bottom-sheet-handle-bar');
-  if (sheetHandle) {
-    let startY = 0;
-    sheetHandle.addEventListener('touchstart', (e) => {
-      startY = e.touches[0].clientY;
-    }, { passive: true });
-    sheetHandle.addEventListener('touchend', (e) => {
-      const endY = e.changedTouches[0].clientY;
-      if (endY - startY > 50) {
-        if (window.closeModal) window.closeModal();
+  // Mobile Quick Mic Toggle in Subplayer Bar
+  const btnMobileMicQuick = document.getElementById('btn-mobile-mic-quick');
+  if (btnMobileMicQuick) {
+    btnMobileMicQuick.addEventListener('click', (e) => {
+      e.preventDefault();
+      toggleLocalMic();
+      if (window.webrtcManager) {
+        const isMuted = window.webrtcManager.isAudioMuted;
+        btnMobileMicQuick.classList.toggle('mic-muted', isMuted);
+        btnMobileMicQuick.classList.toggle('mic-live', !isMuted);
+      }
+    });
+  }
+
+  // Mobile Picture-in-Picture Toggle
+  const btnMobilePip = document.getElementById('btn-mobile-pip');
+  if (btnMobilePip) {
+    btnMobilePip.addEventListener('click', async (e) => {
+      e.preventDefault();
+      try {
+        const video = document.querySelector('#player-container video, video');
+        if (document.pictureInPictureElement) {
+          await document.exitPictureInPicture();
+          if (window.showToast) window.showToast('Exited Picture-in-Picture', 'info');
+        } else if (video && video.requestPictureInPicture) {
+          await video.requestPictureInPicture();
+          if (window.showToast) window.showToast('Entered Picture-in-Picture', 'success');
+        } else if (video && video.webkitSetPresentationMode) {
+          const mode = video.webkitPresentationMode === 'picture-in-picture' ? 'inline' : 'picture-in-picture';
+          video.webkitSetPresentationMode(mode);
+          if (window.showToast) window.showToast('Picture-in-Picture toggled', 'success');
+        } else {
+          if (window.showToast) window.showToast('Picture-in-Picture not supported on this browser', 'info');
+        }
+      } catch (err) {
+        console.warn('PiP error:', err);
+      }
+    });
+  }
+
+  // Mobile Double-Tap to Seek (±10s) with clean vector ripple
+  const playerWrapper = document.querySelector('.player-wrapper') || document.getElementById('player-container');
+  if (playerWrapper) {
+    let lastTapTime = 0;
+    let lastTapX = 0;
+    let tapTimeout = null;
+
+    playerWrapper.addEventListener('touchend', (e) => {
+      const isMobile = window.matchMedia('(max-width: 900px)').matches;
+      if (!isMobile) return;
+
+      // Ignore touches on interactive controls
+      if (e.target.closest('#custom-controls') || e.target.closest('button') || e.target.closest('input') || e.target.closest('.w2g-subplayer-bar')) return;
+
+      const currentTime = Date.now();
+      const tapLength = currentTime - lastTapTime;
+      const touch = e.changedTouches[0];
+      if (!touch) return;
+      const rect = playerWrapper.getBoundingClientRect();
+      const tapX = touch.clientX - rect.left;
+      const relativeX = tapX / rect.width;
+
+      if (tapLength < 320 && tapLength > 0 && Math.abs(tapX - lastTapX) < 80) {
+        clearTimeout(tapTimeout);
+        if (relativeX < 0.45) {
+          // Left side -> Rewind 10s
+          if (window.universalPlayer && typeof window.universalPlayer.seekRelative === 'function') {
+            window.universalPlayer.seekRelative(-10);
+          }
+          showSeekRipple('left', '-10s');
+        } else if (relativeX > 0.55) {
+          // Right side -> Forward 10s
+          if (window.universalPlayer && typeof window.universalPlayer.seekRelative === 'function') {
+            window.universalPlayer.seekRelative(10);
+          }
+          showSeekRipple('right', '+10s');
+        }
+        lastTapTime = 0;
+      } else {
+        lastTapTime = currentTime;
+        lastTapX = tapX;
+        tapTimeout = setTimeout(() => {
+          const controls = document.getElementById('custom-controls');
+          if (controls && controls.style.display !== 'none') {
+            controls.classList.toggle('active');
+          }
+        }, 330);
       }
     }, { passive: true });
+
+    function showSeekRipple(side, text) {
+      const ripple = document.createElement('div');
+      ripple.className = `mobile-seek-ripple seek-ripple-${side}`;
+      ripple.innerHTML = `
+        <div class="seek-ripple-pill">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            ${side === 'left' 
+              ? '<polygon points="11 19 2 12 11 5 11 19"/><polygon points="22 19 13 12 22 5 22 19"/>'
+              : '<polygon points="13 19 22 12 13 5 13 19"/><polygon points="2 19 11 12 2 5 2 19"/>'
+            }
+          </svg>
+          <span>${text}</span>
+        </div>
+      `;
+      playerWrapper.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 650);
+    }
   }
+
+  // Mobile Virtual Keyboard Viewport Anchoring (iOS Safari & Android Chrome)
+  if (window.visualViewport) {
+    let isKeyboardOpen = false;
+    const onViewportChange = () => {
+      const isMobile = window.matchMedia('(max-width: 900px)').matches;
+      if (!isMobile) return;
+
+      const keyboardHeight = Math.max(0, window.innerHeight - window.visualViewport.height);
+      const chatBar = document.getElementById('chat-form');
+      const chatMessages = document.getElementById('chat-messages');
+
+      if (keyboardHeight > 100) {
+        isKeyboardOpen = true;
+        if (chatBar) {
+          chatBar.style.transform = `translateY(-${keyboardHeight}px)`;
+        }
+        if (chatMessages) {
+          chatMessages.style.paddingBottom = `${keyboardHeight + 48}px`;
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+      } else if (isKeyboardOpen) {
+        isKeyboardOpen = false;
+        if (chatBar) chatBar.style.transform = '';
+        if (chatMessages) chatMessages.style.paddingBottom = '';
+      }
+    };
+
+    window.visualViewport.addEventListener('resize', onViewportChange);
+    window.visualViewport.addEventListener('scroll', onViewportChange);
+  }
+
+  // Mobile Bottom Sheet Swipe-Down to Dismiss
+  document.querySelectorAll('.w2g-modal-card, .wallpaper-modal-container, .cinema-hub-container').forEach(sheet => {
+    let startY = 0;
+    sheet.addEventListener('touchstart', (e) => {
+      startY = e.touches[0].clientY;
+    }, { passive: true });
+    sheet.addEventListener('touchend', (e) => {
+      const endY = e.changedTouches[0].clientY;
+      if (endY - startY > 70) {
+        const dialog = sheet.closest('dialog');
+        if (dialog && typeof dialog.close === 'function') {
+          dialog.close();
+        } else {
+          const overlay = sheet.closest('.modal-overlay, .wallpaper-modal-overlay');
+          if (overlay) overlay.style.display = 'none';
+        }
+      }
+    }, { passive: true });
+  });
 
   // Quick Vector Reaction Cannon (Hotkey E / Quick Launcher)
   const reactionTypes = ['star', 'heart', 'flame', 'zap', 'clap', 'laugh', 'shock'];
@@ -5952,7 +6097,24 @@ function initWatch2GetherRoomClone() {
     }
   }
 
-  if (btnDockInvite) btnDockInvite.addEventListener('click', openInviteDialog);
+  async function handleMobileInvite() {
+    const shareData = {
+      title: 'Join my ZAMI room',
+      text: 'Watch movies and videos together in sync on ZAMI!',
+      url: window.location.href
+    };
+    if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+      try {
+        await navigator.share(shareData);
+        return;
+      } catch (err) {
+        if (err.name === 'AbortError') return;
+      }
+    }
+    openInviteDialog();
+  }
+
+  if (btnDockInvite) btnDockInvite.addEventListener('click', handleMobileInvite);
   if (btnCopyLinkDesktop) btnCopyLinkDesktop.addEventListener('click', openInviteDialog);
   if (btnCloseInvite) btnCloseInvite.addEventListener('click', closeInviteDialog);
 
@@ -6379,9 +6541,12 @@ function initWatch2GetherRoomClone() {
     });
   }
 
-  // --- Mobile Bottom Dock Pagination Bullets ---
+  // --- Mobile Bottom Dock Pagination Bullets & Tab Navigation ---
   const roomSidebar = document.getElementById('room-sidebar');
   const dockBullets = document.querySelectorAll('.w2g-dock-bullets .w2g-bullet');
+  const btnDockPeople = document.getElementById('btn-dock-people');
+  const btnDockQueue = document.getElementById('btn-dock-queue');
+  const btnDockChat = document.getElementById('btn-dock-chat');
 
   // Slide mapping: 0 = People (voice), 1 = Playlists (queue), 2 = Chat (chat)
   function scrollRoomToSlide(index) {
@@ -6403,7 +6568,14 @@ function initWatch2GetherRoomClone() {
     dockBullets.forEach((b, i) => {
       b.classList.toggle('active', i === index);
     });
+    if (btnDockPeople) btnDockPeople.classList.toggle('active', index === 0);
+    if (btnDockQueue) btnDockQueue.classList.toggle('active', index === 1);
+    if (btnDockChat) btnDockChat.classList.toggle('active', index === 2);
   }
+
+  if (btnDockPeople) btnDockPeople.addEventListener('click', () => scrollRoomToSlide(0));
+  if (btnDockQueue) btnDockQueue.addEventListener('click', () => scrollRoomToSlide(1));
+  if (btnDockChat) btnDockChat.addEventListener('click', () => scrollRoomToSlide(2));
 
   dockBullets.forEach(bullet => {
     bullet.addEventListener('click', () => {
