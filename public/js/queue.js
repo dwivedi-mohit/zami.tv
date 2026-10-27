@@ -132,19 +132,49 @@ class RoomQueueManager {
       this.container.innerHTML = `
         <div class="queue-empty-state">
           <div class="queue-empty-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#e5a93c" stroke-width="1.8"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
           </div>
-          <div class="queue-empty-title">Queue is empty</div>
-          <div class="queue-empty-desc">Paste any video or YouTube link below, or browse movies to queue up shows for everyone.</div>
-          <button type="button" class="btn btn-secondary btn-xs" id="btn-empty-queue-load" style="margin-top: 10px; display: inline-flex; align-items: center; gap: 6px;">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line></svg>
-            <span>Browse Media</span>
-          </button>
+          <div class="queue-empty-title">What would you like to watch?</div>
+          <div class="queue-empty-desc">Choose a source below or paste a video link to start co-watching:</div>
+          <div class="queue-empty-choices">
+            <button type="button" class="btn-queue-choice" id="btn-queue-choice-movies">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#e5a93c" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
+              <span>Browse Movies</span>
+            </button>
+            <button type="button" class="btn-queue-choice" id="btn-queue-choice-link">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              <span>Paste Video Link</span>
+            </button>
+            <button type="button" class="btn-queue-choice" id="btn-queue-choice-more">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              <span>More Sources</span>
+            </button>
+          </div>
         </div>
       `;
-      const emptyLoadBtn = this.container.querySelector('#btn-empty-queue-load');
-      if (emptyLoadBtn) {
-        emptyLoadBtn.addEventListener('click', () => {
+      const btnMovies = this.container.querySelector('#btn-queue-choice-movies');
+      if (btnMovies) {
+        btnMovies.addEventListener('click', () => {
+          const modal = document.getElementById('media-modal');
+          if (modal) {
+            modal.classList.add('active');
+            modal.style.display = 'flex';
+            if (window.showVaultView) window.showVaultView('movies');
+          }
+        });
+      }
+      const btnLink = this.container.querySelector('#btn-queue-choice-link');
+      if (btnLink) {
+        btnLink.addEventListener('click', () => {
+          if (this.quickUrlInput) {
+            this.quickUrlInput.focus();
+            this.quickUrlInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        });
+      }
+      const btnMore = this.container.querySelector('#btn-queue-choice-more');
+      if (btnMore) {
+        btnMore.addEventListener('click', () => {
           const modal = document.getElementById('media-modal');
           if (modal) {
             modal.classList.add('active');
