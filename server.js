@@ -1,3 +1,6 @@
+const dns = require('dns');
+try { dns.setDefaultResultOrder('ipv4first'); } catch (e) {}
+
 const express = require('express');
 const http = require('http');
 const path = require('path');
@@ -1085,6 +1088,91 @@ app.get('/api/tmdb/curated', async (req, res) => {
     res.json(payload);
   } catch (err) {
     console.error('TMDB Curated fetch failed:', err.message);
+    res.status(500).json({ success: false, message: 'Could not fetch catalog: ' + err.message });
+  }
+});
+
+// Dynamic Multi-Category Catalog Explorer (MovieBox / CineTV style)
+app.get('/api/tmdb/catalog', async (req, res) => {
+  const category = (req.query.category || 'trending').toLowerCase();
+  const page = parseInt(req.query.page, 10) || 1;
+  const cacheKey = `tmdb_cat_${category}_p${page}`;
+  const cached = tmdbCache.get(cacheKey);
+  if (cached && Date.now() - cached.timestamp < 20 * 60 * 1000) {
+    return res.json(cached.data);
+  }
+
+  try {
+    let endpoint = '/trending/all/week';
+    let params = { page };
+    let defaultType = 'movie';
+
+    switch (category) {
+      case 'popular':
+        endpoint = '/movie/popular';
+        break;
+      case 'series':
+      case 'tv':
+        endpoint = '/trending/tv/week';
+        defaultType = 'tv';
+        break;
+      case 'bollywood':
+      case 'indian':
+        endpoint = '/discover/movie';
+        params = { with_original_language: 'hi', sort_by: 'popularity.desc', page };
+        break;
+      case 'hollywood':
+        endpoint = '/discover/movie';
+        params = { with_original_language: 'en', sort_by: 'popularity.desc', page };
+        break;
+      case 'anime':
+        endpoint = '/discover/tv';
+        params = { with_genres: '16', with_original_language: 'ja', sort_by: 'popularity.desc', page };
+        defaultType = 'tv';
+        break;
+      case 'action':
+        endpoint = '/discover/movie';
+        params = { with_genres: '28', sort_by: 'popularity.desc', page };
+        break;
+      case 'comedy':
+        endpoint = '/discover/movie';
+        params = { with_genres: '35', sort_by: 'popularity.desc', page };
+        break;
+      case 'scifi':
+        endpoint = '/discover/movie';
+        params = { with_genres: '878', sort_by: 'popularity.desc', page };
+        break;
+      case 'horror':
+        endpoint = '/discover/movie';
+        params = { with_genres: '27', sort_by: 'popularity.desc', page };
+        break;
+      case 'top_rated':
+      case 'top':
+        endpoint = '/movie/top_rated';
+        break;
+      case 'trending':
+      default:
+        endpoint = '/trending/all/week';
+        break;
+    }
+
+    const data = await fetchFromTmdb(endpoint, params);
+    const results = (data.results || [])
+      .filter(item => item.poster_path)
+      .map(item => formatTmdbItem(item, defaultType));
+
+    const payload = {
+      success: true,
+      category,
+      page,
+      totalPages: data.total_pages || 1,
+      results
+    };
+
+    tmdbCache.set(cacheKey, { timestamp: Date.now(), data: payload });
+    res.json(payload);
+  } catch (err) {
+    console.error(`TMDB Catalog fetch failed for ${category}:`, err.message);
     res.status(500).json({ success: false, message: 'Could not fetch catalog: ' + err.message });
   }
 });

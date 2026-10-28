@@ -8210,10 +8210,43 @@
   background: #18181b;
   border: 1px solid #27272a;
   transition: border-color 0.15s ease;
+  position: relative;
 }
 
 .movie-poster-card:hover .movie-poster-wrap {
   border-color: #3f3f46;
+}
+
+.movie-type-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  color: #fbbf24;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 5px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  z-index: 2;
+}
+
+.movie-poster-play-hint {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 1;
+}
+
+.movie-poster-card:hover .movie-poster-play-hint {
+  opacity: 1;
 }
 
 .movie-poster-img {

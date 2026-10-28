@@ -2293,24 +2293,48 @@ function setupCinemaDiscoveryHub(socket) {
   function renderMovieGrid(items) {
     const grid = document.getElementById('movies-catalog-grid');
     if (!grid) return;
-    grid.innerHTML = items.map(m => `
-      <article class="movie-poster-card" data-tmdb-id="${m.tmdbId || m.id}" data-title="${escapeHtml(m.title)}" data-year="${m.year || ''}" data-rating="${m.rating || '8.0'}" data-poster="${m.poster || ''}">
-        <div class="movie-poster-wrap">
-          <img src="${m.poster || 'https://via.placeholder.com/300x450?text=No+Poster'}" alt="${escapeHtml(m.title)}" class="movie-poster-img" loading="lazy">
-        </div>
-        <div class="movie-poster-info">
-          <h4 class="movie-poster-title">${escapeHtml(m.title)}</h4>
-          <div class="movie-poster-meta">
-            <span class="movie-year">${m.year || ''}</span>
-            <span class="movie-rating"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;margin-right:2px;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>${m.rating || '8.0'}</span>
+    if (!items || !items.length) {
+      grid.innerHTML = '<div style="grid-column: 1 / -1; padding: 48px 16px; text-align: center; color: #a1a1aa; font-size: 13px;">No titles found in this category.</div>';
+      return;
+    }
+    grid.innerHTML = items.map(m => {
+      const id = m.tmdbId || m.id;
+      const mediaType = m.mediaType || (m.first_air_date ? 'tv' : 'movie');
+      const isTv = mediaType === 'tv';
+      const title = m.title || m.name || 'Untitled';
+      const year = m.year || (m.release_date || m.first_air_date || '').slice(0, 4) || '';
+      const rating = m.rating || (m.vote_average ? m.vote_average.toFixed(1) : '8.0');
+      const poster = m.poster || (m.poster_path ? `https://image.tmdb.org/t/p/w500${m.poster_path}` : '');
+      const typeBadge = isTv ? '<span class="movie-type-badge">SERIES</span>' : '';
+      return `
+        <article class="movie-poster-card" data-tmdb-id="${id}" data-type="${mediaType}" data-title="${escapeHtml(title)}" data-year="${year}" data-rating="${rating}" data-poster="${poster}">
+          <div class="movie-poster-wrap">
+            <img src="${poster || 'https://via.placeholder.com/300x450?text=No+Poster'}" alt="${escapeHtml(title)}" class="movie-poster-img" loading="lazy">
+            ${typeBadge}
+            <div class="movie-poster-play-hint">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="#ffffff"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            </div>
           </div>
-        </div>
-      </article>
-    `).join('');
+          <div class="movie-poster-info">
+            <h4 class="movie-poster-title" title="${escapeHtml(title)}">${escapeHtml(title)}</h4>
+            <div class="movie-poster-meta">
+              <span class="movie-year">${year || (isTv ? 'Series' : 'Movie')}</span>
+              <span class="movie-rating"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;margin-right:2px;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>${rating}</span>
+            </div>
+          </div>
+        </article>
+      `;
+    }).join('');
   }
 
-  async function streamMovieFromCard(tmdbId, title, poster, year) {
+  async function streamMovieFromCard(tmdbId, title, poster, year, mediaType = 'movie') {
     closeModal();
+    const isTv = mediaType === 'tv';
+    if (isTv) {
+      openFilmDrawer(tmdbId, 'tv', { id: tmdbId, title, poster, year, mediaType: 'tv' });
+      return;
+    }
+
     const placeholder = document.getElementById('player-placeholder');
     if (placeholder) {
       placeholder.style.setProperty('display', 'none', 'important');
@@ -2340,18 +2364,22 @@ function setupCinemaDiscoveryHub(socket) {
           year: year,
           isPlaying: true
         });
-        window.showToast(`Now screening: ${title}`, 'success');
+        window.showToast(`Now screening: ${title} (Pure Native HLS)`, 'success');
         return;
       }
+      const fallbackUrl = (data && data.fallbackUrl)
+        ? data.fallbackUrl
+        : `https://vidlink.pro/movie/${tmdbId}?primaryColor=B20710&autoplay=true`;
+
       socket.emit('change-media', {
         type: 'embed',
-        url: `https://vidsrc.sh/embed/movie?tmdb=${tmdbId}`,
+        url: fallbackUrl,
         title: title,
         poster: poster,
         year: year,
         isPlaying: true
       });
-      window.showToast(`Now screening: ${title} (Cloud Embed)`, 'info');
+      window.showToast(`Now screening: ${title} (Clean HD Player)`, 'info');
     } catch (err) {
       if (window.universalPlayer) window.universalPlayer.hideSpinner();
       window.showToast(`Failed to connect "${title}". Try another server.`, 'error');
@@ -2526,6 +2554,29 @@ function setupCinemaDiscoveryHub(socket) {
     });
   });
 
+  // Dynamic Multi-Category Catalog Loader (MovieBox / CineTV style)
+  async function loadMovieCategory(category = 'trending') {
+    const grid = document.getElementById('movies-catalog-grid');
+    if (!grid) return;
+    grid.innerHTML = `<div style="grid-column: 1 / -1; padding: 48px 16px; text-align: center; color: #a1a1aa; font-size: 13px;">
+      <div style="margin: 0 auto 12px; width: 24px; height: 24px; border: 2px solid rgba(255,255,255,0.2); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
+      Loading ${escapeHtml(category)} catalog...
+    </div>`;
+
+    try {
+      const res = await fetch(`/api/tmdb/catalog?category=${encodeURIComponent(category)}`);
+      const data = await res.json();
+      if (data.success && data.results && data.results.length) {
+        renderMovieGrid(data.results);
+      } else {
+        renderMovieGrid(REFERENCE_POPULAR_MOVIES);
+      }
+    } catch (e) {
+      console.warn('Failed to load category:', category, e);
+      renderMovieGrid(REFERENCE_POPULAR_MOVIES);
+    }
+  }
+
   // Movie Card Click Handler
   const moviesGrid = document.getElementById('movies-catalog-grid');
   if (moviesGrid) {
@@ -2533,12 +2584,13 @@ function setupCinemaDiscoveryHub(socket) {
       const card = e.target.closest('.movie-poster-card');
       if (!card) return;
       const tmdbId = card.dataset.tmdbId;
+      const mediaType = card.dataset.type || 'movie';
       const title = card.dataset.title || 'Feature Movie';
       const year = card.dataset.year || '2024';
       const img = card.querySelector('.movie-poster-img');
       const poster = card.dataset.poster || (img ? img.src : '');
       if (tmdbId) {
-        streamMovieFromCard(tmdbId, title, poster, year);
+        streamMovieFromCard(tmdbId, title, poster, year, mediaType);
       }
     });
   }
@@ -2546,44 +2598,11 @@ function setupCinemaDiscoveryHub(socket) {
   // Movie Category Pills
   const moviePills = document.querySelectorAll('#movies-category-pills .vault-pill');
   moviePills.forEach(pill => {
-    pill.addEventListener('click', async () => {
+    pill.addEventListener('click', () => {
       moviePills.forEach(p => p.classList.remove('active'));
       pill.classList.add('active');
-      const filter = pill.dataset.filter;
-      if (filter === 'popular') {
-        renderMovieGrid(REFERENCE_POPULAR_MOVIES);
-      } else if (filter === 'bollywood') {
-        try {
-          const res = await fetch('/api/tmdb/search?q=Bollywood');
-          const data = await res.json();
-          if (data.results && data.results.length) {
-            renderMovieGrid(data.results.slice(0, 6));
-          }
-        } catch (e) {
-          renderMovieGrid(REFERENCE_POPULAR_MOVIES);
-        }
-      } else if (filter === 'hollywood') {
-        renderMovieGrid(REFERENCE_POPULAR_MOVIES);
-      } else if (filter === 'anime') {
-        try {
-          const res = await fetch('/api/tmdb/search?q=Anime');
-          const data = await res.json();
-          if (data.results && data.results.length) {
-            renderMovieGrid(data.results.slice(0, 6));
-          }
-        } catch (e) {
-          renderMovieGrid(REFERENCE_POPULAR_MOVIES);
-        }
-      } else if (filter === 'trending') {
-        try {
-          const res = await fetch('/api/tmdb/curated');
-          const data = await res.json();
-          const items = data.rows?.[0]?.items || REFERENCE_POPULAR_MOVIES;
-          renderMovieGrid(items.slice(0, 6));
-        } catch (e) {
-          renderMovieGrid(REFERENCE_POPULAR_MOVIES);
-        }
-      }
+      const filter = pill.dataset.filter || 'trending';
+      loadMovieCategory(filter);
     });
   });
 
@@ -2597,7 +2616,9 @@ function setupCinemaDiscoveryHub(socket) {
       if (movieSearchClear) movieSearchClear.style.display = q ? 'flex' : 'none';
       clearTimeout(searchDebounceTimer);
       if (!q) {
-        renderMovieGrid(REFERENCE_POPULAR_MOVIES);
+        const activePill = document.querySelector('#movies-category-pills .vault-pill.active');
+        const filter = activePill ? (activePill.dataset.filter || 'trending') : 'trending';
+        loadMovieCategory(filter);
         return;
       }
       searchDebounceTimer = setTimeout(async () => {
@@ -2605,7 +2626,9 @@ function setupCinemaDiscoveryHub(socket) {
           const res = await fetch(`/api/tmdb/search?q=${encodeURIComponent(q)}`);
           const data = await res.json();
           if (data.results && data.results.length) {
-            renderMovieGrid(data.results.slice(0, 12));
+            renderMovieGrid(data.results);
+          } else {
+            renderMovieGrid([]);
           }
         } catch (e) {
           console.warn('Movie search failed:', e);
@@ -2617,9 +2640,14 @@ function setupCinemaDiscoveryHub(socket) {
     movieSearchClear.addEventListener('click', () => {
       movieSearchInput.value = '';
       movieSearchClear.style.display = 'none';
-      renderMovieGrid(REFERENCE_POPULAR_MOVIES);
+      const activePill = document.querySelector('#movies-category-pills .vault-pill.active');
+      const filter = activePill ? (activePill.dataset.filter || 'trending') : 'trending';
+      loadMovieCategory(filter);
     });
   }
+
+  // Initial load of default catalog category
+  loadMovieCategory('trending');
 
   // Apps URLs & Launch Handlers
   const APP_URLS = {
@@ -2917,8 +2945,8 @@ function setupCinemaDiscoveryHub(socket) {
           const sData = await sResp.json();
           const fallbackServer = sData.servers?.find(s => !s.isNative) || sData.servers?.[1] || sData.servers?.[0];
           const serverUrl = fallbackServer?.url || (isTv
-            ? `https://vidsrc.sh/embed/tv?tmdb=${spotlight.id}&season=1&episode=1`
-            : `https://vidsrc.sh/embed/movie?tmdb=${spotlight.id}`);
+            ? `https://vidlink.pro/tv/${spotlight.id}/1/1?primaryColor=B20710&autoplay=true`
+            : `https://vidlink.pro/movie/${spotlight.id}?primaryColor=B20710&autoplay=true`);
 
           socket.emit('change-media', {
             type: 'embed',
@@ -3042,7 +3070,7 @@ function setupCinemaDiscoveryHub(socket) {
               socket.emit('playlist-add', {
                 item: {
                   type: 'embed',
-                  url: `https://vidsrc.sh/embed/movie?tmdb=${film.id}`,
+                  url: `https://vidlink.pro/movie/${film.id}?primaryColor=B20710&autoplay=true`,
                   title: film.title,
                   poster: film.poster,
                   backdrop: film.backdrop
@@ -3097,8 +3125,8 @@ function setupCinemaDiscoveryHub(socket) {
       const sData = await sResp.json();
       const fallbackServer = sData.servers?.find(s => !s.isNative) || sData.servers?.[1] || sData.servers?.[0];
       const serverUrl = fallbackServer?.url || (film.mediaType === 'tv'
-        ? `https://vidsrc.sh/embed/tv?tmdb=${film.id}&season=1&episode=1`
-        : `https://vidsrc.sh/embed/movie?tmdb=${film.id}`);
+        ? `https://vidlink.pro/tv/${film.id}/1/1?primaryColor=B20710&autoplay=true`
+        : `https://vidlink.pro/movie/${film.id}?primaryColor=B20710&autoplay=true`);
 
       socket.emit('change-media', {
         type: 'embed',
@@ -3393,8 +3421,8 @@ function setupCinemaDiscoveryHub(socket) {
           }
 
           const defaultUrl = isTv
-            ? `https://vidsrc.sh/embed/tv?tmdb=${id}&season=${currentSelectedSeason}&episode=${currentSelectedEpisode}`
-            : `https://vidsrc.sh/embed/movie?tmdb=${id}`;
+            ? `https://vidlink.pro/tv/${id}/${currentSelectedSeason}/${currentSelectedEpisode}?primaryColor=B20710&autoplay=true`
+            : `https://vidlink.pro/movie/${id}?primaryColor=B20710&autoplay=true`;
           const streamUrl = (activeServer && !activeServer.isNative) ? activeServer.url : defaultUrl;
 
           socket.emit('change-media', {
@@ -3606,7 +3634,7 @@ function setupCinemaDiscoveryHub(socket) {
             const sData = await sResp.json();
             const activeServer = (sData.servers && sData.servers[selectedServerIndex]) || sData.servers?.[0];
             const fallbackServer = (activeServer && !activeServer.isNative) ? activeServer : (sData.servers?.find(s => !s.isNative) || sData.servers?.[1]);
-            const streamUrl = fallbackServer?.url || `https://vidsrc.sh/embed/tv?tmdb=${seriesId}&season=${seasonNum}&episode=${ep.episodeNumber}`;
+            const streamUrl = fallbackServer?.url || `https://vidlink.pro/tv/${seriesId}/${seasonNum}/${ep.episodeNumber}?primaryColor=B20710&autoplay=true`;
 
             socket.emit('change-media', {
               type: 'embed',
@@ -7638,7 +7666,7 @@ function initWatch2GetherRoomClone() {
           if (curSocket) {
             curSocket.emit('change-media', {
               type: 'embed',
-              url: `https://vidsrc.sh/embed/${type === 'tv' ? 'tv' : 'movie'}?tmdb=${id}`,
+              url: type === 'tv' ? `https://vidlink.pro/tv/${id}/1/1?primaryColor=B20710&autoplay=true` : `https://vidlink.pro/movie/${id}?primaryColor=B20710&autoplay=true`,
               title: title,
               poster: card.dataset.poster,
               isPlaying: true
@@ -7655,7 +7683,7 @@ function initWatch2GetherRoomClone() {
             curSocket.emit('playlist-add', {
               item: {
                 type: 'embed',
-                url: `https://vidsrc.sh/embed/${type === 'tv' ? 'tv' : 'movie'}?tmdb=${id}`,
+                url: type === 'tv' ? `https://vidlink.pro/tv/${id}/1/1?primaryColor=B20710&autoplay=true` : `https://vidlink.pro/movie/${id}?primaryColor=B20710&autoplay=true`,
                 title: title,
                 poster: card.dataset.poster
               }

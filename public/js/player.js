@@ -1899,6 +1899,7 @@ class UniversalPlayer {
       <iframe src="${source.url}" 
               style="width: 100%; height: 100%; border: none; background: #000; position: absolute; inset: 0;" 
               allow="autoplay; encrypted-media; fullscreen; picture-in-picture; screen-wake-lock" 
+              sandbox="allow-scripts allow-same-origin allow-forms allow-presentation"
               referrerpolicy="origin"
               allowfullscreen>
       </iframe>
