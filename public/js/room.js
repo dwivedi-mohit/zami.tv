@@ -1355,8 +1355,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnStageChoiceYt) {
     btnStageChoiceYt.addEventListener('click', () => {
       closeStageSourcesPopup();
-      if (typeof window.openRaveSourceSheet === 'function') {
-        window.openRaveSourceSheet('youtube');
+      if (typeof window.openInbuiltBrowser === 'function') {
+        window.openInbuiltBrowser('https://m.youtube.com', 'YouTube');
       }
     });
   }
@@ -2358,32 +2358,48 @@ function setupCinemaDiscoveryHub(socket) {
     }
   }
 
-  const RAVE_SHEET_SOURCES = ['youtube', 'netflix', 'prime', 'hotstar', 'mx', 'twitch', 'crunchyroll', 'movies', 'url', 'local'];
+  const RAVE_SHEET_SOURCES = ['youtube', 'netflix', 'prime', 'primevideo', 'hotstar', 'jiohotstar', 'mx', 'mxplayer', 'twitch', 'crunchyroll', 'sonyliv', 'zee5', 'hulu', 'appletv', 'more', 'browser'];
 
   function openRaveSourceSheet(sourceName) {
     const clean = (sourceName || 'youtube').toLowerCase();
-    const iframe = document.getElementById('yt-official-iframe');
-    const container = document.getElementById('cinema-hub-container');
-
-    if (iframe) {
-      if (clean === 'youtube') {
-        iframe.src = '/app/youtube';
-      } else {
-        iframe.src = `/app/source?app=${encodeURIComponent(clean)}`;
-      }
-    }
-
-    const views = document.querySelectorAll('.vault-view');
-    views.forEach(v => v.classList.remove('active'));
-    const targetView = document.getElementById('hub-view-youtube');
-    if (targetView) targetView.classList.add('active');
-
-    if (container) {
-      container.classList.add('youtube-sheet-mode');
-      container.classList.remove('menu-mode');
-    }
-    openModal();
+    closeModal();
     closeDrawer();
+    if (typeof window.closeSearchDrawer === 'function') window.closeSearchDrawer();
+    if (typeof window.closeStageSourcesPopup === 'function') window.closeStageSourcesPopup();
+
+    const appMap = {
+      netflix: { url: 'https://www.netflix.com', name: 'Netflix' },
+      prime: { url: 'https://www.mxplayer.in', name: 'Prime Video' },
+      primevideo: { url: 'https://www.mxplayer.in', name: 'Prime Video' },
+      hotstar: { url: 'https://www.hotstar.com', name: 'JioHotstar' },
+      jiohotstar: { url: 'https://www.hotstar.com', name: 'JioHotstar' },
+      youtube: { url: 'https://m.youtube.com', name: 'YouTube' },
+      mx: { url: 'https://www.mxplayer.in', name: 'MX Player' },
+      mxplayer: { url: 'https://www.mxplayer.in', name: 'MX Player' },
+      sonyliv: { url: 'https://www.sonyliv.com', name: 'Sony LIV' },
+      zee5: { url: 'https://www.zee5.com', name: 'ZEE5' },
+      crunchyroll: { url: 'https://www.crunchyroll.com', name: 'Crunchyroll' },
+      hulu: { url: 'https://www.hulu.com', name: 'Hulu' },
+      appletv: { url: 'https://tv.apple.com', name: 'Apple TV' },
+      twitch: { url: 'https://m.twitch.tv', name: 'Twitch' },
+      browser: { url: 'https://www.google.com', name: 'Web Browser' },
+      more: { url: 'https://www.google.com', name: 'Web Browser' }
+    };
+
+    if (appMap[clean] && typeof window.openInbuiltBrowser === 'function') {
+      window.openInbuiltBrowser(appMap[clean].url, appMap[clean].name);
+      return;
+    }
+
+    if (clean === 'movies') {
+      openModal();
+      showVaultView('movies');
+      return;
+    }
+
+    if (typeof window.openInbuiltBrowser === 'function') {
+      window.openInbuiltBrowser('https://www.google.com', 'Web Browser');
+    }
   }
   window.openRaveSourceSheet = openRaveSourceSheet;
 
@@ -2608,17 +2624,32 @@ function setupCinemaDiscoveryHub(socket) {
   // Apps URLs & Launch Handlers
   const APP_URLS = {
     netflix: 'https://www.netflix.com',
-    prime: 'https://www.primevideo.com',
+    prime: 'https://www.mxplayer.in',
     jiohotstar: 'https://www.hotstar.com',
-    youtube: 'https://www.youtube.com',
+    youtube: 'https://m.youtube.com',
     mxplayer: 'https://www.mxplayer.in',
     sonyliv: 'https://www.sonyliv.com',
     zee5: 'https://www.zee5.com',
     crunchyroll: 'https://www.crunchyroll.com',
     hulu: 'https://www.hulu.com',
     appletv: 'https://tv.apple.com',
-    twitch: 'https://www.twitch.tv',
-    more: 'https://www.youtube.com'
+    twitch: 'https://m.twitch.tv',
+    more: 'https://www.google.com'
+  };
+
+  const APP_DISPLAY_NAMES = {
+    netflix: 'Netflix',
+    prime: 'Prime Video',
+    jiohotstar: 'JioHotstar',
+    youtube: 'YouTube',
+    mxplayer: 'MX Player',
+    sonyliv: 'Sony LIV',
+    zee5: 'ZEE5',
+    crunchyroll: 'Crunchyroll',
+    hulu: 'Hulu',
+    appletv: 'Apple TV',
+    twitch: 'Twitch',
+    more: 'Web Browser'
   };
 
   const appsGrid = document.getElementById('apps-squircles-grid');
@@ -2627,12 +2658,16 @@ function setupCinemaDiscoveryHub(socket) {
       const item = e.target.closest('.app-item');
       if (!item) return;
       const appKey = item.dataset.app;
-      const appName = item.querySelector('.app-label')?.textContent || appKey;
+      const appName = APP_DISPLAY_NAMES[appKey] || item.querySelector('.app-label')?.textContent || appKey;
+      const targetUrl = APP_URLS[appKey] || 'https://www.google.com';
       closeModal();
-      if (window.openRaveSourceSheet) {
+      if (typeof window.closeSearchDrawer === 'function') window.closeSearchDrawer();
+      if (typeof window.closeStageSourcesPopup === 'function') window.closeStageSourcesPopup();
+
+      if (typeof window.openInbuiltBrowser === 'function') {
+        window.openInbuiltBrowser(targetUrl, appName);
+      } else if (window.openRaveSourceSheet) {
         window.openRaveSourceSheet(appKey);
-      } else {
-        showVaultView(appKey);
       }
     });
   }
@@ -4763,6 +4798,51 @@ function initRaveSuite(socket, roomId) {
         iconSvg: `<svg width="20" height="15" viewBox="0 0 24 18" fill="none"><path d="M23.5 2.6c-.3-1-1-1.8-2-2.1C19.7 0 12 0 12 0S4.3 0 2.5.5c-1 .3-1.7 1.1-2 2.1C0 4.4 0 9 0 9s0 4.6.5 6.4c.3 1 1 1.8 2 2.1 1.8.5 9.5.5 9.5.5s7.7 0 9.5-.5c1-.3 1.7-1.1 2-2.1.5-1.8.5-6.4.5-6.4s0-4.6-.5-6.4z" fill="#FF0000"/><polygon points="9.6 12.8 15.8 9 9.6 5.2" fill="#FFFFFF"/></svg>`,
         iconBg: '#ff0000',
         appUrl: 'https://www.youtube.com'
+      };
+    }
+    if (app.includes('sonyliv') || u.includes('sonyliv')) {
+      return {
+        title: 'Sony LIV',
+        bannerText: 'Open the Sony LIV app',
+        iconSvg: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><text x="2" y="17" fill="#E6007E" font-family="-apple-system, sans-serif" font-weight="900" font-size="14">LIV</text></svg>`,
+        iconBg: '#000000',
+        appUrl: 'https://www.sonyliv.com'
+      };
+    }
+    if (app.includes('zee5') || u.includes('zee5')) {
+      return {
+        title: 'ZEE5',
+        bannerText: 'Open the ZEE5 app',
+        iconSvg: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><text x="2" y="17" fill="#FFFFFF" font-family="-apple-system, sans-serif" font-weight="900" font-size="13">ZEE5</text></svg>`,
+        iconBg: '#8230c6',
+        appUrl: 'https://www.zee5.com'
+      };
+    }
+    if (app.includes('hulu') || u.includes('hulu')) {
+      return {
+        title: 'Hulu',
+        bannerText: 'Open the Hulu app',
+        iconSvg: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><text x="2" y="17" fill="#0b0c0f" font-family="-apple-system, sans-serif" font-weight="900" font-size="14">hulu</text></svg>`,
+        iconBg: '#1ce783',
+        appUrl: 'https://www.hulu.com'
+      };
+    }
+    if (app.includes('appletv') || app.includes('apple') || u.includes('apple.com')) {
+      return {
+        title: 'Apple TV',
+        bannerText: 'Open the Apple TV app',
+        iconSvg: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M18.7 15.5c-.8 1-2.1 1.7-3.3 1.6-.2-1.3.4-2.6 1.1-3.4.8-1 2.2-1.7 3.2-1.7.2 1.4-.3 2.6-1 3.5zm3.5 1.7c-1.8-.1-3.3-1.1-4.2-1.1-.9 0-2.2 1-3.6 1-1.9 0-3.6-1.1-4.6-2.8-2-3.4-.5-8.5 1.4-11.3 1-1.4 2.1-2.9 3.7-2.9 1.5 0 2.1 1 3.9 1 1.8 0 2.3-1 3.9-1 1.6 0 2.7 1.4 3.6 2.8.7 1.1 1.1 1.7 1.6 2.8-3.4 1.3-3.9 6.2-.5 7.6-.8 1.9-1.9 3.9-3.2 5.9z" fill="#FFFFFF"/></svg>`,
+        iconBg: '#000000',
+        appUrl: 'https://tv.apple.com'
+      };
+    }
+    if (app.includes('twitch') || u.includes('twitch.tv')) {
+      return {
+        title: 'Twitch',
+        bannerText: 'Open the Twitch app',
+        iconSvg: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 2h16v14l-4 4h-4l-3 3v-3H4V2zm13 11h2V7h-2v6zm-5 0h2V7h-2v6z" fill="#FFFFFF"/></svg>`,
+        iconBg: '#9146ff',
+        appUrl: 'https://www.twitch.tv'
       };
     }
 
