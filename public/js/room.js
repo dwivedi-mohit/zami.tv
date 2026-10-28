@@ -7255,6 +7255,19 @@ function initWatch2GetherRoomClone() {
     btnCallQueueQuick.addEventListener('click', () => scrollRoomToSlide(1));
   }
 
+  const btnChatBackToCall = document.getElementById('btn-chat-back-to-call');
+  if (btnChatBackToCall) {
+    btnChatBackToCall.addEventListener('click', () => scrollRoomToSlide(0));
+  }
+  const btnChatToQueue = document.getElementById('btn-chat-to-queue');
+  if (btnChatToQueue) {
+    btnChatToQueue.addEventListener('click', () => scrollRoomToSlide(1));
+  }
+  const btnQueueBackToCall = document.getElementById('btn-queue-back-to-call');
+  if (btnQueueBackToCall) {
+    btnQueueBackToCall.addEventListener('click', () => scrollRoomToSlide(0));
+  }
+
   const dockRow = document.querySelector('.dock-actions-row');
   if (dockRow) {
     dockRow.addEventListener('keydown', (e) => {

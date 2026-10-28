@@ -1263,6 +1263,19 @@
 
         <!-- Tab 1: Live Chat -->
         <div id="tab-pane-chat" class="tab-pane active">
+          <!-- Mobile Chat Header Bar (One-tap Back to Call & Queue) -->
+          <div class="mobile-chat-top-bar" id="mobile-chat-top-bar">
+            <button type="button" class="mobile-back-to-call-btn" id="btn-chat-back-to-call" title="Back to Video Call">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+              <span>Call</span>
+            </button>
+            <span class="mobile-chat-title">Lounge Chat</span>
+            <button type="button" class="mobile-switch-to-queue-btn" id="btn-chat-to-queue" title="Switch to Queue">
+              <span>Queue</span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            </button>
+          </div>
+
           <!-- Active Watch Party Poll & Trivia Banner (Pinned at top of chat) -->
           <div id="active-poll-hud" class="active-poll-hud" style="display: none;">
             <div class="poll-hud-header">
@@ -1497,6 +1510,7 @@
                 <span class="queue-header-count" id="queue-header-count">0 items</span>
               </div>
               <div class="queue-header-actions">
+                <button type="button" id="btn-queue-back-to-call" class="queue-ghost-btn mobile-call-btn" title="Back to Video Call">← Call</button>
                 <button type="button" id="btn-queue-skip" class="queue-ghost-btn" title="Skip to next queued item" disabled aria-disabled="true">Skip</button>
                 <button type="button" id="btn-queue-clear" class="queue-ghost-btn" title="Clear queue" disabled aria-disabled="true">Clear</button>
               </div>
@@ -1522,62 +1536,21 @@
     </main>
     </div> <!-- .room-body-container -->
 
-    <!-- Sleek Minimalist Mobile Bottom Navigation Dock (Pure 3-Tab View Navigation) -->
-    <nav class="w2g-mobile-dock" id="w2g-mobile-dock" aria-label="Mobile Navigation Controls">
-      <div class="dock-actions-row" role="tablist" aria-label="Room views">
-        <!-- 1. People / Voice Tab (Slide 0) -->
-        <button type="button" id="btn-dock-people" class="dock-action-btn active" title="People & Voice" aria-label="People & Voice" role="tab" aria-selected="true" data-slide="0">
-          <div class="dock-icon-wrap">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-            </svg>
-            <span class="dock-badge" id="mob-people-badge">1</span>
-          </div>
-          <span class="dock-label">People</span>
-        </button>
-
-        <!-- 2. Queue / Playlist Tab (Slide 1) -->
-        <button type="button" id="btn-dock-queue" class="dock-action-btn" title="Queue & Playlist" aria-label="Queue & Playlist" role="tab" aria-selected="false" data-slide="1">
-          <div class="dock-icon-wrap">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
-            </svg>
-            <span class="dock-badge" id="mob-queue-badge" style="display:none;">0</span>
-          </div>
-          <span class="dock-label">Queue</span>
-        </button>
-
-        <!-- 3. Chat Tab (Slide 2) -->
-        <button type="button" id="btn-dock-chat" class="dock-action-btn" title="Live Chat" aria-label="Live Chat" role="tab" aria-selected="false" data-slide="2">
-          <div class="dock-icon-wrap">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-            </svg>
-            <span class="dock-badge" id="mob-chat-badge" style="display:none;">0</span>
-          </div>
-          <span class="dock-label">Chat</span>
-        </button>
-      </div>
-
-      <!-- Preserved legacy elements for script compatibility (hidden) -->
-      <div style="display: none;" aria-hidden="true">
-        <button type="button" id="btn-dock-invite" class="dock-action-btn dock-btn-invite"></button>
-        <button type="button" id="btn-dock-mic" class="dock-action-btn dock-btn-mic"></button>
-        <a href="/" class="dock-action-btn dock-btn-leave" id="btn-dock-leave-legacy"></a>
-        <button type="button" id="btn-dock-cam" class="dock-pill-btn"></button>
-        <button type="button" id="btn-dock-zoom-out" class="dock-pill-btn"></button>
-        <button type="button" id="btn-dock-zoom-in" class="dock-pill-btn"></button>
-        <div class="w2g-dock-bullets" id="w2g-dock-bullets">
-          <button type="button" class="w2g-bullet active" data-slide="0"></button>
-          <button type="button" class="w2g-bullet" data-slide="1"></button>
-          <button type="button" class="w2g-bullet" data-slide="2"></button>
-        </div>
-        <button class="mobile-nav-btn" data-tab="chat" id="mob-nav-chat"></button>
-        <button class="mobile-nav-btn" data-tab="voice" id="mob-nav-people"></button>
-        <button class="mobile-nav-btn" data-tab="queue" id="mob-nav-queue"></button>
-        <button class="mobile-nav-btn mob-nav-btn-media" data-action="media" id="mob-nav-media"></button>
-      </div>
-    </nav>
+    <!-- Preserved legacy elements for script compatibility (strictly hidden) -->
+    <div style="display: none !important;" aria-hidden="true">
+      <button type="button" id="btn-dock-people"></button>
+      <button type="button" id="btn-dock-queue"></button>
+      <button type="button" id="btn-dock-chat"></button>
+      <button type="button" id="btn-dock-invite"></button>
+      <button type="button" id="btn-dock-mic"></button>
+      <a href="/" id="btn-dock-leave-legacy"></a>
+      <button type="button" id="btn-dock-cam"></button>
+      <button type="button" id="btn-dock-zoom-out"></button>
+      <button type="button" id="btn-dock-zoom-in"></button>
+      <span id="mob-people-badge"></span>
+      <span id="mob-queue-badge"></span>
+      <span id="mob-chat-badge"></span>
+    </div>
 
     <!-- Watch2Gether Top-Down Search Drawer Overlay -->
     <div id="w2g-search-drawer" class="w2g-search-drawer" style="display: none;">

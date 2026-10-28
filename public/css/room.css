@@ -11826,19 +11826,99 @@ body[data-theme="vhs"] .zami-text-logo {
     background: #0c1017 !important;
     border-bottom: 1px solid #27272a !important;
   }
-  /* Mobile Bottom Navigation & Call Controls Toggle */
+  /* Mobile Navigation Dock - Completely Removed */
   .w2g-mobile-dock {
-    display: flex !important;
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
   }
 
-  /* When viewing Slide 0 (Call / People) on mobile, hide the navigation dock completely */
-  body.mobile-on-call-slide .w2g-mobile-dock {
-    display: none !important;
+  /* Mobile Chat Top Bar (Clean one-tap back to call and queue) */
+  .mobile-chat-top-bar {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 8px 12px !important;
+    background: rgba(18, 20, 26, 0.9) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    flex-shrink: 0 !important;
+    z-index: 10 !important;
+  }
+
+  .mobile-back-to-call-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    background: rgba(30, 142, 62, 0.2) !important;
+    border: 1px solid rgba(30, 142, 62, 0.4) !important;
+    color: #81c995 !important;
+    padding: 4px 10px !important;
+    border-radius: 14px !important;
+    font-size: 0.72rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+  }
+
+  .mobile-back-to-call-btn:active {
+    background: rgba(30, 142, 62, 0.35) !important;
+  }
+
+  .mobile-chat-title {
+    font-size: 0.82rem !important;
+    font-weight: 700 !important;
+    color: #e4e4e7 !important;
+    letter-spacing: 0.02em !important;
+  }
+
+  .mobile-switch-to-queue-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #d4d4d8 !important;
+    padding: 4px 10px !important;
+    border-radius: 14px !important;
+    font-size: 0.72rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+  }
+
+  .mobile-switch-to-queue-btn:active {
+    background: rgba(255, 255, 255, 0.16) !important;
+  }
+
+  .mobile-call-btn {
+    display: inline-flex !important;
+    background: rgba(30, 142, 62, 0.2) !important;
+    border-color: rgba(30, 142, 62, 0.4) !important;
+    color: #81c995 !important;
   }
 
   /* When NOT viewing Slide 0 (i.e. on Slide 1 Queue or Slide 2 Chat), hide the fixed call controls card */
   body:not(.mobile-on-call-slide) .gmeet-call-card {
     display: none !important;
+  }
+
+  /* Padding adjustments with navigation completely gone */
+  #room-sidebar #tab-pane-chat {
+    padding: 0 0 0 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+  }
+
+  #room-sidebar #tab-pane-queue {
+    padding: 10px 12px calc(14px + env(safe-area-inset-bottom, 0px)) 12px !important;
+  }
+
+  .chat-input-bar {
+    padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px)) 12px !important;
   }
 
   /* Google Meet Call Controls Bar docked directly at the bottom on mobile (replacing navigation dock) */
