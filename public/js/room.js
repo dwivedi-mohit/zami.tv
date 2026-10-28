@@ -452,7 +452,7 @@ document.addEventListener('DOMContentLoaded', () => {
       window.webrtcManager = webrtcManager;
     }
     if (webrtcManager && typeof webrtcManager.autoJoinOnRoomEntry === 'function') {
-      webrtcManager.autoJoinOnRoomEntry();
+      webrtcManager.autoJoinOnRoomEntry(data.users);
     }
 
     if (data.screenShare && data.screenShare.active) {
@@ -745,16 +745,25 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Mobile Quick Mic Toggle in Subplayer Bar
+  // Mobile Quick Mic & Cam Toggles in Subplayer Bar
   const btnMobileMicQuick = document.getElementById('btn-mobile-mic-quick');
   if (btnMobileMicQuick) {
     btnMobileMicQuick.addEventListener('click', (e) => {
       e.preventDefault();
       toggleLocalMic();
       if (window.webrtcManager) {
-        const isMuted = window.webrtcManager.isAudioMuted;
-        btnMobileMicQuick.classList.toggle('mic-muted', isMuted);
-        btnMobileMicQuick.classList.toggle('mic-live', !isMuted);
+        window.webrtcManager.updateDockAVButtons();
+      }
+    });
+  }
+
+  const btnMobileCamQuick = document.getElementById('btn-mobile-cam-quick');
+  if (btnMobileCamQuick) {
+    btnMobileCamQuick.addEventListener('click', (e) => {
+      e.preventDefault();
+      toggleLocalCam();
+      if (window.webrtcManager) {
+        window.webrtcManager.updateDockAVButtons();
       }
     });
   }
@@ -1258,7 +1267,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnMobileInvite) btnMobileInvite.addEventListener('click', triggerInviteShare);
 
-  // Wire First Watch Hub Direct Choices
+  // Wire Stage Single Choose Button & Expandable All Sources
+  const btnStageSingleChoose = document.getElementById('btn-stage-single-choose');
+  const emptyStageSingleWrap = document.getElementById('empty-stage-single-wrap');
+  const stageAllSourcesWrapper = document.getElementById('stage-all-sources-wrapper');
+  const btnCollapseStageAll = document.getElementById('btn-collapse-stage-all');
+
+  function resetStageSourceView() {
+    if (emptyStageSingleWrap) emptyStageSingleWrap.style.display = 'flex';
+    if (stageAllSourcesWrapper) stageAllSourcesWrapper.style.display = 'none';
+    if (btnStageSingleChoose) btnStageSingleChoose.setAttribute('aria-expanded', 'false');
+  }
+  window.resetStageSourceView = resetStageSourceView;
+
+  if (btnStageSingleChoose) {
+    btnStageSingleChoose.addEventListener('click', () => {
+      if (emptyStageSingleWrap) emptyStageSingleWrap.style.display = 'none';
+      if (stageAllSourcesWrapper) {
+        stageAllSourcesWrapper.style.display = 'flex';
+      }
+      btnStageSingleChoose.setAttribute('aria-expanded', 'true');
+    });
+  }
+
+  if (btnCollapseStageAll) {
+    btnCollapseStageAll.addEventListener('click', () => {
+      if (stageAllSourcesWrapper) stageAllSourcesWrapper.style.display = 'none';
+      if (emptyStageSingleWrap) {
+        emptyStageSingleWrap.style.display = 'flex';
+      }
+      if (btnStageSingleChoose) {
+        btnStageSingleChoose.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
+  // 1. Browse Movies
   const btnStageMovies = document.getElementById('btn-stage-choice-movies');
   if (btnStageMovies) {
     btnStageMovies.addEventListener('click', () => {
@@ -1267,6 +1311,27 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // 2. Web Browser (Virtual Webview)
+  const btnStageBrowserChoice = document.getElementById('btn-stage-choice-browser');
+  if (btnStageBrowserChoice) {
+    btnStageBrowserChoice.addEventListener('click', () => {
+      if (typeof window.openInbuiltBrowser === 'function') {
+        window.openInbuiltBrowser('https://www.google.com');
+      }
+    });
+  }
+
+  // 3. YouTube
+  const btnStageChoiceYt = document.getElementById('btn-stage-choice-yt');
+  if (btnStageChoiceYt) {
+    btnStageChoiceYt.addEventListener('click', () => {
+      if (typeof window.openRaveSourceSheet === 'function') {
+        window.openRaveSourceSheet('youtube');
+      }
+    });
+  }
+
+  // 4. Paste Video Link
   const btnStageLink = document.getElementById('btn-stage-choice-link');
   if (btnStageLink) {
     btnStageLink.addEventListener('click', () => {
@@ -1277,20 +1342,74 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // 5. Netflix
+  const btnStageNetflix = document.getElementById('btn-stage-choice-netflix');
+  if (btnStageNetflix) {
+    btnStageNetflix.addEventListener('click', () => {
+      if (typeof window.openInbuiltBrowser === 'function') {
+        window.openInbuiltBrowser('https://www.netflix.com');
+      }
+    });
+  }
+
+  // 6. JioHotstar
+  const btnStageHotstar = document.getElementById('btn-stage-choice-hotstar');
+  if (btnStageHotstar) {
+    btnStageHotstar.addEventListener('click', () => {
+      if (typeof window.openInbuiltBrowser === 'function') {
+        window.openInbuiltBrowser('https://www.hotstar.com');
+      }
+    });
+  }
+
+  // 7. Prime Video
+  const btnStagePrime = document.getElementById('btn-stage-choice-prime');
+  if (btnStagePrime) {
+    btnStagePrime.addEventListener('click', () => {
+      if (typeof window.openInbuiltBrowser === 'function') {
+        window.openInbuiltBrowser('https://www.primevideo.com');
+      }
+    });
+  }
+
+  // 8. MX Player
+  const btnStageMx = document.getElementById('btn-stage-choice-mx');
+  if (btnStageMx) {
+    btnStageMx.addEventListener('click', () => {
+      if (typeof window.openInbuiltBrowser === 'function') {
+        window.openInbuiltBrowser('https://www.mxplayer.in');
+      }
+    });
+  }
+
+  // 9. Crunchyroll
+  const btnStageCrunchyroll = document.getElementById('btn-stage-choice-crunchyroll');
+  if (btnStageCrunchyroll) {
+    btnStageCrunchyroll.addEventListener('click', () => {
+      if (typeof window.openInbuiltBrowser === 'function') {
+        window.openInbuiltBrowser('https://www.crunchyroll.com');
+      }
+    });
+  }
+
+  // 10. Share Screen
+  const btnStageScreenShare = document.getElementById('btn-stage-choice-screenshare');
+  if (btnStageScreenShare) {
+    btnStageScreenShare.addEventListener('click', () => {
+      if (window.webrtcManager && typeof window.webrtcManager.startScreenShare === 'function') {
+        window.webrtcManager.startScreenShare();
+      } else if (typeof window.startScreenShare === 'function') {
+        window.startScreenShare();
+      }
+    });
+  }
+
+  // 11. Explore Hub
   const btnStageMore = document.getElementById('btn-stage-choice-more');
   if (btnStageMore) {
     btnStageMore.addEventListener('click', () => {
       if (typeof window.openModal === 'function') window.openModal(btnStageMore);
       if (typeof window.showVaultView === 'function') window.showVaultView('menu');
-    });
-  }
-
-  const btnStageBrowserChoice = document.getElementById('btn-stage-choice-browser');
-  if (btnStageBrowserChoice) {
-    btnStageBrowserChoice.addEventListener('click', () => {
-      if (typeof window.openInbuiltBrowser === 'function') {
-        window.openInbuiltBrowser('https://www.google.com');
-      }
     });
   }
 
@@ -3813,6 +3932,12 @@ function renderUsers(users, webrtcMgr, currentUserId) {
       <video class="peer-video" autoplay playsinline ${isMe ? 'muted' : ''} style="display: none;"></video>
       <div class="peer-avatar" style="background-color: ${avatarColor}">
         ${initial}
+        ${isMe ? `
+          <button type="button" class="peer-quick-cam-chip" id="my-tile-cam-chip" style="display: ${webrtcMgr && webrtcMgr.isCameraOn ? 'none' : 'inline-flex'};" title="Turn on Camera" aria-label="Turn on Camera">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+            <span>Start Video</span>
+          </button>
+        ` : ''}
       </div>
       <div class="peer-label">
         <span class="gmeet-peer-name">
@@ -3823,7 +3948,7 @@ function renderUsers(users, webrtcMgr, currentUserId) {
       </div>
       <div class="gmeet-peer-trailing">
         ${volControlHtml}
-        <span class="peer-mic-status ${isMuted ? 'muted' : ''}" title="${isMuted ? 'Microphone Off' : 'Microphone On'}">
+        <span class="peer-mic-status ${isMuted ? 'muted' : ''} ${isMe ? 'is-me-mic-btn' : ''}" title="${isMe ? (isMuted ? 'Click to Unmute' : 'Click to Mute') : (isMuted ? 'Microphone Off' : 'Microphone On')}">
           ${isMuted ? MIC_OFF_SVG : MIC_ON_SVG}
         </span>
         <button type="button" class="gmeet-peer-menu-btn" title="More options" aria-label="More options">
@@ -3838,6 +3963,20 @@ function renderUsers(users, webrtcMgr, currentUserId) {
     const avatarEl = tile.querySelector('.peer-avatar');
     if (isMe) {
       tile.dataset.isMe = 'true';
+      const myMicBadge = tile.querySelector('.is-me-mic-btn');
+      if (myMicBadge) {
+        myMicBadge.addEventListener('click', (e) => {
+          e.stopPropagation();
+          toggleLocalMic();
+        });
+      }
+      const myCamChip = tile.querySelector('#my-tile-cam-chip');
+      if (myCamChip) {
+        myCamChip.addEventListener('click', (e) => {
+          e.stopPropagation();
+          toggleLocalCam();
+        });
+      }
       if (webrtcMgr && webrtcMgr.isCameraOn && webrtcMgr.localStream && videoEl) {
         videoEl.srcObject = webrtcMgr.localStream;
         videoEl.style.display = 'block';
@@ -5573,13 +5712,7 @@ function initRaveSuite(socket, roomId) {
     });
   }
 
-  // Stage choice card for Virtual Browser
-  const btnStageChoiceBrowser = document.getElementById('btn-stage-choice-browser');
-  if (btnStageChoiceBrowser) {
-    btnStageChoiceBrowser.addEventListener('click', () => {
-      openInbuiltBrowser('https://www.google.com');
-    });
-  }
+  // Virtual Browser helper export
 
   // Mobile subplayer quick Virtual Browser button
   const btnMobileBrowserQuick = document.getElementById('btn-mobile-browser-quick');

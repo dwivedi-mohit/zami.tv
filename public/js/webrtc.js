@@ -27,8 +27,19 @@ class WebRTCManager {
         { urls: 'stun:stun.l.google.com:19302' },
         { urls: 'stun:stun1.l.google.com:19302' },
         { urls: 'stun:stun2.l.google.com:19302' },
-        { urls: 'stun:stun3.l.google.com:19302' }
-      ]
+        { urls: 'stun:stun3.l.google.com:19302' },
+        { urls: 'stun:openrelay.metered.ca:80' },
+        {
+          urls: [
+            'turn:openrelay.metered.ca:80',
+            'turn:openrelay.metered.ca:443',
+            'turn:openrelay.metered.ca:443?transport=tcp'
+          ],
+          username: 'openrelay',
+          credential: 'openrelay'
+        }
+      ],
+      iceCandidatePoolSize: 10
     };
 
     this.audioCtx = null;
@@ -41,8 +52,8 @@ class WebRTCManager {
     this.initUIControls();
     this.updateDockAVButtons();
 
-    // Auto-resume AudioContext and unlock any pending peer audio on user click
-    window.addEventListener('click', () => {
+    // Auto-resume AudioContext and unlock any pending peer audio on user click or touch
+    const unlockAudio = () => {
       const ctx = this.getAudioContext();
       if (ctx && ctx.state === 'suspended') {
         ctx.resume().catch(() => {});
@@ -52,7 +63,9 @@ class WebRTCManager {
           audioEl.play().catch(() => {});
         }
       });
-    }, { passive: true });
+    };
+    window.addEventListener('click', unlockAudio, { passive: true });
+    window.addEventListener('touchstart', unlockAudio, { passive: true });
   }
 
   getAudioContext() {
@@ -197,6 +210,7 @@ class WebRTCManager {
     this.btnToggleVoice = document.getElementById('btn-toggle-voice');
     this.btnToggleMic = document.getElementById('btn-toggle-mic');
     this.btnToggleCam = document.getElementById('btn-toggle-cam');
+    this.btnFlipCam = document.getElementById('btn-flip-cam');
     this.btnShareScreen = document.getElementById('btn-screenshare-trigger');
     this.btnNavbarScreenshare = document.getElementById('btn-navbar-screenshare');
     this.btnHubScreenshare = document.getElementById('btn-trigger-screenshare-hub');
@@ -214,6 +228,10 @@ class WebRTCManager {
       this.btnToggleCam.addEventListener('click', () => this.toggleCamera());
     }
 
+    if (this.btnFlipCam) {
+      this.btnFlipCam.addEventListener('click', () => this.flipCamera());
+    }
+
     if (this.btnShareScreen) {
       this.btnShareScreen.addEventListener('click', () => this.toggleScreenShare());
     }
@@ -227,12 +245,66 @@ class WebRTCManager {
     }
   }
 
+  async flipCamera() {
+    this.currentFacingMode = this.currentFacingMode === 'environment' ? 'user' : 'environment';
+    if (!this.isCameraOn) {
+      await this.toggleCamera();
+      return;
+    }
+
+    if (this.localStream) {
+      const oldTrack = this.localStream.getVideoTracks()[0];
+      if (oldTrack) {
+        oldTrack.stop();
+        this.localStream.removeTrack(oldTrack);
+      }
+    }
+
+    try {
+      const videoStream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          width: { ideal: 640 },
+          height: { ideal: 480 },
+          facingMode: this.currentFacingMode
+        }
+      });
+      const newTrack = videoStream.getVideoTracks()[0];
+      if (!this.localStream) this.localStream = new MediaStream();
+      this.localStream.addTrack(newTrack);
+
+      this.updateLocalTile();
+
+      for (const [peerId, peerObj] of this.peers.entries()) {
+        const pc = peerObj.pc;
+        if (pc) {
+          const videoSender = pc.getSenders().find(s => s.track && s.track.kind === 'video') ||
+                              pc.getSenders().find(s => !s.track && s.kind === 'video');
+          if (videoSender && typeof videoSender.replaceTrack === 'function') {
+            await videoSender.replaceTrack(newTrack);
+          }
+        }
+      }
+
+      if (window.showToast) {
+        window.showToast(`Switched to ${this.currentFacingMode === 'user' ? 'front' : 'rear'} camera`, 'info', 2000);
+      }
+    } catch (e) {
+      console.warn('Failed to flip camera:', e);
+      if (window.showToast) window.showToast('Camera switch not available on this device', 'info', 2000);
+    }
+  }
+
   updateDockAVButtons() {
     const dockMic = document.getElementById('btn-dock-mic');
     const desktopMic = document.getElementById('btn-desktop-mic');
     const quickMic = document.getElementById('btn-mobile-mic-quick');
+    const quickCam = document.getElementById('btn-mobile-cam-quick');
     const dockCam = document.getElementById('btn-dock-cam');
     const desktopCam = document.getElementById('btn-desktop-cam');
+    const gmeetMic = document.getElementById('btn-toggle-mic');
+    const gmeetCam = document.getElementById('btn-toggle-cam');
+    const ctrlLabelMic = document.getElementById('ctrl-label-mic');
+    const ctrlLabelCam = document.getElementById('ctrl-label-cam');
 
     [dockMic, desktopMic, quickMic].forEach(btn => {
       if (!btn) return;
@@ -242,11 +314,50 @@ class WebRTCManager {
       btn.classList.toggle('is-muted', this.isMuted);
     });
 
-    [dockCam, desktopCam].forEach(btn => {
+    [quickCam, dockCam, desktopCam].forEach(btn => {
       if (!btn) return;
       btn.classList.toggle('active', this.isCameraOn);
+      btn.classList.toggle('cam-live', this.isCameraOn);
       btn.classList.toggle('is-muted', !this.isCameraOn);
     });
+
+    if (gmeetMic) {
+      gmeetMic.classList.toggle('is-muted', this.isMuted);
+      gmeetMic.classList.toggle('is-active', !this.isMuted);
+      const micOn = gmeetMic.querySelector('.gmeet-icon-mic-on');
+      const micOff = gmeetMic.querySelector('.gmeet-icon-mic-off');
+      if (micOn) micOn.style.display = this.isMuted ? 'none' : 'inline-block';
+      if (micOff) micOff.style.display = this.isMuted ? 'inline-block' : 'none';
+      if (ctrlLabelMic) ctrlLabelMic.textContent = this.isMuted ? 'Unmute' : 'Mute';
+    }
+
+    if (gmeetCam) {
+      gmeetCam.classList.toggle('is-muted', !this.isCameraOn);
+      gmeetCam.classList.toggle('cam-active', this.isCameraOn);
+      const camOn = gmeetCam.querySelector('.gmeet-icon-cam-on');
+      const camOff = gmeetCam.querySelector('.gmeet-icon-cam-off');
+      if (camOn) camOn.style.display = this.isCameraOn ? 'inline-block' : 'none';
+      if (camOff) camOff.style.display = this.isCameraOn ? 'none' : 'inline-block';
+      if (ctrlLabelCam) ctrlLabelCam.textContent = this.isCameraOn ? 'Cam Off' : 'Camera';
+    }
+
+    if (this.voiceStatusText) {
+      if (this.isInCall) {
+        this.voiceStatusText.textContent = this.isMuted ? 'In call · Muted' : 'In call · Mic ON';
+      } else {
+        this.voiceStatusText.textContent = 'Call paused';
+      }
+    }
+
+    // Sync user's own tile badges
+    const myTile = document.querySelector('.peer-tile[data-is-me="true"]');
+    if (myTile) {
+      const micBadge = myTile.querySelector('.peer-mic-status');
+      if (micBadge) {
+        micBadge.classList.toggle('muted', this.isMuted);
+        micBadge.title = this.isMuted ? 'Tap to Unmute Microphone' : 'Tap to Mute Microphone';
+      }
+    }
   }
 
   updateScreenshareUI() {
@@ -289,9 +400,17 @@ class WebRTCManager {
     }
   }
 
-  autoJoinOnRoomEntry() {
+  autoJoinOnRoomEntry(users) {
     this.isInCall = true;
     this.updateInCallUI(true);
+
+    if (users && Array.isArray(users)) {
+      users.forEach(u => {
+        if (u.id && u.id !== this.socket.id) {
+          this.knownPeerIds.add(u.id);
+        }
+      });
+    }
 
     // Immediately initiate WebRTC connections to existing peers so we receive their video/audio
     if (this.knownPeerIds) {
@@ -679,7 +798,7 @@ class WebRTCManager {
     };
 
     pc.ontrack = (event) => {
-      const [remoteStream] = event.streams;
+      const remoteStream = (event.streams && event.streams[0]) ? event.streams[0] : new MediaStream([event.track]);
       this.handleRemoteStream(peerId, remoteStream, event.track);
     };
 
@@ -805,19 +924,27 @@ class WebRTCManager {
     for (const [peerId, peerObj] of this.peers.entries()) {
       const pc = peerObj.pc;
       if (pc) {
-        let trackAdded = false;
-        this.localStream.getAudioTracks().forEach(track => {
-          const senders = pc.getSenders();
-          const exists = senders.some(s => s.track && s.track.id === track.id);
-          if (!exists) {
+        let needsRenegotiate = false;
+        for (const track of this.localStream.getAudioTracks()) {
+          const audioSender = pc.getSenders().find(s => s.track && s.track.kind === 'audio') ||
+                              pc.getSenders().find(s => !s.track && s.kind === 'audio');
+          if (audioSender && typeof audioSender.replaceTrack === 'function') {
+            try {
+              await audioSender.replaceTrack(track);
+            } catch (err) {
+              console.warn('[WebRTC] replaceTrack error:', err);
+            }
+          } else {
             try {
               pc.addTrack(track, this.localStream);
-              trackAdded = true;
-            } catch(e) {}
+              needsRenegotiate = true;
+            } catch (e) {
+              console.warn('[WebRTC] addTrack error:', e);
+            }
           }
-        });
+        }
 
-        if (trackAdded) {
+        if (needsRenegotiate) {
           try {
             const offer = await pc.createOffer();
             await pc.setLocalDescription(offer);
@@ -1048,6 +1175,7 @@ class WebRTCManager {
     if (localTile) {
       const localVideo = localTile.querySelector('.peer-video');
       const localAvatar = localTile.querySelector('.peer-avatar');
+      const camChip = localTile.querySelector('.peer-quick-cam-chip');
       if (this.isCameraOn && this.localStream && this.localStream.getVideoTracks().length > 0) {
         if (localVideo) {
           localVideo.srcObject = this.localStream;
@@ -1055,12 +1183,14 @@ class WebRTCManager {
           localVideo.play().catch(() => {});
         }
         if (localAvatar) localAvatar.style.display = 'none';
+        if (camChip) camChip.style.display = 'none';
       } else {
         if (localVideo) {
           localVideo.style.display = 'none';
           localVideo.srcObject = null;
         }
         if (localAvatar) localAvatar.style.display = 'flex';
+        if (camChip) camChip.style.display = 'inline-flex';
       }
     }
 
