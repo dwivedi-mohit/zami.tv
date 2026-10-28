@@ -95,7 +95,7 @@
      * Complete nuclear teardown of all media elements, audio nodes, and streaming pipelines.
      * Guarantees zero residual audio bleed.
      */
-    silenceAndTeardownAll() {
+    silenceAndTeardownAll(keepSource = null) {
       // 1. Silence and stop all registered HTML5 video elements
       this.videoElements.forEach(vid => {
         try {
@@ -123,14 +123,16 @@
       });
 
       // Silence remote browser audio element if present
-      const remoteAudio = document.getElementById('remote-browser-audio');
-      if (remoteAudio) {
-        try {
-          remoteAudio.pause();
-          remoteAudio.muted = true;
-          remoteAudio.removeAttribute('src');
-          remoteAudio.load();
-        } catch(e) {}
+      if (keepSource !== 'remote_browser') {
+        const remoteAudio = document.getElementById('remote-browser-audio');
+        if (remoteAudio) {
+          try {
+            remoteAudio.pause();
+            remoteAudio.muted = true;
+            remoteAudio.removeAttribute('src');
+            remoteAudio.load();
+          } catch(e) {}
+        }
       }
 
       // 3. Teardown active engines
@@ -155,18 +157,23 @@
       }
 
       // 6. Stop and hide Remote Browser
-      const browserContainer = document.getElementById('inbuilt-browser-container');
-      if (browserContainer) browserContainer.style.display = 'none';
+      if (keepSource !== 'remote_browser') {
+        const browserContainer = document.getElementById('inbuilt-browser-container');
+        if (browserContainer) browserContainer.style.display = 'none';
 
-      const appStage = document.getElementById('inbuilt-app-stage');
-      if (appStage) appStage.style.display = 'none';
+        const appStage = document.getElementById('inbuilt-app-stage');
+        if (appStage) appStage.style.display = 'none';
 
-      // 7. Emit remote-browser-stop to server if active
-      if (window.socket && window.isRemoteBrowserActive) {
-        try {
-          window.socket.emit('remote-browser-stop');
-        } catch(e) {}
-        window.isRemoteBrowserActive = false;
+        const playerWrapper = document.querySelector('.player-wrapper');
+        if (playerWrapper) playerWrapper.classList.remove('browser-active');
+
+        // 7. Emit remote-browser-stop to server if active
+        if (window.socket && window.isRemoteBrowserActive) {
+          try {
+            window.socket.emit('remote-browser-stop');
+          } catch(e) {}
+          window.isRemoteBrowserActive = false;
+        }
       }
     }
 
@@ -180,7 +187,7 @@
       this.isTransitioning = true;
 
       // Immediately silence everything before activating the new source
-      this.silenceAndTeardownAll();
+      this.silenceAndTeardownAll(targetSource);
 
       const token = {
         id: transitionId,

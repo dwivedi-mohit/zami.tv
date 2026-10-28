@@ -5758,34 +5758,34 @@
     overflow-y: auto;
     z-index: 150;
   }
-  /* Mobile In-App Webview Fullscreen Container (Matches native app webview from user screenshot) */
+  /* Mobile Virtual Browser Container (inside .player-wrapper stage) */
   #inbuilt-browser-container {
-    position: fixed !important;
-    inset: 0 !important;
-    z-index: 3000 !important;
-    width: 100vw !important;
-    height: 100dvh !important;
-    background: #000000 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    border-radius: 0 !important;
-    box-sizing: border-box !important;
-    padding-top: env(safe-area-inset-top, 0) !important;
-    padding-bottom: env(safe-area-inset-bottom, 0) !important;
+    position: absolute;
+    inset: 0;
+    z-index: 45;
+    background: #000000;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
   }
 
-  body:has(#inbuilt-browser-container[style*="display: flex"]) #gmeet-call-card,
-  body:has(#inbuilt-browser-container[style*="display: flex"]) .gmeet-controls-dock,
-  body:has(#inbuilt-browser-container[style*="display: flex"]) .gmeet-call-floating-dock,
-  body:has(#inbuilt-browser-container[style*="display: flex"]) .rave-dock-wrapper,
-  body:has(#inbuilt-browser-container[style*="display: flex"]) .nav-bottom-bar {
+  #inbuilt-browser-container[style*="display: none"] {
     display: none !important;
+  }
+
+  /* Responsive Stage Height for Phone Viewport */
+  .player-wrapper.browser-active,
+  .player-wrapper:has(#inbuilt-browser-container[style*="display: flex"]) {
+    height: clamp(320px, 48dvh, 500px) !important;
+    min-height: 320px !important;
+    max-height: 500px !important;
+    flex: 0 0 clamp(320px, 48dvh, 500px) !important;
   }
 
   #inbuilt-browser-container .browser-viewport-wrapper {
     flex: 1 1 auto !important;
-    height: calc(100dvh - 104px) !important;
     width: 100% !important;
+    height: 100% !important;
     background: #000000 !important;
     position: relative !important;
     overflow: hidden !important;
@@ -5816,25 +5816,10 @@
     pointer-events: none !important;
   }
 
-  /* Mobile Floating Quick Toolbar */
-  .browser-mobile-toolbar {
-    position: absolute;
-    bottom: 14px;
-    right: 14px;
-    left: auto;
-    transform: none;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 3px 8px;
-    background: rgba(10, 14, 22, 0.85);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    border-radius: 9999px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.65);
-    z-index: 25;
-    pointer-events: auto;
+  /* Clean up floating toolbars so webview is clean matching user reference */
+  #browser-mobile-toolbar,
+  #remote-stage-unmute-pill {
+    display: none !important;
   }
 
   .browser-mobile-bar-btn {

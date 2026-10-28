@@ -4861,12 +4861,16 @@ function initRaveSuite(socket, roomId) {
 
     // Silence all native HTML5 player or YouTube player media elements before remote browser starts
     if (window.mediaSourceManager) {
-      window.mediaSourceManager.silenceAndTeardownAll();
       const token = window.mediaSourceManager.acquireTransition('remote_browser');
       window.mediaSourceManager.commitTransition(token);
     } else if (window.universalPlayer) {
       try { window.universalPlayer.pause(); } catch(e) {}
     }
+
+    if (browserContainer) browserContainer.style.display = 'flex';
+    if (playerWrapper) playerWrapper.classList.add('browser-active');
+    if (remoteContainer) remoteContainer.style.display = 'block';
+    if (browserIframe) browserIframe.style.display = 'none';
 
     // Show status overlay
     if (remoteOverlay) {
@@ -5145,6 +5149,8 @@ function initRaveSuite(socket, roomId) {
       if (placeholderEl) placeholderEl.style.display = 'none';
       if (raveDock) raveDock.style.display = 'none';
       if (browserContainer) browserContainer.style.display = 'flex';
+      const playerWrapper = document.querySelector('.player-wrapper');
+      if (playerWrapper) playerWrapper.classList.add('browser-active');
       if (remoteContainer) remoteContainer.style.display = 'block';
       if (browserIframe) browserIframe.style.display = 'none';
       if (remoteOverlay) remoteOverlay.style.display = 'none';
