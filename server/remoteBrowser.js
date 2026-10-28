@@ -564,12 +564,16 @@ class RemoteBrowserSession {
 
   async navigate(url, options = {}) {
     let target = (url || '').trim();
-    if (!target) return;
+    const isResizeOnly = !target && options.resize;
 
-    if (!target.includes('.') || target.includes(' ')) {
-      target = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(target);
-    } else if (!target.startsWith('http://') && !target.startsWith('https://')) {
-      target = 'https://' + target;
+    if (!target && !isResizeOnly) return;
+
+    if (target) {
+      if (!target.includes('.') || target.includes(' ')) {
+        target = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(target);
+      } else if (!target.startsWith('http://') && !target.startsWith('https://')) {
+        target = 'https://' + target;
+      }
     }
 
     if (options.isMobile !== undefined) {
@@ -588,6 +592,13 @@ class RemoteBrowserSession {
         deviceScaleFactor: this.isMobile ? 2 : 1,
         mobile: !!this.isMobile
       }).catch(() => {});
+    }
+
+    // Resize-only: viewport updated, no navigation needed
+    if (isResizeOnly) {
+      this.lastActive = Date.now();
+      this.log(`Viewport resized to ${this.width}x${this.height}`);
+      return;
     }
 
     this.currentUrl = target;

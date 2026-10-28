@@ -8690,10 +8690,10 @@
     transition: height 0.3s cubic-bezier(0.16, 1, 0.3, 1), max-height 0.3s cubic-bezier(0.16, 1, 0.3, 1), flex 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .player-wrapper.is-expanded {
-    height: clamp(480px, 66dvh, 660px) !important;
-    min-height: 460px !important;
-    max-height: 72dvh !important;
-    flex: 0 0 clamp(480px, 66dvh, 660px) !important;
+    height: clamp(540px, 85dvh, 92dvh) !important;
+    min-height: 520px !important;
+    max-height: 92dvh !important;
+    flex: 0 0 clamp(540px, 85dvh, 92dvh) !important;
   }
 
   .player-placeholder {
@@ -12444,10 +12444,10 @@ body[data-theme="vhs"] .zami-text-logo {
     transition: height 0.3s cubic-bezier(0.16, 1, 0.3, 1), max-height 0.3s cubic-bezier(0.16, 1, 0.3, 1), flex 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .player-wrapper.is-expanded {
-    height: clamp(480px, 66dvh, 660px) !important;
-    min-height: 460px !important;
-    max-height: 72dvh !important;
-    flex: 0 0 clamp(480px, 66dvh, 660px) !important;
+    height: clamp(540px, 85dvh, 92dvh) !important;
+    min-height: 520px !important;
+    max-height: 92dvh !important;
+    flex: 0 0 clamp(540px, 85dvh, 92dvh) !important;
   }
   .w2g-subplayer-bar {
     display: flex !important;

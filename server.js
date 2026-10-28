@@ -2271,11 +2271,11 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('remote-browser-navigate', async ({ url, isMobile, width, height, appName }) => {
+  socket.on('remote-browser-navigate', async ({ url, isMobile, width, height, appName, resize }) => {
     if (!currentRoomId) return;
     const session = remoteBrowserManager.getSession(currentRoomId);
     if (session) {
-      await session.navigate(url, { isMobile, width, height, appName });
+      await session.navigate(url, { isMobile, width, height, appName, resize });
     }
   });
 

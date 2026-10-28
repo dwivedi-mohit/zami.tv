@@ -7850,7 +7850,21 @@ function initWatch2GetherRoomClone() {
         btnMobileResize.setAttribute('title', isExpanded ? 'Minimize streaming area' : 'Expand streaming area');
         btnMobileResize.setAttribute('aria-label', isExpanded ? 'Minimize streaming area' : 'Expand streaming area');
         setTimeout(() => window.dispatchEvent(new Event('resize')), 50);
-        setTimeout(() => window.dispatchEvent(new Event('resize')), 320);
+        setTimeout(() => {
+          window.dispatchEvent(new Event('resize'));
+          // Re-send viewport dimensions to headless browser after CSS transition
+          if (isRemoteBrowserActive && socket) {
+            const rect = playerWrapper.getBoundingClientRect();
+            const newW = Math.round(rect.width) || 412;
+            const newH = Math.round(rect.height) || 340;
+            socket.emit('remote-browser-navigate', {
+              url: null,
+              resize: true,
+              width: newW,
+              height: newH
+            });
+          }
+        }, 350);
         if (window.showToast) {
           window.showToast(isExpanded ? 'Streaming stage expanded' : 'Streaming stage minimized', 'info');
         }
