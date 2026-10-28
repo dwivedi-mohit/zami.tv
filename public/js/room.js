@@ -1278,37 +1278,53 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnMobileInvite) btnMobileInvite.addEventListener('click', triggerInviteShare);
 
-  // Wire Stage Single Choose Button & Expandable All Sources
+  // Wire Stage Single Choose Play Button & Popup Modal for All Sources
   const btnStageSingleChoose = document.getElementById('btn-stage-single-choose');
-  const emptyStageSingleWrap = document.getElementById('empty-stage-single-wrap');
-  const stageAllSourcesWrapper = document.getElementById('stage-all-sources-wrapper');
-  const btnCollapseStageAll = document.getElementById('btn-collapse-stage-all');
+  const stageSourcesPopupModal = document.getElementById('stage-sources-popup-modal');
+  const btnCloseStageSourcesModal = document.getElementById('btn-close-stage-sources-modal');
+
+  function openStageSourcesPopup(opener = null) {
+    if (!stageSourcesPopupModal) return;
+    stageSourcesPopupModal.style.display = 'flex';
+    if (btnStageSingleChoose) btnStageSingleChoose.setAttribute('aria-expanded', 'true');
+    const firstBtn = stageSourcesPopupModal.querySelector('.stage-choice-card');
+    if (firstBtn) setTimeout(() => firstBtn.focus(), 60);
+  }
+
+  function closeStageSourcesPopup() {
+    if (!stageSourcesPopupModal) return;
+    stageSourcesPopupModal.style.display = 'none';
+    if (btnStageSingleChoose) {
+      btnStageSingleChoose.setAttribute('aria-expanded', 'false');
+      btnStageSingleChoose.focus();
+    }
+  }
 
   function resetStageSourceView() {
-    if (emptyStageSingleWrap) emptyStageSingleWrap.style.display = 'flex';
-    if (stageAllSourcesWrapper) stageAllSourcesWrapper.style.display = 'none';
-    if (btnStageSingleChoose) btnStageSingleChoose.setAttribute('aria-expanded', 'false');
+    closeStageSourcesPopup();
   }
   window.resetStageSourceView = resetStageSourceView;
+  window.openStageSourcesPopup = openStageSourcesPopup;
+  window.closeStageSourcesPopup = closeStageSourcesPopup;
 
   if (btnStageSingleChoose) {
-    btnStageSingleChoose.addEventListener('click', () => {
-      if (emptyStageSingleWrap) emptyStageSingleWrap.style.display = 'none';
-      if (stageAllSourcesWrapper) {
-        stageAllSourcesWrapper.style.display = 'flex';
-      }
-      btnStageSingleChoose.setAttribute('aria-expanded', 'true');
-    });
+    btnStageSingleChoose.addEventListener('click', () => openStageSourcesPopup(btnStageSingleChoose));
   }
 
-  if (btnCollapseStageAll) {
-    btnCollapseStageAll.addEventListener('click', () => {
-      if (stageAllSourcesWrapper) stageAllSourcesWrapper.style.display = 'none';
-      if (emptyStageSingleWrap) {
-        emptyStageSingleWrap.style.display = 'flex';
+  if (btnCloseStageSourcesModal) {
+    btnCloseStageSourcesModal.addEventListener('click', closeStageSourcesPopup);
+  }
+
+  if (stageSourcesPopupModal) {
+    stageSourcesPopupModal.addEventListener('click', (e) => {
+      if (e.target === stageSourcesPopupModal) {
+        closeStageSourcesPopup();
       }
-      if (btnStageSingleChoose) {
-        btnStageSingleChoose.setAttribute('aria-expanded', 'false');
+    });
+    stageSourcesPopupModal.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closeStageSourcesPopup();
       }
     });
   }
@@ -1317,6 +1333,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnStageMovies = document.getElementById('btn-stage-choice-movies');
   if (btnStageMovies) {
     btnStageMovies.addEventListener('click', () => {
+      closeStageSourcesPopup();
       if (typeof window.openModal === 'function') window.openModal(btnStageMovies);
       if (typeof window.showVaultView === 'function') window.showVaultView('movies');
     });
@@ -1326,6 +1343,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnStageBrowserChoice = document.getElementById('btn-stage-choice-browser');
   if (btnStageBrowserChoice) {
     btnStageBrowserChoice.addEventListener('click', () => {
+      closeStageSourcesPopup();
       if (typeof window.openInbuiltBrowser === 'function') {
         window.openInbuiltBrowser('https://www.google.com');
       }
@@ -1336,6 +1354,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnStageChoiceYt = document.getElementById('btn-stage-choice-yt');
   if (btnStageChoiceYt) {
     btnStageChoiceYt.addEventListener('click', () => {
+      closeStageSourcesPopup();
       if (typeof window.openRaveSourceSheet === 'function') {
         window.openRaveSourceSheet('youtube');
       }
@@ -1346,6 +1365,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnStageLink = document.getElementById('btn-stage-choice-link');
   if (btnStageLink) {
     btnStageLink.addEventListener('click', () => {
+      closeStageSourcesPopup();
       if (typeof window.openModal === 'function') window.openModal(btnStageLink);
       if (typeof window.showVaultView === 'function') window.showVaultView('url');
       const inputUrl = document.getElementById('input-direct-url');
@@ -1357,6 +1377,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnStageNetflix = document.getElementById('btn-stage-choice-netflix');
   if (btnStageNetflix) {
     btnStageNetflix.addEventListener('click', () => {
+      closeStageSourcesPopup();
       if (typeof window.openInbuiltBrowser === 'function') {
         window.openInbuiltBrowser('https://www.netflix.com');
       }
@@ -1367,6 +1388,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnStageHotstar = document.getElementById('btn-stage-choice-hotstar');
   if (btnStageHotstar) {
     btnStageHotstar.addEventListener('click', () => {
+      closeStageSourcesPopup();
       if (typeof window.openInbuiltBrowser === 'function') {
         window.openInbuiltBrowser('https://www.hotstar.com');
       }
@@ -1377,6 +1399,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnStagePrime = document.getElementById('btn-stage-choice-prime');
   if (btnStagePrime) {
     btnStagePrime.addEventListener('click', () => {
+      closeStageSourcesPopup();
       if (typeof window.openInbuiltBrowser === 'function') {
         window.openInbuiltBrowser('https://www.primevideo.com');
       }
@@ -1387,6 +1410,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnStageMx = document.getElementById('btn-stage-choice-mx');
   if (btnStageMx) {
     btnStageMx.addEventListener('click', () => {
+      closeStageSourcesPopup();
       if (typeof window.openInbuiltBrowser === 'function') {
         window.openInbuiltBrowser('https://www.mxplayer.in');
       }
@@ -1397,6 +1421,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnStageCrunchyroll = document.getElementById('btn-stage-choice-crunchyroll');
   if (btnStageCrunchyroll) {
     btnStageCrunchyroll.addEventListener('click', () => {
+      closeStageSourcesPopup();
       if (typeof window.openInbuiltBrowser === 'function') {
         window.openInbuiltBrowser('https://www.crunchyroll.com');
       }
@@ -1407,6 +1432,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnStageScreenShare = document.getElementById('btn-stage-choice-screenshare');
   if (btnStageScreenShare) {
     btnStageScreenShare.addEventListener('click', () => {
+      closeStageSourcesPopup();
       if (window.webrtcManager && typeof window.webrtcManager.startScreenShare === 'function') {
         window.webrtcManager.startScreenShare();
       } else if (typeof window.startScreenShare === 'function') {
@@ -1419,6 +1445,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnStageMore = document.getElementById('btn-stage-choice-more');
   if (btnStageMore) {
     btnStageMore.addEventListener('click', () => {
+      closeStageSourcesPopup();
       if (typeof window.openModal === 'function') window.openModal(btnStageMore);
       if (typeof window.showVaultView === 'function') window.showVaultView('menu');
     });
@@ -1458,6 +1485,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const curName = (currentUser && currentUser.name) || localStorage.getItem('zami_username') || 'Viewer';
       if (roomSettingsNickname) roomSettingsNickname.value = curName;
       if (currentDisplayNamePill) currentDisplayNamePill.textContent = curName;
+      updateSettingsAVStates();
 
       settingsModal.style.display = 'flex';
       settingsModal.setAttribute('aria-hidden', 'false');
@@ -1480,6 +1508,98 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
   window.closeSettingsModal = closeSettingsModal;
+
+  // Settings Modal Room Quick Actions (Merged from Subplayer Bar)
+  const btnSettingsActionResize = document.getElementById('btn-settings-action-resize');
+  const btnSettingsActionPip = document.getElementById('btn-settings-action-pip');
+  const btnSettingsActionMic = document.getElementById('btn-settings-action-mic');
+  const btnSettingsActionCam = document.getElementById('btn-settings-action-cam');
+  const btnSettingsActionShare = document.getElementById('btn-settings-action-share');
+  const btnSettingsActionBrowser = document.getElementById('btn-settings-action-browser');
+  const btnSettingsActionSearch = document.getElementById('btn-settings-action-search');
+
+  function updateSettingsAVStates() {
+    const isMuted = window.webrtcManager ? window.webrtcManager.isMuted : true;
+    const isCamOn = window.webrtcManager ? window.webrtcManager.isCamOn : false;
+    const micLabel = document.getElementById('settings-action-mic-label');
+    const camLabel = document.getElementById('settings-action-cam-label');
+    if (micLabel) micLabel.textContent = isMuted ? 'Mic Muted' : 'Mic Live';
+    if (camLabel) camLabel.textContent = isCamOn ? 'Camera Live' : 'Camera Off';
+  }
+
+  if (btnSettingsActionResize) {
+    btnSettingsActionResize.addEventListener('click', () => {
+      const playerWrapper = document.querySelector('.player-wrapper');
+      if (playerWrapper) {
+        const isExpanded = playerWrapper.classList.toggle('is-expanded');
+        if (window.showToast) {
+          window.showToast(isExpanded ? 'Player stage expanded' : 'Standard player stage', 'info');
+        }
+      }
+      closeSettingsModal();
+    });
+  }
+
+  if (btnSettingsActionPip) {
+    btnSettingsActionPip.addEventListener('click', async () => {
+      closeSettingsModal();
+      try {
+        const video = document.querySelector('#player-container video, video');
+        if (document.pictureInPictureElement) {
+          await document.exitPictureInPicture();
+        } else if (video && video.requestPictureInPicture) {
+          await video.requestPictureInPicture();
+        }
+      } catch (err) {
+        console.warn('PiP error from settings:', err);
+      }
+    });
+  }
+
+  if (btnSettingsActionMic) {
+    btnSettingsActionMic.addEventListener('click', () => {
+      toggleLocalMic();
+      if (window.webrtcManager) {
+        window.webrtcManager.updateDockAVButtons();
+      }
+      updateSettingsAVStates();
+    });
+  }
+
+  if (btnSettingsActionCam) {
+    btnSettingsActionCam.addEventListener('click', () => {
+      toggleLocalCam();
+      if (window.webrtcManager) {
+        window.webrtcManager.updateDockAVButtons();
+      }
+      updateSettingsAVStates();
+    });
+  }
+
+  if (btnSettingsActionShare) {
+    btnSettingsActionShare.addEventListener('click', () => {
+      closeSettingsModal();
+      triggerInviteShare();
+    });
+  }
+
+  if (btnSettingsActionBrowser) {
+    btnSettingsActionBrowser.addEventListener('click', () => {
+      closeSettingsModal();
+      if (typeof window.openInbuiltBrowser === 'function') {
+        window.openInbuiltBrowser('https://www.google.com');
+      }
+    });
+  }
+
+  if (btnSettingsActionSearch) {
+    btnSettingsActionSearch.addEventListener('click', () => {
+      closeSettingsModal();
+      if (typeof openSearchDrawer === 'function') {
+        openSearchDrawer();
+      }
+    });
+  }
 
   function saveRoomNickname() {
     if (!roomSettingsNickname) return;
