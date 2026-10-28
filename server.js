@@ -2303,13 +2303,32 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('remote-browser-insert-text', async ({ text, pressEnter }) => {
+  socket.on('remote-browser-insert-text', async ({ text, pressEnter, keyAction }) => {
     if (!currentRoomId) return;
     const session = remoteBrowserManager.getSession(currentRoomId);
     if (session && session.status === 'ready') {
       const room = rooms.get(currentRoomId);
       if (room && room.hostOnlyControls && room.hostId !== socket.id) {
         return; // Host locked controls
+      }
+      if (keyAction === 'backspace') {
+        await session.dispatchKeyEvent({ type: 'keyDown', key: 'Backspace', code: 'Backspace', windowsVirtualKeyCode: 8 });
+        await session.dispatchKeyEvent({ type: 'keyUp', key: 'Backspace', code: 'Backspace', windowsVirtualKeyCode: 8 });
+        return;
+      }
+      if (keyAction === 'tab') {
+        await session.dispatchKeyEvent({ type: 'keyDown', key: 'Tab', code: 'Tab', windowsVirtualKeyCode: 9, text: '\t' });
+        await session.dispatchKeyEvent({ type: 'keyUp', key: 'Tab', code: 'Tab', windowsVirtualKeyCode: 9 });
+        return;
+      }
+      if (keyAction === 'enter') {
+        await session.dispatchKeyEvent({ type: 'keyDown', key: 'Enter', code: 'Enter', windowsVirtualKeyCode: 13, text: '\r' });
+        await session.dispatchKeyEvent({ type: 'keyUp', key: 'Enter', code: 'Enter', windowsVirtualKeyCode: 13 });
+        return;
+      }
+      if (keyAction === 'space') {
+        await session.insertText(' ');
+        return;
       }
       if (text) {
         await session.insertText(text);

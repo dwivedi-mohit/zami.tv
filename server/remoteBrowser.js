@@ -713,11 +713,22 @@ class RemoteBrowserSession {
       effectiveText = undefined;
     }
 
+    let vKeyCode = windowsVirtualKeyCode;
+    if (!vKeyCode && key) {
+      if (key === 'Enter') vKeyCode = 13;
+      else if (key === 'Backspace') vKeyCode = 8;
+      else if (key === 'Tab') vKeyCode = 9;
+      else if (key === 'Escape') vKeyCode = 27;
+      else if (key === 'Space' || key === ' ') vKeyCode = 32;
+      else if (key >= '0' && key <= '9') vKeyCode = key.charCodeAt(0);
+      else if (key.length === 1) vKeyCode = key.toUpperCase().charCodeAt(0);
+    }
+
     const params = {
       type, // 'keyDown' or 'keyUp'
       key,
       code,
-      windowsVirtualKeyCode,
+      windowsVirtualKeyCode: vKeyCode,
       nativeVirtualKeyCode,
       modifiers: effectiveModifiers
     };

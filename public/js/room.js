@@ -5365,21 +5365,51 @@ function initRaveSuite(socket, roomId) {
       e.preventDefault();
     });
 
-    remoteCanvas.addEventListener('keydown', (e) => {
+    function forwardBrowserKeyEvent(e, type) {
       if (!isRemoteBrowserActive) return;
+      // Don't intercept if user is typing in our app's own text inputs or dialogs
+      const active = document.activeElement;
+      if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable) && active.id !== 'remote-browser-keyboard-proxy') {
+        return;
+      }
+
       if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Tab', 'Backspace'].includes(e.code)) {
         e.preventDefault();
       }
+
+      // Intercept Ctrl+V or Cmd+V on desktop to paste into remote browser via CDP
+      if (type === 'keyDown' && (e.ctrlKey || e.metaKey) && (e.key === 'v' || e.key === 'V')) {
+        e.preventDefault();
+        if (navigator.clipboard && navigator.clipboard.readText) {
+          navigator.clipboard.readText().then(clipText => {
+            if (clipText) {
+              socket.emit('remote-browser-insert-text', { text: clipText });
+              if (window.showToast) window.showToast('Pasted text into browser', 'info', 1500);
+            }
+          }).catch(() => {});
+        }
+        return;
+      }
+
       let modifiers = 0;
       if (e.altKey) modifiers |= 1;
       if (e.ctrlKey) modifiers |= 2;
       if (e.metaKey) modifiers |= 4;
       if (e.shiftKey) modifiers |= 8;
 
-      const text = e.key === 'Enter' ? '\r' : (e.key.length === 1 && !e.ctrlKey && !e.metaKey ? e.key : '');
+      let text = '';
+      if (type === 'keyDown') {
+        if (e.key === 'Enter') {
+          text = '\r';
+        } else if (e.key === 'Tab') {
+          text = '\t';
+        } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
+          text = e.key;
+        }
+      }
 
       socket.emit('remote-browser-key', {
-        type: 'keyDown',
+        type,
         key: e.key,
         code: e.code,
         text,
@@ -5390,28 +5420,82 @@ function initRaveSuite(socket, roomId) {
         shiftKey: e.shiftKey,
         modifiers
       });
-    });
+    }
 
-    remoteCanvas.addEventListener('keyup', (e) => {
+    remoteCanvas.addEventListener('keydown', (e) => forwardBrowserKeyEvent(e, 'keyDown'));
+    remoteCanvas.addEventListener('keyup', (e) => forwardBrowserKeyEvent(e, 'keyUp'));
+    window.addEventListener('keydown', (e) => {
       if (!isRemoteBrowserActive) return;
-      let modifiers = 0;
-      if (e.altKey) modifiers |= 1;
-      if (e.ctrlKey) modifiers |= 2;
-      if (e.metaKey) modifiers |= 4;
-      if (e.shiftKey) modifiers |= 8;
-
-      socket.emit('remote-browser-key', {
-        type: 'keyUp',
-        key: e.key,
-        code: e.code,
-        windowsVirtualKeyCode: e.keyCode,
-        ctrlKey: e.ctrlKey,
-        metaKey: e.metaKey,
-        altKey: e.altKey,
-        shiftKey: e.shiftKey,
-        modifiers
-      });
+      if (document.activeElement === remoteCanvas || document.activeElement === document.getElementById('remote-browser-keyboard-proxy') || document.activeElement === document.body) {
+        forwardBrowserKeyEvent(e, 'keyDown');
+      }
     });
+    window.addEventListener('keyup', (e) => {
+      if (!isRemoteBrowserActive) return;
+      if (document.activeElement === remoteCanvas || document.activeElement === document.getElementById('remote-browser-keyboard-proxy') || document.activeElement === document.body) {
+        forwardBrowserKeyEvent(e, 'keyUp');
+      }
+    });
+
+    // Paste handling directly onto remote browser
+    function handleStreamPaste(e) {
+      if (!isRemoteBrowserActive) return;
+      const active = document.activeElement;
+      if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable) && active.id !== 'remote-browser-keyboard-proxy') {
+        return;
+      }
+      const pasted = e.clipboardData ? e.clipboardData.getData('text') : '';
+      if (pasted) {
+        e.preventDefault();
+        socket.emit('remote-browser-insert-text', { text: pasted });
+        if (window.showToast) window.showToast(`Pasted ${pasted.length} characters into browser`, 'info', 2000);
+      }
+    }
+    remoteCanvas.addEventListener('paste', handleStreamPaste);
+    window.addEventListener('paste', handleStreamPaste);
+
+    // Mobile Virtual Keyboard Proxy handling
+    const kbProxy = document.getElementById('remote-browser-keyboard-proxy');
+    if (kbProxy) {
+      kbProxy.addEventListener('beforeinput', (e) => {
+        if (!isRemoteBrowserActive) return;
+        if (e.inputType === 'deleteContentBackward') {
+          e.preventDefault();
+          socket.emit('remote-browser-insert-text', { keyAction: 'backspace' });
+          kbProxy.value = '';
+        } else if (e.inputType === 'insertLineBreak') {
+          e.preventDefault();
+          socket.emit('remote-browser-insert-text', { keyAction: 'enter' });
+          kbProxy.value = '';
+        }
+      });
+
+      kbProxy.addEventListener('input', (e) => {
+        if (!isRemoteBrowserActive) return;
+        const text = e.data || kbProxy.value;
+        if (text) {
+          socket.emit('remote-browser-insert-text', { text });
+        }
+        kbProxy.value = '';
+      });
+
+      kbProxy.addEventListener('keydown', (e) => {
+        if (!isRemoteBrowserActive) return;
+        if (e.key === 'Backspace') {
+          socket.emit('remote-browser-insert-text', { keyAction: 'backspace' });
+          kbProxy.value = '';
+        } else if (e.key === 'Enter') {
+          if (e.isComposing || e.keyCode === 229) return;
+          socket.emit('remote-browser-insert-text', { keyAction: 'enter' });
+          kbProxy.value = '';
+        } else if (e.key === 'Tab') {
+          e.preventDefault();
+          socket.emit('remote-browser-insert-text', { keyAction: 'tab' });
+        }
+      });
+
+      kbProxy.addEventListener('paste', handleStreamPaste);
+    }
 
     // Full Mobile Touch & Gesture Forwarding (Tap-to-click, Swipe-to-scroll, Audio auto-unlock)
     let activeTouch = null;
@@ -5512,6 +5596,12 @@ function initRaveSuite(socket, roomId) {
             clickCount: 1
           });
         }, 30);
+
+        // Bring up the mobile virtual keyboard
+        const kbProxy = document.getElementById('remote-browser-keyboard-proxy');
+        if (kbProxy) {
+          kbProxy.focus({ preventScroll: true });
+        }
       }
       activeTouch = null;
     }, { passive: false });
@@ -5926,6 +6016,134 @@ function initRaveSuite(socket, roomId) {
     });
   }
 
+  // Quick Type & Search Dialog Controls
+  const btnBrowserType = document.getElementById('btn-browser-type');
+  const typeDialog = document.getElementById('browser-type-dialog');
+  const btnTypeDialogClose = document.getElementById('btn-type-dialog-close');
+  const typeForm = document.getElementById('browser-type-form');
+  const typeInput = document.getElementById('browser-type-input');
+  const btnTypeSendEnter = document.getElementById('btn-type-send-enter');
+
+  if (btnBrowserType && typeDialog) {
+    btnBrowserType.addEventListener('click', () => {
+      if (typeof typeDialog.showModal === 'function') {
+        typeDialog.showModal();
+      } else {
+        typeDialog.style.display = 'block';
+      }
+      if (typeInput) {
+        typeInput.value = '';
+        setTimeout(() => typeInput.focus(), 120);
+      }
+    });
+  }
+
+  if (btnTypeDialogClose && typeDialog) {
+    btnTypeDialogClose.addEventListener('click', () => {
+      if (typeof typeDialog.close === 'function') {
+        typeDialog.close();
+      } else {
+        typeDialog.style.display = 'none';
+      }
+    });
+  }
+
+  // IME safe Enter handling for type dialog form
+  if (typeInput) {
+    typeInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        // IME composition check to prevent submitting prematurely during candidate selection
+        if (event.isComposing || event.keyCode === 229) {
+          return;
+        }
+      }
+    });
+  }
+
+  if (typeForm && typeDialog) {
+    typeForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const val = (typeInput ? typeInput.value : '').trim();
+      if (!val) return;
+      socket.emit('remote-browser-insert-text', { text: val, pressEnter: false });
+      if (window.showToast) window.showToast(`Sent "${val}" to browser`, 'info', 2000);
+      if (typeof typeDialog.close === 'function') {
+        typeDialog.close();
+      } else {
+        typeDialog.style.display = 'none';
+      }
+    });
+  }
+
+  if (btnTypeSendEnter && typeDialog) {
+    btnTypeSendEnter.addEventListener('click', () => {
+      const val = (typeInput ? typeInput.value : '').trim();
+      if (!val) return;
+      socket.emit('remote-browser-insert-text', { text: val, pressEnter: true });
+      if (window.showToast) window.showToast(`Sent "${val}" + Enter to browser`, 'info', 2000);
+      if (typeof typeDialog.close === 'function') {
+        typeDialog.close();
+      } else {
+        typeDialog.style.display = 'none';
+      }
+    });
+  }
+
+  // Quick helper keys in Quick Type Dialog
+  document.querySelectorAll('.btn-type-key').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const action = btn.dataset.action;
+      if (action === 'backspace') {
+        if (typeInput && typeInput.value.length > 0) {
+          typeInput.value = typeInput.value.slice(0, -1);
+        }
+        socket.emit('remote-browser-insert-text', { keyAction: 'backspace' });
+      } else if (action === 'tab') {
+        socket.emit('remote-browser-insert-text', { keyAction: 'tab' });
+        if (window.showToast) window.showToast('Pressed Tab (next field)', 'info', 1500);
+      } else if (action === 'space') {
+        if (typeInput) typeInput.value += ' ';
+        socket.emit('remote-browser-insert-text', { keyAction: 'space' });
+      } else if (action === 'enter') {
+        socket.emit('remote-browser-insert-text', { keyAction: 'enter' });
+        if (window.showToast) window.showToast('Pressed Enter', 'info', 1500);
+      } else if (action === 'clear') {
+        if (typeInput) {
+          typeInput.value = '';
+          typeInput.focus();
+        }
+      } else if (action === 'paste') {
+        try {
+          if (navigator.clipboard && navigator.clipboard.readText) {
+            const clipText = await navigator.clipboard.readText();
+            if (clipText && typeInput) {
+              typeInput.value += clipText;
+              typeInput.focus();
+            }
+          }
+        } catch(err) {
+          if (window.showToast) window.showToast('Paste permission required or use manual paste', 'info', 2000);
+        }
+      }
+    });
+  });
+
+  // Modern Web Guidance: Graceful degradation click-outside fallback if closedby is unsupported
+  if (typeDialog && !('closedBy' in HTMLDialogElement.prototype)) {
+    const outside = (e, dialog) => {
+      const r = dialog.getBoundingClientRect();
+      return e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
+    };
+    let pressedOutside = false;
+    typeDialog.addEventListener('pointerdown', (e) => { pressedOutside = outside(e, typeDialog); });
+    typeDialog.addEventListener('pointerup', (e) => {
+      if (pressedOutside && outside(e, typeDialog) && typeof typeDialog.close === 'function') {
+        typeDialog.close();
+      }
+    });
+  }
+
   if (btnBrowserBack) {
     btnBrowserBack.addEventListener('click', () => {
       socket.emit('remote-browser-back');
@@ -6087,6 +6305,44 @@ function initRaveSuite(socket, roomId) {
       if (mobileKbBar) mobileKbBar.style.display = 'none';
     });
   }
+
+  if (mobileTextInput) {
+    mobileTextInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        if (event.isComposing || event.keyCode === 229) return;
+      }
+    });
+  }
+
+  document.querySelectorAll('.btn-mobile-quick-key').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const action = btn.dataset.action;
+      if (action === 'backspace') {
+        if (mobileTextInput && mobileTextInput.value.length > 0) {
+          mobileTextInput.value = mobileTextInput.value.slice(0, -1);
+        }
+        socket.emit('remote-browser-insert-text', { keyAction: 'backspace' });
+      } else if (action === 'tab') {
+        socket.emit('remote-browser-insert-text', { keyAction: 'tab' });
+      } else if (action === 'space') {
+        if (mobileTextInput) mobileTextInput.value += ' ';
+        socket.emit('remote-browser-insert-text', { keyAction: 'space' });
+      } else if (action === 'enter') {
+        socket.emit('remote-browser-insert-text', { keyAction: 'enter' });
+      } else if (action === 'paste') {
+        try {
+          if (navigator.clipboard && navigator.clipboard.readText) {
+            const clipText = await navigator.clipboard.readText();
+            if (clipText && mobileTextInput) {
+              mobileTextInput.value += clipText;
+              mobileTextInput.focus();
+            }
+          }
+        } catch(err) {}
+      }
+    });
+  });
 
   if (btnMobileAudio) {
     btnMobileAudio.addEventListener('click', () => {
