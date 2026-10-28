@@ -362,6 +362,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateUnreadBadge() {
     const badge = document.getElementById('chat-unread-badge');
     const mobBadge = document.getElementById('mob-chat-badge');
+    const callChatBadge = document.getElementById('call-card-chat-badge');
     const countStr = unreadChatCount > 99 ? '99+' : String(unreadChatCount);
 
     if (badge) {
@@ -381,6 +382,16 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         mobBadge.style.display = 'none';
         mobBadge.textContent = '0';
+      }
+    }
+
+    if (callChatBadge) {
+      if (unreadChatCount > 0) {
+        callChatBadge.style.display = 'flex';
+        callChatBadge.textContent = countStr;
+      } else {
+        callChatBadge.style.display = 'none';
+        callChatBadge.textContent = '0';
       }
     }
   }
@@ -7226,11 +7237,23 @@ function initWatch2GetherRoomClone() {
       btnDockChat.classList.toggle('active', index === 2);
       btnDockChat.setAttribute('aria-selected', String(index === 2));
     }
+    if (window.innerWidth <= 900) {
+      document.body.classList.toggle('mobile-on-call-slide', index === 0);
+    }
   }
 
   if (btnDockPeople) btnDockPeople.addEventListener('click', () => scrollRoomToSlide(0));
   if (btnDockQueue) btnDockQueue.addEventListener('click', () => scrollRoomToSlide(1));
   if (btnDockChat) btnDockChat.addEventListener('click', () => scrollRoomToSlide(2));
+
+  const btnCallChatQuick = document.getElementById('btn-call-chat-quick');
+  if (btnCallChatQuick) {
+    btnCallChatQuick.addEventListener('click', () => scrollRoomToSlide(2));
+  }
+  const btnCallQueueQuick = document.getElementById('btn-call-queue-quick');
+  if (btnCallQueueQuick) {
+    btnCallQueueQuick.addEventListener('click', () => scrollRoomToSlide(1));
+  }
 
   const dockRow = document.querySelector('.dock-actions-row');
   if (dockRow) {
@@ -7279,6 +7302,16 @@ function initWatch2GetherRoomClone() {
         scrollRoomToSlide(0);
       }, 200);
     }
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 900) {
+        document.body.classList.remove('mobile-on-call-slide');
+      } else {
+        const w = roomSidebar.clientWidth || window.innerWidth;
+        const currentSlide = Math.round(roomSidebar.scrollLeft / w);
+        document.body.classList.toggle('mobile-on-call-slide', currentSlide === 0);
+      }
+    });
   }
 
   // Bottom Dock Mic & Cam toggles

@@ -116,6 +116,10 @@ class RoomQueueManager {
       mobQueueBadge.textContent = this.playlist.length;
       mobQueueBadge.style.display = this.playlist.length > 0 ? 'flex' : 'none';
     }
+    const callQueueBadge = document.getElementById('call-card-queue-badge');
+    if (callQueueBadge) {
+      callQueueBadge.textContent = this.playlist.length;
+    }
     const headerCount = document.getElementById('queue-header-count');
     if (headerCount) {
       headerCount.textContent = this.playlist.length === 1 ? '1 item' : `${this.playlist.length} items`;
