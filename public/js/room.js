@@ -1532,6 +1532,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const playerWrapper = document.querySelector('.player-wrapper');
       if (playerWrapper) {
         const isExpanded = playerWrapper.classList.toggle('is-expanded');
+        const btnMobileResize = document.getElementById('btn-mobile-resize-player');
+        if (btnMobileResize) {
+          btnMobileResize.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+          btnMobileResize.setAttribute('title', isExpanded ? 'Minimize streaming area' : 'Expand streaming area');
+          btnMobileResize.setAttribute('aria-label', isExpanded ? 'Minimize streaming area' : 'Expand streaming area');
+        }
         if (window.showToast) {
           window.showToast(isExpanded ? 'Player stage expanded' : 'Standard player stage', 'info');
         }
@@ -7300,10 +7306,12 @@ function initWatch2GetherRoomClone() {
       const playerWrapper = document.querySelector('.player-wrapper');
       if (playerWrapper) {
         const isExpanded = playerWrapper.classList.toggle('is-expanded');
-        btnMobileResize.style.transform = isExpanded ? 'rotate(180deg)' : 'rotate(0deg)';
         btnMobileResize.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
-        btnMobileResize.setAttribute('title', isExpanded ? 'Collapse streaming area' : 'Expand streaming area');
-        btnMobileResize.setAttribute('aria-label', isExpanded ? 'Collapse streaming area' : 'Expand streaming area');
+        btnMobileResize.setAttribute('title', isExpanded ? 'Minimize streaming area' : 'Expand streaming area');
+        btnMobileResize.setAttribute('aria-label', isExpanded ? 'Minimize streaming area' : 'Expand streaming area');
+        if (window.showToast) {
+          window.showToast(isExpanded ? 'Streaming stage expanded' : 'Streaming stage minimized', 'info');
+        }
       }
     });
   }

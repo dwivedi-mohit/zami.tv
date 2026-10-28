@@ -864,6 +864,24 @@
               </div>
             </div>
 
+            <div class="subplayer-center">
+              <button type="button" id="btn-mobile-resize-player" class="btn-subplayer-resize" aria-label="Expand or minimize streaming area" aria-expanded="false" title="Expand or minimize streaming area">
+                <!-- Monochrome Black and White Expand / Minimize Icons -->
+                <svg class="icon-expand-player" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <polyline points="9 21 3 21 3 15"></polyline>
+                  <line x1="21" y1="3" x2="14" y2="10"></line>
+                  <line x1="3" y1="21" x2="10" y2="14"></line>
+                </svg>
+                <svg class="icon-minimize-player" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="4 14 10 14 10 20"></polyline>
+                  <polyline points="20 10 14 10 14 4"></polyline>
+                  <line x1="14" y1="10" x2="21" y2="3"></line>
+                  <line x1="10" y1="14" x2="3" y2="21"></line>
+                </svg>
+              </button>
+            </div>
+
             <div class="subplayer-right">
               <button type="button" id="btn-mobile-open-settings" class="btn-subplayer-action" title="Room Settings" aria-label="Room Settings">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1947,7 +1965,7 @@
       <div class="wallpaper-modal-container stage-sources-modal-container" style="max-width: 820px;">
         <div class="wallpaper-modal-header">
           <div class="wallpaper-header-title">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e5a93c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <polygon points="5 3 19 12 5 21 5 3"></polygon>
             </svg>
             <h2 id="stage-sources-modal-title">Choose What to Watch</h2>
@@ -1963,14 +1981,18 @@
         <div class="wallpaper-modal-body stage-sources-modal-body" style="padding: 16px 20px 24px 20px;">
           <div style="font-size: 0.82rem; color: #a1a1aa; margin-bottom: 14px;">Select any streaming source below to start synchronized playback for everyone in this room:</div>
           <div class="empty-stage-choices-grid all-sources-grid">
-            <!-- 1. Browse Movies -->
+            <!-- 1. Browse Movies (Generic Action - Official Professional B&W) -->
             <button type="button" class="stage-choice-card" id="btn-stage-choice-movies" aria-label="Browse Movies &amp; Shows">
-              <div class="choice-icon-wrap" style="color: #f59e0b; background: rgba(245, 158, 11, 0.12); border-color: rgba(245, 158, 11, 0.3);">
-                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                  <rect x="2" y="2" width="20" height="20" rx="2.18"/>
-                  <line x1="7" y1="2" x2="7" y2="22"/>
-                  <line x1="17" y1="2" x2="17" y2="22"/>
-                  <line x1="2" y1="12" x2="22" y2="12"/>
+              <div class="choice-icon-wrap choice-action">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
+                  <line x1="7" y1="2" x2="7" y2="22"></line>
+                  <line x1="17" y1="2" x2="17" y2="22"></line>
+                  <line x1="2" y1="12" x2="22" y2="12"></line>
+                  <line x1="2" y1="7" x2="7" y2="7"></line>
+                  <line x1="2" y1="17" x2="7" y2="17"></line>
+                  <line x1="17" y1="17" x2="22" y2="17"></line>
+                  <line x1="17" y1="7" x2="22" y2="7"></line>
                 </svg>
               </div>
               <div class="choice-text-wrap">
@@ -1979,14 +2001,18 @@
               </div>
               <div class="card-action-cue">
                 <span>Open Library</span>
-                <svg class="cue-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 18 15 12 9 6"/></svg>
+                <svg class="cue-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
               </div>
             </button>
 
-            <!-- 2. Web Browser (Virtual Webview) -->
+            <!-- 2. Web Browser (Native Webview - Official Professional B&W) -->
             <button type="button" class="stage-choice-card" id="btn-stage-choice-browser" aria-label="Open Inbuilt Web Browser">
-              <div class="choice-icon-wrap" style="color: #10b981; background: rgba(16, 185, 129, 0.12); border-color: rgba(16, 185, 129, 0.3);">
-                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              <div class="choice-icon-wrap choice-action">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="2" y1="12" x2="22" y2="12"></line>
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                </svg>
               </div>
               <div class="choice-text-wrap">
                 <span class="choice-title">Web Browser</span>
@@ -1994,14 +2020,17 @@
               </div>
               <div class="card-action-cue">
                 <span>Open Webview</span>
-                <svg class="cue-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 18 15 12 9 6"/></svg>
+                <svg class="cue-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
               </div>
             </button>
 
-            <!-- 3. YouTube -->
+            <!-- 3. YouTube (Official Original Logo) -->
             <button type="button" class="stage-choice-card" id="btn-stage-choice-yt" aria-label="Open YouTube">
-              <div class="choice-icon-wrap" style="color: #ef4444; background: rgba(239, 68, 68, 0.12); border-color: rgba(239, 68, 68, 0.3);">
-                <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              <div class="choice-icon-wrap choice-platform">
+                <svg width="26" height="19" viewBox="0 0 28 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <rect width="28" height="20" rx="5.5" fill="#FF0000"/>
+                  <polygon points="11,5.5 19,10 11,14.5" fill="#FFFFFF"/>
+                </svg>
               </div>
               <div class="choice-text-wrap">
                 <span class="choice-title">YouTube</span>
@@ -2009,16 +2038,16 @@
               </div>
               <div class="card-action-cue">
                 <span>Open YouTube</span>
-                <svg class="cue-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 18 15 12 9 6"/></svg>
+                <svg class="cue-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
               </div>
             </button>
 
-            <!-- 4. Paste Video Link -->
+            <!-- 4. Paste Video Link (Generic Action - Official Professional B&W) -->
             <button type="button" class="stage-choice-card" id="btn-stage-choice-link" aria-label="Paste Video Link">
-              <div class="choice-icon-wrap" style="color: #3b82f6; background: rgba(59, 130, 246, 0.12); border-color: rgba(59, 130, 246, 0.3);">
-                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+              <div class="choice-icon-wrap choice-action">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
                 </svg>
               </div>
               <div class="choice-text-wrap">
@@ -2027,14 +2056,18 @@
               </div>
               <div class="card-action-cue">
                 <span>Paste URL</span>
-                <svg class="cue-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 18 15 12 9 6"/></svg>
+                <svg class="cue-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
               </div>
             </button>
 
-            <!-- 5. Netflix -->
+            <!-- 5. Netflix (Official Original Logo) -->
             <button type="button" class="stage-choice-card" id="btn-stage-choice-netflix" aria-label="Open Netflix">
-              <div class="choice-icon-wrap" style="color: #e50914; background: rgba(229, 9, 20, 0.12); border-color: rgba(229, 9, 20, 0.3); font-weight: 900; font-size: 1.1rem;">
-                <span>N</span>
+              <div class="choice-icon-wrap choice-platform">
+                <svg width="18" height="22" viewBox="0 0 111 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path d="M0 0h36v200H0z" fill="#E50914"/>
+                  <path d="M75 0h36v200H75z" fill="#E50914"/>
+                  <path d="M0 0h36l39 200H39z" fill="#B81D24"/>
+                </svg>
               </div>
               <div class="choice-text-wrap">
                 <span class="choice-title">Netflix</span>
@@ -2042,14 +2075,17 @@
               </div>
               <div class="card-action-cue">
                 <span>Watch Netflix</span>
-                <svg class="cue-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 18 15 12 9 6"/></svg>
+                <svg class="cue-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
               </div>
             </button>
 
-            <!-- 6. JioHotstar -->
+            <!-- 6. JioHotstar (Official Original Logo) -->
             <button type="button" class="stage-choice-card" id="btn-stage-choice-hotstar" aria-label="Open JioHotstar">
-              <div class="choice-icon-wrap" style="color: #f59e0b; background: rgba(12, 32, 214, 0.18); border-color: rgba(12, 32, 214, 0.35);">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <div class="choice-icon-wrap choice-platform" style="background: rgba(12, 32, 214, 0.22); border-color: rgba(60, 90, 255, 0.35);">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path d="M12 2l2.6 5.5 6 .9-4.3 4.2 1 6-5.3-2.8-5.3 2.8 1-6-4.3-4.2 6-.9z" fill="#FFA000"/>
+                  <circle cx="12" cy="12" r="3" fill="#FFD54F" opacity="0.75"/>
+                </svg>
               </div>
               <div class="choice-text-wrap">
                 <span class="choice-title">JioHotstar</span>
@@ -2057,14 +2093,18 @@
               </div>
               <div class="card-action-cue">
                 <span>Watch Hotstar</span>
-                <svg class="cue-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 18 15 12 9 6"/></svg>
+                <svg class="cue-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
               </div>
             </button>
 
-            <!-- 7. Prime Video -->
+            <!-- 7. Prime Video (Official Original Logo) -->
             <button type="button" class="stage-choice-card" id="btn-stage-choice-prime" aria-label="Open Prime Video">
-              <div class="choice-icon-wrap" style="color: #00a8e1; background: rgba(0, 168, 225, 0.12); border-color: rgba(0, 168, 225, 0.3); font-weight: 800; font-size: 0.72rem;">
-                <span>prime</span>
+              <div class="choice-icon-wrap choice-platform" style="background: rgba(0, 168, 225, 0.12); border-color: rgba(0, 168, 225, 0.3);">
+                <svg width="30" height="22" viewBox="0 0 54 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <text x="2" y="19" fill="#00A8E1" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="18" letter-spacing="-0.5px">prime</text>
+                  <path d="M4 27c9 5 24 5 35-1" stroke="#FF9900" stroke-width="3" stroke-linecap="round"/>
+                  <path d="M37 23l4 3-3 4" stroke="#FF9900" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
               </div>
               <div class="choice-text-wrap">
                 <span class="choice-title">Prime Video</span>
@@ -2072,14 +2112,17 @@
               </div>
               <div class="card-action-cue">
                 <span>Watch Prime</span>
-                <svg class="cue-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 18 15 12 9 6"/></svg>
+                <svg class="cue-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
               </div>
             </button>
 
-            <!-- 8. MX Player -->
+            <!-- 8. MX Player (Official Original Logo) -->
             <button type="button" class="stage-choice-card" id="btn-stage-choice-mx" aria-label="Open MX Player">
-              <div class="choice-icon-wrap" style="color: #0066ff; background: rgba(0, 102, 255, 0.12); border-color: rgba(0, 102, 255, 0.3); font-weight: 800; font-size: 0.75rem;">
-                <span>MX</span>
+              <div class="choice-icon-wrap choice-platform" style="background: rgba(0, 102, 255, 0.15); border-color: rgba(0, 102, 255, 0.35);">
+                <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <rect width="32" height="32" rx="8" fill="#0066FF"/>
+                  <polygon points="12,8 24,16 12,24" fill="#FFFFFF"/>
+                </svg>
               </div>
               <div class="choice-text-wrap">
                 <span class="choice-title">MX Player</span>
@@ -2087,14 +2130,18 @@
               </div>
               <div class="card-action-cue">
                 <span>Watch MX</span>
-                <svg class="cue-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 18 15 12 9 6"/></svg>
+                <svg class="cue-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
               </div>
             </button>
 
-            <!-- 9. Crunchyroll -->
+            <!-- 9. Crunchyroll (Official Original Logo) -->
             <button type="button" class="stage-choice-card" id="btn-stage-choice-crunchyroll" aria-label="Open Crunchyroll">
-              <div class="choice-icon-wrap" style="color: #f47521; background: rgba(244, 117, 33, 0.12); border-color: rgba(244, 117, 33, 0.3);">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="#f47521"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4" fill="#18181b"/></svg>
+              <div class="choice-icon-wrap choice-platform" style="background: rgba(244, 117, 33, 0.15); border-color: rgba(244, 117, 33, 0.35);">
+                <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <circle cx="16" cy="16" r="15" fill="#F47521"/>
+                  <ellipse cx="14" cy="16" rx="8.5" ry="10.5" fill="#18181b"/>
+                  <ellipse cx="12" cy="16" rx="5" ry="7" fill="#F47521"/>
+                </svg>
               </div>
               <div class="choice-text-wrap">
                 <span class="choice-title">Crunchyroll</span>
@@ -2102,14 +2149,14 @@
               </div>
               <div class="card-action-cue">
                 <span>Watch Anime</span>
-                <svg class="cue-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 18 15 12 9 6"/></svg>
+                <svg class="cue-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
               </div>
             </button>
 
-            <!-- 10. Share Screen -->
+            <!-- 10. Share Screen (Generic Action - Official Professional B&W) -->
             <button type="button" class="stage-choice-card" id="btn-stage-choice-screenshare" aria-label="Share Screen">
-              <div class="choice-icon-wrap" style="color: #14b8a6; background: rgba(20, 184, 166, 0.12); border-color: rgba(20, 184, 166, 0.3);">
-                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <div class="choice-icon-wrap choice-action">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <rect x="2" y="3" width="20" height="14" rx="2"/>
                   <line x1="8" y1="21" x2="16" y2="21"/>
                   <line x1="12" y1="17" x2="12" y2="21"/>
@@ -2121,14 +2168,14 @@
               </div>
               <div class="card-action-cue">
                 <span>Cast Screen</span>
-                <svg class="cue-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 18 15 12 9 6"/></svg>
+                <svg class="cue-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
               </div>
             </button>
 
-            <!-- 11. Explore Hub -->
+            <!-- 11. Explore Hub (Generic Action - Official Professional B&W) -->
             <button type="button" class="stage-choice-card" id="btn-stage-choice-more" aria-label="More Media Sources">
-              <div class="choice-icon-wrap" style="color: #a855f7; background: rgba(168, 85, 247, 0.12); border-color: rgba(168, 85, 247, 0.3);">
-                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <div class="choice-icon-wrap choice-action">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <rect x="3" y="3" width="7" height="7" rx="1"/>
                   <rect x="14" y="3" width="7" height="7" rx="1"/>
                   <rect x="14" y="14" width="7" height="7" rx="1"/>
@@ -2141,7 +2188,7 @@
               </div>
               <div class="card-action-cue">
                 <span>Open Hub</span>
-                <svg class="cue-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 18 15 12 9 6"/></svg>
+                <svg class="cue-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
               </div>
             </button>
           </div>
@@ -2154,7 +2201,7 @@
       <div class="wallpaper-modal-container" style="max-width: 520px;">
         <div class="wallpaper-modal-header">
           <div class="wallpaper-header-title">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e5a93c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <circle cx="12" cy="12" r="3"/>
               <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
             </svg>
@@ -2169,20 +2216,25 @@
         </div>
 
         <div class="wallpaper-modal-body" style="display: flex; flex-direction: column; gap: 20px;">
-          <!-- Room Quick Actions (Merged from Subplayer Bar) -->
+          <!-- Room Quick Actions (Official Professional Black and White Icons & Clean Monochrome Text) -->
           <div class="settings-quick-actions-section">
             <div class="settings-section-header">
-              <span class="settings-section-title">Room Quick Actions</span>
-              <span class="settings-section-sub">Tools & Controls</span>
+              <span class="settings-section-title">Room Controls &amp; Tools</span>
+              <span class="settings-section-sub">Quick Actions</span>
             </div>
             <div class="settings-quick-actions-grid">
-              <!-- 1. Resize Stage -->
-              <button type="button" class="settings-action-tile" id="btn-settings-action-resize" aria-label="Resize Player">
+              <!-- 1. Expand / Resize Stage -->
+              <button type="button" class="settings-action-tile" id="btn-settings-action-resize" aria-label="Expand or Minimize Stage">
                 <div class="settings-action-icon">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <polyline points="9 21 3 21 3 15"></polyline>
+                    <line x1="21" y1="3" x2="14" y2="10"></line>
+                    <line x1="3" y1="21" x2="10" y2="14"></line>
+                  </svg>
                 </div>
                 <div class="settings-action-text">
-                  <span class="settings-action-label">Fit / Resize</span>
+                  <span class="settings-action-label">Expand Stage</span>
                   <span class="settings-action-hint">Toggle player height</span>
                 </div>
               </button>
@@ -2190,21 +2242,21 @@
               <!-- 2. PiP -->
               <button type="button" class="settings-action-tile" id="btn-settings-action-pip" aria-label="Picture in Picture">
                 <div class="settings-action-icon">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <rect x="2" y="4" width="20" height="16" rx="2" ry="2"/>
                     <rect x="12" y="11" width="8" height="7" rx="1" ry="1"/>
                   </svg>
                 </div>
                 <div class="settings-action-text">
-                  <span class="settings-action-label">Pop-out (PiP)</span>
-                  <span class="settings-action-hint">Picture-in-picture</span>
+                  <span class="settings-action-label">Picture-in-Picture</span>
+                  <span class="settings-action-hint">Pop out video window</span>
                 </div>
               </button>
 
               <!-- 3. Mic Toggle -->
               <button type="button" class="settings-action-tile" id="btn-settings-action-mic" aria-label="Toggle Microphone">
                 <div class="settings-action-icon" id="settings-action-mic-icon">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
                     <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
                     <line x1="12" y1="19" x2="12" y2="23"/>
@@ -2212,58 +2264,62 @@
                   </svg>
                 </div>
                 <div class="settings-action-text">
-                  <span class="settings-action-label" id="settings-action-mic-label">Mic Mute</span>
-                  <span class="settings-action-hint">Toggle audio mic</span>
+                  <span class="settings-action-label" id="settings-action-mic-label">Microphone</span>
+                  <span class="settings-action-hint">Mute or unmute mic</span>
                 </div>
               </button>
 
               <!-- 4. Cam Toggle -->
               <button type="button" class="settings-action-tile" id="btn-settings-action-cam" aria-label="Toggle Camera">
                 <div class="settings-action-icon" id="settings-action-cam-icon">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <polygon points="23 7 16 12 23 17 23 7"/>
                     <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
                   </svg>
                 </div>
                 <div class="settings-action-text">
-                  <span class="settings-action-label" id="settings-action-cam-label">Camera</span>
-                  <span class="settings-action-hint">Toggle live video</span>
+                  <span class="settings-action-label" id="settings-action-cam-label">Video Camera</span>
+                  <span class="settings-action-hint">Start or stop video</span>
                 </div>
               </button>
 
               <!-- 5. Share & Invite -->
               <button type="button" class="settings-action-tile" id="btn-settings-action-share" aria-label="Invite Friends">
-                <div class="settings-action-icon" style="color: #38bdf8;">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <div class="settings-action-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
                     <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
                   </svg>
                 </div>
                 <div class="settings-action-text">
                   <span class="settings-action-label">Invite Friends</span>
-                  <span class="settings-action-hint">Share party room</span>
+                  <span class="settings-action-hint">Copy party room link</span>
                 </div>
               </button>
 
               <!-- 6. Virtual Web Browser -->
               <button type="button" class="settings-action-tile" id="btn-settings-action-browser" aria-label="Open Web Browser">
-                <div class="settings-action-icon" style="color: #10b981;">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                <div class="settings-action-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                  </svg>
                 </div>
                 <div class="settings-action-text">
                   <span class="settings-action-label">Web Browser</span>
-                  <span class="settings-action-hint">Isolated Webview</span>
+                  <span class="settings-action-hint">Isolated native webview</span>
                 </div>
               </button>
 
               <!-- 7. Search Media -->
               <button type="button" class="settings-action-tile" id="btn-settings-action-search" aria-label="Search Media">
-                <div class="settings-action-icon" style="color: #f59e0b;">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <div class="settings-action-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                  </svg>
                 </div>
                 <div class="settings-action-text">
                   <span class="settings-action-label">Search Media</span>
-                  <span class="settings-action-hint">Find films &amp; clips</span>
+                  <span class="settings-action-hint">Find movies &amp; clips</span>
                 </div>
               </button>
             </div>
@@ -2272,7 +2328,7 @@
           <div style="padding: 14px 16px; background: rgba(255, 255, 255, 0.04); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08); display: flex; flex-direction: column; gap: 8px;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
               <label for="room-settings-nickname" style="font-size: 0.9rem; font-weight: 600; color: #f4f4f5;">Your Display Name</label>
-              <span id="current-display-name-pill" style="font-size: 0.75rem; color: #e5a93c; font-weight: 700;">Viewer</span>
+              <span id="current-display-name-pill" style="font-size: 0.75rem; color: #ffffff; font-weight: 700; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.15); padding: 2px 8px; border-radius: 9999px;">Viewer</span>
             </div>
             <div style="display: flex; gap: 8px;">
               <input type="text" id="room-settings-nickname" class="wallpaper-custom-input" placeholder="Enter nickname..." maxlength="32" style="flex: 1;" aria-label="Your Display Name">
@@ -2294,7 +2350,7 @@
           <div class="settings-audio-mixer-section" style="padding: 16px; background: rgba(255, 255, 255, 0.04); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08); display: flex; flex-direction: column; gap: 14px;">
             <div style="display: flex; align-items: center; justify-content: space-between;">
               <div style="font-size: 0.9rem; font-weight: 600; color: #f4f4f5; display: flex; align-items: center; gap: 8px;">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#e5a93c" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
                 Dual Audio Controls
               </div>
               <span class="badge-mini-gray" id="audio-ducking-status-badge">Ducking Off</span>
@@ -2346,7 +2402,7 @@
           <div class="settings-stage-chat-section" style="padding: 16px; background: rgba(255, 255, 255, 0.04); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08); display: flex; flex-direction: column; gap: 14px;">
             <div style="display: flex; align-items: center; justify-content: space-between;">
               <div style="font-size: 0.9rem; font-weight: 600; color: #f4f4f5; display: flex; align-items: center; gap: 8px;">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#e5a93c" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                 In-Stage Live Chat HUD (C)
               </div>
               <button type="button" id="btn-toggle-stage-chat" class="btn btn-outline btn-sm active" aria-label="Toggle In-Stage Live Chat HUD" style="border-radius: 9999px; padding: 5px 12px; font-size: 0.75rem;">
@@ -2356,7 +2412,7 @@
             <div style="display: flex; flex-direction: column; gap: 6px;">
               <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #a1a1aa;">
                 <span>HUD Bubble Opacity</span>
-                <span id="settings-stage-chat-opacity-val" style="font-weight: 600; color: #e5a93c;">85%</span>
+                <span id="settings-stage-chat-opacity-val" style="font-weight: 600; color: #ffffff;">85%</span>
               </div>
               <input type="range" id="settings-stage-chat-opacity" class="settings-volume-slider" min="0.2" max="1" step="0.05" value="0.85" aria-label="Stage Chat HUD Opacity">
             </div>
@@ -2366,7 +2422,7 @@
           <div class="settings-audio-eq-section" style="padding: 16px; background: rgba(255, 255, 255, 0.04); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08); display: flex; flex-direction: column; gap: 12px;">
             <div style="display: flex; align-items: center; justify-content: space-between;">
               <div style="font-size: 0.9rem; font-weight: 600; color: #f4f4f5; display: flex; align-items: center; gap: 8px;">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#e5a93c" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
                 Cinema Audio Equalizer (DSP)
               </div>
               <span class="badge-mini-gold" id="eq-active-preset-badge">Flat Monitor</span>
