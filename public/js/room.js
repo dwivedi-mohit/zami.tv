@@ -1379,7 +1379,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnStageNetflix.addEventListener('click', () => {
       closeStageSourcesPopup();
       if (typeof window.openInbuiltBrowser === 'function') {
-        window.openInbuiltBrowser('https://www.netflix.com');
+        window.openInbuiltBrowser('https://www.netflix.com', 'Netflix');
       }
     });
   }
@@ -1390,18 +1390,18 @@ document.addEventListener('DOMContentLoaded', () => {
     btnStageHotstar.addEventListener('click', () => {
       closeStageSourcesPopup();
       if (typeof window.openInbuiltBrowser === 'function') {
-        window.openInbuiltBrowser('https://www.hotstar.com');
+        window.openInbuiltBrowser('https://www.hotstar.com', 'JioHotstar');
       }
     });
   }
 
-  // 7. Prime Video
+  // 7. Prime Video (Amazon MX Player - exact catalog from user screenshot)
   const btnStagePrime = document.getElementById('btn-stage-choice-prime');
   if (btnStagePrime) {
     btnStagePrime.addEventListener('click', () => {
       closeStageSourcesPopup();
       if (typeof window.openInbuiltBrowser === 'function') {
-        window.openInbuiltBrowser('https://www.primevideo.com');
+        window.openInbuiltBrowser('https://www.mxplayer.in', 'Prime Video');
       }
     });
   }
@@ -1412,7 +1412,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnStageMx.addEventListener('click', () => {
       closeStageSourcesPopup();
       if (typeof window.openInbuiltBrowser === 'function') {
-        window.openInbuiltBrowser('https://www.mxplayer.in');
+        window.openInbuiltBrowser('https://www.mxplayer.in', 'MX Player');
       }
     });
   }
@@ -1423,7 +1423,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnStageCrunchyroll.addEventListener('click', () => {
       closeStageSourcesPopup();
       if (typeof window.openInbuiltBrowser === 'function') {
-        window.openInbuiltBrowser('https://www.crunchyroll.com');
+        window.openInbuiltBrowser('https://www.crunchyroll.com', 'Crunchyroll');
       }
     });
   }
@@ -4707,7 +4707,75 @@ function initRaveSuite(socket, roomId) {
     }
   }
 
-  function openInbuiltBrowser(url = 'https://www.youtube.com') {
+  function getAppMeta(url, customAppName) {
+    const u = (url || '').toLowerCase();
+    const app = (customAppName || '').toLowerCase();
+
+    if (app.includes('prime') || u.includes('primevideo') || u.includes('amazon.')) {
+      return {
+        title: 'Prime Video',
+        bannerText: 'Open the Prime Video app',
+        iconSvg: `<svg width="24" height="24" viewBox="0 0 54 36" fill="none"><text x="2" y="19" fill="#00A8E1" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="18">prime</text><path d="M4 27c9 5 24 5 35-1" stroke="#FF9900" stroke-width="3" stroke-linecap="round"/><path d="M37 23l4 3-3 4" stroke="#FF9900" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+        iconBg: '#000000',
+        appUrl: 'https://www.primevideo.com'
+      };
+    }
+    if (app.includes('mx') || u.includes('mxplayer')) {
+      return {
+        title: customAppName || 'Prime Video',
+        bannerText: 'Open the Prime Video app',
+        iconSvg: `<svg width="24" height="24" viewBox="0 0 54 36" fill="none"><text x="2" y="19" fill="#00A8E1" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="18">prime</text><path d="M4 27c9 5 24 5 35-1" stroke="#FF9900" stroke-width="3" stroke-linecap="round"/><path d="M37 23l4 3-3 4" stroke="#FF9900" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+        iconBg: '#000000',
+        appUrl: 'https://www.mxplayer.in'
+      };
+    }
+    if (app.includes('netflix') || u.includes('netflix')) {
+      return {
+        title: 'Netflix',
+        bannerText: 'Open the Netflix app',
+        iconSvg: `<svg width="18" height="22" viewBox="0 0 111 200" fill="none"><path d="M0 0h36v200H0z" fill="#E50914"/><path d="M75 0h36v200H75z" fill="#E50914"/><path d="M0 0h36l39 200H39z" fill="#B81D24"/></svg>`,
+        iconBg: '#000000',
+        appUrl: 'https://www.netflix.com'
+      };
+    }
+    if (app.includes('hotstar') || u.includes('hotstar')) {
+      return {
+        title: 'JioHotstar',
+        bannerText: 'Open the JioHotstar app',
+        iconSvg: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2l2.6 5.5 6 .9-4.3 4.2 1 6-5.3-2.8-5.3 2.8 1-6-4.3-4.2 6-.9z" fill="#FFA000"/><circle cx="12" cy="12" r="3" fill="#FFD54F" opacity="0.75"/></svg>`,
+        iconBg: '#0f1014',
+        appUrl: 'https://www.hotstar.com'
+      };
+    }
+    if (app.includes('crunchyroll') || u.includes('crunchyroll')) {
+      return {
+        title: 'Crunchyroll',
+        bannerText: 'Open the Crunchyroll app',
+        iconSvg: `<svg width="20" height="20" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="15" fill="#F47521"/><ellipse cx="14" cy="16" rx="8.5" ry="10.5" fill="#18181b"/><ellipse cx="12" cy="16" rx="5" ry="7" fill="#F47521"/></svg>`,
+        iconBg: '#f47521',
+        appUrl: 'https://www.crunchyroll.com'
+      };
+    }
+    if (app.includes('youtube') || u.includes('youtube') || u.includes('youtu.be')) {
+      return {
+        title: 'YouTube',
+        bannerText: 'Open the YouTube app',
+        iconSvg: `<svg width="20" height="15" viewBox="0 0 24 18" fill="none"><path d="M23.5 2.6c-.3-1-1-1.8-2-2.1C19.7 0 12 0 12 0S4.3 0 2.5.5c-1 .3-1.7 1.1-2 2.1C0 4.4 0 9 0 9s0 4.6.5 6.4c.3 1 1 1.8 2 2.1 1.8.5 9.5.5 9.5.5s7.7 0 9.5-.5c1-.3 1.7-1.1 2-2.1.5-1.8.5-6.4.5-6.4s0-4.6-.5-6.4z" fill="#FF0000"/><polygon points="9.6 12.8 15.8 9 9.6 5.2" fill="#FFFFFF"/></svg>`,
+        iconBg: '#ff0000',
+        appUrl: 'https://www.youtube.com'
+      };
+    }
+
+    return {
+      title: customAppName || 'Web Browser',
+      bannerText: 'Open in Native Webview',
+      iconSvg: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`,
+      iconBg: '#1e293b',
+      appUrl: url
+    };
+  }
+
+  function openInbuiltBrowser(url = 'https://www.mxplayer.in', customAppName = null) {
     hideInbuiltAppStage();
     const placeholderEl = document.getElementById('player-placeholder');
     if (placeholderEl) placeholderEl.style.display = 'none';
@@ -4733,18 +4801,39 @@ function initRaveSuite(socket, roomId) {
     if (browserIframe) browserIframe.style.display = 'none';
 
     let target = (url || '').trim();
-    if (!target) target = 'https://www.youtube.com';
+    if (!target) target = 'https://www.mxplayer.in';
     if (!target.includes('.') || target.includes(' ')) {
-      target = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(target);
+      target = 'https://www.google.com/search?q=' + encodeURIComponent(target);
     } else if (!target.startsWith('http://') && !target.startsWith('https://')) {
       target = 'https://' + target;
     }
 
     if (browserUrlInput) browserUrlInput.value = target;
 
+    // Update in-app top header and banner
+    const meta = getAppMeta(target, customAppName);
+    const inappTitle = document.getElementById('browser-inapp-title');
+    if (inappTitle) inappTitle.textContent = meta.title;
+
+    const inappBannerText = document.getElementById('browser-banner-text');
+    if (inappBannerText) inappBannerText.textContent = meta.bannerText;
+
+    const inappBannerIcon = document.getElementById('browser-banner-icon');
+    if (inappBannerIcon) {
+      inappBannerIcon.style.backgroundColor = meta.iconBg || '#000000';
+      inappBannerIcon.innerHTML = meta.iconSvg;
+    }
+
+    const btnBannerOpen = document.getElementById('btn-browser-banner-open');
+    if (btnBannerOpen) {
+      btnBannerOpen.onclick = () => {
+        window.open(meta.appUrl || target, '_blank');
+      };
+    }
+
     // Native Playback Interception Engine (Guaranteed zero-lag 1080p 60fps GPU decode)
     const classified = window.mediaSourceManager ? window.mediaSourceManager.classifyUrl(target) : null;
-    if (classified) {
+    if (classified && !customAppName) {
       if (browserContainer) browserContainer.style.display = 'none';
       if (window.mediaSourceManager) window.mediaSourceManager.silenceAndTeardownAll();
 
@@ -4782,15 +4871,24 @@ function initRaveSuite(socket, roomId) {
     // Show status overlay
     if (remoteOverlay) {
       remoteOverlay.style.display = 'flex';
-      if (remoteStatusText) remoteStatusText.textContent = `Connecting to genuine remote browser for ${target}...`;
+      if (remoteStatusText) remoteStatusText.textContent = `Connecting to ${meta.title} remote session...`;
     }
 
     connectRemoteAudio();
 
+    const isMobile = window.innerWidth <= 768;
+    const launchPayload = {
+      url: target,
+      appName: meta.title,
+      isMobile: isMobile,
+      width: isMobile ? 412 : 1920,
+      height: isMobile ? 890 : 1080
+    };
+
     if (isRemoteBrowserActive) {
-      socket.emit('remote-browser-navigate', { url: target });
+      socket.emit('remote-browser-navigate', launchPayload);
     } else {
-      socket.emit('remote-browser-start', { url: target });
+      socket.emit('remote-browser-start', launchPayload);
     }
   }
 
@@ -5085,6 +5183,20 @@ function initRaveSuite(socket, roomId) {
   socket.on('remote-browser-navigated', ({ url, title }) => {
     if (url && browserUrlInput) {
       browserUrlInput.value = url;
+    }
+    if (url) {
+      const meta = getAppMeta(url);
+      const inappTitle = document.getElementById('browser-inapp-title');
+      if (inappTitle) inappTitle.textContent = meta.title;
+
+      const inappBannerText = document.getElementById('browser-banner-text');
+      if (inappBannerText) inappBannerText.textContent = meta.bannerText;
+
+      const inappBannerIcon = document.getElementById('browser-banner-icon');
+      if (inappBannerIcon) {
+        inappBannerIcon.style.backgroundColor = meta.iconBg || '#000000';
+        inappBannerIcon.innerHTML = meta.iconSvg;
+      }
     }
     if (remoteSessionBadge && title) {
       remoteSessionBadge.title = title;
@@ -5650,6 +5762,80 @@ function initRaveSuite(socket, roomId) {
       } catch (err) {
         console.warn('Canvas captureStream fallback to getDisplayMedia:', err);
         if (window.webrtcManager) window.webrtcManager.toggleScreenShare();
+      }
+    });
+  }
+
+  // Native In-App Webview "Paste link" dialog & controls
+  const btnPasteLink = document.getElementById('btn-browser-paste-link');
+  const pasteDialog = document.getElementById('browser-paste-dialog');
+  const btnPasteDialogClose = document.getElementById('btn-paste-dialog-close');
+  const pasteForm = document.getElementById('browser-paste-form');
+  const pasteInput = document.getElementById('browser-paste-input');
+  const btnPasteClip = document.getElementById('btn-paste-from-clipboard');
+
+  if (btnPasteLink && pasteDialog) {
+    btnPasteLink.addEventListener('click', () => {
+      if (typeof pasteDialog.showModal === 'function') {
+        pasteDialog.showModal();
+      } else {
+        pasteDialog.style.display = 'block';
+      }
+      if (pasteInput) {
+        pasteInput.value = '';
+        setTimeout(() => pasteInput.focus(), 150);
+      }
+    });
+  }
+
+  if (btnPasteDialogClose && pasteDialog) {
+    btnPasteDialogClose.addEventListener('click', () => {
+      if (typeof pasteDialog.close === 'function') {
+        pasteDialog.close();
+      } else {
+        pasteDialog.style.display = 'none';
+      }
+    });
+  }
+
+  if (btnPasteClip && pasteInput) {
+    btnPasteClip.addEventListener('click', async () => {
+      try {
+        if (navigator.clipboard && navigator.clipboard.readText) {
+          const text = await navigator.clipboard.readText();
+          if (text) pasteInput.value = text.trim();
+        }
+      } catch(e) {
+        if (window.showToast) window.showToast('Please paste the URL manually into the box', 'info');
+      }
+    });
+  }
+
+  if (pasteForm && pasteDialog) {
+    pasteForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const val = (pasteInput ? pasteInput.value : '').trim();
+      if (!val) return;
+      if (typeof pasteDialog.close === 'function') {
+        pasteDialog.close();
+      } else {
+        pasteDialog.style.display = 'none';
+      }
+      openInbuiltBrowser(val);
+    });
+  }
+
+  // Modern Web Guidance: Graceful degradation click-outside fallback if closedby is unsupported
+  if (pasteDialog && !('closedBy' in HTMLDialogElement.prototype)) {
+    const outside = (e, dialog) => {
+      const r = dialog.getBoundingClientRect();
+      return e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
+    };
+    let pressedOutside = false;
+    pasteDialog.addEventListener('pointerdown', (e) => { pressedOutside = outside(e, pasteDialog); });
+    pasteDialog.addEventListener('pointerup', (e) => {
+      if (pressedOutside && outside(e, pasteDialog) && typeof pasteDialog.close === 'function') {
+        pasteDialog.close();
       }
     });
   }

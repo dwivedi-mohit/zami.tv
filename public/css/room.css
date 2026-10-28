@@ -4880,10 +4880,317 @@
   position: absolute;
   inset: 0;
   z-index: 45;
-  background: #0b0f19;
+  background: #000000;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+/* ==========================================================================
+   NATIVE IN-APP WEBVIEW HEADER & CONTEXTUAL BANNER (EXACT RAVE/MOBILE STYLE)
+   ========================================================================== */
+
+.browser-inapp-header {
+  position: relative;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 52px;
+  min-height: 52px;
+  background: #ffffff;
+  color: #111827;
+  padding: 0 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  user-select: none;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.browser-inapp-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 0 0 auto;
+}
+
+.btn-inapp-nav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: none;
+  color: #1c1e21;
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 0;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.btn-inapp-nav:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.btn-inapp-nav:active {
+  background: rgba(0, 0, 0, 0.12);
+  transform: scale(0.95);
+}
+
+.browser-inapp-center {
+  flex: 1 1 auto;
+  text-align: center;
+  min-width: 0;
+  padding: 0 8px;
+}
+
+.browser-inapp-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.browser-inapp-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 0 0 auto;
+}
+
+.btn-inapp-paste {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: #0b84fe;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 4px;
+  border-radius: 6px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  transition: opacity 0.15s ease, background 0.15s ease;
+}
+
+.btn-inapp-paste:hover {
+  color: #0070f3;
+  background: rgba(11, 132, 254, 0.08);
+}
+
+.btn-inapp-paste:active {
+  opacity: 0.7;
+}
+
+/* Contextual App Banner underneath header */
+.browser-inapp-banner {
+  position: relative;
+  z-index: 45;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 52px;
+  min-height: 52px;
+  background: #111827;
+  color: #ffffff;
+  padding: 0 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.browser-inapp-banner .banner-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.banner-app-icon {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.banner-app-text {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.browser-inapp-banner .banner-right {
+  flex: 0 0 auto;
+  margin-left: 12px;
+}
+
+.btn-banner-open {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  color: #111827;
+  border: none;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  padding: 6px 16px;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.btn-banner-open:hover {
+  background: #f3f4f6;
+}
+
+.btn-banner-open:active {
+  transform: scale(0.96);
+}
+
+/* Paste Link Modal Dialog */
+.browser-paste-dialog {
+  border: none;
+  border-radius: 16px;
+  background: #18181b;
+  color: #f4f4f5;
+  padding: 0;
+  max-width: 440px;
+  width: 90vw;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.12);
+  margin: auto;
+}
+
+.browser-paste-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.paste-dialog-content {
+  padding: 20px;
+}
+
+.paste-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.paste-dialog-header h4 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.btn-paste-close {
+  background: transparent;
+  border: none;
+  color: #a1a1aa;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+}
+
+.btn-paste-close:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.paste-dialog-desc {
+  margin: 0 0 16px 0;
+  font-size: 0.85rem;
+  color: #a1a1aa;
+  line-height: 1.4;
+}
+
+.paste-dialog-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.browser-paste-input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #27272a;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  font-size: 0.95rem;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.browser-paste-input:focus {
+  border-color: #0b84fe;
+  box-shadow: 0 0 0 3px rgba(11, 132, 254, 0.25);
+}
+
+.paste-dialog-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn-paste-clipboard {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 14px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #f4f4f5;
+  font-size: 0.88rem;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-paste-clipboard:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.btn-paste-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 18px;
+  background: #0b84fe;
+  border: none;
+  color: #ffffff;
+  font-size: 0.88rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-paste-submit:hover {
+  background: #0070f3;
 }
 
 .browser-navbar {
@@ -5451,132 +5758,54 @@
     overflow-y: auto;
     z-index: 150;
   }
-  .browser-navbar {
+  /* Mobile In-App Webview Fullscreen Container (Matches native app webview from user screenshot) */
+  #inbuilt-browser-container {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 3000 !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    background: #000000 !important;
     display: flex !important;
-    align-items: center !important;
-    gap: 6px !important;
-    padding: 6px 8px !important;
-    width: 100% !important;
-    max-width: 100% !important;
+    flex-direction: column !important;
+    border-radius: 0 !important;
     box-sizing: border-box !important;
-    overflow: visible !important;
-    background: rgba(14, 18, 28, 0.98) !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    padding-top: env(safe-area-inset-top, 0) !important;
+    padding-bottom: env(safe-area-inset-bottom, 0) !important;
   }
-  .browser-cast-btn {
+
+  body:has(#inbuilt-browser-container[style*="display: flex"]) #gmeet-call-card,
+  body:has(#inbuilt-browser-container[style*="display: flex"]) .gmeet-controls-dock,
+  body:has(#inbuilt-browser-container[style*="display: flex"]) .gmeet-call-floating-dock,
+  body:has(#inbuilt-browser-container[style*="display: flex"]) .rave-dock-wrapper,
+  body:has(#inbuilt-browser-container[style*="display: flex"]) .nav-bottom-bar {
     display: none !important;
   }
-  .browser-nav-controls {
-    display: flex !important;
-    align-items: center !important;
-    gap: 4px !important;
-    flex-shrink: 0 !important;
-  }
-  .browser-nav-btn {
-    width: 34px !important;
-    height: 34px !important;
-    padding: 0 !important;
-    min-width: 34px !important;
-    border-radius: 8px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-  #browser-btn-forward,
-  #browser-btn-reload {
-    display: none !important;
-  }
-  .remote-session-badge {
-    display: none !important; /* Conceal text badge on phones so URL bar receives 100% remaining width */
-  }
-  .browser-url-bar {
-    display: flex !important;
-    align-items: center !important;
+
+  #inbuilt-browser-container .browser-viewport-wrapper {
     flex: 1 1 auto !important;
-    min-width: 0 !important;
-    height: 34px !important;
-    padding: 0 8px !important;
-    gap: 6px !important;
-    background: rgba(0, 0, 0, 0.6) !important;
-    border: 1px solid rgba(255, 255, 255, 0.15) !important;
-    border-radius: 8px !important;
-    box-sizing: border-box !important;
-  }
-  .browser-ssl-icon {
-    font-size: 0.7rem !important;
-    display: flex !important;
-    align-items: center !important;
-    flex-shrink: 0 !important;
-  }
-  .browser-url-input {
-    font-size: 16px !important; /* 16px strictly prevents iOS Safari viewport auto-zoom */
-    min-width: 0 !important;
+    height: calc(100dvh - 104px) !important;
     width: 100% !important;
-    padding: 0 !important;
-    color: #fff !important;
-    text-overflow: ellipsis !important;
-    line-height: normal !important;
+    background: #000000 !important;
+    position: relative !important;
+    overflow: hidden !important;
   }
-  .browser-go-btn {
-    width: 26px !important;
-    height: 26px !important;
-    padding: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    flex-shrink: 0 !important;
-  }
-  .btn-browser-apps-toggle {
-    height: 34px !important;
-    padding: 0 8px !important;
-    font-size: 0.74rem !important;
-    gap: 4px !important;
-    flex-shrink: 0 !important;
-    border-radius: 8px !important;
-  }
-  .browser-actions {
-    display: flex !important;
-    align-items: center !important;
-    gap: 4px !important;
-    flex-shrink: 0 !important;
-  }
-  /* Secondary desktop buttons hidden from narrow top mobile bar, served in bottom floating toolbar */
-  #btn-remote-quality-toggle,
-  #btn-browser-sync-countdown,
-  #btn-browser-cast-stage {
-    display: none !important;
-  }
-  #btn-remote-audio-toggle {
-    width: 34px !important;
-    height: 34px !important;
-    min-width: 34px !important;
-    padding: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    border-radius: 8px !important;
-  }
-  #btn-remote-audio-toggle span {
-    display: none !important;
-  }
-  .btn-browser-close {
-    width: 34px !important;
-    height: 34px !important;
-    min-width: 34px !important;
-    font-size: 1.25rem !important;
-    border-radius: 8px !important;
+
+  #inbuilt-browser-container #remote-browser-container {
+    width: 100% !important;
+    height: 100% !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
   }
 
-  /* Responsive Stage Height for Phone Viewport */
-  .player-wrapper.browser-active,
-  .player-wrapper:has(#inbuilt-browser-container[style*="display: flex"]) {
-    height: clamp(340px, 50dvh, 520px) !important;
-    min-height: 340px !important;
-    max-height: 520px !important;
-    flex: 0 0 clamp(340px, 50dvh, 520px) !important;
+  #inbuilt-browser-container #remote-browser-canvas {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: contain !important;
+    touch-action: none !important;
   }
 
   .player-wrapper.browser-active .custom-controls,
@@ -5590,14 +5819,15 @@
   /* Mobile Floating Quick Toolbar */
   .browser-mobile-toolbar {
     position: absolute;
-    bottom: 8px;
-    left: 50%;
-    transform: translateX(-50%);
+    bottom: 14px;
+    right: 14px;
+    left: auto;
+    transform: none;
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 4px 8px;
-    background: rgba(10, 14, 22, 0.9);
+    padding: 3px 8px;
+    background: rgba(10, 14, 22, 0.85);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.14);
@@ -5605,10 +5835,6 @@
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.65);
     z-index: 25;
     pointer-events: auto;
-    max-width: calc(100% - 20px);
-    overflow-x: auto;
-    white-space: nowrap;
-    -webkit-overflow-scrolling: touch;
   }
 
   .browser-mobile-bar-btn {

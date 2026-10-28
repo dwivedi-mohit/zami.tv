@@ -2261,21 +2261,21 @@ io.on('connection', (socket) => {
   // --------------------------------------------------------------------------
   // Remote Browser Stage Handlers (Real Isolated Chromium Instance per Room)
   // --------------------------------------------------------------------------
-  socket.on('remote-browser-start', async ({ url }) => {
+  socket.on('remote-browser-start', async ({ url, isMobile, width, height, appName }) => {
     if (!currentRoomId) return;
     try {
       const session = remoteBrowserManager.getOrCreateSession(currentRoomId);
-      await session.start(url || 'https://www.youtube.com');
+      await session.start(url || 'https://www.youtube.com', { isMobile, width, height, appName });
     } catch (err) {
       socket.emit('remote-browser-status', { status: 'error', message: err.message });
     }
   });
 
-  socket.on('remote-browser-navigate', async ({ url }) => {
+  socket.on('remote-browser-navigate', async ({ url, isMobile, width, height, appName }) => {
     if (!currentRoomId) return;
     const session = remoteBrowserManager.getSession(currentRoomId);
     if (session) {
-      await session.navigate(url);
+      await session.navigate(url, { isMobile, width, height, appName });
     }
   });
 

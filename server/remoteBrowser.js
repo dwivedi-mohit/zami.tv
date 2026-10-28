@@ -66,10 +66,10 @@ class RemoteBrowserSession {
     console.error(`[RemoteBrowser][${this.roomId}] [ERROR] ${msg}`, ...args);
   }
 
-  async start(initialUrl = 'https://www.youtube.com') {
+  async start(initialUrl = 'https://www.youtube.com', options = {}) {
     if (this.status === 'starting' || this.status === 'ready') {
       if (initialUrl && initialUrl !== this.currentUrl) {
-        await this.navigate(initialUrl);
+        await this.navigate(initialUrl, options);
       }
       return;
     }
@@ -77,19 +77,30 @@ class RemoteBrowserSession {
     this.status = 'starting';
     this.currentUrl = initialUrl || 'https://www.youtube.com';
     this.lastActive = Date.now();
+    this.isMobile = !!options.isMobile;
+    if (this.isMobile) {
+      this.width = options.width || 412;
+      this.height = options.height || 890;
+    } else {
+      this.width = options.width || 1920;
+      this.height = options.height || 1080;
+    }
 
     try {
       this.port = await getAvailablePort();
       fs.mkdirSync(this.profileDir, { recursive: true });
 
       const browserBin = process.env.CHROME_BIN || '/bin/brave-browser';
-      this.log(`Launching isolated browser on 127.0.0.1:${this.port} using ${browserBin}`);
+      this.log(`Launching isolated browser on 127.0.0.1:${this.port} using ${browserBin} (Mobile: ${this.isMobile}, ${this.width}x${this.height})`);
 
       const desktopUA = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
+      const mobileUA = 'Mozilla/5.0 (Linux; Android 14; Pixel 8 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36';
+      const activeUA = this.isMobile ? mobileUA : desktopUA;
 
       const args = [
         '--headless=new',
         '--no-sandbox',
+        '--disable-blink-features=AutomationControlled',
         '--enable-gpu-rasterization',
         '--enable-zero-copy',
         '--ignore-gpu-blocklist',
@@ -112,7 +123,7 @@ class RemoteBrowserSession {
         '--disable-sync',
         '--metrics-recording-only',
         '--no-first-run',
-        `--user-agent=${desktopUA}`,
+        `--user-agent=${activeUA}`,
         this.currentUrl
       ];
 
@@ -146,17 +157,17 @@ class RemoteBrowserSession {
       await this.sendCommand('Runtime.enable');
       await this.sendCommand('Network.enable');
 
-      // Set realistic Desktop User-Agent
+      // Set realistic User-Agent
       await this.sendCommand('Network.setUserAgentOverride', {
-        userAgent: desktopUA
+        userAgent: activeUA
       });
 
       // Emulate viewport size
       await this.sendCommand('Emulation.setDeviceMetricsOverride', {
         width: this.width,
         height: this.height,
-        deviceScaleFactor: 1,
-        mobile: false
+        deviceScaleFactor: this.isMobile ? 2 : 1,
+        mobile: !!this.isMobile
       });
 
       // Auto-unmute video and audio elements, dark scrollbars, and cookie banner auto-dismiss
@@ -311,6 +322,15 @@ class RemoteBrowserSession {
   getInjectedPageEnhancementsScript() {
     return `
       (() => {
+        // 0. Automation & Stealth Overrides
+        try {
+          Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
+          if (!window.chrome) window.chrome = {};
+          if (!window.chrome.runtime) window.chrome.runtime = {};
+          Object.defineProperty(navigator, 'plugins', { get: () => [1, 2, 3] });
+          Object.defineProperty(navigator, 'languages', { get: () => ['en-US', 'en'] });
+        } catch(e) {}
+
         // 1. ZAMI Cinematic Dark Scrollbars
         const injectDarkScrollbars = () => {
           try {
@@ -542,7 +562,7 @@ class RemoteBrowserSession {
     } catch(e) {}
   }
 
-  async navigate(url) {
+  async navigate(url, options = {}) {
     let target = (url || '').trim();
     if (!target) return;
 
@@ -550,6 +570,22 @@ class RemoteBrowserSession {
       target = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(target);
     } else if (!target.startsWith('http://') && !target.startsWith('https://')) {
       target = 'https://' + target;
+    }
+
+    if (options.isMobile !== undefined && options.isMobile !== this.isMobile) {
+      this.isMobile = !!options.isMobile;
+      this.width = this.isMobile ? (options.width || 412) : 1920;
+      this.height = this.isMobile ? (options.height || 890) : 1080;
+      const mobileUA = 'Mozilla/5.0 (Linux; Android 14; Pixel 8 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36';
+      const desktopUA = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
+      const activeUA = this.isMobile ? mobileUA : desktopUA;
+      await this.sendCommand('Network.setUserAgentOverride', { userAgent: activeUA }).catch(() => {});
+      await this.sendCommand('Emulation.setDeviceMetricsOverride', {
+        width: this.width,
+        height: this.height,
+        deviceScaleFactor: this.isMobile ? 2 : 1,
+        mobile: !!this.isMobile
+      }).catch(() => {});
     }
 
     this.currentUrl = target;
