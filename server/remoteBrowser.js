@@ -79,11 +79,11 @@ class RemoteBrowserSession {
     this.lastActive = Date.now();
     this.isMobile = !!options.isMobile;
     if (this.isMobile) {
-      this.width = options.width || 412;
-      this.height = options.height || 890;
+      this.width = options.width ? Math.round(options.width) : 412;
+      this.height = options.height ? Math.round(options.height) : 340;
     } else {
-      this.width = options.width || 1920;
-      this.height = options.height || 1080;
+      this.width = options.width ? Math.round(options.width) : 1920;
+      this.height = options.height ? Math.round(options.height) : 1080;
     }
 
     try {
@@ -572,10 +572,12 @@ class RemoteBrowserSession {
       target = 'https://' + target;
     }
 
-    if (options.isMobile !== undefined && options.isMobile !== this.isMobile) {
+    if (options.isMobile !== undefined) {
       this.isMobile = !!options.isMobile;
-      this.width = this.isMobile ? (options.width || 412) : 1920;
-      this.height = this.isMobile ? (options.height || 890) : 1080;
+    }
+    if (options.width && options.height) {
+      this.width = Math.round(options.width);
+      this.height = Math.round(options.height);
       const mobileUA = 'Mozilla/5.0 (Linux; Android 14; Pixel 8 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36';
       const desktopUA = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
       const activeUA = this.isMobile ? mobileUA : desktopUA;

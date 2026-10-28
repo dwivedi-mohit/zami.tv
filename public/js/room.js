@@ -4961,12 +4961,24 @@ function initRaveSuite(socket, roomId) {
     connectRemoteAudio();
 
     const isMobile = window.innerWidth <= 768;
+    let vpWidth = 1920, vpHeight = 1080;
+    if (isMobile) {
+      const stageEl = document.querySelector('.player-wrapper');
+      if (stageEl) {
+        const rect = stageEl.getBoundingClientRect();
+        vpWidth = Math.round(rect.width) || 412;
+        vpHeight = Math.round(rect.height) || 340;
+      } else {
+        vpWidth = window.innerWidth || 412;
+        vpHeight = 340;
+      }
+    }
     const launchPayload = {
       url: target,
       appName: meta.title,
       isMobile: isMobile,
-      width: isMobile ? 412 : 1920,
-      height: isMobile ? 890 : 1080
+      width: vpWidth,
+      height: vpHeight
     };
 
     if (isRemoteBrowserActive) {
