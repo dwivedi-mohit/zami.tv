@@ -7581,6 +7581,8 @@ function initWatch2GetherRoomClone() {
         btnMobileResize.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
         btnMobileResize.setAttribute('title', isExpanded ? 'Minimize streaming area' : 'Expand streaming area');
         btnMobileResize.setAttribute('aria-label', isExpanded ? 'Minimize streaming area' : 'Expand streaming area');
+        setTimeout(() => window.dispatchEvent(new Event('resize')), 50);
+        setTimeout(() => window.dispatchEvent(new Event('resize')), 320);
         if (window.showToast) {
           window.showToast(isExpanded ? 'Streaming stage expanded' : 'Streaming stage minimized', 'info');
         }

@@ -5773,13 +5773,13 @@
     display: none !important;
   }
 
-  /* Responsive Stage Height for Phone Viewport */
-  .player-wrapper.browser-active,
-  .player-wrapper:has(#inbuilt-browser-container[style*="display: flex"]) {
-    height: clamp(320px, 48dvh, 500px) !important;
-    min-height: 320px !important;
-    max-height: 500px !important;
-    flex: 0 0 clamp(320px, 48dvh, 500px) !important;
+  /* Responsive Stage Height for Phone Viewport (Standard / Compact) */
+  .player-wrapper.browser-active:not(.is-expanded),
+  .player-wrapper:not(.is-expanded):has(#inbuilt-browser-container[style*="display: flex"]) {
+    height: clamp(280px, 40dvh, 360px) !important;
+    min-height: 280px !important;
+    max-height: 380px !important;
+    flex: 0 0 clamp(280px, 40dvh, 360px) !important;
   }
 
   #inbuilt-browser-container .browser-viewport-wrapper {
@@ -8412,15 +8412,21 @@
 
   .player-wrapper {
     width: 100% !important;
-    height: 300px !important;
-    min-height: 270px !important;
-    max-height: 340px !important;
-    flex: 0 0 300px !important;
+    height: clamp(260px, 38dvh, 340px) !important;
+    min-height: 260px !important;
+    max-height: 360px !important;
+    flex: 0 0 clamp(260px, 38dvh, 340px) !important;
     display: flex !important;
     position: relative !important;
     overflow: hidden !important;
     background: transparent !important;
-    transition: height 0.25s ease, max-height 0.25s ease, flex 0.25s ease;
+    transition: height 0.3s cubic-bezier(0.16, 1, 0.3, 1), max-height 0.3s cubic-bezier(0.16, 1, 0.3, 1), flex 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .player-wrapper.is-expanded {
+    height: clamp(480px, 66dvh, 660px) !important;
+    min-height: 460px !important;
+    max-height: 72dvh !important;
+    flex: 0 0 clamp(480px, 66dvh, 660px) !important;
   }
 
   .player-placeholder {
@@ -12160,21 +12166,21 @@ body[data-theme="vhs"] .zami-text-logo {
   }
   .player-wrapper {
     width: 100%;
-    height: 300px !important;
-    min-height: 270px !important;
-    max-height: 340px !important;
-    flex: 0 0 300px !important;
+    height: clamp(260px, 38dvh, 340px) !important;
+    min-height: 260px !important;
+    max-height: 360px !important;
+    flex: 0 0 clamp(260px, 38dvh, 340px) !important;
     position: relative;
     inset: auto;
     border-radius: 0 !important;
     background: #000000 !important;
-    transition: height 0.25s cubic-bezier(0.16, 1, 0.3, 1), max-height 0.25s cubic-bezier(0.16, 1, 0.3, 1), flex 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: height 0.3s cubic-bezier(0.16, 1, 0.3, 1), max-height 0.3s cubic-bezier(0.16, 1, 0.3, 1), flex 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .player-wrapper.is-expanded {
-    height: 400px !important;
-    min-height: 380px !important;
-    max-height: 460px !important;
-    flex: 0 0 400px !important;
+    height: clamp(480px, 66dvh, 660px) !important;
+    min-height: 460px !important;
+    max-height: 72dvh !important;
+    flex: 0 0 clamp(480px, 66dvh, 660px) !important;
   }
   .w2g-subplayer-bar {
     display: flex !important;
