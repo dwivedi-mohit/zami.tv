@@ -1912,16 +1912,15 @@ class UniversalPlayer {
 
     if (tmdbId) {
       const serverOptions = [
-        { id: 'autoembed', name: '⚡ AutoEmbed', url: isTv ? `https://autoembed.co/tv/tmdb/${tmdbId}/${s}/${e}` : `https://autoembed.co/movie/tmdb/${tmdbId}` },
+        { id: 'vidsrc-su', name: '⚡ VidSrc Prime', url: isTv ? `https://vidsrc.su/embed/tv/${tmdbId}/${s}/${e}` : `https://vidsrc.su/embed/movie/${tmdbId}` },
         { id: 'vidsrc-to', name: '🎬 VidSrc To', url: isTv ? `https://vidsrc.to/embed/tv/${tmdbId}/${s}/${e}` : `https://vidsrc.to/embed/movie/${tmdbId}` },
-        { id: 'vidsrc-su', name: '🚀 VidSrc SU', url: isTv ? `https://vidsrc.su/embed/tv/${tmdbId}/${s}/${e}` : `https://vidsrc.su/embed/movie/${tmdbId}` },
         { id: 'vidlink', name: '🌐 VidLink', url: isTv ? `https://vidlink.pro/tv/${tmdbId}/${s}/${e}?primaryColor=B20710&autoplay=true` : `https://vidlink.pro/movie/${tmdbId}?primaryColor=B20710&autoplay=true` },
         { id: '2embed', name: '✨ 2Embed', url: isTv ? `https://2embed.cc/embedtv/${tmdbId}&s=${s}&e=${e}` : `https://2embed.cc/embed/${tmdbId}` },
         { id: 'multiembed', name: '🍿 MultiEmbed', url: isTv ? `https://multiembed.mov/?video_id=${tmdbId}&tmdb=1&s=${s}&e=${e}` : `https://multiembed.mov/?video_id=${tmdbId}&tmdb=1` }
       ];
 
       const buttonsHtml = serverOptions.map(srv => {
-        const isActive = currentUrl.includes(srv.id) || (srv.id === 'autoembed' && currentUrl.includes('autoembed'));
+        const isActive = currentUrl.includes(srv.id) || (srv.id === 'vidsrc-su' && (currentUrl.includes('vidsrc.su') || (!currentUrl.includes('vidsrc.to') && !currentUrl.includes('vidlink') && !currentUrl.includes('2embed') && !currentUrl.includes('multiembed'))));
         return `<button type="button" class="embed-srv-chip ${isActive ? 'active' : ''}" data-url="${srv.url}" data-name="${srv.name}">${srv.name}</button>`;
       }).join('');
 

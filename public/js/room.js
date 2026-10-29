@@ -2369,7 +2369,7 @@ function setupCinemaDiscoveryHub(socket) {
       }
       const fallbackUrl = (data && data.fallbackUrl)
         ? data.fallbackUrl
-        : `https://autoembed.co/movie/tmdb/${tmdbId}`;
+        : `https://vidsrc.su/embed/movie/${tmdbId}`;
 
       socket.emit('change-media', {
         type: 'embed',
@@ -2947,8 +2947,8 @@ function setupCinemaDiscoveryHub(socket) {
           const sData = await sResp.json();
           const fallbackServer = sData.servers?.find(s => !s.isNative) || sData.servers?.[1] || sData.servers?.[0];
           const serverUrl = fallbackServer?.url || (isTv
-            ? `https://autoembed.co/tv/tmdb/${spotlight.id}/1/1`
-            : `https://autoembed.co/movie/tmdb/${spotlight.id}`);
+            ? `https://vidsrc.su/embed/tv/${spotlight.id}/1/1`
+            : `https://vidsrc.su/embed/movie/${spotlight.id}`);
 
           socket.emit('change-media', {
             type: 'embed',
@@ -3129,8 +3129,8 @@ function setupCinemaDiscoveryHub(socket) {
       const sData = await sResp.json();
       const fallbackServer = sData.servers?.find(s => !s.isNative) || sData.servers?.[1] || sData.servers?.[0];
       const serverUrl = fallbackServer?.url || (film.mediaType === 'tv'
-        ? `https://autoembed.co/tv/tmdb/${film.id}/1/1`
-        : `https://autoembed.co/movie/tmdb/${film.id}`);
+        ? `https://vidsrc.su/embed/tv/${film.id}/1/1`
+        : `https://vidsrc.su/embed/movie/${film.id}`);
 
       socket.emit('change-media', {
         type: 'embed',
@@ -3427,8 +3427,8 @@ function setupCinemaDiscoveryHub(socket) {
           }
 
           const defaultUrl = isTv
-            ? `https://autoembed.co/tv/tmdb/${id}/${currentSelectedSeason}/${currentSelectedEpisode}`
-            : `https://autoembed.co/movie/tmdb/${id}`;
+            ? `https://vidsrc.su/embed/tv/${id}/${currentSelectedSeason}/${currentSelectedEpisode}`
+            : `https://vidsrc.su/embed/movie/${id}`;
           const streamUrl = (activeServer && !activeServer.isNative) ? activeServer.url : defaultUrl;
 
           socket.emit('change-media', {
@@ -3644,7 +3644,7 @@ function setupCinemaDiscoveryHub(socket) {
             const sData = await sResp.json();
             const activeServer = (sData.servers && sData.servers[selectedServerIndex]) || sData.servers?.[0];
             const fallbackServer = (activeServer && !activeServer.isNative) ? activeServer : (sData.servers?.find(s => !s.isNative) || sData.servers?.[1]);
-            const streamUrl = fallbackServer?.url || `https://autoembed.co/tv/tmdb/${seriesId}/${seasonNum}/${ep.episodeNumber}`;
+            const streamUrl = fallbackServer?.url || `https://vidsrc.su/embed/tv/${seriesId}/${seasonNum}/${ep.episodeNumber}`;
 
             socket.emit('change-media', {
               type: 'embed',
@@ -7680,7 +7680,7 @@ function initWatch2GetherRoomClone() {
           if (curSocket) {
             curSocket.emit('change-media', {
               type: 'embed',
-              url: type === 'tv' ? `https://autoembed.co/tv/tmdb/${id}/1/1` : `https://autoembed.co/movie/tmdb/${id}`,
+              url: type === 'tv' ? `https://vidsrc.su/embed/tv/${id}/1/1` : `https://vidsrc.su/embed/movie/${id}`,
               title: title,
               poster: card.dataset.poster,
               tmdbId: id,
@@ -7699,7 +7699,7 @@ function initWatch2GetherRoomClone() {
             curSocket.emit('playlist-add', {
               item: {
                 type: 'embed',
-                url: type === 'tv' ? `https://autoembed.co/tv/tmdb/${id}/1/1` : `https://autoembed.co/movie/tmdb/${id}`,
+                url: type === 'tv' ? `https://vidsrc.su/embed/tv/${id}/1/1` : `https://vidsrc.su/embed/movie/${id}`,
                 title: title,
                 poster: card.dataset.poster,
                 tmdbId: id,

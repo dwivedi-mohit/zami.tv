@@ -1363,8 +1363,8 @@ app.get('/api/stream/resolve', async (req, res) => {
       success: false,
       message: 'Direct HLS stream not indexed for this selection. Universal fallback server available.',
       fallbackUrl: isTv
-        ? `https://autoembed.co/tv/tmdb/${id}/${s}/${e}`
-        : `https://autoembed.co/movie/tmdb/${id}`
+        ? `https://vidsrc.su/embed/tv/${id}/${s}/${e}`
+        : `https://vidsrc.su/embed/movie/${id}`
     });
   } catch (err) {
     console.error('Stream resolve error:', err.message);
@@ -1389,10 +1389,10 @@ app.get('/api/stream/servers', (req, res) => {
       url: `/api/stream/resolve?id=${id}&type=${type}&season=${s}&episode=${e}`
     },
     {
-      id: 'autoembed',
-      name: 'Server 2 · AutoEmbed (Universal · High Availability)',
+      id: 'vidsrc-su',
+      name: 'Server 2 · VidSrc Prime (Fast · Global & Bollywood)',
       isNative: false,
-      url: isTv ? `https://autoembed.co/tv/tmdb/${id}/${s}/${e}` : `https://autoembed.co/movie/tmdb/${id}`
+      url: isTv ? `https://vidsrc.su/embed/tv/${id}/${s}/${e}` : `https://vidsrc.su/embed/movie/${id}`
     },
     {
       id: 'vidsrc-to',
@@ -1401,26 +1401,20 @@ app.get('/api/stream/servers', (req, res) => {
       url: isTv ? `https://vidsrc.to/embed/tv/${id}/${s}/${e}` : `https://vidsrc.to/embed/movie/${id}`
     },
     {
-      id: 'vidsrc-su',
-      name: 'Server 4 · VidSrc SU (Fast Mirror)',
-      isNative: false,
-      url: isTv ? `https://vidsrc.su/embed/tv/${id}/${s}/${e}` : `https://vidsrc.su/embed/movie/${id}`
-    },
-    {
       id: 'vidlink',
-      name: 'Server 5 · VidLink Pro (HD Clean Player)',
+      name: 'Server 4 · VidLink Pro (HD Clean Player)',
       isNative: false,
       url: isTv ? `https://vidlink.pro/tv/${id}/${s}/${e}?primaryColor=B20710&autoplay=true` : `https://vidlink.pro/movie/${id}?primaryColor=B20710&autoplay=true`
     },
     {
       id: '2embed',
-      name: 'Server 6 · 2Embed Cinema',
+      name: 'Server 5 · 2Embed Cinema',
       isNative: false,
       url: isTv ? `https://2embed.cc/embedtv/${id}&s=${s}&e=${e}` : `https://2embed.cc/embed/${id}`
     },
     {
       id: 'superembed',
-      name: 'Server 7 · SuperEmbed Multi-Server',
+      name: 'Server 6 · SuperEmbed Multi-Server',
       isNative: false,
       url: isTv ? `https://multiembed.mov/?video_id=${id}&tmdb=1&s=${s}&e=${e}` : `https://multiembed.mov/?video_id=${id}&tmdb=1`
     }
