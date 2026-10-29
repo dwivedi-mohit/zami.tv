@@ -1358,13 +1358,13 @@ app.get('/api/stream/resolve', async (req, res) => {
       return res.json(payload);
     }
 
-    // If direct stream is not yet indexed, respond with graceful fallback
+    // If direct stream is not yet indexed, respond with universal high-availability fallback
     return res.json({
       success: false,
-      message: 'Direct HLS stream not indexed for this selection. Fallback embed server available.',
+      message: 'Direct HLS stream not indexed for this selection. Universal fallback server available.',
       fallbackUrl: isTv
-        ? `https://vidlink.pro/tv/${id}/${s}/${e}?autoplay=true`
-        : `https://vidlink.pro/movie/${id}?autoplay=true`
+        ? `https://autoembed.co/tv/tmdb/${id}/${s}/${e}`
+        : `https://autoembed.co/movie/tmdb/${id}`
     });
   } catch (err) {
     console.error('Stream resolve error:', err.message);
@@ -1389,40 +1389,40 @@ app.get('/api/stream/servers', (req, res) => {
       url: `/api/stream/resolve?id=${id}&type=${type}&season=${s}&episode=${e}`
     },
     {
-      id: 'vidlink',
-      name: 'Server 2 · VidLink Pro (HD · Clean Player)',
-      isNative: false,
-      url: isTv ? `https://vidlink.pro/tv/${id}/${s}/${e}?primaryColor=B20710&autoplay=true` : `https://vidlink.pro/movie/${id}?primaryColor=B20710&autoplay=true`
-    },
-    {
-      id: 'embed-su',
-      name: 'Server 3 · Embed.su (Fast · Multi-Source)',
-      isNative: false,
-      url: isTv ? `https://embed.su/embed/tv/${id}/${s}/${e}` : `https://embed.su/embed/movie/${id}`
-    },
-    {
-      id: 'vidsrc-cc',
-      name: 'Server 4 · VidSrc CC (Global Mirror)',
-      isNative: false,
-      url: isTv ? `https://vidsrc.cc/v2/embed/tv/${id}/${s}/${e}` : `https://vidsrc.cc/v2/embed/movie/${id}`
-    },
-    {
-      id: 'superembed',
-      name: 'Server 5 · SuperEmbed (Multi-Server)',
-      isNative: false,
-      url: isTv ? `https://multiembed.mov/?video_id=${id}&tmdb=1&s=${s}&e=${e}` : `https://multiembed.mov/?video_id=${id}&tmdb=1`
-    },
-    {
       id: 'autoembed',
-      name: 'Server 6 · AutoEmbed Global',
+      name: 'Server 2 · AutoEmbed (Universal · High Availability)',
       isNative: false,
       url: isTv ? `https://autoembed.co/tv/tmdb/${id}/${s}/${e}` : `https://autoembed.co/movie/tmdb/${id}`
     },
     {
-      id: 'vidsrc-sh',
-      name: 'Server 7 · VidSrc HD (Fallback)',
+      id: 'vidsrc-to',
+      name: 'Server 3 · VidSrc To (Worldwide Catalog)',
       isNative: false,
-      url: isTv ? `https://vidsrc.sh/embed/tv?tmdb=${id}&season=${s}&episode=${e}` : `https://vidsrc.sh/embed/movie?tmdb=${id}`
+      url: isTv ? `https://vidsrc.to/embed/tv/${id}/${s}/${e}` : `https://vidsrc.to/embed/movie/${id}`
+    },
+    {
+      id: 'vidsrc-su',
+      name: 'Server 4 · VidSrc SU (Fast Mirror)',
+      isNative: false,
+      url: isTv ? `https://vidsrc.su/embed/tv/${id}/${s}/${e}` : `https://vidsrc.su/embed/movie/${id}`
+    },
+    {
+      id: 'vidlink',
+      name: 'Server 5 · VidLink Pro (HD Clean Player)',
+      isNative: false,
+      url: isTv ? `https://vidlink.pro/tv/${id}/${s}/${e}?primaryColor=B20710&autoplay=true` : `https://vidlink.pro/movie/${id}?primaryColor=B20710&autoplay=true`
+    },
+    {
+      id: '2embed',
+      name: 'Server 6 · 2Embed Cinema',
+      isNative: false,
+      url: isTv ? `https://2embed.cc/embedtv/${id}&s=${s}&e=${e}` : `https://2embed.cc/embed/${id}`
+    },
+    {
+      id: 'superembed',
+      name: 'Server 7 · SuperEmbed Multi-Server',
+      isNative: false,
+      url: isTv ? `https://multiembed.mov/?video_id=${id}&tmdb=1&s=${s}&e=${e}` : `https://multiembed.mov/?video_id=${id}&tmdb=1`
     }
   ];
 

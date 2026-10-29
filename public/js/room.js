@@ -2369,7 +2369,7 @@ function setupCinemaDiscoveryHub(socket) {
       }
       const fallbackUrl = (data && data.fallbackUrl)
         ? data.fallbackUrl
-        : `https://vidlink.pro/movie/${tmdbId}?primaryColor=B20710&autoplay=true`;
+        : `https://autoembed.co/movie/tmdb/${tmdbId}`;
 
       socket.emit('change-media', {
         type: 'embed',
@@ -2377,9 +2377,11 @@ function setupCinemaDiscoveryHub(socket) {
         title: title,
         poster: poster,
         year: year,
+        tmdbId: tmdbId,
+        mediaType: 'movie',
         isPlaying: true
       });
-      window.showToast(`Now screening: ${title} (Clean HD Player)`, 'info');
+      window.showToast(`Now screening: ${title} (Universal Server)`, 'info');
     } catch (err) {
       if (window.universalPlayer) window.universalPlayer.hideSpinner();
       window.showToast(`Failed to connect "${title}". Try another server.`, 'error');
@@ -2945,8 +2947,8 @@ function setupCinemaDiscoveryHub(socket) {
           const sData = await sResp.json();
           const fallbackServer = sData.servers?.find(s => !s.isNative) || sData.servers?.[1] || sData.servers?.[0];
           const serverUrl = fallbackServer?.url || (isTv
-            ? `https://vidlink.pro/tv/${spotlight.id}/1/1?primaryColor=B20710&autoplay=true`
-            : `https://vidlink.pro/movie/${spotlight.id}?primaryColor=B20710&autoplay=true`);
+            ? `https://autoembed.co/tv/tmdb/${spotlight.id}/1/1`
+            : `https://autoembed.co/movie/tmdb/${spotlight.id}`);
 
           socket.emit('change-media', {
             type: 'embed',
@@ -2954,6 +2956,8 @@ function setupCinemaDiscoveryHub(socket) {
             title: spotlight.title,
             poster: spotlight.poster,
             backdrop: spotlight.backdrop,
+            tmdbId: spotlight.id,
+            mediaType: spotlight.mediaType,
             isPlaying: true
           });
           window.showToast(`Now screening: ${spotlight.title} (Cloud Embed)`, 'info');
@@ -3125,8 +3129,8 @@ function setupCinemaDiscoveryHub(socket) {
       const sData = await sResp.json();
       const fallbackServer = sData.servers?.find(s => !s.isNative) || sData.servers?.[1] || sData.servers?.[0];
       const serverUrl = fallbackServer?.url || (film.mediaType === 'tv'
-        ? `https://vidlink.pro/tv/${film.id}/1/1?primaryColor=B20710&autoplay=true`
-        : `https://vidlink.pro/movie/${film.id}?primaryColor=B20710&autoplay=true`);
+        ? `https://autoembed.co/tv/tmdb/${film.id}/1/1`
+        : `https://autoembed.co/movie/tmdb/${film.id}`);
 
       socket.emit('change-media', {
         type: 'embed',
@@ -3134,6 +3138,8 @@ function setupCinemaDiscoveryHub(socket) {
         title: film.title,
         poster: film.poster,
         backdrop: film.backdrop,
+        tmdbId: film.id,
+        mediaType: film.mediaType,
         isPlaying: true
       });
       window.showToast(`Now playing: ${film.title} (Cloud Embed)`, 'info');
@@ -3421,8 +3427,8 @@ function setupCinemaDiscoveryHub(socket) {
           }
 
           const defaultUrl = isTv
-            ? `https://vidlink.pro/tv/${id}/${currentSelectedSeason}/${currentSelectedEpisode}?primaryColor=B20710&autoplay=true`
-            : `https://vidlink.pro/movie/${id}?primaryColor=B20710&autoplay=true`;
+            ? `https://autoembed.co/tv/tmdb/${id}/${currentSelectedSeason}/${currentSelectedEpisode}`
+            : `https://autoembed.co/movie/tmdb/${id}`;
           const streamUrl = (activeServer && !activeServer.isNative) ? activeServer.url : defaultUrl;
 
           socket.emit('change-media', {
@@ -3431,6 +3437,10 @@ function setupCinemaDiscoveryHub(socket) {
             title: fullTitle,
             poster: details.poster,
             backdrop: details.backdrop,
+            tmdbId: id,
+            mediaType: type,
+            season: currentSelectedSeason,
+            episode: currentSelectedEpisode,
             isPlaying: true
           });
           window.showToast(`Now screening: ${fullTitle} (Cloud Embed)`, 'info');
@@ -3634,7 +3644,7 @@ function setupCinemaDiscoveryHub(socket) {
             const sData = await sResp.json();
             const activeServer = (sData.servers && sData.servers[selectedServerIndex]) || sData.servers?.[0];
             const fallbackServer = (activeServer && !activeServer.isNative) ? activeServer : (sData.servers?.find(s => !s.isNative) || sData.servers?.[1]);
-            const streamUrl = fallbackServer?.url || `https://vidlink.pro/tv/${seriesId}/${seasonNum}/${ep.episodeNumber}?primaryColor=B20710&autoplay=true`;
+            const streamUrl = fallbackServer?.url || `https://autoembed.co/tv/tmdb/${seriesId}/${seasonNum}/${ep.episodeNumber}`;
 
             socket.emit('change-media', {
               type: 'embed',
@@ -3642,6 +3652,10 @@ function setupCinemaDiscoveryHub(socket) {
               title: fullTitle,
               poster: currentDrawerDetails?.poster,
               backdrop: currentDrawerDetails?.backdrop,
+              tmdbId: seriesId,
+              mediaType: 'tv',
+              season: seasonNum,
+              episode: ep.episodeNumber,
               isPlaying: true
             });
             window.showToast(`Now playing: ${fullTitle} (Cloud Embed)`, 'info');
@@ -7666,9 +7680,11 @@ function initWatch2GetherRoomClone() {
           if (curSocket) {
             curSocket.emit('change-media', {
               type: 'embed',
-              url: type === 'tv' ? `https://vidlink.pro/tv/${id}/1/1?primaryColor=B20710&autoplay=true` : `https://vidlink.pro/movie/${id}?primaryColor=B20710&autoplay=true`,
+              url: type === 'tv' ? `https://autoembed.co/tv/tmdb/${id}/1/1` : `https://autoembed.co/movie/tmdb/${id}`,
               title: title,
               poster: card.dataset.poster,
+              tmdbId: id,
+              mediaType: type,
               isPlaying: true
             });
             if (window.showToast) window.showToast(`Now playing: ${title}`, 'info');
@@ -7683,9 +7699,11 @@ function initWatch2GetherRoomClone() {
             curSocket.emit('playlist-add', {
               item: {
                 type: 'embed',
-                url: type === 'tv' ? `https://vidlink.pro/tv/${id}/1/1?primaryColor=B20710&autoplay=true` : `https://vidlink.pro/movie/${id}?primaryColor=B20710&autoplay=true`,
+                url: type === 'tv' ? `https://autoembed.co/tv/tmdb/${id}/1/1` : `https://autoembed.co/movie/tmdb/${id}`,
                 title: title,
-                poster: card.dataset.poster
+                poster: card.dataset.poster,
+                tmdbId: id,
+                mediaType: type
               }
             });
             if (window.showToast) window.showToast(`Queued: "${title}"`, 'success');

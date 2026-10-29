@@ -1895,14 +1895,89 @@ class UniversalPlayer {
     }
 
     embedContainer.style.display = 'block';
+
+    let tmdbId = source.tmdbId || source.id;
+    let isTv = source.mediaType === 'tv';
+    let s = source.season || 1;
+    let e = source.episode || 1;
+
+    if (!tmdbId && source.url) {
+      const matchTmdb = source.url.match(/tmdb[=/](\d+)/i) || source.url.match(/movie\/(\d+)/i) || source.url.match(/video_id=(\d+)/i);
+      if (matchTmdb) tmdbId = matchTmdb[1];
+      if (/tv\/|embedtv/i.test(source.url)) isTv = true;
+    }
+
+    const currentUrl = source.url || '';
+    let serversHudHtml = '';
+
+    if (tmdbId) {
+      const serverOptions = [
+        { id: 'autoembed', name: '⚡ AutoEmbed', url: isTv ? `https://autoembed.co/tv/tmdb/${tmdbId}/${s}/${e}` : `https://autoembed.co/movie/tmdb/${tmdbId}` },
+        { id: 'vidsrc-to', name: '🎬 VidSrc To', url: isTv ? `https://vidsrc.to/embed/tv/${tmdbId}/${s}/${e}` : `https://vidsrc.to/embed/movie/${tmdbId}` },
+        { id: 'vidsrc-su', name: '🚀 VidSrc SU', url: isTv ? `https://vidsrc.su/embed/tv/${tmdbId}/${s}/${e}` : `https://vidsrc.su/embed/movie/${tmdbId}` },
+        { id: 'vidlink', name: '🌐 VidLink', url: isTv ? `https://vidlink.pro/tv/${tmdbId}/${s}/${e}?primaryColor=B20710&autoplay=true` : `https://vidlink.pro/movie/${tmdbId}?primaryColor=B20710&autoplay=true` },
+        { id: '2embed', name: '✨ 2Embed', url: isTv ? `https://2embed.cc/embedtv/${tmdbId}&s=${s}&e=${e}` : `https://2embed.cc/embed/${tmdbId}` },
+        { id: 'multiembed', name: '🍿 MultiEmbed', url: isTv ? `https://multiembed.mov/?video_id=${tmdbId}&tmdb=1&s=${s}&e=${e}` : `https://multiembed.mov/?video_id=${tmdbId}&tmdb=1` }
+      ];
+
+      const buttonsHtml = serverOptions.map(srv => {
+        const isActive = currentUrl.includes(srv.id) || (srv.id === 'autoembed' && currentUrl.includes('autoembed'));
+        return `<button type="button" class="embed-srv-chip ${isActive ? 'active' : ''}" data-url="${srv.url}" data-name="${srv.name}">${srv.name}</button>`;
+      }).join('');
+
+      serversHudHtml = `
+        <div class="embed-servers-hud" id="embed-servers-hud">
+          <span class="embed-servers-hud-label">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            SERVERS:
+          </span>
+          <div class="embed-servers-chips-wrap">
+            ${buttonsHtml}
+          </div>
+        </div>
+      `;
+    }
+
     embedContainer.innerHTML = `
-      <iframe src="${source.url}" 
+      ${serversHudHtml}
+      <iframe id="active-embed-iframe"
+              src="${source.url}" 
               style="width: 100%; height: 100%; border: none; background: #000; position: absolute; inset: 0;" 
               allow="autoplay; encrypted-media; fullscreen; picture-in-picture; screen-wake-lock" 
               referrerpolicy="origin"
               allowfullscreen>
       </iframe>
     `;
+
+    const hud = embedContainer.querySelector('#embed-servers-hud');
+    if (hud) {
+      hud.addEventListener('click', (ev) => {
+        const btn = ev.target.closest('.embed-srv-chip');
+        if (!btn) return;
+        const targetUrl = btn.dataset.url;
+        const srvName = btn.dataset.name || 'Server';
+        if (!targetUrl) return;
+
+        hud.querySelectorAll('.embed-srv-chip').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const iframe = embedContainer.querySelector('#active-embed-iframe');
+        if (iframe) {
+          iframe.src = targetUrl;
+        }
+
+        if (window.showToast) {
+          window.showToast(`Switched to ${srvName}`, 'info', 2500);
+        }
+
+        if (window.socket) {
+          window.socket.emit('change-media', {
+            ...source,
+            url: targetUrl
+          });
+        }
+      });
+    }
 
     const titleEl = document.getElementById('current-media-title');
     if (titleEl && source.title) {
